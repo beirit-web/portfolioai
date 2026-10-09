@@ -1,4 +1,4 @@
-# Beirit Digital Portfolio
+# Beirit Web Portfolio
 
 Dieses Repository zeigt meine Web- und Softwareprojekte samt Quellcode. Es ist
 zugleich ein persönliches Entwicklerportfolio und eine Dokumentation meines
@@ -278,7 +278,7 @@ Der gebündelte lokale Check einschließlich Audit läuft über:
 scripts/check-workspace.sh
 ```
 
-GitHub Actions prüft Beirit Digital, DeutschLive und Wohnungssuche getrennt.
+GitHub Actions prüft Beirit Web, DeutschLive und Wohnungssuche getrennt.
 Diese Prüfungen helfen bei der Weiterentwicklung; sie bestätigen keine
 vollständige Responsive-, SEO-, Accessibility- oder Lighthouse-Optimierung.
 
