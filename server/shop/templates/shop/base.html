@@ -1,0 +1,71 @@
+{% load static shop_ui %}
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  {% if tab != 'catalog' %}<meta name="robots" content="noindex, nofollow">{% endif %}
+  <title>{% block title %}Beirit Backstube{% endblock %} | Beirit Digital</title>
+  <link rel="icon" type="image/svg+xml" href="{% asset_url 'shop/brand-mark.svg' %}">
+  <link rel="stylesheet" href="{% asset_url 'shop/style.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'shop/brand.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'css/project-home.css' %}">
+  <script src="{% asset_url 'shop/app.js' %}" defer></script>
+</head>
+<body class="{% if tab == 'catalog' %}shop-catalog{% endif %}{% if cart_count and tab == 'catalog' %} has-cart-bar{% endif %}">
+  <a class="skip-link" href="#main">Zum Inhalt</a>
+  <nav class="project-home-nav project-home-nav--shop" aria-label="Shop-Schnellnavigation">
+    <ul class="project-home-nav__links">
+      <li><a href="/projekte/online-shop" aria-label="Zur Startseite des Torten- und Kuchen-Shops">Zur Startseite</a></li>
+      <li><a href="{% url 'storefront:catalog' %}" {% if request.resolver_match.url_name == 'catalog' and category == 'all' and not query and sort == 'featured' %}aria-current="page"{% endif %}>Alle Produkte</a></li>
+      <li><a href="{% url 'storefront:catalog' %}#productSearch">Produktsuche</a></li>
+      {% for key, label in navigation_categories %}
+      <li><a href="{% url 'storefront:catalog' %}?category={{ key|urlencode }}" {% if request.resolver_match.url_name == 'catalog' and category == key and not query %}aria-current="page"{% endif %}>{{ label }}</a></li>
+      {% endfor %}
+      <li><a href="{% url 'storefront:catalog' %}?q=Schoko" {% if request.resolver_match.url_name == 'catalog' and query == 'Schoko' and category == 'all' %}aria-current="page"{% endif %}>Schokoladengebäck</a></li>
+      <li><a href="{% url 'storefront:catalog' %}?category=torte&amp;q=Erdbeer" {% if request.resolver_match.url_name == 'catalog' and query == 'Erdbeer' and category == 'torte' %}aria-current="page"{% endif %}>Erdbeertorten</a></li>
+      <li><a href="{% url 'storefront:catalog' %}?category=kuchen&amp;q=Apfel" {% if request.resolver_match.url_name == 'catalog' and query == 'Apfel' and category == 'kuchen' %}aria-current="page"{% endif %}>Apfelkuchen</a></li>
+      <li><a href="{% url 'storefront:catalog' %}?category=kuchen&amp;q=Zitrone" {% if request.resolver_match.url_name == 'catalog' and query == 'Zitrone' and category == 'kuchen' %}aria-current="page"{% endif %}>Zitronenkuchen</a></li>
+      <li>
+        <form class="project-home-nav__sort" method="get" action="{% url 'storefront:catalog' %}" aria-label="Preissortierung">
+          {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+          {% if category and category != 'all' %}<input type="hidden" name="category" value="{{ category }}">{% endif %}
+          <label class="sr-only" for="headerPriceSort">Preis sortieren</label>
+          <span class="sr-only" id="headerPriceSortHint">Die Auswahl lädt das Sortiment mit der gewählten Preissortierung neu.</span>
+          <select name="sort" id="headerPriceSort" aria-describedby="headerPriceSortHint" required>
+            <option value="" disabled {% if sort != 'priceAsc' and sort != 'priceDesc' %}selected{% endif %}>Preis sortieren</option>
+            <option value="priceAsc" {% if sort == 'priceAsc' %}selected{% endif %}>Preis aufsteigend</option>
+            <option value="priceDesc" {% if sort == 'priceDesc' %}selected{% endif %}>Preis absteigend</option>
+          </select>
+          <noscript>
+            <a href="{% url 'storefront:catalog' %}?sort=priceAsc{% if query %}&amp;q={{ query|urlencode }}{% endif %}{% if category and category != 'all' %}&amp;category={{ category|urlencode }}{% endif %}">Preis aufsteigend</a>
+            <a href="{% url 'storefront:catalog' %}?sort=priceDesc{% if query %}&amp;q={{ query|urlencode }}{% endif %}{% if category and category != 'all' %}&amp;category={{ category|urlencode }}{% endif %}">Preis absteigend</a>
+          </noscript>
+        </form>
+      </li>
+      <li><a href="{% url 'storefront:catalog' %}?sort=leadTime" {% if request.resolver_match.url_name == 'catalog' and category == 'all' and not query and sort == 'leadTime' %}aria-current="page"{% endif %}>Kürzester Vorlauf</a></li>
+      <li><a href="{% url 'storefront:orders' %}" {% if tab == 'orders' %}aria-current="page"{% endif %}>Meine Anfragen</a></li>
+      <li><a href="{% if request.user.is_authenticated %}{% url 'pages:profile' %}{% else %}{{ login_url }}{% endif %}">{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}</a></li>
+      {% if not request.user.is_authenticated %}
+      <li><a href="{% url 'pages:register' %}">Registrieren</a></li>
+      {% endif %}
+      <li><a href="{% url 'storefront:cart' %}" {% if tab == 'cart' %}aria-current="page"{% endif %}>Warenkorb ({{ cart_count }})</a></li>
+      <li><a href="{% url 'storefront:checkout' %}" {% if tab == 'checkout' %}aria-current="page"{% endif %}>Bestellanfrage</a></li>
+      <li><a href="{% url 'pages:contact' %}">Kontakt</a></li>
+      <li><a href="{% url 'pages:imprint' %}">Impressum</a></li>
+      <li><a href="{% url 'pages:privacy' %}">Datenschutz</a></li>
+    </ul>
+  </nav>
+  <header class="shop-header">
+    {% include 'shop/brand.html' with brand_heading=True only %}
+    <div class="header-actions"><a class="icon-button" href="{% if request.user.is_authenticated %}{% url 'pages:profile' %}{% else %}{{ login_url }}{% endif %}" title="{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}" aria-label="{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}">{% shop_icon 'user' %}</a><a class="cart-link" href="{% url 'storefront:cart' %}" aria-label="Warenkorb, {{ cart_count }} Artikel">{% shop_icon 'bag' %}<span class="cart-count">{{ cart_count }}</span></a></div>
+  </header>
+  <nav class="shop-nav" aria-label="Shop"><div><a href="{% url 'storefront:catalog' %}" {% if tab == 'catalog' %}aria-current="page"{% endif %}>Sortiment</a><a href="{% url 'storefront:cart' %}" {% if tab == 'cart' %}aria-current="page"{% endif %}>Warenkorb{% if cart_count %}<small>{{ cart_count }}</small>{% endif %}</a><a href="{% url 'storefront:orders' %}" {% if tab == 'orders' %}aria-current="page"{% endif %}>Meine Anfragen</a></div></nav>
+  <main id="main" tabindex="-1">
+    {% if messages %}<div class="messages" aria-live="polite">{% for message in messages %}<p class="message message--{{ message.tags }}" {% if message.tags == 'error' %}role="alert"{% endif %}>{% if message.tags == 'error' %}{% shop_icon 'alert' %}{% else %}{% shop_icon 'check' %}{% endif %}{{ message }}</p>{% endfor %}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="shop-footer"><a href="/projekte">Beirit Digital{% shop_icon 'arrow' %}</a><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a></footer>
+  {% if cart_count and tab == 'catalog' %}<a class="mobile-cart-bar" href="{% url 'storefront:cart' %}"><span>{% shop_icon 'bag' %}{{ cart_count }} Artikel</span><strong>{{ subtotal|euros }}</strong>{% shop_icon 'next' %}</a>{% endif %}
+</body>
+</html>

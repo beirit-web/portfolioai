@@ -1,0 +1,207 @@
+{% extends "base_public.html" %}
+{% load static i18n %}
+
+{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Импрессум | Beirit Web{% else %}Impressum | Beirit Web{% endif %}{% endblock %}
+{% block meta_description %}{% if initial_lang|slice:':2' == 'ru' %}Импрессум Beirit Web: данные согласно § 5 DDG, контакты, правовые примечания и услуги перевода по договоренности.{% else %}Impressum von Beirit Web mit Angaben gemäß § 5 DDG, Kontakt, rechtlichen Hinweisen und Übersetzung nach Absprache.{% endif %}{% endblock %}
+{% block og_title %}{% if initial_lang|slice:':2' == 'ru' %}Импрессум | Beirit Web{% else %}Impressum | Beirit Web{% endif %}{% endblock %}
+{% block og_description %}{% if initial_lang|slice:':2' == 'ru' %}Данные поставщика услуги и правовые примечания для Beirit Web.{% else %}Anbieterkennzeichnung und rechtliche Hinweise für Beirit Web.{% endif %}{% endblock %}
+{% block twitter_title %}{% if initial_lang|slice:':2' == 'ru' %}Импрессум | Beirit Web{% else %}Impressum | Beirit Web{% endif %}{% endblock %}
+{% block twitter_description %}{% if initial_lang|slice:':2' == 'ru' %}Данные поставщика услуги и контакт Beirit Web.{% else %}Anbieterangaben und Kontakt für Beirit Web.{% endif %}{% endblock %}
+
+{% block base_styles %}
+  <style>{% inline_asset 'css/root.css' %}</style>
+  <style>{% inline_asset 'css/main.css' %}</style>
+  <style>{% inline_asset 'css/flash.css' %}</style>
+  <style>{% inline_asset 'css/impressum.css' %}</style>
+  <style>{% inline_asset 'css/impressum-nav.css' %}</style>
+  <style>{% inline_asset 'css/impressum-list.css' %}</style>
+{% endblock %}
+
+{% block extra_head %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": ["Organization", "LocalBusiness"],
+      "name": "Beirit Web",
+      "url": "{{ site_url }}/impressum",
+      "founder": {
+        "@type": "Person",
+        "name": "Max Mustermann"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Musterstraße 1",
+        "postalCode": "12345",
+        "addressLocality": "Musterstadt",
+        "addressCountry": "Deutschland"
+      },
+      "email": "max.mustermann@example.com",
+      "telephone": "+490000000000",
+      "knowsAbout": [
+        "Web- und Softwareentwicklung",
+        "Übersetzung von Web- und Softwaretexten nach Absprache"
+      ]
+    }
+  </script>
+{% endblock %}
+
+{% block body_attrs %} class="has-topnav imprint-body template-body"{% endblock %}
+
+{% block topnav %}
+  <div class="topnav topnav--no-link-underline" id="mainTopnav">
+    <a
+      class="nav-cube-link"
+      href="{% url 'pages:home' %}#top"
+      aria-label="{% if initial_lang|slice:':2' == 'ru' %}Beirit Web Главная{% else %}Beirit Web Startseite{% endif %}"
+    >
+      <img
+        src="{% static 'images/aktueles-logo-160.webp' %}"
+        sizes="56px"
+        alt="Beirit Web"
+        class="imprint-topnav-logo"
+        width="80"
+        height="80"
+        decoding="async"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </a>
+    <a href="{% url 'pages:home' %}#top" class="nav-link nav-link--home" data-i18n="nav.home">{% if initial_lang|slice:':2' == 'ru' %}Главная{% else %}Start{% endif %}</a>
+    <a href="{% url 'pages:skills_page' %}" class="nav-link">{% if initial_lang|slice:':2' == 'ru' %}Компетенции{% else %}Kompetenzen{% endif %}</a>
+    <a href="{% url 'pages:home' %}#profil" class="nav-link" data-i18n="nav.about">{% if initial_lang|slice:':2' == 'ru' %}Обо мне{% else %}Über{% endif %}</a>
+    <a href="{% url 'pages:home' %}#kontakt" class="nav-link nav-link--contact" data-i18n="nav.contact">{% if initial_lang|slice:':2' == 'ru' %}Контакты{% else %}Kontakt{% endif %}</a>
+  </div>
+{% endblock %}
+
+{% block footer %}
+  <footer class="site-footer">
+    <span class="brand">
+      © 2026 Beirit Web – Eugen Beirit
+    </span>
+    <div class="footer-meta">
+      <a href="{% url 'pages:home' %}" class="footer-link">
+        {% if initial_lang|slice:':2' == "ru" %}Главная{% else %}Startseite{% endif %}
+      </a>
+      <a href="{% url 'pages:contact' %}" class="footer-link">
+        {% if initial_lang|slice:':2' == "ru" %}Контакт{% else %}Kontakt{% endif %}
+      </a>
+      <a href="{% url 'pages:imprint' %}" class="footer-link" aria-current="page">
+        {% if initial_lang|slice:':2' == "ru" %}Импрессум{% else %}Impressum{% endif %}
+      </a>
+      <a href="{% url 'pages:privacy' %}" class="footer-link">
+        {% if initial_lang|slice:':2' == "ru" %}Конфиденциальность{% else %}Datenschutz{% endif %}
+      </a>
+      <a href="{% url 'pages:legal' %}" class="footer-link">
+        {% if initial_lang|slice:':2' == "ru" %}Условия использования{% else %}Nutzungsbedingungen{% endif %}
+      </a>
+    </div>
+  </footer>
+{% endblock %}
+
+{% block base_scripts %}
+  <script>
+    (function () {
+      var root = document.documentElement;
+      root.setAttribute("data-theme", "light");
+    })();
+  </script>
+  <script src="{% asset_url 'js/i18n-data.js' %}" defer></script>
+  <script src="{% asset_url 'js/main.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+  <main id="top" class="imprint-page">
+    <header class="imprint-header">
+      <div class="imprint-header__copy">
+        <h1 data-i18n="imprintPage.title">Impressum</h1>
+      </div>
+    </header>
+
+    <div class="imprint-content">
+      <section class="imprint-section imprint-section--provider" aria-labelledby="imprint-provider">
+        <h2 id="imprint-provider" data-i18n="imprintPage.sections.details.title">Angaben gemäß § 5 DDG</h2>
+        <p class="legal-callout">{% if initial_lang|slice:':2' == 'ru' %}Вымышленные примерные данные для демонстрации портфолио.{% else %}Fiktive Musterangaben für die Portfolio-Demonstration.{% endif %}</p>
+        <address>
+          <strong>Beirit Web</strong><br />
+          <span data-i18n="imprintPage.sections.details.owner">Musterinhaber: Max Mustermann</span><br />
+          <span data-i18n="imprintPage.sections.details.legal_form.value">Demonstrationsprojekt</span><br /><br />
+          Musterstraße 1<br />
+          12345 Musterstadt<br />
+          <span data-i18n="imprintPage.sections.details.country">Deutschland</span>
+        </address>
+      </section>
+
+      <section class="imprint-section imprint-section--contact" aria-labelledby="imprint-contact">
+        <h2 id="imprint-contact" data-i18n="imprintPage.sections.details.contact.label">Kontakt</h2>
+        <dl class="imprint-details">
+          <div>
+            <dd>
+              <div class="imprint-contact-actions" aria-label="Kontaktoptionen" data-i18n-aria-label="imprintPage.sections.details.contact.actions_label">
+                <a class="imprint-contact-link imprint-contact-link--phone" href="tel:+490000000000" aria-label="Telefon anrufen" data-i18n-aria-label="imprintPage.sections.details.contact.phone_aria">
+                  <span class="imprint-contact-link__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.8a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.28-1.25a2 2 0 0 1 2.11-.45c.9.32 1.84.55 2.8.68A2 2 0 0 1 22 16.92Z" />
+                    </svg>
+                  </span>
+                  <span data-i18n="imprintPage.sections.details.contact.phone_link">Telefon</span>
+                </a>
+                <a class="imprint-contact-link imprint-contact-link--whatsapp" href="https://example.com/kontakt" aria-label="WhatsApp Business öffnen" rel="noopener" data-i18n-aria-label="imprintPage.sections.details.contact.whatsapp_aria">
+                  <span class="imprint-contact-link__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                      <path d="M12.04 2a9.9 9.9 0 0 0-8.56 14.86L2.2 21.8l5.06-1.22A9.96 9.96 0 1 0 12.04 2Zm0 2a7.96 7.96 0 1 1-3.95 14.87l-.34-.2-2.66.64.67-2.58-.22-.36A7.96 7.96 0 0 1 12.04 4Zm-3.5 3.88c-.18 0-.46.05-.7.31-.24.26-.91.89-.91 2.17s.94 2.52 1.07 2.69c.13.18 1.82 2.92 4.5 3.98 2.23.88 2.69.71 3.17.67.49-.05 1.56-.64 1.78-1.26.22-.62.22-1.15.15-1.26-.06-.11-.24-.18-.51-.31-.27-.13-1.56-.77-1.8-.86-.24-.09-.42-.13-.6.13-.18.27-.68.86-.84 1.04-.15.18-.31.2-.58.07-.27-.13-1.12-.41-2.14-1.31-.79-.7-1.33-1.57-1.49-1.84-.15-.27-.02-.41.12-.54.12-.12.27-.31.4-.46.13-.15.18-.27.27-.44.09-.18.04-.33-.02-.46-.07-.13-.6-1.44-.82-1.97-.2-.49-.41-.5-.6-.51h-.51Z" />
+                    </svg>
+                  </span>
+                  <span data-i18n="imprintPage.sections.details.contact.whatsapp_link">WhatsApp Business</span>
+                </a>
+                <a class="imprint-contact-link imprint-contact-link--email" href="{% url 'pages:contact' %}" aria-label="Kontaktformular öffnen" data-i18n-aria-label="imprintPage.sections.details.contact.email_aria">
+                  <span class="imprint-contact-link__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                      <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 3.2v10.3l5.48-5.05L4 7.2Zm1.28-1.2L12 11.06 18.72 6H5.28ZM12 13.56l-1.06-.8L5.22 18h13.56l-5.72-5.24-1.06.8Zm2.52-1.11L20 17.5V7.2l-5.48 5.25Z" />
+                    </svg>
+                  </span>
+                  <span data-i18n="imprintPage.sections.details.contact.email_link">E-Mail</span>
+                </a>
+              </div>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="imprint-section imprint-section--purpose" aria-labelledby="imprint-purpose">
+        <h2 id="imprint-purpose" data-i18n="imprintPage.sections.purpose.title">Tätigkeitsbereich</h2>
+        <ul class="imprint-list">
+          <li data-i18n="imprintPage.sections.purpose.items.websites">Webseiten, Webapps und digitale Projektumsetzungen</li>
+          <li data-i18n="imprintPage.sections.purpose.items.development">Web- und Softwareentwicklung</li>
+          <li data-i18n="imprintPage.sections.purpose.items.localization">Lokalisierung und Übersetzung von Web- und Softwaretexten nach Absprache</li>
+        </ul>
+      </section>
+
+      <section class="imprint-section imprint-section--tax" aria-labelledby="imprint-tax">
+        <h2 id="imprint-tax" data-i18n="imprintPage.sections.tax.title">Umsatzsteuer</h2>
+        <p data-i18n="imprintPage.sections.tax.text_primary">Fiktive Musterangaben für ein Demonstrationsprojekt.</p>
+        <p data-i18n="imprintPage.sections.tax.text_secondary">Es werden keine Leistungen verkauft oder Zahlungen angeboten.</p>
+      </section>
+
+      <section class="imprint-section imprint-section--dispute" aria-labelledby="imprint-dispute">
+        <h2 id="imprint-dispute" data-i18n="imprintPage.sections.dispute.title">Verbraucherstreitbeilegung</h2>
+        <p data-i18n="imprintPage.sections.dispute.text">Ich bin weder verpflichtet noch bereit, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+      </section>
+
+      <section class="imprint-section imprint-section--content-liability" aria-labelledby="imprint-content-liability">
+        <h2 id="imprint-content-liability" data-i18n="imprintPage.sections.content_liability.title">Haftung für Inhalte</h2>
+        <p data-i18n="imprintPage.sections.content_liability.text">Die Inhalte dieser Website wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.</p>
+      </section>
+
+      <section class="imprint-section imprint-section--link-liability" aria-labelledby="imprint-link-liability">
+        <h2 id="imprint-link-liability" data-i18n="imprintPage.sections.link_liability.title">Haftung für Links</h2>
+        <p data-i18n="imprintPage.sections.link_liability.text">Diese Website kann Links zu externen Websites Dritter enthalten. Auf deren Inhalte habe ich keinen Einfluss. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber verantwortlich.</p>
+      </section>
+
+      <section class="imprint-section imprint-section--copyright" aria-labelledby="imprint-copyright">
+        <h2 id="imprint-copyright" data-i18n="imprintPage.sections.copyright.title">Urheberrecht</h2>
+        <p data-i18n="imprintPage.sections.copyright.text">Die durch den Betreiber dieser Website erstellten Inhalte und Werke unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und sonstige Verwertung außerhalb der Grenzen des Urheberrechts bedürfen der vorherigen Zustimmung des jeweiligen Rechteinhabers.</p>
+      </section>
+
+    </div>
+  </main>
+{% endblock %}

@@ -1,0 +1,162 @@
+{
+  "_createLucideIcon-CGjY0HpW.js": {
+    "file": "assets/createLucideIcon-CGjY0HpW.js",
+    "name": "createLucideIcon",
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js"
+    ]
+  },
+  "_preact-vendor-BzB9ud5D.js": {
+    "file": "assets/preact-vendor-BzB9ud5D.js",
+    "name": "preact-vendor"
+  },
+  "_three-vendor-BMZE3j17.js": {
+    "file": "assets/three-vendor-BMZE3j17.js",
+    "name": "three-vendor"
+  },
+  "src/about-page.css": {
+    "file": "assets/about-page-CRf7UaUQ.css",
+    "src": "src/about-page.css",
+    "isEntry": true
+  },
+  "src/about-shell.css": {
+    "file": "assets/about-shell-h5YqyhL2.css",
+    "src": "src/about-shell.css",
+    "isEntry": true
+  },
+  "src/botanic-weather.jsx": {
+    "file": "assets/botanic-weather-ChkCr6oF.js",
+    "name": "botanic-weather",
+    "src": "src/botanic-weather.jsx",
+    "isEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_createLucideIcon-CGjY0HpW.js"
+    ],
+    "css": [
+      "assets/weather-page-oGoViGJq.css"
+    ]
+  },
+  "src/components/contact/ContactDetails.jsx": {
+    "file": "assets/ContactDetails-38F56bp4.js",
+    "name": "ContactDetails",
+    "src": "src/components/contact/ContactDetails.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js"
+    ]
+  },
+  "src/components/contact/ContactForm.jsx": {
+    "file": "assets/ContactForm-OlEbj37b.js",
+    "name": "ContactForm",
+    "src": "src/components/contact/ContactForm.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_createLucideIcon-CGjY0HpW.js",
+      "src/main.jsx"
+    ],
+    "css": [
+      "assets/ContactForm-Bzv6oGPQ.css"
+    ]
+  },
+  "src/components/home/faqsection/FaqSection.css": {
+    "file": "assets/faq-section-CHMXlAnq.css",
+    "src": "src/components/home/faqsection/FaqSection.css",
+    "isEntry": true
+  },
+  "src/components/home/hero/Hero.css": {
+    "file": "assets/hero-CcLf3-3B.css",
+    "src": "src/components/home/hero/Hero.css",
+    "isEntry": true
+  },
+  "src/components/home/hero/WaveGridHero.jsx": {
+    "file": "assets/WaveGridHero-CzXrHZy8.js",
+    "name": "WaveGridHero",
+    "src": "src/components/home/hero/WaveGridHero.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_three-vendor-BMZE3j17.js"
+    ]
+  },
+  "src/components/home/homepage/HomePage.css": {
+    "file": "assets/homepage-BU65OJ-N.css",
+    "src": "src/components/home/homepage/HomePage.css",
+    "isEntry": true
+  },
+  "src/components/home/technologyproofsection/TechnologyProofSection.css": {
+    "file": "assets/technology-proof-section-DidIyPQ9.css",
+    "src": "src/components/home/technologyproofsection/TechnologyProofSection.css",
+    "isEntry": true
+  },
+  "src/components/shared/TechnicalLabel.css": {
+    "file": "assets/technical-label-6AOknLyw.css",
+    "src": "src/components/shared/TechnicalLabel.css",
+    "isEntry": true
+  },
+  "src/components/weather/WeatherPage.css": {
+    "file": "assets/weather-page-oGoViGJq.css",
+    "src": "src/components/weather/WeatherPage.css",
+    "isEntry": true
+  },
+  "src/header-nav.css": {
+    "file": "assets/header-nav-BpspplQA.css",
+    "src": "src/header-nav.css",
+    "isEntry": true
+  },
+  "src/homepage-custom.css": {
+    "file": "assets/homepage-custom-y3I-G8xW.css",
+    "src": "src/homepage-custom.css",
+    "isEntry": true
+  },
+  "src/homepage-layout.css": {
+    "file": "assets/homepage-layout-C96wmk2h.css",
+    "src": "src/homepage-layout.css",
+    "isEntry": true
+  },
+  "src/i18n/locales/ru.json": {
+    "file": "assets/ru-twcyTlZc.js",
+    "name": "ru",
+    "src": "src/i18n/locales/ru.json",
+    "isDynamicEntry": true
+  },
+  "src/i18n/locales/uk.json": {
+    "file": "assets/uk-D-0RXq5q.js",
+    "name": "uk",
+    "src": "src/i18n/locales/uk.json",
+    "isDynamicEntry": true
+  },
+  "src/main.jsx": {
+    "file": "assets/main-B12LlLbl.js",
+    "name": "main",
+    "src": "src/main.jsx",
+    "isEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_createLucideIcon-CGjY0HpW.js"
+    ],
+    "dynamicImports": [
+      "src/i18n/locales/ru.json",
+      "src/i18n/locales/uk.json",
+      "src/components/home/hero/WaveGridHero.jsx",
+      "src/components/contact/ContactForm.jsx",
+      "src/components/contact/ContactDetails.jsx"
+    ]
+  },
+  "src/mobile-pages.css": {
+    "file": "assets/mobile-pages-mMwClSXT.css",
+    "src": "src/mobile-pages.css",
+    "isEntry": true
+  },
+  "src/responsive-overrides.css": {
+    "file": "assets/responsive-overrides-CgtilAt9.css",
+    "src": "src/responsive-overrides.css",
+    "isEntry": true
+  },
+  "src/styles.css": {
+    "file": "assets/styles-DxcRGk6_.css",
+    "src": "src/styles.css",
+    "isEntry": true
+  }
+}

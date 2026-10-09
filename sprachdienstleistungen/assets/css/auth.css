@@ -1,0 +1,475 @@
+.template-body,
+.password-reset-page {
+  background:
+    radial-gradient(circle at 16% 10%, rgba(14, 165, 233, 0.14), transparent 28rem),
+    radial-gradient(circle at 86% 22%, rgba(45, 212, 191, 0.08), transparent 22rem),
+    linear-gradient(180deg, #06111d 0%, #09182b 42%, #020617 100%);
+  color: #f8fafc;
+}
+
+.template-page {
+  display: grid;
+  gap: clamp(1.2rem, 1.7vw + 0.75rem, 2rem);
+}
+
+.template-page--narrow {
+  width: min(100%, 52rem);
+  margin-inline: auto;
+}
+
+.template-page--wide {
+  width: min(100%, 76rem);
+  margin-inline: auto;
+}
+
+.template-body .page-shell.has-topnav.template-page,
+.password-reset-page .page-shell.has-topnav.template-page {
+  padding-top: clamp(0.7rem, 1.5vw, 1.4rem);
+  padding-bottom: clamp(2rem, 4vw, 4rem);
+}
+
+.hero-card.hero-card--static.template-hero,
+.template-panel {
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 34%),
+    linear-gradient(145deg, rgba(15, 23, 42, 0.96), rgba(17, 36, 58, 0.72));
+  box-shadow:
+    0 1.25rem 2.8rem rgba(2, 6, 23, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+}
+
+.hero-card.hero-card--static.template-hero {
+  padding: clamp(1.4rem, 2vw, 2rem);
+  overflow: hidden;
+}
+
+.template-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(20rem, 0.9fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+  align-items: stretch;
+}
+
+.template-hero__copy {
+  display: grid;
+  align-content: center;
+  gap: 0.85rem;
+}
+
+.template-hero__copy h1,
+.template-hero h1 {
+  max-width: 15ch;
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(2.15rem, 3.2vw, 3.45rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.section-kicker,
+.template-panel__kicker {
+  width: fit-content;
+  margin: 0;
+  padding: 0.38rem 0.68rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 8px;
+  color: #7dd3fc;
+  background: rgba(14, 165, 233, 0.14);
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.section-intro,
+.template-panel p,
+.template-panel li,
+.form-help,
+.template-empty {
+  color: rgba(226, 232, 240, 0.9);
+  overflow-wrap: anywhere;
+}
+
+.section-intro {
+  max-width: 42rem;
+  margin: 0;
+  font-size: clamp(1rem, 1.2vw, 1.12rem);
+}
+
+.template-panel {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1.15rem, 1.25vw + 0.82rem, 1.55rem);
+}
+
+.template-panel--accent {
+  background:
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.2), transparent 34%),
+    linear-gradient(145deg, rgba(8, 47, 73, 0.9), rgba(17, 36, 58, 0.9));
+  border-color: rgba(125, 211, 252, 0.24);
+}
+
+.template-panel--danger {
+  background:
+    radial-gradient(circle at top left, rgba(239, 68, 68, 0.16), transparent 34%),
+    linear-gradient(145deg, rgba(69, 10, 10, 0.72), rgba(15, 23, 42, 0.76));
+  border-color: rgba(248, 113, 113, 0.28);
+}
+
+.template-form-card {
+  width: min(100%, 44rem);
+  margin-inline: auto;
+}
+
+.template-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.template-panel--span-6 {
+  grid-column: span 6;
+}
+
+.template-chip-list,
+.template-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.template-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.52rem;
+  min-height: 2.35rem;
+  padding: 0.42rem 0.8rem;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  border-radius: 8px;
+  color: #f8fafc;
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.82), rgba(17, 36, 58, 0.72));
+  font-weight: 700;
+}
+
+.template-chip strong {
+  display: inline-grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 8px;
+  color: #07110e;
+  background: #7dd3fc;
+}
+
+.template-list {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.template-list li + li {
+  margin-top: 0.45rem;
+}
+
+.template-inline-note,
+.template-consent {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 8px;
+  color: rgba(226, 232, 240, 0.9);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(15, 23, 42, 0.08)),
+    rgba(15, 23, 42, 0.42);
+}
+
+.template-inline-note--stack {
+  grid-template-columns: 1fr;
+}
+
+.form,
+.auth-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-field,
+.form-group {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.form label,
+.auth-form label {
+  color: #f8fafc;
+  font-weight: 800;
+}
+
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="password"],
+.form input[type="file"],
+.form select,
+.form textarea,
+.auth-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  border-radius: 8px;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.66);
+  font: inherit;
+}
+
+.form input:focus,
+.form select:focus,
+.form textarea:focus,
+.auth-input:focus {
+  border-color: rgba(125, 211, 252, 0.5);
+  outline: 3px solid rgba(125, 211, 252, 0.24);
+  outline-offset: 1px;
+}
+
+.form-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+}
+
+.form-input-action {
+  min-width: 9.8rem;
+  min-height: 3rem;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 8px;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.52);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.85rem;
+  padding: 0.72rem 0.95rem;
+  border: 1px solid rgba(125, 211, 252, 0.24);
+  border-radius: 8px;
+  color: #f8fafc;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  border-color: rgba(134, 239, 172, 0.68);
+  color: #08110e;
+  background: #1fb997;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  color: #06110d;
+  background: #45d6b5;
+}
+
+.btn-secondary,
+.btn-ghost {
+  background: rgba(15, 23, 42, 0.52);
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus-visible,
+.btn-ghost:hover,
+.btn-ghost:focus-visible {
+  color: #ffffff;
+  background: rgba(14, 165, 233, 0.16);
+}
+
+.form-error {
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(248, 113, 113, 0.34);
+  border-radius: 8px;
+  color: #fecaca;
+  background: rgba(127, 29, 29, 0.28);
+}
+
+.simple-login-remember {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.simple-login-remember input[type="checkbox"],
+.template-consent input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.2rem;
+  flex: 0 0 auto;
+}
+
+.login-page .page-shell.has-topnav.template-page.template-page--narrow {
+  width: 100%;
+  max-width: 100%;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.login-page .template-panel.template-form-card.login-form-card {
+  width: min(100%, 40rem);
+}
+
+.login-page .login-form-card .form button[type="submit"].btn-primary {
+  width: 100%;
+  max-width: none;
+}
+
+.login-page .login-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.file-inline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.file-inline input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.file-inline__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(125, 211, 252, 0.24);
+  border-radius: 8px;
+  color: #f8fafc;
+  background: rgba(15, 23, 42, 0.52);
+}
+
+.file-inline__name {
+  color: rgba(226, 232, 240, 0.86);
+  overflow-wrap: anywhere;
+}
+
+.file-inline__preview {
+  display: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+html[data-theme="light"] .template-body,
+html[data-theme="light"] .password-reset-page {
+  color: #14201b;
+  background:
+    radial-gradient(circle at 16% 10%, rgba(14, 165, 233, 0.1), transparent 28rem),
+    radial-gradient(circle at 86% 22%, rgba(20, 184, 166, 0.08), transparent 22rem),
+    linear-gradient(180deg, #f6faf7 0%, #edf5f0 48%, #f8fbf8 100%);
+}
+
+html[data-theme="light"] .hero-card.hero-card--static.template-hero,
+html[data-theme="light"] .template-panel {
+  border-color: rgba(67, 93, 81, 0.14);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 0.9rem 1.8rem rgba(15, 35, 60, 0.08);
+}
+
+html[data-theme="light"] .template-hero__copy h1,
+html[data-theme="light"] .template-hero h1,
+html[data-theme="light"] .form label,
+html[data-theme="light"] .auth-form label {
+  color: #10201b;
+}
+
+html[data-theme="light"] .section-intro,
+html[data-theme="light"] .template-panel p,
+html[data-theme="light"] .template-panel li,
+html[data-theme="light"] .form-help,
+html[data-theme="light"] .template-empty,
+html[data-theme="light"] .template-inline-note,
+html[data-theme="light"] .template-consent,
+html[data-theme="light"] .file-inline__name {
+  color: #4a5d55;
+}
+
+html[data-theme="light"] .form input[type="text"],
+html[data-theme="light"] .form input[type="email"],
+html[data-theme="light"] .form input[type="password"],
+html[data-theme="light"] .form input[type="file"],
+html[data-theme="light"] .form select,
+html[data-theme="light"] .form textarea,
+html[data-theme="light"] .auth-input,
+html[data-theme="light"] .form-input-action,
+html[data-theme="light"] .btn-secondary,
+html[data-theme="light"] .btn-ghost,
+html[data-theme="light"] .file-inline__button,
+html[data-theme="light"] .template-inline-note,
+html[data-theme="light"] .template-consent {
+  color: #10201b;
+  border-color: rgba(67, 93, 81, 0.18);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+@media (max-width: 900px) {
+  .template-hero__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .template-panel--span-6 {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    padding-inline: 0.85rem;
+  }
+
+  .form-input-row,
+  .file-inline,
+  .login-page .login-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .form-input-action {
+    width: 100%;
+    min-width: 0;
+  }
+}

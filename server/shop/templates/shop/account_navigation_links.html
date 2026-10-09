@@ -1,0 +1,5 @@
+<a class="{{ link_class }}" href="{% url 'storefront:catalog' %}">{% if initial_lang|slice:':2' == 'ru' %}Ассортимент{% else %}Sortiment{% endif %}</a>
+<a class="{{ link_class }}" href="{% url 'storefront:catalog' %}?category=torte">{% if initial_lang|slice:':2' == 'ru' %}Торты{% else %}Torten{% endif %}</a>
+<a class="{{ link_class }}" href="{% url 'storefront:catalog' %}?category=kuchen">{% if initial_lang|slice:':2' == 'ru' %}Пироги{% else %}Kuchen{% endif %}</a>
+<a class="{{ link_class }}" href="{% url 'storefront:cart' %}">{% if initial_lang|slice:':2' == 'ru' %}Корзина{% else %}Warenkorb{% endif %}</a>
+<a class="{{ link_class }}" href="{% url 'storefront:orders' %}">{% if initial_lang|slice:':2' == 'ru' %}Мои запросы{% else %}Meine Anfragen{% endif %}</a>

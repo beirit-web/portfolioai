@@ -1,0 +1,21 @@
+{
+    "name": "3d-wave-grid",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "vite": "^8.0.13",
+        "vite-plugin-restart": "^2.0.0"
+    },
+    "dependencies": {
+        "gsap": "^3.15.0",
+        "lil-gui": "^0.21.0",
+        "mitt": "^3.0.1",
+        "stats.js": "^0.17.0",
+        "three": "^0.184.0"
+    }
+}

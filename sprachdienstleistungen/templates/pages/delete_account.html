@@ -1,0 +1,44 @@
+{% extends "base_public.html" %}
+
+{% block title %}Konto löschen | Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block hint_styles %}{% endblock %}
+{% block main_styles %}
+  <link rel="stylesheet" href="{% asset_url 'css/public-shell.css' %}" />
+  <link rel="stylesheet" href="{% asset_url 'css/auth.css' %}" />
+{% endblock %}
+{% block calendar_styles %}{% endblock %}
+
+{% block body_attrs %} class="has-topnav delete-account-page template-body"{% endblock %}
+
+{% block content %}
+  <main class="page-shell has-topnav template-page template-page--narrow">
+    <header class="hero-card hero-card--static template-hero">
+      <p class="section-kicker">Konto</p>
+      <h1>Konto löschen</h1>
+      <p class="section-intro">
+        Dieser Schritt entfernt Ihr Konto und Ihre hinterlegten Profildaten. Sie
+        können sich später jederzeit neu registrieren.
+      </p>
+    </header>
+
+    <section class="template-panel template-panel--danger template-form-card">
+      <p class="template-panel__kicker">Bestätigung</p>
+      <form method="post" class="form">
+        {% csrf_token %}
+        <p class="template-inline-note">
+          Bestätigen Sie die Löschung Ihres Kontos
+          (E-Mail:
+          {% if request.user.email %}
+            {{ request.user.email }}
+          {% else %}
+            Keine E-Mail hinterlegt
+          {% endif %}).
+        </p>
+        <button type="submit" class="btn-primary">
+          Konto endgültig löschen
+        </button>
+      </form>
+    </section>
+  </main>
+{% endblock %}

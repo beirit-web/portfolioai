@@ -1,0 +1,68 @@
+{% extends "base_public.html" %}
+
+{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Записаться на субботу | Евгений Байрит – устный перевод и языковые услуги{% else %}Samstagstermin buchen | Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen{% endif %}{% endblock %}
+{% block meta_description %}{% if initial_lang|slice:':2' == 'ru' %}Выберите свободную субботу и отправьте заявку на немецко-русское языковое сопровождение у Евгения Байрита.{% else %}Freien Samstagstermin für Deutsch-Russisch Sprachmittlung bei Eugen Beirit direkt online anfragen.{% endif %}{% endblock %}
+{% block og_title %}{% if initial_lang|slice:':2' == 'ru' %}Записаться на субботу | Евгений Байрит – устный перевод и языковые услуги{% else %}Samstagstermin buchen | Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen{% endif %}{% endblock %}
+{% block og_description %}{% if initial_lang|slice:':2' == 'ru' %}Выберите свободную субботу и отправьте заявку на устный перевод и языковые услуги.{% else %}Wählen Sie einen freien Samstag und senden Sie eine Terminanfrage für Dolmetsch- und Sprachdienstleistungen.{% endif %}{% endblock %}
+{% block twitter_title %}{% if initial_lang|slice:':2' == 'ru' %}Записаться на субботу | Евгений Байрит – устный перевод и языковые услуги{% else %}Samstagstermin buchen | Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen{% endif %}{% endblock %}
+{% block twitter_description %}{% if initial_lang|slice:':2' == 'ru' %}Посмотрите свободные субботы и отправьте заявку на встречу.{% else %}Freie Samstage direkt ansehen und eine Terminanfrage senden.{% endif %}{% endblock %}
+
+{% block main_styles %}
+  <link rel="stylesheet" href="{% asset_url 'css/public-shell.css' %}" />
+  <link rel="stylesheet" href="{% asset_url 'css/home-platform.css' %}" />
+{% endblock %}
+{% block calendar_styles %}{% endblock %}
+{% block body_attrs %} class="has-topnav home-page appointment-page template-body"{% endblock %}
+
+{% block content %}
+  <main class="page-shell has-topnav template-page template-page--wide appointment-page-shell">
+    <header class="hero-card hero-card--static template-hero appointment-hero">
+      <div class="template-hero__grid">
+        <div class="template-hero__copy">
+          <p class="section-kicker" data-i18n="appointmentBooking.hero.kicker">Terminanfrage</p>
+          <h1 data-i18n="appointmentBooking.hero.title">Samstagstermin buchen</h1>
+          <p class="section-intro" data-i18n="appointmentBooking.hero.intro">
+            Wählen Sie einen freien Samstag im Kalender und senden Sie Ihre Terminanfrage.
+          Der Termin gilt erst nach persönlicher Rückmeldung als bestätigt.
+          </p>
+        </div>
+        <aside class="template-panel template-panel--accent">
+          <p class="template-panel__kicker" data-i18n="appointmentBooking.process.kicker">Ablauf</p>
+          <ul class="template-list template-list--plain">
+            <li data-i18n="appointmentBooking.process.steps.0">Freien Samstag auswählen.</li>
+            <li data-i18n="appointmentBooking.process.steps.1">Uhrzeit und Kontaktmöglichkeit eintragen.</li>
+            <li data-i18n="appointmentBooking.process.steps.2">Anfrage absenden und Rückmeldung abwarten.</li>
+          </ul>
+        </aside>
+      </div>
+    </header>
+
+    <section class="appointment-booking-section" aria-labelledby="appointment-booking-title">
+      <div class="home-contact-heading">
+        <h2 class="section-title" id="appointment-booking-title" data-i18n="appointmentBooking.formTitle">Freien Samstag auswählen</h2>
+        <p class="home-section-lead" data-i18n="appointmentBooking.formLead">
+          Grün markierte Samstage sind frei. Belegte oder gesperrte Samstage können nicht ausgewählt werden.
+        </p>
+      </div>
+      {% include "partials/appointment_request_form.html" %}
+    </section>
+  </main>
+{% endblock %}
+
+{% block before_base_scripts %}
+  <script>
+    (() => {
+      const preferredLang = "{{ initial_lang|default:'de'|escapejs }}" || "de";
+      window.PREFERRED_LANG = preferredLang;
+      document.documentElement.lang = preferredLang;
+      window.CALENDAR_ENABLED = true;
+      window.EVENTS_JSON_URL = "{{ events_json_url|default:''|escapejs }}";
+      window.CALENDAR_HOVER = false;
+      window.I18N_LOCALE_URLS = {
+        de: "{% asset_url 'locales/de.json' %}",
+        ru: "{% asset_url 'locales/ru.json' %}",
+        uk: "{% asset_url 'locales/uk.json' %}",
+      };
+    })();
+  </script>
+{% endblock %}

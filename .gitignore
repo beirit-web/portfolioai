@@ -1,0 +1,91 @@
+notes.json
+verwaltung.html
+.backup/events-private.json
+
+# Backups & logs
+.backup/
+*.backup
+*.log
+*.tmp
+*.bak
+*.swp
+*.out
+
+# Sensitive files
+events.json
+data/
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.*
+*_rsa
+*_rsa.pub
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env*.example
+.env.local
+.env.backup
+.env.production
+.env.original
+.envrc
+.venv/
+__pycache__/
+*.py[cod]
+db.sqlite3
+staticfiles/
+media/
+runtime/
+botanic-cache/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+.agents
+.agents/
+.codex
+.codex/
+*.iml
+.fly/
+
+# Build artifacts & dependencies
+node_modules/
+dist/
+coverage/
+.cache/
+.tools/
+tmp/
+build/
+*.egg-info/
+
+# Binaries / archives
+*.class
+*.jar
+*.war
+*.exe
+*.bundle
+*.sql
+*.dump
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+*.tar.gz
+
+# Private/legal local files
+declaration_of_ownership_and_proprietary_license.pdf
+
+# Local reference dumps and misplaced helper scripts
+server/docs/paralax.txt
+server/docs/root-manage-wrapper.py
+
+# Local screenshots
+screenshots/

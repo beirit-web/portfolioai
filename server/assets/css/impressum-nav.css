@@ -1,0 +1,74 @@
+/* Navigation motion scoped to the imprint page. */
+.imprint-body .topnav .nav-link {
+  isolation: isolate;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--imprint-accent) 22%, transparent);
+  background: color-mix(in srgb, var(--imprint-surface-muted) 66%, transparent);
+  box-shadow: inset 0 1px color-mix(in srgb, #ffffff 10%, transparent);
+  transition:
+    color 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 280ms ease,
+    transform 280ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.imprint-body .topnav .nav-link::before {
+  content: "";
+  position: absolute;
+  inset: -45% auto -45% -65%;
+  z-index: 0;
+  width: 42%;
+  height: auto;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--imprint-blue) 24%, transparent),
+    transparent
+  );
+  opacity: 0;
+  pointer-events: none;
+  transform: skewX(-18deg) translateX(-120%);
+  transition: opacity 180ms ease, transform 560ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.imprint-body .topnav .nav-link:hover,
+.imprint-body .topnav .nav-link:focus-visible {
+  border-color: color-mix(in srgb, var(--imprint-accent) 62%, transparent);
+  background: color-mix(in srgb, var(--imprint-accent) 16%, var(--imprint-surface));
+  color: var(--imprint-text);
+  box-shadow:
+    0 .65rem 1.4rem color-mix(in srgb, var(--imprint-accent) 16%, transparent),
+    inset 0 1px color-mix(in srgb, #ffffff 18%, transparent);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.imprint-body .topnav .nav-link:hover::before,
+.imprint-body .topnav .nav-link:focus-visible::before {
+  opacity: 1;
+  transform: skewX(-18deg) translateX(460%);
+}
+
+.imprint-body .topnav .nav-link:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--imprint-accent) 35%, transparent);
+  outline-offset: 3px;
+}
+
+.imprint-body .topnav .nav-link:active {
+  box-shadow: inset 0 2px 8px color-mix(in srgb, #020617 24%, transparent);
+  transform: translateY(0) scale(.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imprint-body .topnav .nav-link,
+  .imprint-body .topnav .nav-link::before {
+    transition: none;
+  }
+
+  .imprint-body .topnav .nav-link:hover,
+  .imprint-body .topnav .nav-link:focus-visible,
+  .imprint-body .topnav .nav-link:active {
+    transform: none;
+  }
+}

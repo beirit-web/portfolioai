@@ -1,0 +1,616 @@
+html body.home-page {
+  background: #f8fbf9;
+}
+
+html body.home-page::before,
+html[data-theme="light"] body.home-page::before {
+  background: linear-gradient(180deg, #f8fbf9 0%, #f4f8f6 48%, #f8fbf9 100%);
+  background-size: auto;
+  opacity: 1;
+}
+
+html body.home-page .page-shell,
+html[data-theme="light"] body.home-page .page-shell {
+  background: transparent;
+}
+
+html body.home-page .hero.hero--platform .hero-surface--platform,
+html[data-theme="light"] body.home-page .hero.hero--platform .hero-surface--platform {
+  min-height: clamp(22rem, 50svh, 30rem);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.12));
+  box-shadow: inset 0 -1px 0 rgba(120, 143, 166, 0.22);
+}
+
+html body.home-page .hero.hero--platform .hero-surface--platform::before,
+html body.home-page .hero.hero--platform .hero-surface--platform::after,
+html[data-theme="light"] body.home-page .hero.hero--platform .hero-surface--platform::before,
+html[data-theme="light"] body.home-page .hero.hero--platform .hero-surface--platform::after {
+  content: none;
+}
+
+html body.home-page .home-main.home-main--local {
+  width: min(100% - clamp(1rem, 2.4vw, 2.2rem), 86rem);
+  padding-top: clamp(1.1rem, 2.2vw, 2rem);
+}
+
+html body.home-page .home-main.home-main--minimal.home-main--local,
+html body.home-page .home-main--local > .home-section--services,
+html body.home-page .home-main--local > .home-about-contact,
+html body.home-page .home-main--local > .home-faq-section,
+html body.home-page .home-about-card {
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+html body.home-page .home-main--local > .home-about-contact {
+  --home-about-image-overlay: rgba(248, 251, 249, 0.66);
+  isolation: isolate;
+  overflow: hidden;
+  padding-inline: clamp(1rem, 3vw, 2.75rem);
+  background-image:
+    linear-gradient(var(--home-about-image-overlay), var(--home-about-image-overlay)),
+    url("../images/contact-workspace-bg.webp") !important;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+html body.home-page .home-main--local > .home-about-contact > * {
+  position: relative;
+  z-index: 1;
+}
+
+html body.home-page .home-about-contact {
+  color: #0f172a;
+}
+
+html body.home-page .home-about-contact .section-title,
+html body.home-page .home-about-contact .home-contact-link strong {
+  color: #071827 !important;
+}
+
+html body.home-page .home-about-contact .home-section-lead,
+html body.home-page .home-about-contact .home-profile-facts--local dd {
+  color: #253b4d !important;
+}
+
+html body.home-page .home-about-contact .home-section-kicker,
+html body.home-page .home-about-contact .home-profile-facts--local dt,
+html body.home-page .home-about-contact .home-contact-link__eyebrow {
+  color: #0f4f59 !important;
+}
+
+html body.home-page .home-about-card {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+html body.home-page .home-service-item {
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+html body.home-page .home-service-grid {
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+html body.home-page .home-profile-facts.home-profile-facts--local {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+html body.home-page .home-profile-facts.home-profile-facts--local > div {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+}
+
+html body.home-page .home-contact-area {
+  --home-contact-card-margin-right: clamp(0.75rem, 2vw, 1.5rem);
+  display: grid;
+  width: fit-content;
+  max-width: min(calc(100% - var(--home-contact-card-margin-right)), 34rem);
+  min-width: 0;
+  min-height: 0;
+  height: fit-content;
+  justify-self: end;
+  align-self: end;
+  margin-right: var(--home-contact-card-margin-right);
+  gap: clamp(0.8rem, 1.5vw, 1.1rem);
+  padding: clamp(1rem, 2vw, 1.4rem) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  background-image: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(224, 242, 236, 0.02)
+  ) !important;
+  box-shadow:
+    0 1rem 2.5rem rgba(15, 35, 25, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+
+html body.home-page .home-contact-area .home-contact-heading {
+  width: fit-content;
+  max-width: 42ch;
+}
+
+html body.home-page .home-contact-simple.home-contact-simple--local {
+  display: block;
+  width: fit-content;
+}
+
+html body.home-page .home-contact-simple--local .home-contact-link {
+  width: fit-content;
+  min-height: 0;
+}
+
+html body.home-page .home-contact-simple--local .home-contact-link--email {
+  background: #ffffff !important;
+  background-image: none !important;
+}
+
+@media (max-width: 767.98px) {
+  html body.home-page .home-main--local > .home-about-contact {
+    --home-about-image-overlay: rgba(248, 251, 249, 0.76);
+  }
+}
+
+html body.home-page #hero-title,
+html body.home-page .hero-title {
+  max-width: 11ch;
+  line-height: 0.95;
+  overflow-wrap: normal;
+}
+
+html body.home-page .hero-title__line {
+  display: block;
+}
+
+html body.home-page .hero-copy {
+  max-width: 58ch;
+}
+
+html body.home-page .home-main--local > .home-section--local,
+html body.home-page .home-main--local > #leistungen,
+html body.home-page .home-main--local > #preise,
+html body.home-page .home-main--local > #profil,
+html body.home-page .home-main--local > #faq {
+  padding-block: clamp(1.15rem, 2.2vw, 2.2rem);
+  background: transparent;
+  box-shadow: none;
+}
+
+html body.home-page .home-service-grid,
+html body.home-page .home-price-example-list {
+  gap: 0;
+  border: 1px solid rgba(120, 143, 166, 0.24);
+  border-radius: 8px;
+  overflow: hidden;
+  background: transparent;
+}
+
+html body.home-page .home-service-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+html body.home-page .home-price-groups {
+  display: grid;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+html body.home-page .home-price-example-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+html body.home-page .home-profile-facts--local {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.65rem, 1.2vw, 1rem);
+}
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+  html body.home-page .hero.hero--platform .hero-card-portrait__frame {
+    container-type: inline-size;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait__side--back {
+    padding: clamp(0.55rem, 4cqi, 0.78rem);
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait__panel {
+    min-width: 0;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait__message {
+    width: 100%;
+    max-width: 18ch;
+    font-size: clamp(0.78rem, 7cqi, 1.02rem);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait__channels {
+    gap: clamp(0.25rem, 3cqi, 0.42rem);
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait__channel {
+    flex-basis: clamp(2.2rem, 20cqi, 2.7rem);
+  }
+}
+
+html body.home-page .home-contact-simple--local {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+html body.home-page .home-service-item,
+html body.home-page .home-price-group,
+html body.home-page .home-price-example,
+html body.home-page .home-price-note,
+html body.home-page .home-about-card,
+html body.home-page .home-contact-area,
+html body.home-page .home-contact-link,
+html body.home-page .home-faq-item,
+html body.home-page .home-profile-facts--local div {
+  background: transparent;
+  box-shadow: none;
+}
+
+html body.home-page .home-service-item,
+html body.home-page .home-price-example {
+  border-width: 0 1px 1px 0;
+  border-radius: 0;
+}
+
+html body.home-page .home-price-note {
+  padding: 0.85rem 0;
+  border-width: 1px 0;
+  border-radius: 0;
+}
+
+html body.home-page .home-faq-list {
+  gap: clamp(0.55rem, 1.6vw, 0.85rem);
+  border-top: 1px solid rgba(120, 143, 166, 0.24);
+}
+
+html body.home-page .home-faq-item {
+  border-width: 0 0 1px;
+  border-radius: 0;
+}
+
+html body.home-page .home-faq-item summary,
+html body.home-page .home-faq-item p {
+  padding-inline: clamp(1rem, 4vw, 1.35rem);
+}
+
+html body.home-page .home-faq-section .home-faq-item.motion-hover-lift,
+html body.home-page .home-faq-section .home-faq-item.motion-hover-lift:hover,
+html body.home-page .home-faq-section .home-faq-item.motion-hover-lift:focus-visible,
+html body.home-page .home-faq-section .home-faq-item.motion-hover-lift:focus-within,
+html body.home-page .home-faq-section .home-faq-item.motion-hover-lift[open] {
+  transform: scale(1, 1);
+}
+
+@media (min-width: 1024px) {
+  html body.home-page .hero.hero--platform .hero-surface--platform {
+    grid-template-columns: clamp(11rem, 13vw, 14rem) minmax(0, 50rem);
+    gap: clamp(1rem, 1.8vw, 2rem);
+    padding-top: clamp(3.4rem, 5.2vh, 4.8rem);
+    padding-bottom: clamp(1.6rem, 3vh, 2.5rem);
+  }
+
+  html body.home-page .home-price-groups {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  html body.home-page .home-about-contact {
+    grid-template-columns: minmax(18rem, 0.68fr) minmax(0, 1.32fr);
+  }
+}
+
+@media (min-width: 1500px) {
+  html body.home-page .hero.hero--platform .hero-surface--platform {
+    grid-template-columns: 14rem minmax(0, 54rem);
+    justify-content: center;
+  }
+
+  html body.home-page .home-main.home-main--local {
+    width: min(100% - 3rem, 92rem);
+  }
+
+  html body.home-page .home-service-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  html body.home-page .home-service-item {
+    border-bottom: 0;
+  }
+
+  html body.home-page .home-service-item:nth-child(2n) {
+    border-right: 1px solid rgba(120, 143, 166, 0.24);
+  }
+
+  html body.home-page .home-service-item:last-child {
+    border-right: 0;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  html body.home-page .hero.hero--platform .hero-surface--platform {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 1.4rem;
+    min-height: auto;
+    padding: calc(var(--topnav-offset, 4.4rem) + 1.8rem) 1.35rem 2rem;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  html body.home-page .hero.hero--platform .hero-surface--platform > .hero-card-portrait,
+  html body.home-page .hero.hero--platform .hero-surface--platform > .hero-content-body {
+    grid-area: auto;
+    position: relative;
+    inset: auto;
+    transform: none;
+    opacity: 1;
+    min-width: 0;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait {
+    display: block;
+    width: 11rem;
+    max-width: 11rem;
+    justify-self: end;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait__frame,
+  html body.home-page .hero.hero--platform .hero-card-portrait__flip,
+  html body.home-page .hero.hero--platform .hero-card-portrait__side {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  html body.home-page .hero.hero--platform .hero-content-body {
+    justify-self: start;
+    max-width: 30rem;
+  }
+
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    max-width: 11ch;
+    font-size: 2.65rem;
+    line-height: 1;
+  }
+
+  html body.home-page .home-main.home-main--local {
+    width: min(100% - 1.5rem, 56rem);
+  }
+
+  html body.home-page .home-price-groups,
+  html body.home-page .home-about-contact {
+    grid-template-columns: 1fr;
+  }
+
+  html body.home-page .home-price-example-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  html body.home-page .home-price-example:nth-child(3n) {
+    border-right: 1px solid rgba(120, 143, 166, 0.24);
+  }
+
+  html body.home-page .home-price-example:nth-child(2n) {
+    border-right: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  html body.home-page .hero.hero--platform .hero-surface--platform {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    min-height: auto;
+    padding: calc(var(--topnav-offset, 4.4rem) + 1.1rem) 1rem 1.7rem;
+    text-align: center;
+  }
+
+  html body.home-page .hero.hero--platform .hero-surface--platform > .hero-card-portrait,
+  html body.home-page .hero.hero--platform .hero-surface--platform > .hero-content-body {
+    grid-area: auto;
+    position: relative;
+    inset: auto;
+    transform: none;
+    opacity: 1;
+    min-width: 0;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait {
+    width: min(12.25rem, 58vw);
+    justify-self: center;
+    order: 1;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait__frame,
+  html body.home-page .hero.hero--platform .hero-card-portrait__flip,
+  html body.home-page .hero.hero--platform .hero-card-portrait__side {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  html body.home-page .hero.hero--platform .hero-content-body {
+    order: 2;
+    max-width: 32rem;
+  }
+
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    max-width: 12ch;
+    font-size: 2.7rem;
+    line-height: 0.98;
+  }
+
+  html body.home-page .hero-copy {
+    max-width: 32rem;
+    margin-inline: auto;
+  }
+
+  html body.home-page .home-main.home-main--local {
+    width: min(100% - 1rem, 42rem);
+    padding-top: 1rem;
+  }
+
+  html body.home-page .home-service-grid,
+  html body.home-page .home-price-groups,
+  html body.home-page .home-price-example-list,
+  html body.home-page .home-about-contact,
+  html body.home-page .home-profile-facts--local,
+  html body.home-page .home-contact-simple--local {
+    grid-template-columns: 1fr;
+  }
+
+  html body.home-page .home-service-item,
+  html body.home-page .home-price-example {
+    border-right: 0;
+  }
+
+  html body.home-page .home-service-item:nth-last-child(-n + 2),
+  html body.home-page .home-price-example:nth-last-child(-n + 3) {
+    border-bottom: 1px solid rgba(120, 143, 166, 0.24);
+  }
+
+  html body.home-page .home-service-item:last-child,
+  html body.home-page .home-price-example:last-child {
+    border-bottom: 0;
+  }
+
+  html body.home-page .home-price-group {
+    padding: 1rem;
+  }
+
+  html body.home-page .home-price-item {
+    gap: 0.75rem;
+  }
+
+  html body.home-page .home-contact-link {
+    min-height: 4rem;
+  }
+}
+
+@media (max-width: 479.98px) {
+  html body.home-page .hero.hero--platform .hero-surface--platform {
+    padding-inline: 0.75rem;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait {
+    width: min(10.75rem, 62vw);
+  }
+
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    font-size: 2.25rem;
+  }
+
+  html body.home-page .hero-subtitle,
+  html body.home-page .hero-copy,
+  html body.home-page .home-section-lead,
+  html body.home-page .home-price-note,
+  html body.home-page .home-price-item,
+  html body.home-page .home-price-example {
+    font-size: 0.95rem;
+  }
+
+  html body.home-page .home-price-example {
+    align-items: start;
+    gap: 0.65rem;
+  }
+
+  html body.home-page .home-price-example strong,
+  html body.home-page .home-price-item strong {
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  html body.home-page .hero.hero--platform .hero-surface.hero-surface--platform {
+    grid-template-columns: minmax(9rem, 11rem) minmax(0, 28rem);
+    justify-content: center;
+    overflow: clip;
+  }
+
+  html body.home-page .hero.hero--platform .hero-content-body {
+    width: 100%;
+    max-width: 28rem;
+  }
+
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    max-width: 11ch;
+    font-size: 2.65rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  html body.home-page .hero.hero--platform .hero-surface.hero-surface--platform {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: auto;
+    padding: calc(var(--topnav-offset, 4.4rem) + 1.6rem) 1rem 2rem;
+    text-align: center;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait {
+    display: none;
+  }
+
+  html body.home-page .hero.hero--platform .hero-content-body {
+    width: min(100%, 32rem);
+    justify-self: center;
+  }
+
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    max-width: 12ch;
+    margin-inline: auto;
+    color: #16231c;
+    font-size: 2.7rem;
+    line-height: 1;
+  }
+
+  html body.home-page .hero-subtitle,
+  html body.home-page .hero-copy {
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 479.98px) {
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    font-size: 2.25rem;
+  }
+}

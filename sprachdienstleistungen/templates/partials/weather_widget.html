@@ -1,0 +1,83 @@
+{% load static %}
+<section class="weather-widget" aria-label="Wetter-Widget">
+  <div class="wrap" aria-busy="false">
+    <button id="loadBtn" type="button" class="load-btn">Wetter laden</button>
+    <form class="search" role="search" aria-label="Wetter nach Ort suchen">
+      <label for="cityInput" class="visually-hidden">Ort suchen</label>
+      <div class="input">
+        <span class="icon">🔍</span>
+        <input
+          id="cityInput"
+          type="search"
+          autocomplete="off"
+          autocapitalize="words"
+          spellcheck="false"
+          placeholder="Ort suchen (z. B. Helmstedt)"
+          value="Helmstedt"
+        />
+      </div>
+    </form>
+    <div class="status" id="statusMsg" aria-live="polite"></div>
+    <div class="header">
+      <div>
+        <h1 id="cityName">Helmstedt</h1>
+        <div class="sub" id="timeText">Wetter noch nicht geladen</div>
+        <div class="big">
+          <div class="temp" id="tempNow">--</div>
+          <div class="mini" id="miniNow">H: -- • L: --<br/>Niederschlag: --</div>
+        </div>
+      </div>
+      <div class="pill" id="rainNow">🌧️ --</div>
+    </div>
+
+    <div class="record-strip hidden" id="weatherRecordStrip" aria-live="polite">
+      <div class="record-card record-card--high">
+        <div class="record-card__label" id="recordHighLabel">Bisher am wärmsten</div>
+        <div class="record-card__value" id="recordHighValue">--</div>
+      </div>
+      <div class="record-card record-card--low">
+        <div class="record-card__label" id="recordLowLabel">Bisher am kältesten</div>
+        <div class="record-card__value" id="recordLowValue">--</div>
+      </div>
+    </div>
+
+    <div class="details-panel" id="weatherDetails">
+      <div class="grid">
+        <div class="card">
+          <div class="label" id="windLabel">Wind</div>
+          <div class="value" id="windValue">--</div>
+          <div class="hint" id="windHint">--</div>
+        </div>
+        <div class="card">
+          <div class="label" id="humidityLabel">Luftfeuchte</div>
+          <div class="value" id="humValue">--</div>
+          <div class="hint" id="humHint">--</div>
+        </div>
+        <div class="card">
+          <div class="label" id="uvLabel">UV-Index</div>
+          <div class="value" id="uvValue">--</div>
+          <div class="hint" id="uvHint">--</div>
+        </div>
+        <div class="card">
+          <div class="label" id="precipLabel">Regen</div>
+          <div class="value" id="precipValue">--</div>
+          <div class="hint" id="precipHint">--</div>
+        </div>
+      </div>
+
+      <section class="forecast hidden" id="forecast" aria-labelledby="forecastTitle" aria-live="polite">
+        <div class="forecast__header">
+          <h3 id="forecastTitle">5-Tage-Ausblick</h3>
+          <span>Temperatur und Regenrisiko</span>
+        </div>
+        <div class="forecast__list" id="forecastList"></div>
+      </section>
+      <div class="hourly hidden" id="hourlyBox">
+        <h3 id="hourlyTitle">Heute stündlich</h3>
+        <div class="strip" id="hourlyStrip"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="{% asset_url 'js/weather-widget.js' %}" defer></script>

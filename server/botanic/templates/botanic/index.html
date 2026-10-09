@@ -1,0 +1,46 @@
+{% extends 'botanic/base.html' %}
+{% load botanic_ui %}
+{% block content %}
+  <div class="page-heading">
+    <div><p class="eyebrow">{% if tab == 'search' %}PFLANZENKATALOG{% else %}DEINE SAMMLUNG{% endif %}</p><h2>{% if tab == 'search' %}Pflanzen entdecken{% elif tab == 'plants' %}Meine Pflanzen{% else %}Gießplan{% endif %}</h2></div>
+    {% if tab != 'search' and request.user.is_authenticated %}<a class="button button--primary add-plant" href="?tab=search" aria-label="Pflanze hinzufügen">{% botanic_icon 'plus' %}<span>Pflanze hinzufügen</span></a>{% elif tab == 'search' %}<a class="source-link" href="https://www.inaturalist.org" target="_blank" rel="noopener noreferrer">iNaturalist{% botanic_icon 'arrow' %}</a>{% endif %}
+  </div>
+  {% if tab == 'search' %}
+    <form method="get" class="search-form" role="search">
+      <input type="hidden" name="tab" value="search">
+      <label class="search-field"><span class="sr-only">{{ search_form.q.label }}</span>{% botanic_icon 'search' %}{{ search_form.q }}</label>
+      <button class="button button--primary" type="submit">Suchen{% botanic_icon 'next' %}</button>
+    </form>
+    {% if search_form.errors %}<div class="form-errors" role="alert">{{ search_form.q.errors }}{{ search_form.page.errors }}</div>{% endif %}
+    <div class="quick-searches" aria-label="Pflanzensuchen"><a href="?tab=search&amp;q=Monstera">Monstera</a><a href="?tab=search&amp;q=Pilea">Pilea</a><a href="?tab=search&amp;q=Ficus">Ficus</a><a href="?tab=search&amp;q=Lavendel">Lavendel</a></div>
+    {% if api_error %}<div class="empty-state error-state" role="alert">{% botanic_icon 'alert' %}<h3>Suche gerade nicht verfügbar</h3><p>{{ api_error }}</p><a class="button button--secondary" href="?tab=search&amp;q={{ query|urlencode }}">Erneut versuchen</a></div>
+    {% elif results %}
+      <div class="results-heading"><h3>Ergebnisse für „{{ query }}“</h3><span>{{ total }} Arten</span></div>
+      <div class="plant-grid">
+        {% for species in results %}
+          <article class="species-card">
+            <a class="species-link" href="{% url 'botanic:species' species.pk %}">{% include 'botanic/photo.html' %}<div class="species-body"><h3>{{ species.name }}</h3><p class="scientific">{{ species.scientific_name }}</p><span class="card-action">Ansehen{% botanic_icon 'arrow' %}</span></div></a>
+            {% include 'botanic/photo_credit.html' %}
+          </article>
+        {% endfor %}
+      </div>
+      {% if has_previous or has_next %}<nav class="pagination" aria-label="Suchergebnisse">{% if has_previous %}<a class="button button--secondary" href="{{ previous_url }}">{% botanic_icon 'previous' %}Zurück</a>{% endif %}<span>Seite {{ page_number }}</span>{% if has_next %}<a class="button button--secondary" href="{{ next_url }}">Weiter{% botanic_icon 'next' %}</a>{% endif %}</nav>{% endif %}
+    {% elif not search_form.errors %}<div class="empty-state">{% botanic_icon 'search' %}<h3>Keine Pflanzen gefunden</h3><p>Kein Treffer für „{{ query }}“.</p></div>{% endif %}
+  {% elif not request.user.is_authenticated %}
+    <div class="empty-state account-state">{% botanic_icon 'plants' %}<h3>Deine Pflanzen, dein Rhythmus.</h3><p>{% if tab == 'watering' %}Für deinen persönlichen Gießplan anmelden.{% else %}Für deine persönliche Pflanzensammlung anmelden.{% endif %}</p><div class="empty-actions"><a class="button button--primary" href="{{ login_url }}">{% botanic_icon 'user' %}Anmelden</a><a class="button button--secondary" href="{% url 'pages:register' %}">Konto erstellen</a></div></div>
+  {% else %}
+    <div class="collection-summary"><span><strong>{{ plant_count }}</strong> Pflanzen</span><span><strong>{{ due_count }}</strong> fällig</span><span><strong>{{ paused_count }}</strong> pausiert</span></div>
+    {% if tab == 'plants' %}
+      <form method="get" class="collection-filters" role="search"><input type="hidden" name="tab" value="plants"><label class="search-field"><span class="sr-only">Sammlung durchsuchen</span>{% botanic_icon 'search' %}<input type="search" name="q" value="{{ query }}" maxlength="80" placeholder="In deiner Sammlung suchen"></label><label class="location-filter"><span class="sr-only">Standort</span><select name="location"><option value="">Alle Standorte</option>{% for room in locations %}<option value="{{ room }}"{% if room == location %} selected{% endif %}>{{ room }}</option>{% endfor %}</select></label><button class="icon-button" type="submit" aria-label="Sammlung filtern" title="Sammlung filtern">{% botanic_icon 'search' %}</button></form>
+    {% else %}
+      <nav class="week-strip" aria-label="Gießtermine der nächsten sieben Tage">{% for day in days %}<a href="{{ day.url }}"{% if day.date == selected_day %} aria-current="date"{% endif %}><span>{{ day.date|date:'D' }}</span><strong>{{ day.date|date:'d' }}</strong><small>{% if day.count %}{{ day.count }}{% else %}–{% endif %}</small></a>{% endfor %}</nav>
+      <nav class="plan-filters" aria-label="Gießplan filtern"><a href="?tab=watering&amp;filter=due"{% if filter_key == 'due' and not selected_day %} aria-current="page"{% endif %}>Fällig <small>{{ due_count }}</small></a><a href="?tab=watering&amp;filter=upcoming"{% if filter_key == 'upcoming' and not selected_day %} aria-current="page"{% endif %}>Nächste 7 Tage</a><a href="?tab=watering&amp;filter=paused"{% if filter_key == 'paused' and not selected_day %} aria-current="page"{% endif %}>Pausiert</a><a href="?tab=watering&amp;filter=all"{% if filter_key == 'all' and not selected_day %} aria-current="page"{% endif %}>Alle</a></nav>
+      {% if selected_day %}<h3 class="selected-day">{{ selected_day|date:'l, d. F' }}</h3>{% endif %}
+      <p class="care-notice">Vor dem Gießen die Erdfeuchte prüfen. Wasserbedarf verändert sich mit Standort und Jahreszeit. <a class="text-link" href="{% url 'botanic:weather' %}">Wetter und Regenvorhersage ansehen</a></p>
+    {% endif %}
+    {% if plants %}
+      <div class="owned-list" aria-label="{% if tab == 'plants' %}Eigene Pflanzen{% else %}Gießtermine{% endif %}">{% for plant in plants %}{% include 'botanic/plant_row.html' %}{% endfor %}</div>
+      {% if page_obj.has_other_pages %}<nav class="pagination" aria-label="Sammlung">{% if page_obj.has_previous %}<a class="button button--secondary" href="{{ previous_url }}">{% botanic_icon 'previous' %}Zurück</a>{% endif %}<span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>{% if page_obj.has_next %}<a class="button button--secondary" href="{{ next_url }}">Weiter{% botanic_icon 'next' %}</a>{% endif %}</nav>{% endif %}
+    {% else %}<div class="empty-state">{% if tab == 'plants' %}{% botanic_icon 'sprout' %}<h3>{% if plant_count %}Keine passenden Pflanzen{% else %}Noch keine Pflanzen{% endif %}</h3><a class="button button--primary" href="?tab=search">{% botanic_icon 'plus' %}Pflanze hinzufügen</a>{% else %}{% botanic_icon 'check' %}<h3>{% if filter_key == 'due' and not selected_day %}Für heute ist alles erledigt{% else %}Keine Gießtermine in dieser Ansicht{% endif %}</h3><a class="button button--secondary" href="?tab=watering&amp;filter=all">Alle Pflanzen</a>{% endif %}</div>{% endif %}
+  {% endif %}
+{% endblock %}

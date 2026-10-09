@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Mietvertrags-Generator als Beirit-Digital-Demo mit Formularfeldern und PDF-Erstellung im Browser."
+    />
+    <meta
+      name="keywords"
+      content="Beirit Digital, Mietvertrag Generator, Vertragsgenerator, PDF erstellen, Formular Webapp, JavaScript"
+    />
+    <meta property="og:title" content="Mietvertrags-Generator | Beirit Digital" />
+    <meta property="og:description" content="Browser-Demo für Mietvertragsentwürfe mit Formular und PDF-Ausgabe." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <title>Mietvertrags-Generator | Beirit Digital</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 8px 0;
+        box-sizing: border-box;
+      }
+      label {
+        font-weight: bold;
+      }
+      button {
+        padding: 10px 20px;
+        margin-top: 15px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Mietvertrags-Generator</h1>
+
+    <label for="vermieter">Name Vermieter:</label>
+    <input
+      type="text"
+      id="vermieter"
+    />
+
+    <label for="mieter">Name Mieter:</label>
+    <input
+      type="text"
+      id="mieter"
+    />
+
+    <label for="adresse">Adresse der Wohnung:</label>
+    <textarea id="adresse"></textarea>
+
+    <label for="beginn">Mietbeginn (z.B. 01.07.2025):</label>
+    <input
+      type="text"
+      id="beginn"
+    />
+
+    <label for="miete">Monatliche Miete (EUR):</label>
+    <input
+      type="text"
+      id="miete"
+    />
+
+    <button id="generateBtn">PDF erzeugen</button>
+
+    <script>
+      const { jsPDF } = window.jspdf;
+
+      document.getElementById('generateBtn').addEventListener('click', () => {
+        const vermieter = document.getElementById('vermieter').value.trim();
+        const mieter = document.getElementById('mieter').value.trim();
+        const adresse = document.getElementById('adresse').value.trim();
+        const beginn = document.getElementById('beginn').value.trim();
+        const miete = document.getElementById('miete').value.trim();
+
+        const doc = new jsPDF();
+
+        doc.setFontSize(16);
+        doc.text('Mietvertrag', 20, 20);
+
+        doc.setFontSize(12);
+        const text = `
+Zwischen:
+Vermieter: ${vermieter}
+
+und
+Mieter: ${mieter}
+
+wird folgender Mietvertrag geschlossen:
+
+Mietobjekt:
+${adresse}
+
+Mietbeginn: ${beginn}
+
+Monatliche Miete: ${miete} EUR
+
+Weitere Regelungen erfolgen individuell und sind ggf. separat schriftlich zu regeln.
+
+Datum: ______________________________________
+
+Unterschrift Vermieter: ______________________
+Unterschrift Mieter: ________________________
+`;
+
+        doc.text(text, 20, 30);
+        doc.save('mietvertrag.pdf');
+      });
+    </script>
+  </body>
+</html>

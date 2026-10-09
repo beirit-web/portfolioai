@@ -1,0 +1,468 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ initial_lang|default:'de' }}" data-theme="light">
+  <head>
+    <title>Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen für Deutsch und Russisch in Helmstedt, Umgebung und online."
+    />
+    <link rel="canonical" href="{{ site_url }}/" />
+    <link rel="alternate" hreflang="de" href="{{ site_url }}/" />
+    <link rel="alternate" hreflang="ru" href="{{ site_url }}/" />
+    <link rel="alternate" hreflang="uk" href="{{ site_url }}/" />
+    <link rel="alternate" hreflang="x-default" href="{{ site_url }}/" />
+    <meta
+      name="robots" content="index, follow"
+    />
+    <meta name="geo.region" content="DE-NI" />
+    <meta name="geo.placename" content="Helmstedt, Niedersachsen" />
+    <meta property="og:locale" content="de_DE" />
+    <meta
+      property="og:title"
+      content="Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen"
+    />
+    <meta
+      property="og:description"
+      content="Deutsch-Russisch-Sprachmittlung bei Terminen, Telefonaten und Online-Gesprächen in Helmstedt und Umgebung sowie deutschlandweit telefonisch und online."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ site_url }}/" />
+    <meta property="og:image" content="{{ site_url }}{% static 'images/eugen-beirit-sprachdienstleistungen.svg' %}" />
+    <meta property="og:image:width" content="1254" />
+    <meta property="og:image:height" content="1254" />
+    <meta
+      property="og:image:alt"
+      content="Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen"
+    />
+    <meta
+      name="twitter:description"
+      content="Dolmetsch- und Sprachdienstleistungen Deutsch ↔ Russisch in Helmstedt, Umgebung und online."
+    />
+    <meta name="twitter:image" content="{{ site_url }}{% static 'images/eugen-beirit-sprachdienstleistungen.svg' %}" />
+    {{ auth_session_js_config|json_script:"auth-session-config-data" }}
+    <script>
+      window.PREFERRED_LANG = "{{ initial_lang|default:'de'|escapejs }}";
+      document.documentElement.lang =
+        window.PREFERRED_LANG || "{{ initial_lang|default:'de'|escapejs }}";
+      window.AUTH_SESSION_CONFIG = JSON.parse(
+        document.getElementById("auth-session-config-data").textContent
+      );
+    </script>
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="{% static 'images/eugen-beirit-sprachdienstleistungen.svg' %}"
+    />
+    <link rel="stylesheet" href="{% asset_url 'css/home-platform.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'css/home-sidenav.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'css/home-local-refactor.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'css/home-local-clean.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'css/home-responsive.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'css/home-hero-responsive.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'css/home-hero-layout.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'css/site-work-notice.css' %}" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "{{ site_url }}/#website",
+            "url": "{{ site_url }}/",
+            "name": "Eugen Beirit – Dolmetsch- & Sprachdienstleistungen",
+            "inLanguage": ["de", "ru", "uk"],
+            "publisher": {
+              "@id": "{{ site_url }}/#business"
+            }
+          },
+          {
+            "@type": ["LocalBusiness", "ProfessionalService"],
+            "@id": "{{ site_url }}/#business",
+            "name": "Eugen Beirit – Dolmetsch- & Sprachdienstleistungen",
+            "url": "{{ site_url }}/",
+            "image": "{{ site_url }}{% static 'images/eugen-beirit-sprachdienstleistungen.svg' %}",
+            "logo": "{{ site_url }}{% static 'images/eugen-beirit-sprachdienstleistungen.svg' %}",
+            "description": "Persönliche Sprachmittlung bei Terminen, Telefonaten und Online-Gesprächen - vor Ort in Helmstedt und Umgebung sowie deutschlandweit online.",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Musterstraße 1",
+              "postalCode": "12345",
+              "addressLocality": "Musterstadt",
+              "addressRegion": "Musterland",
+              "addressCountry": "DE"
+            },
+            "areaServed": [
+              "Helmstedt",
+              "Niedersachsen",
+              "Deutschland",
+              "Online"
+            ],
+            "knowsLanguage": ["de", "ru"],
+            "openingHoursSpecification": [
+              {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": [
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday"
+                ],
+                "opens": "09:00",
+                "closes": "18:00"
+              }
+            ],
+            "priceRange": "Telefonische Sprachmittlung 10 EUR je angefangene Stunde; persönliche und Online-Sprachmittlung 20 EUR erste angefangene Stunde, 15 EUR jede weitere angefangene Stunde"
+          },
+          {
+            "@type": "Service",
+            "@id": "{{ site_url }}/#service",
+            "name": "Deutsch-Russisch Dolmetsch- und Sprachdienstleistungen",
+            "serviceType": [
+              "Dolmetschen",
+              "Sprachmittlung",
+              "Telefonische und Online-Sprachmittlung",
+              "Begleitung zu Terminen"
+            ],
+            "provider": {
+              "@id": "{{ site_url }}/#business"
+            },
+            "areaServed": ["Helmstedt", "Niedersachsen", "Deutschland", "Online"],
+            "availableChannel": [
+              {
+                "@type": "ServiceChannel",
+                "serviceUrl": "{{ site_url }}/#kontakt",
+                "availableLanguage": ["de", "ru"]
+              }
+            ]
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "{{ site_url }}/#faq-schema",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Wie schnell bekomme ich einen Termin?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Kurzfristige Termine sind je nach Verfügbarkeit möglich. Schreiben Sie mir am besten per WhatsApp oder E-Mail mit Ihrem gewünschten Zeitraum."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Bieten Sie beglaubigte Übersetzungen an?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Nein. Beglaubigte Übersetzungen werden derzeit nicht angeboten."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Ist Sprachmittlung auch online möglich?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Ja. Telefonische und Online-Termine sind deutschlandweit möglich. Persönliche Termine biete ich in Helmstedt und Umgebung sowie an weiteren Orten nach Absprache an."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Ist telefonische Sprachmittlung bei jedem Termin möglich?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Nein, nicht immer. Ob eine telefonische Sprachmittlung möglich ist, hängt von der jeweiligen Stelle oder Einrichtung und deren Vorgaben ab. Insbesondere bei Behörden, Arztpraxen oder anderen Einrichtungen kann eine telefonische Teilnahme aus organisatorischen, datenschutzrechtlichen oder anderen Gründen eingeschränkt oder nicht möglich sein. Bitte klären Sie deshalb vor dem Termin mit der jeweiligen Stelle, ob eine telefonische Sprachmittlung akzeptiert wird."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Stellen Sie eine Rechnung oder Quittung aus?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Ja. Auf Wunsch stelle ich eine Rechnung aus. Bei Barzahlung erhalten Sie eine Quittung."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Ist eine Ratenzahlung oder spätere Zahlung möglich?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Derzeit biete ich keine Ratenzahlung oder Zahlungspause an. Die Zahlungsbedingungen werden vor der Terminbestätigung mit Ihnen vereinbart."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Entstehen bei persönlichen Terminen zusätzliche Kosten für Anfahrt oder Wartezeit?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Innerhalb Helmstedts berechne ich keine zusätzlichen Kosten für die Anfahrt. Bei Terminen außerhalb Helmstedts können abhängig von Entfernung und Fahrtzeit zusätzliche Kosten entstehen. Auch notwendige Wartezeiten vor Ort können berücksichtigt werden. Alle zusätzlichen Kosten werden vor der Terminbestätigung mit Ihnen vereinbart."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+    <link rel="stylesheet" href="{% asset_url 'css/project-home.css' %}" />
+  </head>
+
+  <body id="top" class="has-topnav home-page">
+    {% include "partials/topnav.html" %}
+    {% include "partials/project_home_nav.html" %}
+    {% include "partials/site_work_notice.html" %}
+
+    <main class="page-shell" id="main">
+      <header
+        class="hero hero--platform"
+        id="hero"
+        aria-labelledby="hero-title"
+      >
+        <div class="hero-surface hero-surface--platform" id="heroContent">
+          <div class="hero-card-portrait" data-portrait-flip>
+              <div class="hero-card-portrait__frame">
+                <div
+                  class="hero-card-portrait__controls"
+                  role="group"
+                  data-i18n-aria-label="hero.portrait.controls_label"
+                  aria-label="{% if initial_lang|slice:':2' == 'ru' %}Повернуть фото{% else %}Foto umdrehen{% endif %}"
+                >
+                  <button
+                    class="hero-card-portrait__control hero-card-portrait__control--coral"
+                    type="button"
+                    data-portrait-flip-toggle
+                    data-portrait-panel="weekdays"
+                    data-i18n-aria-label="hero.portrait.weekdays_label"
+                    aria-label="{% if initial_lang|slice:':2' == 'ru' %}Показать дни доступности{% else %}Verfügbarkeitstage anzeigen{% endif %}"
+                    aria-pressed="false"
+                  ></button>
+                  <button
+                    class="hero-card-portrait__control hero-card-portrait__control--gold"
+                    type="button"
+                    data-portrait-flip-toggle
+                    data-portrait-panel="hours"
+                    data-i18n-aria-label="hero.portrait.hours_label"
+                    aria-label="{% if initial_lang|slice:':2' == 'ru' %}Показать часы доступности{% else %}Erreichbarkeit anzeigen{% endif %}"
+                    aria-pressed="false"
+                  ></button>
+                  <button
+                    class="hero-card-portrait__control hero-card-portrait__control--mint"
+                    type="button"
+                    data-portrait-flip-toggle
+                    data-portrait-panel="channels"
+                    data-i18n-aria-label="hero.portrait.channels_label"
+                    aria-label="{% if initial_lang|slice:':2' == 'ru' %}Показать способы связи{% else %}Kontaktwege anzeigen{% endif %}"
+                    aria-pressed="false"
+                  ></button>
+                </div>
+                <div class="hero-card-portrait__flip" aria-live="polite">
+                  <div
+                    class="hero-card-portrait__side hero-card-portrait__side--front"
+                    role="img"
+                    aria-label="{% if initial_lang|slice:':2' == 'ru' %}Цифровой персонаж проекта{% else %}Digitale Figur des Projekts{% endif %}"
+                  >
+                    <img
+                      class="hero-card-portrait__image"
+                      src="{% static 'images/digital-avatar-hair-336.webp' %}"
+                      srcset="{% static 'images/digital-avatar-hair-336.webp' %} 336w, {% static 'images/digital-avatar-hair-463.webp' %} 463w"
+                      sizes="(max-width: 640px) 42vw, 336px"
+                      width="336"
+                      height="391"
+                      alt=""
+                      loading="eager"
+                      fetchpriority="high"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="hero-card-portrait__side hero-card-portrait__side--back">
+                    <div class="hero-card-portrait__panel is-active" data-portrait-panel="weekdays">
+                      <strong class="hero-card-portrait__message" data-i18n="hero.portrait.weekdays_text">
+                        {% if initial_lang|slice:':2' == 'ru' %}Кроме выходных и праздничных дней{% else %}Außer Wochenenden und Feiertage{% endif %}
+                      </strong>
+                    </div>
+                    <div class="hero-card-portrait__panel" data-portrait-panel="hours" hidden>
+                      <strong class="hero-card-portrait__message" data-i18n="hero.portrait.hours_text">
+                        {% if initial_lang|slice:':2' == 'ru' %}Доступен с 09:00 до 18:00{% else %}erreichbar von 09:00 bis 18:00{% endif %}
+                      </strong>
+                    </div>
+                    <div class="hero-card-portrait__panel" data-portrait-panel="channels" hidden>
+                      <div
+                        class="hero-card-portrait__channels"
+                        role="group"
+                        aria-label="E-Mail"
+                      >
+                        {% if contact_actions.whatsapp %}
+                        <a
+                          class="hero-card-portrait__channel"
+                          href="{{ contact_actions.whatsapp }}"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="WhatsApp Business"
+                        >
+                          <img src="{% static 'images/whatsapp.png' %}" alt="" loading="lazy" decoding="async" />
+                          <span class="hero-card-portrait__tooltip">WhatsApp Business</span>
+                        </a>
+                        {% endif %}
+                        {% if contact_actions.email %}
+                        <a
+                          class="hero-card-portrait__channel hero-card-portrait__channel--gmail"
+                          href="{{ contact_actions.email }}"
+                          aria-label="max.mustermann@example.com"
+                          data-i18n-aria-label="contact.quickactions.gmail"
+                        >
+                          <img src="{% static 'images/email-contact.svg' %}" alt="" loading="lazy" decoding="async" />
+                          <span class="hero-card-portrait__tooltip" data-i18n="contact.quickactions.gmail">max.mustermann@example.com</span>
+                        </a>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          <div class="hero-content-body">
+            <h1
+              id="hero-title"
+              class="hero-title"
+              data-i18n="hero.title"
+              aria-label="Dolmetsch- &amp; Sprachdienstleistungen">
+              <span class="hero-title__line">Dolmetsch- &amp;</span>
+              <span class="hero-title__line hero-title__line--long">Sprachdienstleistungen</span>
+            </h1>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">
+              <span class="hero-subtitle__language">deutsch</span>
+              <span class="hero-subtitle__arrow" aria-hidden="true">⇄</span>
+              <span class="hero-subtitle__language">russisch</span>
+            </p>
+            <p class="hero-copy" data-i18n="hero.seo_intro">
+              Persönliche Sprachmittlung bei Terminen, Telefonaten und Online-Gesprächen - vor Ort in Musterstadt und Umgebung sowie deutschlandweit online.
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {% include "partials/home_main_sections.html" %}
+    </main>
+    <div class="mobile-action-bar">
+      {% if request.user.is_authenticated %}
+      <span class="mobile-btn secondary" aria-label="Angemeldet als">
+        <strong>{{ request.user.username }}</strong>
+      </span>
+      <a
+        href="{% url 'pages:logout' %}"
+        class="mobile-btn primary cta-highlight"
+        data-i18n="ui.logout"
+      >
+        Abmelden</a
+      >
+      {% else %}
+      <a
+        href="#kontakt"
+        class="mobile-btn primary cta-highlight"
+        data-i18n="hero.cta.primary"
+        >Kontakt aufnehmen</a
+      >
+      <a
+        href="{% if contact_actions.whatsapp %}{{ contact_actions.whatsapp }}{% else %}#kontakt{% endif %}"
+        class="mobile-btn secondary"
+        data-i18n="hero.cta.secondary"
+        {% if contact_actions.whatsapp %}target="_blank" rel="noopener noreferrer"{% endif %}
+        >Per WhatsApp schreiben</a
+      >
+      {% endif %}
+    </div>
+    {% include "partials/site_footer.html" %}
+    <script>
+      (() => {
+        const preferredLangCfg = "{{ initial_lang|default:'de'|escapejs }}";
+        const calendarEnabledCfg =
+          "{{ show_home_calendar|default_if_none:False|yesno:'true,false' }}";
+        const eventsJsonUrlCfg =
+          "{{ events_json_url|default:''|escapejs }}";
+        const uploadStartCfg = parseInt(
+          "{{ upload_service_start|default_if_none:9|default:9 }}",
+          10,
+        );
+        const uploadEndCfg = parseInt(
+          "{{ upload_service_end|default_if_none:18|default:18 }}",
+          10,
+        );
+        const uploadBlockWeekendCfg =
+          '{{ upload_service_block_weekends|default_if_none:False|yesno:"true,false" }}';
+
+        const preferredLang = preferredLangCfg || "de";
+
+        window.PREFERRED_LANG = preferredLang;
+        document.documentElement.lang = preferredLang;
+
+        const calendarEnabled = calendarEnabledCfg === "true";
+        window.CALENDAR_ENABLED = calendarEnabled;
+        window.EVENTS_JSON_URL = calendarEnabled ? eventsJsonUrlCfg : null;
+        window.CALENDAR_HOVER = false;
+
+        const startHour = Number.isFinite(uploadStartCfg) ? uploadStartCfg : 9;
+        const endHour = Number.isFinite(uploadEndCfg) ? uploadEndCfg : 18;
+        const blockWeekends = uploadBlockWeekendCfg === true;
+        window.UPLOAD_SERVICE = { startHour, endHour, blockWeekends };
+
+        window.PASSWORD_RESET_URL = "{% url 'password_reset' %}";
+        window.LOGIN_URL = "{% url 'pages:login' %}";
+        window.REGISTER_URL = "{% url 'pages:register' %}";
+        window.MANUAL_URL = "{% url 'pages:manual' %}";
+        window.I18N_DATA_URL = "{% asset_url 'js/i18n-data.js' %}";
+        window.I18N_LOCALE_URLS = {
+          de: "{% asset_url 'locales/de.json' %}",
+          ru: "{% asset_url 'locales/ru.json' %}",
+          uk: "{% asset_url 'locales/uk.json' %}",
+        };
+      })();
+    </script>
+    <script>
+      (() => {
+        const mainScriptSrc = "{% asset_url 'js/main.js' %}";
+        let mainScriptLoaded = false;
+        let fallbackTimer = null;
+
+        const removeInteractionListeners = () => {
+          ["pointerdown", "keydown", "touchstart", "scroll"].forEach((eventName) => {
+            window.removeEventListener(eventName, loadMainScript, true);
+          });
+        };
+
+        function loadMainScript() {
+          if (mainScriptLoaded) return;
+          mainScriptLoaded = true;
+          removeInteractionListeners();
+          if (fallbackTimer) window.clearTimeout(fallbackTimer);
+
+          const script = document.createElement("script");
+          script.src = mainScriptSrc;
+          script.defer = true;
+          document.body.appendChild(script);
+        }
+
+        ["pointerdown", "keydown", "touchstart", "scroll"].forEach((eventName) => {
+          window.addEventListener(eventName, loadMainScript, {
+            capture: true,
+            once: true,
+            passive: true,
+          });
+        });
+
+        window.addEventListener(
+          "load",
+          () => {
+            fallbackTimer = window.setTimeout(loadMainScript, 12000);
+          },
+          { once: true },
+        );
+      })();
+    </script>
+    <!-- <a href="https://www.flaticon.com/de/kostenlose-icons/whatsapp" title="whatsapp Icons">Whatsapp Icons erstellt von Freepik - Flaticon</a> -->
+  </body>
+</html>

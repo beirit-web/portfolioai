@@ -1,0 +1,19 @@
+{% extends 'shop/base.html' %}
+{% load shop_ui %}
+{% block content %}
+  <div class="page-heading"><div><p class="eyebrow">DAS SORTIMENT</p><h2>Torten & Kuchen</h2></div><span class="muted">{{ products|length }} Artikel</span></div>
+  <form method="get" class="catalog-filters" aria-label="Produktfilter">
+    <label class="search-field"><span class="sr-only">Produkt suchen</span>{% shop_icon 'search' %}<input type="search" id="productSearch" name="q" value="{{ query }}" maxlength="80" placeholder="Torte, Schoko, Zutaten …"></label>
+    <div class="filter-field"><label class="sr-only" for="categorySelect">Kategorie</label><select name="category" id="categorySelect"><option value="all">Alle Kategorien</option>{% for key, label in categories %}<option value="{{ key }}" {% if category == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+    <div class="filter-field"><label class="sr-only" for="sortSelect">Sortierung</label><select name="sort" id="sortSelect"><option value="featured" {% if sort == 'featured' %}selected{% endif %}>Empfohlen</option><option value="priceAsc" {% if sort == 'priceAsc' %}selected{% endif %}>Preis aufsteigend</option><option value="priceDesc" {% if sort == 'priceDesc' %}selected{% endif %}>Preis absteigend</option><option value="leadTime" {% if sort == 'leadTime' %}selected{% endif %}>Kürzester Vorlauf</option></select></div>
+    <button class="icon-button filter-button" type="submit" title="Produkte filtern" aria-label="Produkte filtern">{% shop_icon 'filter' %}</button>
+  </form>
+  {% if query or category != 'all' %}<div class="filter-summary"><span>{% if query %}Suche: „{{ query }}“{% endif %}</span><a class="text-link" href="{% url 'storefront:catalog' %}">Filter zurücksetzen</a></div>{% endif %}
+  <div class="product-grid">
+    {% for product in products %}<article class="product-card" data-product-id="{{ product.pk }}">
+      <a class="product-photo" href="{% url 'storefront:product' product.slug %}"><img src="{{ product.image_url }}" alt="{{ product.name }}" width="620" height="620" {% if not forloop.first %}loading="lazy"{% endif %}></a>
+      <div class="product-copy"><p class="eyebrow">{{ product.get_category_display }}</p><h3><a href="{% url 'storefront:product' product.slug %}">{{ product.name }}</a></h3><p class="product-description">{{ product.description }}</p><div class="product-facts"><span>{{ product.serves }}</span><span>{% shop_icon 'clock' %}{{ product.lead_time_days }} Tag{{ product.lead_time_days|pluralize:'e' }} Vorlauf</span></div><p class="allergens">Allergene: {{ product.allergens|default:'Keine Angaben' }}</p>
+      <div class="product-footer"><strong>{{ product.price|euros }}</strong>{% if product.is_available %}<form method="post" action="{% url 'storefront:add' product.pk %}">{% csrf_token %}<input type="hidden" name="quantity" value="1"><input type="hidden" name="next" value="{{ request.get_full_path }}"><button type="submit" class="button button--primary" aria-label="{{ product.name }} in den Warenkorb">{% shop_icon 'plus' %}<span>Auswählen</span></button></form>{% else %}<span class="availability">Nicht verfügbar</span>{% endif %}</div></div>
+    </article>{% empty %}<div class="empty-state">{% shop_icon 'search' %}<h3>Keine Artikel gefunden</h3><a class="button button--secondary" href="{% url 'storefront:catalog' %}">Zum Sortiment</a></div>{% endfor %}
+  </div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "base_public.html" %}
+
+{% block title %}Anmelden | Beirit Digital{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block meta_description %}Login für bestehende Nutzerinnen und Nutzer von Beirit Digital.{% endblock %}
+
+{% block body_attrs %} class="has-topnav login-page theme-light-locked backstube-account"{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% asset_url 'shop/brand.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'shop/account.css' %}">
+{% endblock %}
+
+{% block content %}
+  <main class="backstube-account-page">
+    <section class="template-panel template-form-card login-form-card" aria-labelledby="login-form-title">
+      <h1 id="login-form-title" class="template-panel__kicker" data-i18n="login.form_title">Anmeldedaten</h1>
+      {% if form.non_field_errors %}
+        <div class="form-error" role="alert">{{ form.non_field_errors }}</div>
+      {% endif %}
+      <form method="post" class="form" data-submit-once>
+        {% csrf_token %}
+        {% if login_next %}
+          <input type="hidden" name="next" value="{{ login_next }}" />
+        {% endif %}
+        <div class="form-field">
+          <label for="{{ form.username.id_for_label }}" data-i18n="login.email_label">E-Mail-Adresse</label>
+          {{ form.username }}
+          <small class="form-help" data-i18n="login.email_help">
+            Bitte verwenden Sie die E-Mail-Adresse, mit der Sie sich registriert haben.
+          </small>
+          {% if form.username.errors %}
+            <div class="form-error">{{ form.username.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.password.id_for_label }}" data-i18n="login.password_label">Passwort</label>
+          <div class="form-input-row">
+            {{ form.password }}
+            <button
+              type="button"
+              class="form-input-action"
+              data-password-toggle="{{ form.password.id_for_label }}"
+              aria-controls="{{ form.password.id_for_label }}"
+              aria-label="Passwort anzeigen"
+            >
+              <span data-password-toggle-text data-i18n="login.password_show">Passwort anzeigen</span>
+            </button>
+          </div>
+          {% if form.password.errors %}
+            <div class="form-error">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="template-inline-note login-session-note">
+          <p class="form-help" data-i18n="login.info_idle_logout">
+            Aus Sicherheitsgründen erfolgt bei Inaktivität nach 10 Minuten eine automatische Abmeldung.
+          </p>
+        </div>
+        <button
+          type="submit"
+          class="btn-primary"
+          data-i18n="login.submit"
+          data-loading-label="Anmeldung läuft..."
+        >
+          Anmelden
+        </button>
+      </form>
+      <div class="template-actions login-actions" aria-label="Weitere Aktionen">
+        <a class="btn-secondary" href="{% url 'pages:register' %}" data-i18n="login.register">Registrieren</a>
+        <a class="btn-ghost cta-highlight" href="{% url 'password_reset' %}" data-i18n="login.reset">Passwort zurücksetzen</a>
+        <a class="btn-ghost" href="{% url 'pages:home' %}" data-i18n="login.cancel">Abbrechen</a>
+      </div>
+    </section>
+  </main>
+{% endblock %}

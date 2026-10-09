@@ -1,0 +1,29 @@
+{% autoescape off %}Kaufvertrag für ein Fahrzeug
+
+Verkäufer:
+{{ verkaeufer|default:"______________________________" }}
+
+Käufer:
+{{ kaeufer|default:"______________________________" }}
+
+1. Fahrzeugdaten
+Fahrzeugtyp: {{ fahrzeug|default:"______________________________" }}
+Marke und Modell: {{ modell|default:"______________________________" }}
+Fahrgestellnummer: {{ fin|default:"______________________________" }}
+Kilometerstand: {{ kilometer|default:"______________________________" }}
+
+2. Kaufpreis und Zahlung
+Kaufpreis: {{ preis|default:"________________ EUR" }}
+Zahlungsart: {{ zahlungsart|default:"______________________________" }}
+
+3. Verkauf und Übergabe
+Verkaufsdatum: {{ datum|default:"________________" }}
+Übergabe: {{ uebergabe|default:"______________________________" }}
+
+4. Zusätzliche Vereinbarungen
+{{ zusatz|default:"Keine zusätzlichen Vereinbarungen." }}
+
+{{ ort|default:"______________________________" }}, {{ datum|default:"________________" }}
+
+Unterschrift Verkäufer: ______________________________
+Unterschrift Käufer: ______________________________{% endautoescape %}

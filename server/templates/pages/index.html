@@ -1,0 +1,231 @@
+{% load static vite_assets %}
+<!doctype html>
+<html lang="{{ initial_lang|default:'de' }}" data-theme="light">
+  <head>
+    <title>{{ react_page_meta.title|default:"Beirit Web | Webentwicklung & digitale Lösungen" }}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="{{ react_page_meta.description|default:'Beirit Web entwickelt moderne Webseiten, Webapps und digitale Lösungen: Webentwicklung mit React und Django, Website-Optimierung, Fehlerbehebung, responsive Webdesigns und digitale Abläufe.' }}"
+    />
+    <meta
+      name="keywords"
+      content="{{ react_page_meta.keywords|default:'Beirit Web, Beirit Digital, Webentwicklung, digitale Lösungen, Webseiten erstellen, Website erstellen lassen, Webapps entwickeln, React Entwickler, Django Entwickler, Webdesign, Webseiten optimieren, Website reparieren, responsive Webseite, digitale Prozesse' }}"
+    />
+    <link rel="canonical" href="{{ site_url }}{{ react_page_meta.canonical_path|default:'/' }}" />
+    <link rel="alternate" hreflang="de" href="{{ site_url }}{{ react_page_meta.canonical_path|default:'/' }}" />
+    <link rel="alternate" hreflang="ru" href="{{ site_url }}{{ react_page_meta.canonical_path|default:'/' }}" />
+    <link rel="alternate" hreflang="uk" href="{{ site_url }}{{ react_page_meta.canonical_path|default:'/' }}" />
+    <link rel="alternate" hreflang="x-default" href="{{ site_url }}{{ react_page_meta.canonical_path|default:'/' }}" />
+    <meta name="robots" content="{{ react_page_meta.robots|default:'index, follow' }}" />
+    <meta name="geo.region" content="DE-NI" />
+    <meta name="geo.placename" content="Musterstadt, Niedersachsen" />
+    <meta property="og:locale" content="{% if initial_lang|slice:':2' == 'ru' %}ru_RU{% elif initial_lang|slice:':2' == 'uk' %}uk_UA{% else %}de_DE{% endif %}" />
+    <meta property="og:title" content="{{ react_page_meta.title|default:'Beirit Web | Webentwicklung & digitale Lösungen' }}" />
+    <meta
+      property="og:description"
+      content="{{ react_page_meta.description|default:'Beirit Web entwickelt moderne Webseiten, Webapps und digitale Lösungen: Webentwicklung mit React und Django, Website-Optimierung, Fehlerbehebung, responsive Webdesigns und digitale Abläufe.' }}"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ site_url }}{{ react_page_meta.canonical_path|default:'/' }}" />
+    <meta property="og:image" content="{{ site_url }}{% static 'images/aktueles-logo.png' %}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="1200" />
+    <meta property="og:image:alt" content="Beirit Digital Logo" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ react_page_meta.title|default:'Beirit Web | Webentwicklung & digitale Lösungen' }}" />
+    <meta
+      name="twitter:description"
+      content="{{ react_page_meta.description|default:'Beirit Web entwickelt moderne Webseiten, Webapps und digitale Lösungen: Webentwicklung mit React und Django, Website-Optimierung, Fehlerbehebung, responsive Webdesigns und digitale Abläufe.' }}"
+    />
+    <meta name="twitter:image" content="{{ site_url }}{% static 'images/aktueles-logo.png' %}" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
+    <link rel="shortcut icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
+    {% if react_route_path == '/ueber-mich' %}
+      <link rel="preload" as="image" href="{% static 'images/about-forest-background.webp' %}" fetchpriority="high" />
+    {% endif %}
+    {{ auth_session_js_config|json_script:"auth-session-config-data" }}
+    {{ react_home_config|json_script:"beirit-home-config-data" }}
+    <script>
+      window.PREFERRED_LANG = "{{ initial_lang|default:'de'|escapejs }}";
+      document.documentElement.lang =
+        window.PREFERRED_LANG || "{{ initial_lang|default:'de'|escapejs }}";
+      window.AUTH_SESSION_CONFIG = JSON.parse(
+        document.getElementById("auth-session-config-data").textContent
+      );
+      window.BEIRIT_HOME_CONFIG = JSON.parse(
+        document.getElementById("beirit-home-config-data").textContent
+      );
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": ["LocalBusiness", "ProfessionalService"],
+        "@id": "{{ site_url }}/#localbusiness",
+        "name": "Beirit Digital",
+        "url": "{{ site_url }}/",
+        "image": "{{ site_url }}{% static 'images/aktueles-logo.png' %}",
+        "logo": "{{ site_url }}{% static 'images/aktueles-logo-320.webp' %}",
+        "description": "Webentwicklung, Webapps, Website-Optimierung, responsive Webdesigns und digitale Lösungen mit React und Django aus Musterstadt.",
+        "founder": {
+          "@type": "Person",
+          "name": "Max Mustermann"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Musterstraße 1",
+          "postalCode": "12345",
+          "addressLocality": "Musterstadt",
+          "addressRegion": "Niedersachsen",
+          "addressCountry": "DE"
+        },
+        "areaServed": [
+          { "@type": "City", "name": "Musterstadt" },
+          { "@type": "Country", "name": "Deutschland" }
+        ],
+        "email": "max.mustermann@example.com",
+        "telephone": "+490000000000",
+        "priceRange": "ab 80 EUR",
+        "sameAs": [],
+        "knowsAbout": [
+          "Webentwicklung Musterstadt",
+          "React Entwickler Musterstadt",
+          "Django Entwickler Musterstadt",
+          "Webseiten reparieren Musterstadt",
+          "Webdesign Musterstadt",
+          "responsive Webseite",
+          "digitale Lösungen",
+          "digitale Prozesse"
+        ],
+        "makesOffer": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "React Webentwicklung" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Django Webentwicklung" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Webseiten reparieren" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Lokalisierung nach Absprache" } }
+        ]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Was brauche ich für eine erste Anfrage?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Eine kurze Beschreibung, relevante Links oder Screenshots und das Ziel reichen meist für eine erste Einschätzung."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Arbeiten Sie deutschlandweit?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ja. Die Umsetzung erfolgt digital; bei Bedarf können Details per E-Mail oder Telefon geklärt werden."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Ist die Anfrage verbindlich?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Nein. Die Anfrage ist unverbindlich. Erst nach Abstimmung von Umfang, Preis und Ablauf entsteht ein Auftrag."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Können bestehende React- oder Django-Projekte übernommen werden?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ja, sofern der Projektstand prüfbar ist. Vorab werden Struktur, Abhängigkeiten, Zugriff und Risiken eingeschätzt."
+            }
+          }
+        ]
+      }
+    </script>
+    {% if react_is_home_route %}
+      {% vite_inline_css_assets 'src/components/home/hero/Hero.css' 'src/header-nav.css' 'src/components/home/homepage/HomePage.css' 'src/homepage-layout.css' %}
+    {% elif react_route_path == '/ueber-mich' %}
+      {% vite_css_assets 'src/about-shell.css' 'src/about-page.css' 'src/header-nav.css' %}
+    {% elif react_route_path == '/wetter' %}
+      {% vite_css_assets 'src/styles.css' 'src/header-nav.css' 'src/components/weather/WeatherPage.css' %}
+    {% elif react_route_path == '/kontakt' or react_route_path == '/kompetenzen' %}
+      <script>
+        {
+          const anchor = document.currentScript;
+          const desktop = window.matchMedia("(min-width: 48rem)");
+          const desktopCss = {% vite_css_asset_urls 'src/styles.css' 'src/homepage-custom.css' 'src/responsive-overrides.css' %};
+          const mobileCss = {% vite_css_asset_urls 'src/mobile-pages.css' %};
+          const loaded = new Map();
+          const loadPageCss = (isDesktop) => Promise.all((isDesktop ? desktopCss : mobileCss).map((href) => {
+            if (loaded.has(href)) return loaded.get(href);
+            const promise = new Promise((resolve) => {
+              const link = document.createElement("link");
+              link.rel = "stylesheet";
+              link.href = href;
+              link.media = isDesktop ? "(min-width: 48rem)" : "(max-width: 47.99rem)";
+              link.onload = resolve;
+              link.onerror = resolve;
+              document.head.insertBefore(link, anchor);
+            });
+            loaded.set(href, promise);
+            return promise;
+          }));
+          window.BEIRIT_CRITICAL_CSS_READY = loadPageCss(desktop.matches);
+          const onViewportChange = (event) => loadPageCss(event.matches);
+          if (desktop.addEventListener) desktop.addEventListener("change", onViewportChange);
+          else desktop.addListener(onViewportChange);
+        }
+      </script>
+      <noscript>{% vite_css_assets 'src/styles.css' 'src/homepage-custom.css' 'src/responsive-overrides.css' %}</noscript>
+      {% vite_css_assets 'src/header-nav.css' %}
+    {% else %}
+      {% vite_css_assets 'src/styles.css' 'src/homepage-custom.css' 'src/responsive-overrides.css' 'src/header-nav.css' %}
+    {% endif %}
+    <script>
+      window.BEIRIT_DEFERRED_CSS = [];
+    </script>
+    {% if react_route_path == '/kontakt' %}
+      {% vite_inline_css_assets 'src/components/contact/ContactForm.jsx' %}
+      {% vite_modulepreload_assets 'src/components/contact/ContactForm.jsx' %}
+    {% endif %}
+    {% vite_react_assets 'src/main.jsx' %}
+  </head>
+  <body>
+    <div id="beirit-root">
+      {% if react_is_home_route %}
+        <div class="site-shell site-shell--home min-h-screen bg-[#f3f4f6] text-stone-950">
+          <main id="top" class="home-main">
+            <section class="hero-stage" aria-hidden="true">
+              <div class="hero-stage__wave-grid" aria-hidden="true"></div>
+              <div class="hero-stage__mesh" aria-hidden="true"></div>
+            </section>
+          </main>
+        </div>
+      {% endif %}
+    </div>
+    <noscript>
+      <main class="react-noscript-message">
+        <h1>Beirit Web Webentwicklung & digitale Lösungen</h1>
+        <p>Bitte aktivieren Sie JavaScript, um die React-Oberfläche und das Kontaktformular zu nutzen.</p>
+        <p><a href="/kontakt/">Kontakt</a></p>
+      </main>
+    </noscript>
+    {% if contact_form.errors %}
+      <section class="react-home-errors" aria-live="polite">
+        {% for field in contact_form %}
+          {% for error in field.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        {% endfor %}
+        {% for error in contact_form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </section>
+    {% endif %}
+  </body>
+</html>

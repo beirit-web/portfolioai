@@ -1,0 +1,32 @@
+{% with listing=item.listing %}
+  <article class="listing-card {% if item.status == 'new' %}new{% endif %}">
+    <div class="listing-image">
+      {% if listing.image_url %}
+        <img src="{{ listing.image_url }}" alt="">
+      {% else %}
+        <span>{{ listing.city }}</span>
+      {% endif %}
+    </div>
+    <div class="listing-body">
+      <div class="listing-title-row">
+        <h3><a href="{% url 'housing_search:listing_detail' item.pk %}">{{ listing.title }}</a></h3>
+        <span class="score">{{ listing.score }}</span>
+      </div>
+      <p>{{ listing.city }} · {{ listing.rooms }} Zi. · {{ listing.size }} m2 · {{ listing.warm_rent }} EUR</p>
+      <p class="source">{{ listing.source_name }}</p>
+      <div class="card-actions">
+        <span class="badge">{{ item.get_status_display }}</span>
+        <form method="post" action="{% url 'housing_search:listing_quick_status' item.pk 'favorite' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button type="submit">Favorit</button>
+        </form>
+        <form method="post" action="{% url 'housing_search:listing_quick_status' item.pk 'ignored' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button type="submit">Ignorieren</button>
+        </form>
+      </div>
+    </div>
+  </article>
+{% endwith %}

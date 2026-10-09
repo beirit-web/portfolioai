@@ -1,0 +1,477 @@
+{% extends "base_public.html" %}
+{% load static %}
+
+{% block title %}{% if initial_lang|slice:":2" == "ru" %}Политика конфиденциальности{% else %}Datenschutz{% endif %} | Beirit Digital{% endblock %}
+{% block meta_description %}{% if initial_lang|slice:":2" == "ru" %}Политика конфиденциальности Beirit Digital: обработка персональных данных при контактной форме, коммуникации и переводах по договоренности.{% else %}Datenschutz bei Beirit Digital: Verarbeitung personenbezogener Daten bei Kontaktformular, Kommunikation und Übersetzung nach Absprache.{% endif %}{% endblock %}
+{% block og_title %}{% if initial_lang|slice:":2" == "ru" %}Политика конфиденциальности{% else %}Datenschutz{% endif %} | Beirit Digital{% endblock %}
+{% block og_description %}{% if initial_lang|slice:":2" == "ru" %}Информация об обработке персональных данных в Beirit Digital.{% else %}Informationen zur Verarbeitung personenbezogener Daten bei Beirit Digital.{% endif %}{% endblock %}
+{% block twitter_title %}{% if initial_lang|slice:":2" == "ru" %}Политика конфиденциальности{% else %}Datenschutz{% endif %} | Beirit Digital{% endblock %}
+{% block twitter_description %}{% if initial_lang|slice:":2" == "ru" %}Информация о защите данных для Beirit Digital.{% else %}Datenschutzinformationen für Beirit Digital.{% endif %}{% endblock %}
+
+{% block body_attrs %} class="has-topnav legal-body legal-body--privacy template-body"{% endblock %}
+
+{% block topnav %}
+  <div class="topnav" id="mainTopnav">
+    <a
+      class="nav-cube-link"
+      href="{% url 'pages:home' %}#top"
+      aria-label="{% if initial_lang|slice:':2' == 'ru' %}Beirit Digital Главная{% else %}Beirit Digital Startseite{% endif %}"
+    >
+      <img
+        src="{% static 'images/aktueles-logo-160.webp' %}"
+        sizes="56px"
+        alt="Beirit Digital"
+        class="legal-topnav-logo"
+        width="80"
+        height="80"
+        decoding="async"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </a>
+    <a href="{% url 'pages:home' %}#top" class="nav-link nav-link--home" data-i18n="nav.home">{% if initial_lang|slice:':2' == 'ru' %}Главная{% else %}Start{% endif %}</a>
+    <a href="{% url 'pages:projects_page' %}" class="nav-link">{% if initial_lang|slice:':2' == 'ru' %}Проекты{% else %}Projekte{% endif %}</a>
+    <a href="{% url 'pages:skills_page' %}" class="nav-link">{% if initial_lang|slice:':2' == 'ru' %}Компетенции{% else %}Kompetenzen{% endif %}</a>
+    <a href="{% url 'pages:home' %}#profil" class="nav-link" data-i18n="nav.about">{% if initial_lang|slice:':2' == 'ru' %}Обо мне{% else %}Über{% endif %}</a>
+    <a href="{% url 'pages:home' %}#kontakt" class="nav-link nav-link--contact" data-i18n="nav.contact">{% if initial_lang|slice:':2' == 'ru' %}Контакты{% else %}Kontakt{% endif %}</a>
+  </div>
+{% endblock %}
+
+{% block content %}
+  {% if initial_lang|slice:":2" == "ru" %}
+  <main class="page-shell has-topnav template-page template-page--wide legal-page-shell legal-page-shell--terms">
+    <header class="terms-hero" aria-labelledby="privacy-title">
+      <div class="terms-hero__copy">
+        <h1 id="privacy-title">Политика конфиденциальности</h1>
+        <p class="legal-callout">Вымышленные примерные данные для демонстрации портфолио.</p>
+        <p class="section-intro">
+          Информация об обработке персональных данных в Beirit Digital,
+          включая запросы по переводам и языковой адаптации по договоренности.
+          Эта политика объясняет, какие персональные данные обрабатываются при
+          использовании этого сайта, для каких целей это происходит и какие права
+          у вас есть.
+        </p>
+        <p class="legal-authoritative-note" data-i18n="legal.authoritative_note">
+          Немецкая версия является юридически определяющей.
+        </p>
+      </div>
+      <div class="terms-hero__facts" aria-label="Краткий обзор">
+        <span>Контактная форма</span>
+        <span>Без рекламной аналитики</span>
+        <span>Передача только при необходимости</span>
+        <span>Версия: октябрь 2026</span>
+      </div>
+    </header>
+
+    <div class="legal-page">
+      <section class="template-panel legal-section" id="verantwortlich">
+        <h2>Ответственное лицо</h2>
+        <p>Ответственный за обработку данных:</p>
+        <address>
+          {{ imprint.owner_name }}<br />
+          {{ imprint.business_name }}<br />
+          {{ imprint.street_address }}<br />
+          {{ imprint.postal_code }} {{ imprint.city }}<br />
+          {{ imprint.country }}
+        </address>
+        <p>
+          E-Mail: <a href="mailto:{{ imprint.email }}">{{ imprint.email }}</a><br />
+          Дополнительная информация указана в <a href="{% url 'pages:imprint' %}">импрессуме</a>.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="kontaktformular">
+        <h2>Контактная форма и запросы</h2>
+        <h3>Собираемые данные</h3>
+        <ul>
+          <li>Имя</li>
+          <li>Адрес электронной почты</li>
+          <li>Номер телефона, если указан</li>
+          <li>Сайт/ссылка, если указаны</li>
+          <li>Файл-вложение, если загружен</li>
+          <li>Сообщение/содержание запроса</li>
+        </ul>
+        <h3>Цель</h3>
+        <ul>
+          <li>Обработка запроса</li>
+          <li>Коммуникация</li>
+          <li>Уточнения по проекту</li>
+          <li>Подготовка предложения</li>
+          <li>Техническая прослеживаемость</li>
+        </ul>
+        <p>
+          Передача персональных данных осуществляется только в той мере, в которой это
+          технически, договорно или законом необходимо.
+        </p>
+        <p>
+          Коммуникация может происходить по электронной почте. Цифровые счета могут
+          предоставляться в формате PDF.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="dateiupload">
+        <h2>Загрузка файлов</h2>
+        <p>
+          Если вы добровольно загружаете файл, сам файл и содержащаяся в нем информация
+          обрабатываются для рассмотрения вашего запроса. Пожалуйста, не загружайте
+          данные, которые не нужны для вашего обращения.
+        </p>
+        <p>
+          Загруженные файлы хранятся только столько, сколько это необходимо для запроса,
+          возможного проекта или выполнения законных обязанностей.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="email-kommunikation">
+        <h2>Коммуникация по электронной почте</h2>
+        <p>
+          При обращении по электронной почте адрес отправителя, содержание сообщения и
+          другие переданные данные обрабатываются для обработки и ответа на сообщение.
+          Электронные письма хранятся в рамках законных и деловых требований, после чего
+          удаляются.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="zwecke">
+        <h2>Цели обработки</h2>
+        <ul>
+          <li>Обработка контактных и проектных запросов</li>
+          <li>Подготовка предложений и проектных соглашений</li>
+          <li>Безопасная техническая работа сайта</li>
+          <li>Анализ ошибок и защита от злоупотреблений</li>
+          <li>Выполнение законных обязанностей по хранению</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="rechtsgrundlagen">
+        <h2>Правовые основания</h2>
+        <dl class="imprint-detail-list">
+          <div>
+            <dt>Ст. 6 абз. 1 лит. b GDPR/DSGVO</dt>
+            <dd>Запросы, преддоговорная коммуникация и проекты</dd>
+          </div>
+          <div>
+            <dt>Ст. 6 абз. 1 лит. f GDPR/DSGVO</dt>
+            <dd>Безопасная работа, техническая стабильность и коммуникация</dd>
+          </div>
+          <div>
+            <dt>Ст. 6 абз. 1 лит. c GDPR/DSGVO</dt>
+            <dd>Законные обязанности и хранение</dd>
+          </div>
+          <div>
+            <dt>Ст. 6 абз. 1 лит. a GDPR/DSGVO</dt>
+            <dd>Согласие, если оно требуется</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="template-panel legal-section" id="deutschlive-aufnahmen">
+        <h2>DeutschLive: локальные аудиозаписи</h2>
+        <p>Функция «Мои записи» сохраняет выбранные вами аудиофайлы и метаданные, например имя файла и время добавления, только в хранилище браузера на вашем устройстве (IndexedDB). Плеер не передаёт эти записи на сервер и не синхронизирует их между устройствами. Посещение сайта и вход в аккаунт регулируются остальными положениями о технических данных и аккаунтах.</p>
+        <p>Списки разделены по аккаунтам и гостевому режиму. Записи хранятся до удаления из коллекции или очистки данных сайта; браузер также может удалить их. Выход из аккаунта или удаление аккаунта не очищает локальную коллекцию автоматически. Исходные и скачанные файлы сохраняются независимо от неё. Используйте «Скачать» для сохранения важных файлов.</p>
+        <p>Это разделение не заменяет защиту устройства и профиля браузера. Подробные сведения о данных, хранении, доступе и удалении приведены в <a href="/deutschlive/datenschutz">политике конфиденциальности DeutschLive</a>.</p>
+      </section>
+
+      <section class="template-panel legal-section" id="serverdaten">
+        <h2>Серверные и технические данные</h2>
+        <p>
+          При открытии сайта могут обрабатываться технически необходимые данные, например
+          IP-адрес, время доступа, тип браузера и запрошенные страницы. Эти данные служат
+          безопасности, стабильности и анализу ошибок.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="verschluesselung">
+        <h2>SSL-/TLS-шифрование</h2>
+        <p>
+          Этот сайт использует зашифрованное соединение. Благодаря этому данные,
+          передаваемые между вашим браузером и сервером, защищены от несанкционированного
+          чтения.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="empfaenger">
+        <h2>Получатели и технические поставщики услуг</h2>
+        <p>
+          Для хостинга, электронной коммуникации, обслуживания и безопасности могут
+          использоваться технические поставщики услуг.
+        </p>
+        <ul>
+          <li>Хостинг: Musterhosting</li>
+          <li>E-Mail: Muster-Mailanbieter</li>
+          <li>Рекламная аналитика и маркетинговое профилирование не используются.</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="cookies">
+        <h2>Cookies и локальное хранение</h2>
+        <ul>
+          <li>Для функций входа и безопасности могут использоваться технически необходимые cookies.</li>
+          <li>Рекламные tracking-cookies не используются.</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="speicherdauer">
+        <h2>Срок хранения</h2>
+        <p>
+          Данные хранятся только столько, сколько это необходимо для обработки,
+          коммуникации или выполнения законных обязанностей.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="bereitstellung">
+        <h2>Предоставление данных</h2>
+        <p>
+          Предоставление персональных данных в принципе добровольно. Однако обязательные
+          поля в контактной форме необходимы, чтобы запрос мог быть обработан и на него
+          можно было ответить.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="automatisierung">
+        <h2>Автоматизированные решения</h2>
+        <p>
+          Исключительно автоматизированное принятие решений и профилирование в смысле
+          ст. 22 GDPR/DSGVO не осуществляются.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="rechte">
+        <h2>Ваши права</h2>
+        <ul>
+          <li>Право на получение информации</li>
+          <li>Право на исправление</li>
+          <li>Право на удаление</li>
+          <li>Право на ограничение обработки</li>
+          <li>Право на возражение</li>
+          <li>Право на переносимость данных</li>
+          <li>Право отозвать согласие</li>
+          <li>Право подать жалобу</li>
+        </ul>
+        <p>
+          Кроме того, вы имеете право обратиться с жалобой в компетентный надзорный
+          орган по защите данных в связи с обработкой ваших персональных данных.
+        </p>
+      </section>
+    </div>
+  </main>
+  {% else %}
+  <main class="page-shell has-topnav template-page template-page--wide legal-page-shell legal-page-shell--terms">
+    <header class="terms-hero" aria-labelledby="privacy-title">
+      <div class="terms-hero__copy">
+        <h1 id="privacy-title">Datenschutz</h1>
+        <p class="legal-callout">Fiktive Musterangaben für die Portfolio-Demonstration.</p>
+        <p class="section-intro">
+          Informationen zur Verarbeitung personenbezogener Daten bei Beirit Digital,
+          einschließlich Anfragen zu Übersetzung nach Absprache.
+          Diese Datenschutzerklärung informiert darüber, welche personenbezogenen Daten
+          bei Nutzung dieser Website verarbeitet werden, zu welchen Zwecken dies geschieht
+          und welche Rechte Ihnen zustehen.
+        </p>
+        <p class="legal-authoritative-note" data-i18n="legal.authoritative_note">
+          Die deutsche Fassung ist maßgeblich.
+        </p>
+      </div>
+      <div class="terms-hero__facts" aria-label="Kurzüberblick">
+        <span>Kontaktformular</span>
+        <span>Keine Werbe-Analytics</span>
+        <span>Weitergabe nur wenn erforderlich</span>
+        <span>Stand: Oktober 2026</span>
+      </div>
+    </header>
+
+    <div class="legal-page">
+      <section class="template-panel legal-section" id="verantwortlich">
+        <h2>Verantwortliche Stelle</h2>
+        <p>Verantwortlich für die Datenverarbeitung:</p>
+        <address>
+          {{ imprint.owner_name }}<br />
+          {{ imprint.business_name }}<br />
+          {{ imprint.street_address }}<br />
+          {{ imprint.postal_code }} {{ imprint.city }}<br />
+          {{ imprint.country }}
+        </address>
+        <p>
+          E-Mail: <a href="mailto:{{ imprint.email }}">{{ imprint.email }}</a><br />
+          Weitere Angaben finden Sie im <a href="{% url 'pages:imprint' %}">Impressum</a>.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="kontaktformular">
+        <h2>Kontaktformular und Anfragen</h2>
+        <h3>Erhobene Daten</h3>
+        <ul>
+          <li>Name</li>
+          <li>E-Mail-Adresse</li>
+          <li>Telefonnummer optional</li>
+          <li>Website/Link optional</li>
+          <li>Dateianhang optional</li>
+          <li>Nachricht/Inhalt der Anfrage</li>
+        </ul>
+        <h3>Zweck</h3>
+        <ul>
+          <li>Bearbeitung der Anfrage</li>
+          <li>Kommunikation</li>
+          <li>Projektbezogene Rückfragen</li>
+          <li>Angebotserstellung</li>
+          <li>Technische Nachvollziehbarkeit</li>
+        </ul>
+        <p>
+          Eine Weitergabe personenbezogener Daten erfolgt nur, soweit dies technisch,
+          vertraglich oder gesetzlich erforderlich ist.
+        </p>
+        <p>
+          Kommunikation kann per E-Mail erfolgen. Digitale Rechnungen können als PDF
+          bereitgestellt werden.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="dateiupload">
+        <h2>Datei-Upload</h2>
+        <p>
+          Wenn Sie freiwillig eine Datei hochladen, werden die Datei sowie die darin
+          enthaltenen Informationen zur Bearbeitung Ihrer Anfrage verarbeitet. Laden Sie
+          bitte keine Daten hoch, die für das Anliegen nicht erforderlich sind.
+        </p>
+        <p>
+          Hochgeladene Dateien werden nur so lange gespeichert, wie dies für die Anfrage,
+          ein daraus entstehendes Projekt oder gesetzliche Pflichten erforderlich ist.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="email-kommunikation">
+        <h2>E-Mail-Kommunikation</h2>
+        <p>
+          Bei einer Kontaktaufnahme per E-Mail werden Absenderadresse, Inhalt und weitere
+          übermittelte Angaben zur Bearbeitung und Beantwortung der Nachricht verarbeitet.
+          E-Mails werden im Rahmen der gesetzlichen und geschäftlichen Erfordernisse
+          gespeichert und anschließend gelöscht.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="zwecke">
+        <h2>Zwecke der Verarbeitung</h2>
+        <ul>
+          <li>Bearbeitung von Kontakt- und Projektanfragen</li>
+          <li>Vorbereitung von Angeboten und Projektvereinbarungen</li>
+          <li>Sicherer technischer Betrieb der Website</li>
+          <li>Fehleranalyse und Missbrauchsschutz</li>
+          <li>Gesetzliche Aufbewahrungspflichten</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="rechtsgrundlagen">
+        <h2>Rechtsgrundlagen</h2>
+        <dl class="imprint-detail-list">
+          <div>
+            <dt>Art. 6 Abs. 1 lit. b DSGVO</dt>
+            <dd>Anfragen, vorvertragliche Kommunikation und Projekte</dd>
+          </div>
+          <div>
+            <dt>Art. 6 Abs. 1 lit. f DSGVO</dt>
+            <dd>Sicherer Betrieb, technische Stabilität und Kommunikation</dd>
+          </div>
+          <div>
+            <dt>Art. 6 Abs. 1 lit. c DSGVO</dt>
+            <dd>Gesetzliche Pflichten und Aufbewahrung</dd>
+          </div>
+          <div>
+            <dt>Art. 6 Abs. 1 lit. a DSGVO</dt>
+            <dd>Einwilligung, sofern erforderlich</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="template-panel legal-section" id="deutschlive-aufnahmen">
+        <h2>DeutschLive: lokal gespeicherte Audioaufnahmen</h2>
+        <p>Die Funktion „Meine Aufnahmen“ speichert selbst ausgewählte Audiodateien und Aufnahmemetadaten, etwa Dateiname und Zeitpunkt des Hinzufügens, ausschließlich im Browser auf Ihrem Gerät (IndexedDB). Der Player übermittelt diese Aufnahmen nicht an den Server und synchronisiert sie nicht zwischen Geräten. Für den Seitenaufruf und die Anmeldung gelten weiterhin die übrigen Hinweise zu technischen Daten und Konten.</p>
+        <p>Die Listen sind nach Nutzerkonto beziehungsweise Gastmodus getrennt. Aufnahmen bleiben bis zum Entfernen aus der Sammlung oder Löschen der Website-Daten gespeichert; auch der Browser kann sie entfernen. Abmelden oder Kontolöschung entfernt die lokale Sammlung nicht automatisch. Originaldateien und heruntergeladene Dateien bleiben unabhängig davon erhalten. Nutzen Sie „Herunterladen“ zur Sicherung wichtiger Dateien.</p>
+        <p>Diese Trennung ersetzt keinen Schutz Ihres Geräts oder Browserprofils. Einzelheiten zu Daten, Speicherdauer, Zugriff und Löschung stehen in der <a href="/deutschlive/datenschutz">Datenschutzerklärung von DeutschLive</a>.</p>
+      </section>
+
+      <section class="template-panel legal-section" id="serverdaten">
+        <h2>Serverdaten und technische Daten</h2>
+        <p>
+          Beim Aufruf der Website können technisch notwendige Daten wie IP-Adresse,
+          Zeitpunkt des Zugriffs, Browsertyp und angeforderte Seiten verarbeitet werden.
+          Diese Daten dienen der Sicherheit, Stabilität und Fehleranalyse.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="verschluesselung">
+        <h2>SSL-/TLS-Verschlüsselung</h2>
+        <p>
+          Diese Website nutzt eine verschlüsselte Verbindung. Dadurch werden Daten,
+          die zwischen Ihrem Browser und dem Server übertragen werden, vor dem
+          unbefugten Mitlesen geschützt.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="empfaenger">
+        <h2>Empfänger und technische Dienstleister</h2>
+        <p>
+          Für Hosting, E-Mail-Kommunikation, Wartung und Sicherheit können technische
+          Dienstleister eingesetzt werden.
+        </p>
+        <ul>
+          <li>Hosting: Musterhosting</li>
+          <li>E-Mail: Muster-Mailanbieter</li>
+          <li>Es werden keine Werbe-Analytics und kein Marketing-Profiling eingesetzt.</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="cookies">
+        <h2>Cookies und lokale Speicherung</h2>
+        <ul>
+          <li>Für Login- und Sicherheitsfunktionen können technisch notwendige Cookies verwendet werden.</li>
+          <li>Es werden keine Werbe-Tracking-Cookies eingesetzt.</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="speicherdauer">
+        <h2>Speicherdauer</h2>
+        <p>
+          Daten werden nur so lange gespeichert, wie dies für Bearbeitung, Kommunikation
+          oder gesetzliche Pflichten erforderlich ist.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="bereitstellung">
+        <h2>Bereitstellung von Daten</h2>
+        <p>
+          Die Bereitstellung personenbezogener Daten ist grundsätzlich freiwillig.
+          Pflichtfelder im Kontaktformular sind jedoch erforderlich, damit eine Anfrage
+          bearbeitet und beantwortet werden kann.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="automatisierung">
+        <h2>Automatisierte Entscheidungen</h2>
+        <p>
+          Es findet keine ausschließlich automatisierte Entscheidungsfindung und kein
+          Profiling im Sinne von Art. 22 DSGVO statt.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="rechte">
+        <h2>Ihre Rechte</h2>
+        <ul>
+          <li>Auskunft</li>
+          <li>Berichtigung</li>
+          <li>Löschung</li>
+          <li>Einschränkung</li>
+          <li>Widerspruch</li>
+          <li>Datenübertragbarkeit</li>
+          <li>Widerruf von Einwilligungen</li>
+          <li>Beschwerderecht</li>
+        </ul>
+        <p>
+          Sie haben außerdem das Recht, sich bei einer zuständigen
+          Datenschutzaufsichtsbehörde über die Verarbeitung Ihrer personenbezogenen
+          Daten zu beschweren.
+        </p>
+      </section>
+    </div>
+  </main>
+  {% endif %}
+{% endblock %}

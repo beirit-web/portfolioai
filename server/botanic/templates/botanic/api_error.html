@@ -1,0 +1,3 @@
+{% extends 'botanic/base.html' %}
+{% load botanic_ui %}
+{% block content %}<div class="empty-state error-state" role="alert">{% botanic_icon 'alert' %}<h2>Pflanzenquelle nicht verfügbar</h2><p>{{ api_error }}</p><a class="button button--secondary" href="{% url 'botanic:index' %}?tab=search">Zum Pflanzenkatalog</a></div>{% endblock %}

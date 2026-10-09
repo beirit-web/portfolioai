@@ -1,0 +1,94 @@
+{% extends "admin/change_form.html" %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block object-tools-items %}
+  {% if change and not is_popup and callback_notice_add_url %}
+    <li>
+      <a href="{{ callback_notice_add_url }}">Kontonachricht vorbereiten</a>
+    </li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}
+
+{% block sidebar %}
+  <div id="content-related">
+    <div class="module admin-context-sidebar">
+      <h2>Kontokontext</h2>
+
+      <section class="admin-context-sidebar__section">
+        <h3>Kontostatus</h3>
+        {% if sidebar_actions %}
+          <div class="admin-workspace-links admin-context-sidebar__actions">
+            {% for item in sidebar_actions %}
+              <a href="{{ item.url }}">{{ item.label }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if account_status %}
+          <dl class="admin-context-facts">
+            {% for item in account_status %}
+              <div class="admin-context-facts__row">
+                <dt>{{ item.label }}</dt>
+                <dd>{{ item.value }}</dd>
+              </div>
+            {% endfor %}
+          </dl>
+        {% else %}
+          <p class="admin-context-sidebar__empty">Kein zusätzlicher Kontostatus vorhanden.</p>
+        {% endif %}
+      </section>
+
+      <section class="admin-context-sidebar__section">
+        <h3>Letzter Postfachverlauf</h3>
+        {% if mailbox_items %}
+          <ul class="admin-context-list">
+            {% for item in mailbox_items %}
+              <li class="admin-context-list__item">
+                <a href="{{ item.url }}" class="admin-context-list__title">{{ item.label }}</a>
+                <p class="admin-context-list__meta">{{ item.created_at|date:"d.m.Y H:i" }} · {{ item.meta }}</p>
+                <p class="admin-context-list__text">{{ item.text|truncatechars:120 }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="admin-context-sidebar__empty">Noch kein Verlauf im Kontopostfach.</p>
+        {% endif %}
+      </section>
+
+      <section class="admin-context-sidebar__section">
+        <h3>Letzte Kontonachrichten</h3>
+        {% if notice_items %}
+          <ul class="admin-context-list">
+            {% for item in notice_items %}
+              <li class="admin-context-list__item">
+                <a href="{{ item.url }}" class="admin-context-list__title">{{ item.label }}</a>
+                <p class="admin-context-list__meta">{{ item.created_at|date:"d.m.Y H:i" }}</p>
+                <p class="admin-context-list__text">{{ item.text|truncatechars:120 }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="admin-context-sidebar__empty">Noch keine interne Nachricht vorhanden.</p>
+        {% endif %}
+      </section>
+
+      <section class="admin-context-sidebar__section">
+        <h3>Neueste Dokumente</h3>
+        {% if document_items %}
+          <ul class="admin-context-list">
+            {% for item in document_items %}
+              <li class="admin-context-list__item">
+                <a href="{{ item.url }}" class="admin-context-list__title">{{ item.label }}</a>
+                <p class="admin-context-list__meta">{{ item.created_at|date:"d.m.Y H:i" }}</p>
+                <p class="admin-context-list__text">{{ item.meta }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="admin-context-sidebar__empty">Noch keine Dokumente im Konto hinterlegt.</p>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base_public.html" %}
+{% load static %}
+
+{% block title %}Profil bearbeiten | Dolmetscher{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block body_attrs %} class="page-shell has-topnav template-body"{% endblock %}
+
+{% block content %}
+  <main class="page-shell has-topnav template-page template-page--narrow">
+    <section class="template-panel template-form-card">
+      <div class="section-header">
+        <div>
+          <p class="section-kicker">Dolmetscher:innen</p>
+          <h1 class="section-title">Profil bearbeiten</h1>
+          <p class="section-intro">Aktualisieren Sie Ihre Profilangaben für die öffentliche Dolmetscher-Karte.</p>
+        </div>
+      </div>
+      {% if messages %}
+        {% for message in messages %}
+          <div class="notice notice-success">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-primary">Speichern</button>
+      </form>
+    </section>
+  </main>
+{% endblock %}

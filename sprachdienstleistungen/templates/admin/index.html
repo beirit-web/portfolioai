@@ -1,0 +1,197 @@
+{% extends "admin/base_site.html" %}
+{% load i18n log admin_dashboard %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard admin-dashboard{% endblock %}
+
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block content %}
+  {% admin_explorer_sections as explorer_sections %}
+  {% admin_optional_url 'admin:auth_user_changelist' as users_url %}
+  {% admin_optional_url 'admin:pages_chatmessage_changelist' as chat_url %}
+  {% admin_optional_url 'admin:pages_appointment_changelist' as appointments_url %}
+  {% admin_optional_url 'admin:pages_interpreterapplication_changelist' as applications_url %}
+
+  <div id="content-main" class="admin-explorer-home">
+    <section class="admin-explorer-hero">
+      <span class="admin-explorer-hero__eyebrow">Arbeitsbereich</span>
+      <div class="admin-explorer-hero__head">
+        <div class="admin-explorer-hero__copy">
+          <h1>Hierarchische Verwaltungsstruktur</h1>
+          <p>
+            Der Admin ist als Explorer-artiger Arbeitsbereich aufgebaut.
+            Hauptbereiche bilden die oberste Ebene, darunter folgen Unterbereiche,
+            Datenmodelle und konkrete Verwaltungsaktionen.
+          </p>
+        </div>
+        <div class="admin-explorer-hero__actions">
+          <a href="{% url 'admin:index' %}">Startordner</a>
+          {% if site_url %}
+            <a href="{{ site_url }}">Website öffnen</a>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <div class="admin-explorer-layout">
+      <aside class="admin-tree-panel" aria-label="Ordnerbaum">
+        <section class="admin-tree-panel__section">
+          <h2>Ordnerbaum</h2>
+          <nav class="admin-tree">
+            {% for section in explorer_sections %}
+              <details class="admin-tree__node" data-tree-node="{{ section.id }}"{% if forloop.first %} open{% endif %}>
+                <summary class="admin-tree__folder" data-tree-summary="{{ section.id }}">
+                  <span class="admin-tree__folder-label">{{ section.label }}</span>
+                  <span class="admin-tree__folder-count">{{ section.subsection_count }}</span>
+                </summary>
+                <div class="admin-tree__branch">
+                  <a href="#{{ section.id }}" class="admin-tree__section-link">Bereich öffnen</a>
+                  {% for subsection in section.subsections %}
+                    <a href="#{{ subsection.anchor }}" class="admin-tree__child">{{ subsection.label }}</a>
+                  {% endfor %}
+                </div>
+              </details>
+            {% endfor %}
+          </nav>
+        </section>
+
+        <section class="admin-tree-panel__section">
+          <h2>Schnellzugriff</h2>
+          <div class="admin-tree-quicklinks">
+            {% if applications_url %}
+              <a href="{{ applications_url }}">Neue Bewerbungen</a>
+            {% endif %}
+            {% if chat_url %}
+              <a href="{{ chat_url }}">Kommunikation</a>
+            {% endif %}
+            {% if appointments_url %}
+              <a href="{{ appointments_url }}">Termine</a>
+            {% endif %}
+            {% if users_url %}
+              <a href="{{ users_url }}">Benutzerkonten</a>
+            {% endif %}
+          </div>
+        </section>
+      </aside>
+
+      <div class="admin-folder-workspace">
+        {% for section in explorer_sections %}
+          <section id="{{ section.id }}" class="admin-folder-section">
+            <header class="admin-folder-section__header">
+              <div class="admin-folder-section__label">
+                <div class="admin-folder-section__titleline">
+                  <span class="admin-folder-icon" aria-hidden="true"></span>
+                  <h2>{{ section.label }}</h2>
+                </div>
+                <p>{{ section.summary }}</p>
+              </div>
+              <span class="admin-folder-section__stats">
+                {{ section.subsection_count }} Unterbereiche · {{ section.entry_count }} Einträge
+              </span>
+            </header>
+
+            <div class="admin-folder-section__body">
+              {% for subsection in section.subsections %}
+                <article id="{{ subsection.anchor }}" class="admin-subfolder">
+                  <header class="admin-subfolder__header">
+                    <span class="admin-subfolder__kicker">Unterbereich</span>
+                    <h3>{{ subsection.label }}</h3>
+                    <p>{{ subsection.summary }}</p>
+                  </header>
+
+                  <div class="admin-entry-list">
+                    {% for entry in subsection.entries %}
+                      <div class="admin-entry{% if entry.kind == 'action' %} admin-entry--action{% endif %}">
+                        <div class="admin-entry__main">
+                          <span class="admin-entry__glyph" aria-hidden="true"></span>
+                          <div class="admin-entry__copy">
+                            {% if entry.url %}
+                              <a href="{{ entry.url }}" class="admin-entry__name">{{ entry.label }}</a>
+                            {% else %}
+                              <span class="admin-entry__name">{{ entry.label }}</span>
+                            {% endif %}
+                            <span class="admin-entry__meta">{{ entry.meta }}</span>
+                          </div>
+                        </div>
+                        <div class="admin-entry__actions">
+                          {% if entry.primary_action %}
+                            <a href="{{ entry.primary_action.url }}">{{ entry.primary_action.label }}</a>
+                          {% endif %}
+                          {% if entry.secondary_action %}
+                            <a href="{{ entry.secondary_action.url }}">{{ entry.secondary_action.label }}</a>
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          </section>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.querySelectorAll("[data-tree-summary]").forEach((summary) => {
+        summary.addEventListener("click", () => {
+          const targetId = summary.getAttribute("data-tree-summary");
+          if (!targetId) {
+            return;
+          }
+          const target = document.getElementById(targetId);
+          if (!target) {
+            return;
+          }
+          requestAnimationFrame(() => {
+            target.scrollIntoView({
+              behavior: prefersReducedMotion ? "auto" : "smooth",
+              block: "start",
+            });
+          });
+        });
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block sidebar %}
+  <div id="content-related">
+    <div class="module" id="recent-actions-module">
+      <h2>Arbeitsverlauf</h2>
+      <h3>Zuletzt bearbeitet</h3>
+      {% get_admin_log 10 as admin_log for_user user %}
+      {% if not admin_log %}
+        <p>Keine Einträge.</p>
+      {% else %}
+        <ul class="actionlist">
+          {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+              {% if entry.is_deletion or not entry.get_admin_url %}
+                {{ entry.object_repr }}
+              {% else %}
+                <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+              {% endif %}
+              <br>
+              {% if entry.content_type %}
+                <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+              {% else %}
+                <span class="mini quiet">Unbekannter Inhalt</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

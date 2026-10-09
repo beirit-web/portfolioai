@@ -1,0 +1,163 @@
+Überarbeite die Startseite meiner App so, dass sie optisch und strukturell stärker wie eine professionelle Dolmetscher- bzw. Übersetzungsplattform wirkt.
+
+Ziel:
+Die Startseite soll klar, vertrauenswürdig, modern und serviceorientiert wirken. Sie soll nicht mehr wie eine lange Informationssammlung erscheinen, sondern wie eine saubere Plattform mit klarer Nutzerführung.
+
+Wichtige Anforderungen:
+
+1. Allgemeine Ausrichtung
+
+* Fokus auf Dolmetsch- und Übersetzungsservice für Deutsch / Russisch / Ukrainisch.
+* Die Seite soll ruhiger, strukturierter und hochwertiger wirken.
+* Weniger Textwüste, mehr klare Abschnitte, Karten, Abstände und visuelle Hierarchie.
+* Wichtige Call-to-Actions deutlich sichtbar platzieren.
+
+2. Neue Reihenfolge der Startseite
+   Die Startseite soll in dieser Logik aufgebaut werden:
+
+* Hero-Bereich
+* Vorteile / Kurzinfos
+* Leistungen
+* So funktioniert es
+* Vertrauen / Warum menschliche Unterstützung wichtig ist
+* Kontakt
+* Hinweis zur neuen Domain
+* Footer
+
+3. Hero-Bereich neu gestalten
+   Ersetze den bisherigen unruhigen Einstieg durch einen klaren Hero mit:
+
+* einer starken Überschrift
+* einer kurzen Unterzeile
+* zwei Buttons
+
+Textvorschlag:
+Überschrift:
+„Dolmetsch- und Übersetzungsservice für Deutsch, Russisch & Ukrainisch“
+
+Unterzeile:
+„Unterstützung bei Formularen, Terminen, Telefonaten und wichtigen Gesprächen – persönlich, verständlich und deutschlandweit.“
+
+Buttons:
+
+* „Kontakt aufnehmen“
+* „Leistungen ansehen“
+
+4. Vorteile / Kurzinfos als kompakte Kacheln
+   Direkt unter dem Hero vier kompakte Info-Karten anzeigen:
+
+* Deutschlandweit
+  Online und nach Absprache vor Ort
+
+* Deutsch / Russisch / Ukrainisch
+  Klare Unterstützung ohne unnötige Umwege
+
+* Dokumente & Gespräche
+  Formulare, Telefonate, Termine und Begleitung
+
+* Schneller Kontakt
+  E-Mail, Messenger und Festnetz
+
+Diese Informationen nicht als langen Fließtext, sondern als saubere Cards oder Grid darstellen.
+
+5. Leistungsbereich verbessern
+   Erstelle einen klaren Bereich „Leistungen“ mit 4 übersichtlichen Karten:
+
+* Formular- & Behördenhilfe
+  Unterstützung beim Verstehen, Erklären und sprachlichen Begleiten von Anträgen, Schreiben und Unterlagen.
+
+* Telefonate & Kommunikation
+  Begleitung bei Telefonaten, E-Mails und wichtigen Gesprächen.
+
+* Termine & Gespräche
+  Dolmetschen und Unterstützung bei Arztterminen, Behörden und Beratungen.
+
+* Bewerbungen & Unterlagen
+  Hilfe bei Lebenslauf, Anschreiben und Bewerbungsunterlagen.
+
+6. Bereich „So funktioniert es“ hinzufügen
+   Füge einen neuen Abschnitt mit 3 Schritten ein:
+
+Titel:
+„So funktioniert es“
+
+Inhalt:
+
+1. Anfrage senden
+   Schreib kurz, wobei du Unterstützung brauchst.
+
+2. Rückmeldung erhalten
+   Ich melde mich mit einer passenden Einschätzung.
+
+3. Unterstützung nutzen
+   Online oder nach Absprache bei Terminen, Gesprächen oder Dokumenten.
+
+Diesen Bereich visuell klar und modern darstellen, z. B. mit nummerierten Karten oder Steps.
+
+7. Vertrauensbereich kürzen und verbessern
+   Der bisherige lange Hinweis zu menschlichen Übersetzern soll deutlich gekürzt und verständlicher gemacht werden.
+
+Neuer Abschnitt:
+Titel:
+„Warum persönliche Unterstützung wichtig ist“
+
+Text:
+„Bei sensiblen oder offiziellen Anliegen reicht automatische Übersetzung oft nicht aus. Gerade bei Behörden, Medizin, Recht und wichtigen Dokumenten sind Vertraulichkeit, Genauigkeit und direktes Verständnis besonders wichtig.“
+
+Optional darunter 4–5 Stichpunkte oder kleine Badges für:
+
+* Behörden
+* Arzttermine
+* Rechtliches
+* Dokumente
+* wichtige Gespräche
+
+8. Kontaktbereich vereinfachen
+   Der Kontaktbereich soll aufgeräumter werden.
+   Wichtige Kontaktwege hervorheben:
+
+* E-Mail
+* WhatsApp
+* Signal
+* Festnetz
+
+Sekundäre Kontaktwege wie Telegram oder Proton Mail nur untergeordnet anzeigen oder optional einklappbar machen.
+
+9. Domain-Hinweis stark verkürzen
+   Der Hinweis zur Adressänderung soll viel kompakter werden.
+
+Verwende etwa diesen Text:
+„Die aktuelle Adresse ist languages.example.invalid. Die bisherige Domain portfolio.example.invalid wird auf die neue Sprachservice-Adresse weitergeleitet.“
+
+Diesen Hinweis als kleine Infobox darstellen, aber nicht dominant.
+
+10. Inhalte entfernen oder nach unten verschieben
+    Folgende Inhalte sollen nicht mehr prominent auf der Startseite erscheinen bzw. stark nach unten verschoben oder entfernt werden:
+
+* Wetterbereich
+* Ortssuche / Wetter laden
+* doppelte oder wiederholte Sprach-/Profilkarten
+* technische Hinweise zum Smartphone-Defekt im oberen Seitenbereich
+* lange Erklärtexte
+* wiederholte Blöcke mit Sprachangaben, Altersangaben und Zeiten
+* Inhalte, die wie Testdaten oder unfertige Profile wirken
+
+11. Design-Ziel
+    Achte auf:
+
+* klare Abschnittsabstände
+* bessere Typografie-Hierarchie
+* moderne Karten
+* ruhige Struktur
+* mobile Optimierung
+* seriösen, vertrauenswürdigen Eindruck
+* Startseite soll mehr nach echter Serviceplattform aussehen
+
+12. Technische Umsetzung
+
+* Bestehende Funktionen nur dann behalten, wenn sie zur neuen klaren Startseite passen.
+* Unwichtige Elemente aus dem oberen Bereich entfernen.
+* Keine unnötigen Wiederholungen.
+* Bestehende Styles nach Möglichkeit weiterverwenden, aber Struktur und Priorisierung deutlich verbessern.
+
+Bitte setze die Startseite entsprechend um und passe Layout, Reihenfolge, Texte und Sichtbarkeit der Bereiche an, damit die Seite insgesamt professioneller, klarer und plattformähnlicher wirkt.

@@ -1,0 +1,30 @@
+body.backstube-account {
+  --backstube-form-width: 64rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+body.backstube-account.login-page {
+  --backstube-form-width: 40rem;
+}
+
+body.backstube-account > .backstube-account-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 0 auto;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.backstube-account .backstube-account-page > .template-panel.template-form-card {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: var(--backstube-form-width);
+  min-width: 0;
+  margin: 0;
+}

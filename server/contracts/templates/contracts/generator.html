@@ -1,0 +1,156 @@
+{% load static contracts_ui %}
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="Vertragsentwürfe mit Beirit Digital erstellen: Mietvertrag, Fahrzeug-Kaufvertrag und Kaufvertrag mit Dokumentvorschau und Export." />
+    <link rel="canonical" href="{{ canonical_url }}" />
+    <meta property="og:title" content="Vertragsgenerator | Beirit Digital" />
+    <meta property="og:description" content="Vertragsentwürfe erstellen, prüfen und exportieren." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="{% static 'images/logo-light.ico' %}" />
+    <link rel="stylesheet" href="{% asset_url 'contracts/style.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'css/project-home.css' %}" />
+    <title>Vertragsgenerator | Beirit Digital</title>
+  </head>
+  <body data-view="form">
+    <nav class="project-home-nav" aria-label="Projekt"><a href="/projekte/vertragsgenerator" aria-label="Zur Startseite des Vertragsgenerators">Zur Startseite</a></nav>
+    <header class="app-header">
+      <div class="topbar">
+        <div class="app-identity">
+          <span class="app-symbol">{% contract_icon 'file-text' %}</span>
+          <h1>Vertragsgenerator</h1>
+          <span class="app-edition">BEIRIT DIGITAL</span>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="icon-button" id="openSettingsButton" aria-label="Dokumenteinstellungen" title="Dokumenteinstellungen" data-tooltip="Dokumenteinstellungen">{% contract_icon 'sliders-horizontal' %}</button>
+          <details class="toolbar-menu" id="exportMenu">
+            <summary class="button button--primary export-trigger" aria-label="Export" title="Export">{% contract_icon 'download' %}<span>Export</span>{% contract_icon 'chevron-down' %}</summary>
+            <div class="menu-panel">
+              <p class="menu-label">Dokument exportieren</p>
+              <button type="button" id="printButton">{% contract_icon 'printer' %}<span>PDF / Drucken</span><small>PDF</small></button>
+              <button type="button" id="downloadButton">{% contract_icon 'download' %}<span>Text herunterladen</span><small>TXT</small></button>
+              <button type="button" id="copyButton">{% contract_icon 'copy' %}<span>Text kopieren</span></button>
+            </div>
+          </details>
+        </div>
+      </div>
+      <div class="document-bar">
+        <div class="template-field">
+          <label class="sr-only" id="templateLabel" for="templateSelect">Vertragstyp</label>
+          <select id="templateSelect" aria-labelledby="templateLabel">
+            {% for key, template in config.templates.items %}
+            <option value="{{ key }}"{% if key == config.selectedTemplate %} selected{% endif %}>{{ template.label }}</option>
+            {% endfor %}
+          </select>
+          <button type="button" class="template-trigger" id="templateTrigger" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="templateListbox" aria-labelledby="templateLabel templateValue" hidden>
+            <span id="templateValue">{{ definition.label }}</span>{% contract_icon 'chevron-down' %}
+          </button>
+          <div class="template-popup" id="templateListbox" role="listbox" aria-labelledby="templateLabel" hidden></div>
+        </div>
+        <div class="save-indicator" role="status"><span class="save-dot" aria-hidden="true"></span><span id="storageBadge">Lokal</span></div>
+      </div>
+      <div class="view-tabs" role="tablist" aria-label="Arbeitsansicht">
+        <button type="button" id="formTab" role="tab" aria-selected="true" aria-controls="formPane" tabindex="0" data-view="form">{% contract_icon 'pen-line' %}<span>Angaben</span></button>
+        <button type="button" id="documentTab" role="tab" aria-selected="false" aria-controls="previewPane" tabindex="-1" data-view="document">{% contract_icon 'file-text' %}<span>Dokument</span></button>
+      </div>
+    </header>
+    <main class="editor-workspace">
+      <aside class="section-nav" aria-label="Vertragsabschnitte">
+        <div class="nav-heading"><span>ABSCHNITTE</span><span id="navStepCount">1 / 5</span></div>
+        <ol class="step-list" id="stepList" aria-label="Abschnitte"></ol>
+        <div class="nav-bottom">
+          <div class="progress-summary"><span>Pflichtangaben</span><span id="fieldProgress">0/0</span></div>
+          <div class="completion" role="progressbar" aria-label="Ausgefüllte Pflichtangaben" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="completionBar"></span></div>
+          <button type="button" class="button button--quiet preview-shortcut" id="showPreviewButton">{% contract_icon 'eye' %}<span>Dokument prüfen</span>{% contract_icon 'arrow-up-right' %}</button>
+          <a class="studio-signature" href="/projekte" title="Beirit Digital Projekte"><img src="{% static 'images/logo-transparent-130.webp' %}" width="96" height="62" alt="Beirit Digital" /><span>Projekte{% contract_icon 'arrow-up-right' %}</span></a>
+        </div>
+      </aside>
+      <section class="form-pane" id="formPane" aria-labelledby="form-title">
+        <div class="form-heading">
+          <div><p class="overline">VERTRAGSDETAILS</p><h2 id="form-title" aria-live="polite" aria-atomic="true">Parteien</h2></div>
+          <details class="toolbar-menu" id="draftMenu">
+            <summary class="icon-button" aria-label="Entwurfsaktionen" title="Entwurfsaktionen" data-tooltip="Entwurfsaktionen">{% contract_icon 'ellipsis' %}</summary>
+            <div class="menu-panel">
+              <button type="button" id="fillSample">{% contract_icon 'sparkles' %}<span>Beispiel füllen</span></button>
+              <button type="button" id="resetForm" class="danger-action">{% contract_icon 'trash-2' %}<span>Entwurf leeren</span></button>
+            </div>
+          </details>
+        </div>
+        <p class="sr-only" id="templateSummary">{{ definition.summary }}</p>
+        <form id="contractForm" method="post" action="{% url 'contracts:download' %}" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="template" value="{{ config.selectedTemplate }}" />
+          {% for group in groups %}
+          <fieldset class="field-group" data-group="{{ group.key }}">
+            <legend>{{ group.label }}</legend>
+            <div class="field-grid">
+              {% for entry in group.fields %}
+              <div class="field{% if entry.wide %} field--wide{% endif %}">
+                <label for="{{ entry.field.id_for_label }}">{{ entry.field.label }}</label>
+                {{ entry.field }}
+                <small id="{{ entry.field.name }}-error"></small>
+              </div>
+              {% endfor %}
+            </div>
+          </fieldset>
+          {% endfor %}
+          <noscript><button class="button button--primary" type="submit">Text herunterladen</button></noscript>
+        </form>
+        <div class="form-bottom">
+          <div class="section-actions">
+            <button type="button" class="button button--quiet" id="previousSectionButton" disabled>{% contract_icon 'chevron-left' %}<span>Zurück</span></button>
+            <span id="sectionCount">1 von 5</span>
+            <button type="button" class="button button--primary" id="nextSectionButton"><span>Weiter</span>{% contract_icon 'chevron-right' %}</button>
+          </div>
+          <details class="data-notice"><summary>{% contract_icon 'shield-check' %}Datenschutz{% contract_icon 'chevron-down' %}</summary><p class="privacy-note">Entwürfe werden lokal in diesem Browser gespeichert. Zur Vorschau und zum Text-Export werden Eingaben an den Server übertragen und dort verarbeitet, aber nicht als Entwurf gespeichert. Logos bleiben lokal.</p></details>
+        </div>
+      </section>
+      <section class="preview-pane" id="previewPane" aria-labelledby="preview-title">
+        <div class="preview-toolbar">
+          <div class="preview-heading"><h2 id="preview-title">Dokument</h2><span id="statusBadge" role="status">Entwurf</span></div>
+          <div class="preview-tools">
+            <span class="paper-format">A4 <span>· Hochformat</span></span>
+            <div class="zoom-control">
+              <button type="button" class="icon-button" id="zoomOutButton" aria-label="Verkleinern" title="Verkleinern" data-tooltip="Verkleinern">{% contract_icon 'minus' %}</button>
+              <label><span class="sr-only">Dokumentzoom</span><select id="zoomSelect"><option value="fit">Anpassen</option><option value="0.5">50 %</option><option value="0.75">75 %</option><option value="1">100 %</option><option value="1.25">125 %</option><option value="1.5">150 %</option></select></label>
+              <button type="button" class="icon-button" id="zoomInButton" aria-label="Vergrößern" title="Vergrößern" data-tooltip="Vergrößern">{% contract_icon 'plus' %}</button>
+            </div>
+          </div>
+        </div>
+        <div class="document-stage" id="documentStage">
+          <div class="page-frame" id="pageFrame">
+            <article class="contract-preview" id="contractPreview" tabindex="0" aria-label="Vertragsentwurf" aria-busy="false"><h3>{{ definition.label }}</h3><div class="preview-text"><p>{{ document }}</p></div></article>
+          </div>
+        </div>
+        <div class="document-feedback">
+          <div class="export-status"><span class="feedback-icon">{% contract_icon 'circle-check' %}</span><p id="exportHint">Leere Stellen bleiben im Entwurf sichtbar.</p><button type="button" class="text-button" id="focusMissingButton" hidden>Angaben prüfen{% contract_icon 'chevron-right' %}</button></div>
+          <ul class="missing-list" id="missingList" aria-label="Fehlende Angaben"></ul>
+          <details class="legal-disclosure"><summary>Hinweis zum Entwurf{% contract_icon 'chevron-down' %}</summary><p class="legal-note">Diese Demo ersetzt keine Rechtsberatung. Inhalte müssen vor echter Nutzung fachlich geprüft werden.</p></details>
+        </div>
+      </section>
+    </main>
+    <dialog id="documentSettingsDialog" class="settings-dialog" aria-labelledby="settings-title">
+      <div class="dialog-heading"><div><p class="overline">DOKUMENT</p><h2 id="settings-title">Einstellungen</h2></div><button type="button" class="icon-button" id="closeSettingsButton" aria-label="Einstellungen schließen" title="Schließen">{% contract_icon 'x' %}</button></div>
+      <div class="settings-body">
+        <section class="settings-section" aria-labelledby="font-title">
+          <h3 id="font-title">Schriftgröße</h3><input id="fontSizeSelect" type="hidden" value="normal" />
+          <div class="font-size-picker" id="fontSizePicker" role="group" aria-label="Schriftgröße"><button type="button" data-size="small">Kompakt</button><button type="button" data-size="normal">Normal</button><button type="button" data-size="large">Groß</button></div>
+          <p class="font-size-sample" id="fontSizeSample">Vereinbarungen zwischen den Vertragsparteien.</p>
+        </section>
+        <section class="settings-section brand-uploader" aria-labelledby="brand-title">
+          <h3 id="brand-title">Logo oder Briefkopf</h3>
+          <div class="logo-upload-row"><img id="logoThumbnail" alt="Ausgewähltes Logo" hidden /><div><p id="logoName">Kein Logo ausgewählt</p><span class="settings-caption">PNG, JPG, WebP, SVG · bis 1,5 MB</span></div></div>
+          <div class="logo-controls"><label class="button button--secondary file-button" for="logoInput">{% contract_icon 'upload' %}Bild auswählen</label><input id="logoInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" /><button type="button" class="icon-button" id="clearLogoButton" aria-label="Logo entfernen" title="Logo entfernen" hidden>{% contract_icon 'trash-2' %}</button></div>
+          <div class="logo-tools" id="logoTools" hidden><label for="logoSizeInput">Logogröße<input id="logoSizeInput" type="range" min="70" max="260" step="5" value="150" /></label><button type="button" class="button button--quiet" id="resetLogoPositionButton">{% contract_icon 'rotate-ccw' %}Position zurücksetzen</button></div>
+        </section>
+      </div>
+      <div class="dialog-footer"><span>{% contract_icon 'shield-check' %}Lokal gespeichert</span><button type="button" class="button button--primary" id="doneSettingsButton">Fertig{% contract_icon 'check' %}</button></div>
+    </dialog>
+    <div class="action-toast" id="actionToast" role="status" hidden></div>
+    {{ config|json_script:"contract-config" }}
+    <script src="{% asset_url 'contracts/app.js' %}" defer charset="UTF-8"></script>
+  </body>
+</html>

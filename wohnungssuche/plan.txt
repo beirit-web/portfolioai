@@ -1,0 +1,1091 @@
+# Django-Projekt: Wohnungsassistent Bodensee
+
+## Ziel
+
+Erstelle eine Django-App, die automatisch nach Wohnungen sucht, Suchfilter speichert, passende Treffer bewertet, den Nutzer benachrichtigt und bei der Wohnungsbewerbung hilft.
+
+Zuerst soll ein sauberes MVP gebaut werden. Echte Anbieter/Scraping kommen erst später und nur, wenn es rechtlich/technisch erlaubt ist.
+
+---
+
+# Phase 1: Projektgrundlage
+
+## Ticket 1: Django-Projekt erstellen
+
+* Neues Django-Projekt erstellen
+* App `housing_search` erstellen
+* `.env` vorbereiten
+* Keine Zugangsdaten im Code speichern
+* SQLite für Entwicklung
+* PostgreSQL später möglich
+* Login/Logout vorbereiten
+* Nur eingeloggte Nutzer dürfen die App nutzen
+
+---
+
+## Ticket 2: Grundmodelle erstellen
+
+Erstelle Models:
+
+### SearchProfile
+
+Speichert Suchfilter.
+
+Felder:
+
+* user
+* name
+* region
+* cities
+* min_rent
+* max_rent
+* min_rooms
+* max_rooms
+* min_size
+* max_size
+* property_type
+* pets_allowed
+* balcony
+* garden
+* elevator
+* barrier_free
+* max_distance_km
+* is_active
+* created_at
+* updated_at
+
+### Listing
+
+Speichert gefundene Wohnungen.
+
+Felder:
+
+* title
+* description
+* rent
+* warm_rent
+* cold_rent
+* additional_costs
+* deposit
+* rooms
+* size
+* city
+* address
+* latitude
+* longitude
+* source_name
+* source_url
+* external_id
+* image_url
+* found_at
+* last_seen_at
+
+### ListingStatus
+
+Nutzerbezogener Status.
+
+Felder:
+
+* user
+* listing
+* status:
+
+  * new
+  * seen
+  * favorite
+  * ignored
+  * contacted
+  * applied
+  * viewing
+  * rejected
+  * accepted
+* notes
+* created_at
+* updated_at
+
+### Notification
+
+Speichert Benachrichtigungen.
+
+Felder:
+
+* user
+* listing
+* notification_type
+* sent_at
+* status
+
+---
+
+# Phase 2: Suchprofile
+
+## Ticket 3: Suchprofil-Formular bauen
+
+Nutzer soll Suchprofile erstellen und bearbeiten können.
+
+Filter:
+
+* Region
+* mehrere Städte
+* maximale Warmmiete
+* minimale/maximale Zimmeranzahl
+* Wohnfläche
+* Haustiere erlaubt
+* Balkon
+* Garten
+* Aufzug
+* barrierefrei
+* Umkreis in km
+
+Standardregion:
+
+* Bodensee
+
+Städte-Vorauswahl:
+
+* Friedrichshafen
+* Konstanz
+* Lindau
+* Ravensburg
+* Überlingen
+* Meersburg
+* Tettnang
+* Markdorf
+* Meckenbeuren
+
+---
+
+## Ticket 4: Suchprofile verwalten
+
+Seiten:
+
+* Suchprofile Übersicht
+* Suchprofil erstellen
+* Suchprofil bearbeiten
+* Suchprofil pausieren
+* Suchprofil löschen
+
+Wichtig:
+
+* Nutzer darf nur eigene Suchprofile sehen
+* Alle QuerySets nach `request.user` filtern
+
+---
+
+# Phase 3: Anbieter-Struktur
+
+## Ticket 5: Provider-System vorbereiten
+
+Erstelle modulare Struktur:
+
+```text
+housing_search/
+  services/
+    providers/
+      base.py
+      fake_provider.py
+      immobilienscout.py
+      immowelt.py
+      kleinanzeigen.py
+    matcher.py
+    notifier.py
+    scoring.py
+```
+
+`base.py`:
+
+```python
+class BaseHousingProvider:
+    name = ""
+
+    def search(self, search_profile):
+        raise NotImplementedError
+```
+
+---
+
+## Ticket 6: Fake-Provider bauen
+
+Erstelle zuerst einen Testanbieter.
+
+Aufgabe:
+
+* Beispielwohnungen zurückgeben
+* verschiedene Städte
+* verschiedene Preise
+* verschiedene Größen
+* verschiedene Zimmeranzahlen
+
+Damit soll die App ohne echtes Scraping testbar sein.
+
+---
+
+## Ticket 7: Rechtliche Anbieter-Regel
+
+Keine Plattform darf blind gescrapt werden.
+
+Vor echter Anbindung prüfen:
+
+* Gibt es API?
+* Gibt es RSS?
+* Gibt es E-Mail-Suchauftrag?
+* Erlauben Nutzungsbedingungen automatische Abfrage?
+* Falls nein: keine automatische Abfrage dieser Plattform
+
+In der App soll ein Hinweis stehen:
+
+> Die Nutzung externer Wohnungsportale muss deren Nutzungsbedingungen beachten. Wenn automatische Abfragen nicht erlaubt sind, soll eine offizielle API, RSS, E-Mail-Suchauftrag oder manuelle Importfunktion genutzt werden.
+
+---
+
+# Phase 4: Matching und Speicherung
+
+## Ticket 8: Matching-Logik erstellen
+
+Datei:
+
+```text
+housing_search/services/matcher.py
+```
+
+Die Logik soll prüfen:
+
+* Stadt passt
+* Miete passt
+* Zimmeranzahl passt
+* Wohnfläche passt
+* Haustiere erlaubt
+* Balkon/Garten/Aufzug
+* barrierefrei
+* Entfernung passt
+
+---
+
+## Ticket 9: Duplikate vermeiden
+
+Wohnungen dürfen nicht doppelt gespeichert werden.
+
+Duplikatprüfung über:
+
+* `external_id`
+* oder `source_url`
+* notfalls Kombination aus Titel, Stadt, Preis, Größe
+
+---
+
+## Ticket 10: Management Command erstellen
+
+Command:
+
+```bash
+python manage.py run_housing_search
+```
+
+Aufgabe:
+
+* aktive Suchprofile laden
+* Provider ausführen
+* Ergebnisse matchen
+* neue Listings speichern
+* ListingStatus erstellen
+* Benachrichtigung vorbereiten
+
+Später soll dieser Command per Cronjob oder Celery laufen.
+
+---
+
+# Phase 5: Dashboard
+
+## Ticket 11: Dashboard erstellen
+
+Dashboard anzeigen:
+
+* Anzahl neuer Treffer
+* Anzahl Favoriten
+* aktive Suchprofile
+* letzte Suche
+* beste Treffer
+* schnelle Aktionen
+
+---
+
+## Ticket 12: Trefferliste erstellen
+
+Trefferliste mit Filtern:
+
+* Neu
+* Favorit
+* Gesehen
+* Kontaktiert
+* Beworben
+* Besichtigung
+* Abgelehnt
+* Zugesagt
+* Uninteressant
+
+Pro Treffer anzeigen:
+
+* Titel
+* Stadt
+* Miete
+* Zimmer
+* Wohnfläche
+* Quelle
+* Link zur Anzeige
+* Bild
+* Score
+* Status
+
+---
+
+## Ticket 13: Detailseite pro Wohnung
+
+Detailseite anzeigen:
+
+* alle Wohnungsdaten
+* Beschreibung
+* Karte/Koordinaten später
+* Notizen
+* Status ändern
+* Favorit setzen
+* als uninteressant markieren
+* Originalanzeige öffnen
+
+---
+
+# Phase 6: Bewerbungsmanager
+
+## Ticket 14: Bewerbungsstatus erweitern
+
+Nutzer soll pro Wohnung den Bewerbungsstand pflegen können:
+
+* Kontakt aufgenommen
+* Unterlagen gesendet
+* Besichtigung geplant
+* Wartet auf Antwort
+* Absage erhalten
+* Zusage erhalten
+
+---
+
+## Ticket 15: Vermieter-Kontaktarchiv
+
+Model `ContactLog` erstellen.
+
+Felder:
+
+* user
+* listing
+* contact_name
+* phone
+* email
+* message
+* contact_date
+* next_follow_up
+* created_at
+
+---
+
+## Ticket 16: Notizen pro Wohnung
+
+Nutzer soll Notizen speichern können:
+
+* Eindruck
+* Vorteile
+* Nachteile
+* offene Fragen
+* Besichtigungshinweise
+
+---
+
+# Phase 7: Automatische Bewerbungsunterlagen
+
+## Ticket 17: Bewerberprofil erstellen
+
+Model `ApplicantProfile`.
+
+Felder:
+
+* user
+* full_name
+* phone
+* email
+* current_city
+* occupation
+* income
+* persons_count
+* pets
+* smoking
+* schufa_available
+* documents_available
+* short_intro
+
+---
+
+## Ticket 18: Anschreiben generieren
+
+Aus Bewerberprofil + Wohnung soll ein Bewerbungstext erstellt werden.
+
+Beispiel:
+
+* höfliche Anrede
+* Interesse an Wohnung
+* kurze Vorstellung
+* Zahlungsfähigkeit
+* Wunsch nach Besichtigung
+* Kontaktdaten
+
+---
+
+## Ticket 19: PDF-Export vorbereiten
+
+Später PDF erstellen für:
+
+* Wohnungsbewerbung
+* Selbstauskunft
+* Anschreiben
+
+Für MVP reicht HTML-Vorschau.
+
+---
+
+# Phase 8: Benachrichtigungen
+
+## Ticket 20: E-Mail-Benachrichtigung
+
+Bei neuen passenden Treffern E-Mail senden.
+
+Inhalt:
+
+* Titel
+* Stadt
+* Miete
+* Zimmer
+* Wohnfläche
+* Link zur Anzeige
+
+Wichtig:
+
+* Nur neue Treffer melden
+* Keine doppelten E-Mails
+* SMTP über `.env`
+
+---
+
+## Ticket 21: Telegram später vorbereiten
+
+Noch nicht sofort umsetzen.
+
+Aber Code so strukturieren, dass später möglich ist:
+
+* Telegram Bot
+* Sofortmeldung bei Treffer
+* tägliche Zusammenfassung
+
+---
+
+# Phase 9: Bewertung und Analyse
+
+## Ticket 22: Score-System erstellen
+
+Datei:
+
+```text
+housing_search/services/scoring.py
+```
+
+Score von 0 bis 100 berechnen.
+
+Kriterien:
+
+* Preis
+* Größe
+* Zimmer
+* Stadt
+* Entfernung
+* Ausstattung
+* Haustiere erlaubt
+* Balkon/Garten/Aufzug
+
+Beispiel:
+
+* 90–100 = sehr passend
+* 70–89 = gut passend
+* 50–69 = mittel
+* unter 50 = eher unpassend
+
+---
+
+## Ticket 23: Preis pro Quadratmeter berechnen
+
+Für jedes Listing berechnen:
+
+* Warmmiete pro m²
+* Kaltmiete pro m², falls vorhanden
+
+Anzeigen:
+
+* günstig
+* normal
+* teuer
+
+---
+
+## Ticket 24: Scam-Erkennung vorbereiten
+
+Warnhinweise bei:
+
+* ungewöhnlich niedriger Miete
+* Kaution vor Besichtigung
+* nur WhatsApp/Telegram-Kommunikation
+* keine genaue Adresse
+* verdächtige Texte
+* sehr schlechte Beschreibung
+
+Ausgabe:
+
+* Kein Risiko erkannt
+* Vorsicht
+* Stark verdächtig
+
+---
+
+# Phase 10: Karte und Entfernung
+
+## Ticket 25: OpenStreetMap vorbereiten
+
+Später Kartenansicht mit OpenStreetMap/Leaflet.
+
+Für MVP nur Felder vorbereiten:
+
+* latitude
+* longitude
+* address
+
+---
+
+## Ticket 26: Arbeitsort speichern
+
+Nutzer soll später Arbeitsorte speichern können.
+
+Model `WorkLocation`.
+
+Felder:
+
+* user
+* name
+* city
+* address
+* latitude
+* longitude
+
+---
+
+## Ticket 27: Fahrzeit später vorbereiten
+
+Noch nicht sofort umsetzen.
+
+Später möglich:
+
+* Entfernung zur Arbeit
+* Auto
+* Fahrrad
+* ÖPNV
+* Fußweg
+
+---
+
+# Phase 11: Jobcenter/Bürgergeld-Modus
+
+## Ticket 28: Mietgrenzen-Modul vorbereiten
+
+Model `RentLimit`.
+
+Felder:
+
+* city_or_county
+* persons_count
+* max_rent
+* max_size
+* heating_cost_note
+* valid_from
+* source_note
+
+Wichtig:
+
+* Werte nicht hart behaupten
+* Manuell pflegbar im Admin
+* Hinweis anzeigen: Richtwerte müssen geprüft werden
+
+---
+
+## Ticket 29: Angemessenheitsprüfung
+
+Wohnung prüfen gegen:
+
+* maximale Miete
+* Wohnfläche
+* Personenanzahl
+
+Ausgabe:
+
+* wahrscheinlich passend
+* prüfen
+* vermutlich zu teuer
+
+Mit Hinweis:
+
+> Dies ist keine Rechtsberatung. Bitte aktuelle Richtwerte beim Jobcenter prüfen.
+
+---
+
+# Phase 12: Admin
+
+## Ticket 30: Django Admin einrichten
+
+Admin für:
+
+* SearchProfile
+* Listing
+* ListingStatus
+* Notification
+* ApplicantProfile
+* ContactLog
+* WorkLocation
+* RentLimit
+
+Filter:
+
+* Nutzer
+* Stadt
+* Status
+* Quelle
+* gefunden am
+* aktiv/inaktiv
+
+---
+
+# Phase 13: Tests
+
+## Ticket 31: Tests schreiben
+
+Tests für:
+
+* Nutzer kann Suchprofil erstellen
+* Nutzer sieht nur eigene Suchprofile
+* Fake-Provider liefert Daten
+* Matching funktioniert
+* Duplikate werden verhindert
+* ListingStatus wird erstellt
+* E-Mail wird nur bei neuen Treffern vorbereitet
+* Dashboard lädt
+* Statuswechsel funktioniert
+* Management Command läuft
+
+---
+
+# Phase 14: UI/Design
+
+## Ticket 32: Saubere Oberfläche bauen
+
+Design:
+
+* modern
+* übersichtlich
+* responsive
+* Dark Mode geeignet
+* Karten für Treffer
+* klare Status-Badges
+* neue Treffer optisch hervorheben
+
+Seiten:
+
+* Dashboard
+* Suchprofile
+* Trefferliste
+* Favoriten
+* Bewerbungsmanager
+* Einstellungen
+
+---
+
+# Phase 15: Deployment-Vorbereitung
+
+## Ticket 33: Deployment vorbereiten
+
+Später für Fly.io vorbereiten:
+
+* `.env`
+* `requirements.txt`
+* `Procfile` oder Dockerfile
+* Staticfiles
+* PostgreSQL möglich
+* SMTP über Secrets
+* DEBUG=False in Produktion
+
+Keine Secrets ins Repository.
+
+---
+
+# MVP-Reihenfolge
+
+Bitte zuerst nur diese Reihenfolge bauen:
+
+1. Django-Projekt
+2. Login
+3. Models
+4. Suchprofil-Formular
+5. Fake-Provider
+6. Matching
+7. Management Command
+8. Treffer speichern
+9. Dashboard
+10. Trefferliste
+11. Status/Favoriten
+12. E-Mail-Benachrichtigung
+13. Tests
+
+Erst danach:
+
+* echte Anbieter
+* Telegram
+* Karten
+* PDF
+* Jobcenter-Modus
+* KI-Bewertung
+* Celery/Redis
+
+## Wichtig
+
+Code sauber, modular und erweiterbar schreiben.
+
+Keine große unübersichtliche Datei.
+
+Keine illegalen Scraper.
+
+Keine Passwörter oder API-Keys im Code.
+
+Alle nutzerbezogenen Daten immer nach `request.user` absichern.
+# Ticket 34: Anbieter-Compliance und erlaubte Datenquellen
+
+## Ziel
+
+Sicherstellen, dass neue Wohnungsanbieter nur über zulässige und technisch saubere Schnittstellen angebunden werden.
+
+## Anforderungen
+
+Vor jeder Anbieter-Anbindung prüfen:
+
+* Gibt es eine offizielle API?
+* Gibt es einen RSS-Feed?
+* Gibt es Suchaufträge per E-Mail?
+* Gibt es eine dokumentierte Schnittstelle?
+* Erlauben die Nutzungsbedingungen automatisierte Zugriffe?
+
+## Nicht umsetzen
+
+Die Anwendung darf keine Funktionen enthalten für:
+
+* Umgehung von Login-Schutz
+* Umgehung von Captchas
+* Umgehung von Anti-Bot-Systemen
+* Umgehung von Zugriffsbeschränkungen
+* Automatisierte Massenabfragen entgegen Nutzungsbedingungen
+
+## Ergebnis
+
+Jeder neue Provider muss eine Dokumentation besitzen:
+
+* Anbietername
+* Datenquelle
+* API vorhanden
+* RSS vorhanden
+* E-Mail-Import möglich
+* Status:
+
+  * erlaubt
+  * prüfen
+  * nicht angebunden
+
+---
+
+# Ticket 35: Provider-Verwaltung
+
+## Ziel
+
+Zentrale Verwaltung aller angebundenen Wohnungsquellen.
+
+## Datenmodell
+
+### Provider
+
+Felder:
+
+* name
+* provider_type
+* homepage
+* api_available
+* rss_available
+* email_import_available
+* active
+* notes
+* created_at
+* updated_at
+
+## Funktionen
+
+* Provider aktivieren
+* Provider deaktivieren
+* Provider dokumentieren
+* Status überwachen
+
+---
+
+# Ticket 36: E-Mail-Suchaufträge importieren
+
+## Ziel
+
+Wohnungsangebote aus Suchauftrag-E-Mails verarbeiten.
+
+## Anwendungsfall
+
+Nutzer erstellt Suchaufträge bei Wohnungsportalen.
+
+Neue Treffer werden per E-Mail zugestellt.
+
+Die App verarbeitet diese E-Mails automatisch.
+
+## Funktionen
+
+* E-Mails abrufen
+* Inhalte analysieren
+* Wohnungsdaten extrahieren
+* Dubletten erkennen
+* Listings speichern
+
+## Unterstützte Daten
+
+* Titel
+* Ort
+* Miete
+* Zimmer
+* Wohnfläche
+* Link
+* Anbieter
+
+---
+
+# Ticket 37: Gmail-Unterstützung
+
+## Ziel
+
+Import von Wohnungsangeboten aus Gmail.
+
+## Funktionen
+
+* OAuth-Anbindung
+* Nur freigegebene E-Mails lesen
+* Suchordner definieren
+* Wohnungs-E-Mails filtern
+* Treffer importieren
+
+## Sicherheit
+
+* Keine Passwörter speichern
+* OAuth verwenden
+* Zugriffe protokollieren
+
+---
+
+# Ticket 38: IMAP-Unterstützung
+
+## Ziel
+
+Unterstützung beliebiger E-Mail-Anbieter.
+
+## Funktionen
+
+* IMAP-Verbindung
+* TLS verwenden
+* Ordner auswählen
+* Abrufintervall festlegen
+
+## Anbieterbeispiele
+
+* Gmail
+* Proton Mail Bridge
+* IONOS
+* Telekom
+* GMX
+* Web.de
+
+---
+
+# Ticket 39: E-Mail-Parser
+
+## Ziel
+
+Verschiedene E-Mail-Layouts verarbeiten.
+
+## Architektur
+
+```text
+services/
+    email_parser/
+        base.py
+        gmail_parser.py
+        immobilienscout_parser.py
+        immowelt_parser.py
+        kleinanzeigen_parser.py
+```
+
+## Aufgaben
+
+* Inhalte erkennen
+* Daten extrahieren
+* Fehler tolerant behandeln
+* Fehlende Felder abfangen
+
+---
+
+# Ticket 40: Import-Historie
+
+## Ziel
+
+Nachvollziehbarkeit aller Importe.
+
+## Modell
+
+### ImportLog
+
+Felder:
+
+* provider
+* source
+* imported_count
+* duplicate_count
+* error_count
+* started_at
+* finished_at
+* status
+
+## Dashboard
+
+Anzeigen:
+
+* letzter Import
+* Anzahl neuer Treffer
+* Anzahl Dubletten
+* Fehler
+
+---
+
+# Ticket 41: Manuelle Angebotsübernahme
+
+## Ziel
+
+Nutzer kann selbst Links einfügen.
+
+## Funktionen
+
+* URL einfügen
+* Daten analysieren
+* Vorschau anzeigen
+* Wohnung speichern
+
+## Nutzen
+
+Falls kein automatischer Import verfügbar ist.
+
+---
+
+# Ticket 42: PDF- und Exposé-Import
+
+## Ziel
+
+Wohnungsdaten aus PDF-Dateien übernehmen.
+
+## Funktionen
+
+* PDF hochladen
+* Daten extrahieren
+* Vorschlag anzeigen
+* Wohnung speichern
+
+## Felder
+
+* Titel
+* Adresse
+* Zimmer
+* Wohnfläche
+* Preis
+* Beschreibung
+
+---
+
+# Ticket 43: Anbieter-Monitoring
+
+## Ziel
+
+Überwachung aller Datenquellen.
+
+## Dashboard
+
+Anzeigen:
+
+* Provider online
+* letzter Abruf
+* letzte Fehler
+* Importdauer
+* Anzahl Treffer
+
+## Warnungen
+
+* API nicht erreichbar
+* Import fehlgeschlagen
+* Datenformat geändert
+
+---
+
+# Ticket 44: Datenschutz und Einwilligung
+
+## Ziel
+
+Transparente Verarbeitung personenbezogener Daten.
+
+## Funktionen
+
+* Datenschutzhinweis
+* Zustimmung speichern
+* Widerruf ermöglichen
+* Datenexport
+* Kontolöschung
+
+## DSGVO
+
+* Datenminimierung
+* Zweckbindung
+* Löschkonzept
+* Protokollierung
+
+---
+
+# Ticket 45: Zukunftserweiterung KI-Assistent
+
+## Ziel
+
+Persönlicher Wohnungsberater.
+
+## Funktionen
+
+* tägliche Zusammenfassung
+* beste Treffer hervorheben
+* Preisbewertung
+* Pendelbewertung
+* Bewerbungsvorschläge
+* Erinnerungen
+
+## Beispiel
+
+"Es wurden heute 12 neue Wohnungen gefunden. Davon passen 4 sehr gut zu Ihren Kriterien. Die beste Wohnung befindet sich in Friedrichshafen und erreicht einen Match-Score von 94 %."
+

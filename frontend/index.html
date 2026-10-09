@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="de" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="Beirit Web entwickelt moderne Webseiten, Webapps und digitale Lösungen: Webentwicklung mit React und Django, Website-Optimierung, Fehlerbehebung, responsive Webdesigns und digitale Abläufe."
+    />
+    <meta
+      name="keywords"
+      content="Beirit Web, Beirit Digital, Webentwicklung, digitale Lösungen, Webseiten erstellen, Website erstellen lassen, Webapps entwickeln, React Entwickler, Django Entwickler, Webdesign, Webseiten optimieren, Website reparieren, responsive Webseite, digitale Prozesse"
+    />
+    <meta
+      property="og:title"
+      content="Beirit Web | Webentwicklung & digitale Lösungen"
+    />
+    <meta
+      property="og:description"
+      content="Beirit Web entwickelt moderne Webseiten, Webapps und digitale Lösungen: Webentwicklung mit React und Django, Website-Optimierung, Fehlerbehebung, responsive Webdesigns und digitale Abläufe."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:title"
+      content="Beirit Web | Webentwicklung & digitale Lösungen"
+    />
+    <meta
+      name="twitter:description"
+      content="Beirit Web entwickelt moderne Webseiten, Webapps und digitale Lösungen: Webentwicklung mit React und Django, Website-Optimierung, Fehlerbehebung, responsive Webdesigns und digitale Abläufe."
+    />
+    <title>Beirit Web | Webentwicklung & digitale Lösungen</title>
+    <link rel="icon" type="image/svg+xml" href="/static/images/beirit-web-favicon-mini.svg" />
+    <link rel="apple-touch-icon" href="/static/images/aktueles-logo-180.png" />
+    <link
+      rel="shortcut icon"
+      type="image/svg+xml"
+      href="/static/images/beirit-web-favicon-mini.svg"
+    />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/homepage-layout.css" />
+    <link rel="stylesheet" href="/src/components/home/hero/Hero.css" />
+    <link rel="stylesheet" href="/src/components/home/homepage/HomePage.css" />
+  </head>
+  <body>
+    <div id="beirit-root"></div>
+    <script>
+      window.BEIRIT_HOME_CONFIG = {
+        contactApiUrl: "/api/contact/",
+        logoUrl: "/static/images/aktueles-logo-160.webp",
+        logoSmallUrl: "/static/images/aktueles-logo-160.webp",
+        logoLargeUrl: "/static/images/aktueles-logo-320.webp",
+        appVersion: "1.2.5-beta",
+        priceRows: [],
+      };
+      window.BEIRIT_DEFERRED_CSS = [
+        "/src/styles.css",
+        "/src/homepage-custom.css",
+        "/src/responsive-overrides.css",
+        "/src/components/shared/TechnicalLabel.css",
+        "/src/components/home/faqsection/FaqSection.css",
+        "/src/components/home/technologyproofsection/TechnologyProofSection.css",
+      ];
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

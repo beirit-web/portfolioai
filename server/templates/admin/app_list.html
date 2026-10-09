@@ -1,0 +1,83 @@
+{% load i18n %}
+
+{% if app_list %}
+  {% if explorer_mode == "apps" %}
+    <ul class="admin-folder-grid">
+      {% for app in app_list %}
+        <li>
+          <a href="{{ app.app_url }}" class="admin-folder-card app-{{ app.app_label }}{% if app.app_url in request.path|urlencode %} current-app{% endif %}">
+            <div class="admin-folder-card__top">
+              <span class="admin-folder-card__icon" aria-hidden="true"></span>
+              <span class="admin-folder-card__count">{{ app.models|length }} Bereiche</span>
+            </div>
+            <div class="admin-folder-card__copy">
+              <span class="admin-folder-card__title">{{ app.name }}</span>
+              <span class="admin-folder-card__meta">
+                {% for model in app.models|slice:":3" %}
+                  {{ model.name }}{% if not forloop.last %} · {% endif %}
+                {% endfor %}
+                {% if app.models|length > 3 %} · weitere Bereiche{% endif %}
+              </span>
+            </div>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <ul class="admin-explorer">
+      {% for app in app_list %}
+        <li class="admin-explorer-group app-{{ app.app_label }} module{% if app.app_url in request.path|urlencode %} current-app{% endif %}">
+          <div class="admin-explorer-group__header">
+            <a href="{{ app.app_url }}" class="admin-explorer-group__link section" title="{% blocktranslate with name=app.name %}Models in the {{ name }} application{% endblocktranslate %}">
+              <span class="admin-explorer-group__icon" aria-hidden="true"></span>
+              <span class="admin-explorer-group__copy">
+                <span class="admin-explorer-group__name">{{ app.name }}</span>
+                <span class="admin-explorer-group__meta">{{ app.models|length }} Bereiche</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="admin-explorer-list">
+            {% for model in app.models %}
+              <article class="admin-explorer-item model-{{ model.object_name|lower }}{% if model.admin_url in request.path|urlencode %} current-model{% endif %}">
+                <div class="admin-explorer-item__main">
+                  <span class="admin-explorer-item__glyph" aria-hidden="true"></span>
+                  <div class="admin-explorer-item__copy">
+                    {% if model.admin_url %}
+                      <a href="{{ model.admin_url }}"{% if model.admin_url in request.path|urlencode %} aria-current="page"{% endif %} class="admin-explorer-item__name">{{ model.name }}</a>
+                    {% else %}
+                      <span class="admin-explorer-item__name">{{ model.name }}</span>
+                    {% endif %}
+                    <span class="admin-explorer-item__meta">
+                      {% if model.view_only %}
+                        Lesemodus
+                      {% else %}
+                        Datenmodell
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="admin-explorer-item__actions">
+                  {% if model.add_url %}
+                    <a href="{{ model.add_url }}" class="addlink">Neu</a>
+                  {% endif %}
+
+                  {% if model.admin_url and show_changelinks %}
+                    {% if model.view_only %}
+                      <a href="{{ model.admin_url }}" class="viewlink">Ansehen</a>
+                    {% else %}
+                      <a href="{{ model.admin_url }}" class="changelink">Öffnen</a>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% else %}
+  <p>Sie haben keine Berechtigung, Inhalte oder Datenmodelle zu sehen.</p>
+{% endif %}

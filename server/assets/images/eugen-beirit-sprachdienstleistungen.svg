@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Eugen Beirit - Dolmetsch- und Sprachdienstleistungen</title>
+  <desc id="desc">Schlichte Wortmarke fuer Deutsch-Russisch-Sprachdienstleistungen</desc>
+  <style>
+    .logo-bg { fill: #0f172a; }
+    .logo-border { stroke: #45d6b5; }
+    .logo-name { fill: #f8fafc; }
+    .logo-service { fill: #dbeafe; }
+    .logo-lang { fill: #7dd3fc; }
+    @media (prefers-color-scheme: light) {
+      .logo-bg { fill: #f8fbf9; }
+      .logo-border { stroke: #0f8a66; }
+      .logo-name { fill: #16231c; }
+      .logo-service { fill: #2f4c42; }
+      .logo-lang { fill: #0f6cbf; }
+    }
+  </style>
+  <rect class="logo-bg" width="1200" height="630" rx="36"/>
+  <rect class="logo-border" x="38" y="38" width="1124" height="554" rx="28" fill="none" stroke-width="6"/>
+  <text class="logo-name" x="600" y="245" text-anchor="middle" font-family="Inter, Arial, Helvetica, sans-serif" font-size="82" font-weight="800" letter-spacing="0">
+    EUGEN BEIRIT
+  </text>
+  <text class="logo-service" x="600" y="340" text-anchor="middle" font-family="Inter, Arial, Helvetica, sans-serif" font-size="48" font-weight="650" letter-spacing="0">
+    Dolmetsch- &amp; Sprachdienstleistungen
+  </text>
+  <text class="logo-lang" x="600" y="430" text-anchor="middle" font-family="Inter, Arial, Helvetica, sans-serif" font-size="42" font-weight="600" letter-spacing="0">
+    Deutsch ↔ Russisch
+  </text>
+</svg>

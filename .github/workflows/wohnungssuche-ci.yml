@@ -1,0 +1,47 @@
+name: Wohnungssuche CI
+
+on:
+  pull_request:
+    paths:
+      - "wohnungssuche/**"
+      - ".github/workflows/wohnungssuche-ci.yml"
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "wohnungssuche/**"
+      - ".github/workflows/wohnungssuche-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  wohnungssuche:
+    name: Django check and tests
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ci-only-check-secret
+      DEBUG: "true"
+      ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+      EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: wohnungssuche/requirements.txt
+
+      - name: Install dependencies
+        working-directory: wohnungssuche
+        run: python -m pip install -r requirements.txt
+
+      - name: Run Django system check
+        working-directory: wohnungssuche
+        run: python manage.py check
+
+      - name: Run tests
+        working-directory: wohnungssuche
+        run: python manage.py test --verbosity 1

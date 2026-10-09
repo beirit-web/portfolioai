@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="3D Wave Grid ist eine interaktive WebGL- und Three.js-Demo von Beirit Digital mit animierter 3D-Oberfläche."
+        />
+        <meta
+            name="keywords"
+            content="Beirit Digital, 3D Wave Grid, Three.js, WebGL, 3D Webentwicklung, interaktive Webapp, Frontend Demo"
+        />
+        <link rel="canonical" href="https://portfolio.example.invalid/referenzen/" />
+        <meta property="og:title" content="3D Wave Grid | Beirit Digital" />
+        <meta property="og:description" content="Interaktive 3D-Webdemo mit WebGL, Three.js und animierter Oberfläche." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="3D Wave Grid | Beirit Digital" />
+        <meta name="twitter:description" content="Interaktive 3D-Webdemo mit WebGL und Three.js." />
+        <title>3D Wave Grid | Beirit Digital</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="./style.css" />
+    </head>
+    <body>
+        <div class="overlay">
+            <div class="top-nav">
+                <div class="nav-logo">
+                    <a href="#">Franky.dev</a>
+                </div>
+                <div class="nav-content">
+                    <div class="nav-links">
+                        <a href="https://arkon.digital" class="animated-link">
+                            <span class="link-content">
+                                <span class="link-text">Projects</span>
+                                <span class="link-text">Projects</span>
+                            </span>
+                        </a>
+                        <a href="https://arkon.digital" class="animated-link">
+                            <span class="link-content">
+                                <span class="link-text">About</span>
+                                <span class="link-text">About</span>
+                            </span>
+                        </a>
+                        <a href="https://arkon.digital" class="animated-link">
+                            <span class="link-content">
+                                <span class="link-text">Contact</span>
+                                <span class="link-text">Contact</span>
+                            </span>
+                        </a>
+                    </div>
+                    <div class="nav-socials">
+                        <a href="https://x.com/FrankyHungDev" class="animated-link">
+                            <span class="link-content">
+                                <span class="link-text">X (Twitter)</span>
+                                <span class="link-text">X (Twitter)</span>
+                            </span>
+                        </a>
+                        <a href="https://www.instagram.com/franky_hung/" class="animated-link">
+                            <span class="link-content">
+                                <span class="link-text">Instagram</span>
+                                <span class="link-text">Instagram</span>
+                            </span>
+                        </a>
+                    </div>
+                    <div class="nav-time">
+                        <p id="local-time"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-section">
+                <div class="spacer"></div>
+                <h1>
+                    Franky is a Hong Kong-based creative developer exploring how
+                    to blend design and technology to create memorable
+                    experiences.
+                    <span class="secondary">
+                        His work focuses clarity, function, and emotion — always
+                        built on inspiration and curiosity.
+                    </span>
+                </h1>
+                <div class="spacer-back"></div>
+            </div>
+            <div class="bottom-bar">
+                <div class="bar-location">
+                    <p>Based in Hong Kong</p>
+                </div>
+                <div class="bar-projects">
+                    <a href="https://arkon.digital" class="animated-link">
+                        <span class="link-content">
+                            <span class="link-text">Check all projects<img class="arrow-icon" src="./arrow.svg" alt="Arrow" /></span>
+                            <span class="link-text">Check all projects<img class="arrow-icon" src="./arrow.svg" alt="Arrow" /></span>
+                        </span>
+                    </a>
+                </div>
+                <div class="bar-availability">
+                    <a href="mailto:franky@arkon.digital" class="animated-link">
+                        <span class="link-content">
+                            <span class="link-text">Contact Me<img class="arrow-icon" src="./arrow.svg" alt="Arrow" /></span>
+                            <span class="link-text">Contact Me<img class="arrow-icon" src="./arrow.svg" alt="Arrow" /></span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <canvas class="webgl"></canvas>
+        <script type="module" src="./script.js"></script>
+    </body>
+</html>

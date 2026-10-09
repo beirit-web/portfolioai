@@ -1,0 +1,15 @@
+{% extends 'shop/base.html' %}
+{% load shop_ui l10n %}
+{% block title %}Bestellanfrage{% endblock %}
+{% block content %}
+  <a class="back-link" href="{% url 'storefront:cart' %}">{% shop_icon 'back' %}Warenkorb bearbeiten</a><div class="page-heading"><div><p class="eyebrow">TERMIN & KONTAKT</p><h2>Bestellanfrage</h2></div></div>
+  <div class="order-layout checkout-layout"><section><form method="post" id="checkoutForm" novalidate data-subtotal="{{ subtotal|unlocalize }}" data-local-fee="{{ local_delivery_fee|unlocalize }}">
+    {% csrf_token %}{{ form.request_key }}
+    {% if form.errors %}<div class="form-errors" role="alert"><p>Bitte die markierten Angaben prüfen.</p>{{ form.non_field_errors }}{{ form.request_key.errors }}</div>{% endif %}
+    {% for error in cart_errors %}<p class="error-text" role="alert">{{ error }}</p>{% endfor %}
+    <fieldset class="delivery-fieldset"><legend>Übergabe</legend><div class="delivery-options">{{ form.delivery_method }}</div>{% if form.delivery_method.errors %}<ul class="errorlist" id="id_delivery_method-errors">{% for error in form.delivery_method.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</fieldset>
+    <div class="field date-field">{% include 'shop/field.html' with field=form.requested_date %}<small>Frühester Termin: {{ earliest_date|date:'d. M Y' }}</small></div>
+    <fieldset class="address-fields" id="deliveryAddress"><legend>Lieferadresse</legend><p class="field-hint">Nur bei lokaler Lieferung erforderlich.</p><div class="form-grid"><div class="field field--wide">{% include 'shop/field.html' with field=form.delivery_address %}</div><div class="field">{% include 'shop/field.html' with field=form.postal_code %}</div><div class="field">{% include 'shop/field.html' with field=form.city %}</div></div></fieldset>
+    <fieldset><legend>Kontaktdaten</legend><div class="form-grid"><div class="field field--wide">{% include 'shop/field.html' with field=form.customer_name %}</div><div class="field">{% include 'shop/field.html' with field=form.customer_email %}</div><div class="field">{% include 'shop/field.html' with field=form.customer_phone %}</div><div class="field field--wide">{% include 'shop/field.html' with field=form.customer_note %}</div></div></fieldset>
+  </form></section><aside class="order-summary"><h3>Deine Auswahl</h3><ul class="checkout-items">{% for row in rows %}<li><span>{{ row.quantity }} × {{ row.product.name|default:'Entfernter Artikel' }}</span><strong>{{ row.line_total|euros }}</strong></li>{% endfor %}</ul>{% include 'shop/summary.html' %}<p class="summary-note">Abholung ohne Aufpreis. Lokale Lieferung: {{ local_delivery_fee|euros }}.</p></aside><div class="checkout-actions"><p class="request-note">Noch keine Zahlung. Termin und Verfügbarkeit werden erst nach Prüfung deiner Anfrage bestätigt.</p><button class="button button--primary submit-request" type="submit" form="checkoutForm" {% if cart_errors %}disabled{% endif %}>{% shop_icon 'send' %}Bestellanfrage senden</button></div></div>
+{% endblock %}

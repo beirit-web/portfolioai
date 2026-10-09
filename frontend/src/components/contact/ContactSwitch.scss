@@ -1,0 +1,432 @@
+// Animation and geometry from the supplied form-switch example.
+.contact-switch-container {
+  margin-inline: auto;
+}
+.contact-switch,
+.contact-switch * {
+  box-sizing: border-box;
+  position: relative;
+  padding: 0;
+  margin: 0;
+}
+.contact-switch input,
+.contact-switch textarea,
+.contact-switch button {
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+.contact-switch__animated-border {
+  --bw: var(--border-width, 3px);
+
+  z-index: 2;
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(
+    0 0, 100% 0, 100% 100%, 0 100%, 0 0,
+    var(--bw) var(--bw),
+    var(--bw) calc(100% - var(--bw)),
+    calc(100% - var(--bw)) calc(100% - var(--bw)),
+    calc(100% - var(--bw)) var(--bw),
+    var(--bw) var(--bw)
+  );
+
+  &:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 150%;
+    padding-bottom: 150%;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(
+      from 270deg,
+      #0868e8 0%,
+      var(--beirit-logo-cyan, #40b9ec) 50%,
+      #0868e8 100%
+    );
+    animation: rotateBtnBg 2s linear infinite;
+  }
+}
+
+.contact-switch-container {
+  width: 800px;
+  max-width: 100%;
+}
+
+.contact-switch {
+  $switchRef: &;
+  --switcher-width: 260px;
+  --arrow-offset: 30px;
+  --anim-time: 1.2s;
+  --transition-transform: transform var(--anim-time) ease-in-out;
+  --transition-opacity: opacity 0s calc(var(--anim-time) / 2);
+
+  --btn-height: 36px;
+
+  height: 550px;
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.3));
+
+  button {
+    display: block;
+    margin: 0 auto;
+    height: var(--btn-height);
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  @mixin switched {
+    #{$switchRef}.s--switched & {
+      @content;
+    }
+  }
+
+  &__inner {
+    --demoX1: 0;
+    --demoX2: calc(100% - var(--arrow-offset));
+    --demoX3: 100%;
+    --demoX4: calc(100% - var(--arrow-offset));
+    --demoX5: 0;
+    --demoX6: 0;
+
+    overflow: hidden;
+    height: 100%;
+    padding-right: var(--switcher-width);
+    background: #fff;
+    transition: clip-path var(--anim-time) ease-in-out;
+    will-change: clip-path;
+    clip-path: polygon(var(--demoX1) 0, var(--demoX2) 0, var(--demoX3) 50%, var(--demoX4) 100%, var(--demoX5) 100%, var(--demoX6) 50%);
+
+    @include switched {
+      --demoX1: var(--arrow-offset);
+      --demoX2: 100%;
+      --demoX3: 100%;
+      --demoX4: 100%;
+      --demoX5: var(--arrow-offset);
+      --demoX6: 0;
+    }
+  }
+
+  &__forms {
+    height: 100%;
+    transition: var(--transition-transform);
+    will-change: transform;
+
+    @include switched {
+      transform: translateX(var(--switcher-width));
+    }
+  }
+
+  &__form {
+    position: absolute;
+    inset: 0;
+    transition: var(--transition-opacity);
+
+    &:first-child {
+      @include switched {
+        opacity: 0;
+        pointer-events: none;
+      }
+    }
+
+    &:last-child {
+      opacity: 0;
+      pointer-events: none;
+
+      @include switched {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+
+    &-content {
+      width: var(--switcher-width);
+      margin: 0 auto;
+    }
+  }
+
+  &__switcher {
+    --x1: calc(100% - var(--switcher-width));
+    --x2: calc(100% - var(--arrow-offset));
+    --x3: 100%;
+    --x4: calc(100% - var(--arrow-offset));
+    --x5: calc(100% - var(--switcher-width));
+    --x6: calc(100% - var(--switcher-width) + var(--arrow-offset));
+
+    z-index: 2;
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/142996/sections-3.jpg');
+    background-size: cover;
+    background-position: center center;
+    clip-path: polygon(var(--x1) 0, var(--x2) 0, var(--x3) 50%, var(--x4) 100%, var(--x5) 100%, var(--x6) 50%);
+    transition: clip-path var(--anim-time) ease-in-out;
+    will-change: clip-path;
+
+    @include switched {
+      --x1: var(--arrow-offset);
+      --x2: var(--switcher-width);
+      --x3: calc(var(--switcher-width) - var(--arrow-offset));
+      --x4: var(--switcher-width);
+      --x5: var(--arrow-offset);
+      --x6: 0;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+    }
+
+    &-inner {
+      height: 100%;
+      transition: var(--transition-transform);
+      will-change: transform;
+
+      @include switched {
+        transform: translateX(calc((100% - var(--switcher-width)) * -1));
+      }
+    }
+
+    &-content {
+      overflow: hidden;
+      position: absolute;
+      right: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      column-gap: 20px;
+      width: var(--switcher-width);
+      height: 100%;
+    }
+
+    &-text {
+      display: flex;
+      flex-wrap: nowrap;
+      height: 140px;
+      color: #fff;
+      transition: var(--transition-transform);
+      will-change: transform;
+
+      @include switched {
+        transform: translateX(-100%);
+      }
+
+      > div {
+        width: 100%;
+        flex-shrink: 0;
+        text-align: center;
+        &:first-child {
+          padding-left: calc(var(--arrow-offset) + 10px);
+          padding-right: calc(var(--arrow-offset) - 10px);
+        }
+
+        &:last-child {
+          padding-left: calc(var(--arrow-offset) - 10px);
+          padding-right: calc(var(--arrow-offset) + 10px);
+        }
+
+        h3 {
+          margin-bottom: 20px;
+        }
+
+        p {
+          font-size: 14px;
+        }
+      }
+    }
+
+    &-btn {
+      --btn-width: 100px;
+      --border-width: 3px;
+
+      overflow: hidden;
+      width: var(--btn-width);
+
+      @keyframes rotateBtnBg {
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      &-inner {
+        z-index: 1;
+        position: absolute;
+        inset: 0;
+        font-weight: 500;
+
+        span {
+          display: block;
+          height: 100%;
+          line-height: var(--btn-height);
+          text-align: center;
+          text-transform: uppercase;
+          transition: var(--transition-transform);
+          will-change: transform;
+
+          @include switched {
+            transform: translateY(-100%);
+          }
+        }
+      }
+    }
+  }
+}
+
+.contact-switch-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 50px 0;
+  row-gap: 20px;
+  text-align: center;
+  transition: transform var(--anim-time, 1.2s);
+  will-change: transform;
+
+  &__heading {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  &__field {
+    width: 100%;
+
+    &-label {
+      font-size: 12px;
+      color: #cfcfcf;
+      text-transform: uppercase;
+    }
+
+    &-input {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      margin-top: 5px;
+      padding-bottom: 5px;
+      font-size: 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.4);
+      text-align: center;
+    }
+  }
+
+  &__submit {
+    width: 100%;
+    background: #d4af7a;
+  }
+}
+.site-shell .home-main#top .contact-section.contact-page-section.contact-page-section--compact .contact-panel {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+}
+.site-shell .home-main#top .contact-switch .contact-form {
+  display: block;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.contact-switch {
+  color: #333;
+  line-height: 1.5;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+}
+.contact-switch .bd-form-item { width: 100%; gap: 0; }
+.site-shell .home-main#top .contact-section.contact-page-section .contact-switch-form__heading { color: #333; font-size: 20px; font-weight: bold; line-height: 1.5; }
+.site-shell .home-main#top .contact-switch .bd-form-label {
+  display: block;
+  color: #cfcfcf;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: center;
+  text-transform: uppercase;
+}
+.site-shell .home-main#top .contact-switch :is(.bd-input, .bd-textarea) {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  margin-top: 5px;
+  padding: 0 0 5px;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, .4);
+  border-radius: 0;
+  background: transparent;
+  color: #333;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: none;
+  outline: none;
+}
+.site-shell .home-main#top .contact-switch :is(.bd-input, .bd-textarea):is(:focus, :focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+.site-shell .home-main#top .contact-switch :is(.bd-input, .bd-textarea)[aria-invalid='true'] { border-bottom-color: #b91c1c; }
+.site-shell .home-main#top .contact-switch .bd-textarea { height: 95px; resize: none; }
+.site-shell .home-main#top .contact-switch .submit-button {
+  display: flex;
+  width: 100%;
+  height: var(--btn-height);
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: #d4af7a;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 400;
+  box-shadow: none;
+  transform: none;
+}
+.contact-switch .contact-form-status { width: 100%; font-size: 12px; padding: .5rem; }
+.contact-switch .contact-switch__switcher-btn { border-radius: 0; min-height: 0; padding: 0; }
+.contact-switch button:focus-visible { outline: 2px solid #d4af7a; outline-offset: 4px; }
+.contact-switch .contact-switch__switcher-btn:focus-visible { outline-color: #fff; outline-offset: -6px; }
+@media (max-width: 40rem) {
+  .contact-switch { --switcher-width: clamp(120px, 32.5vw, 260px); --arrow-offset: 12px; }
+  .contact-switch__form-content { width: calc(100% - 2rem); }
+  .contact-switch__switcher-text { height: 200px; }
+  .contact-switch__switcher-text > div h3 { font-size: 15px; margin-bottom: 12px; }
+  .contact-switch__switcher-text > div p { font-size: 12px; }
+  .contact-switch__switcher-btn { --btn-width: 80px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-switch { --anim-time: 0s; }
+  .contact-switch__animated-border::before { animation: none; }
+}
+
+.site-shell .home-main#top .contact-section.contact-page-section .contact-switch__switcher-text h3 {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.site-shell .home-main#top .contact-section.contact-page-section .contact-switch__switcher-text p {
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.5;
+}
+@media (max-width: 40rem) {
+  .site-shell .home-main#top .contact-section.contact-page-section .contact-switch__switcher-text h3 { font-size: 15px; }
+  .site-shell .home-main#top .contact-section.contact-page-section .contact-switch__switcher-text p { font-size: 12px; }
+}

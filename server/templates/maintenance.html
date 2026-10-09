@@ -1,0 +1,18 @@
+{% extends "base_public.html" %}
+
+{% block title %}Wir sind gleich wieder da{% endblock %}
+
+{% block body_attrs %} class="has-topnav maintenance-page theme-dark-locked"{% endblock %}
+
+{% block content %}
+  <main class="page-shell has-topnav template-page template-page--narrow">
+    <header class="hero-card hero-card--static template-hero">
+      <p class="section-kicker">Update läuft</p>
+      <h1>Wir sind gleich wieder da</h1>
+      <p class="section-intro">
+        {{ message|default:"Wir deployen gerade eine neue Version. Bitte in Kürze erneut versuchen." }}
+      </p>
+      <p class="template-inline-note">Danke für Ihre Geduld.</p>
+    </header>
+  </main>
+{% endblock %}

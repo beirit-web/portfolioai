@@ -1,0 +1,306 @@
+Handbuch für Beirit Digital Sprachdienstleistungen
+
+Dieses Handbuch erklärt die Internet-Seite von Beirit Digital Sprachdienstleistungen.
+
+Die Texte sind kurz und einfach geschrieben.
+
+Das Handbuch ist für:
+
+- Nutzer und Nutzerinnen
+- Menschen, die Hilfe mit Sprache brauchen
+- Menschen, die einen Dolmetscher suchen
+- Menschen, die den Übersetzer oder den Chat benutzen wollen
+
+
+1. Was ist Beirit Digital Sprachdienstleistungen?
+
+Beirit Digital Sprachdienstleistungen ist eine Internet-Seite für sprachliche Hilfe.
+
+Die Seite hilft zum Beispiel bei:
+
+- Formularen
+- Briefen
+- Dokumenten
+- Gesprächen
+- Telefonaten
+- Terminen
+
+Die Hilfe ist vor allem für Deutsch, Russisch und Ukrainisch gedacht.
+
+Auf der Seite gibt es auch weitere Hilfs-Werkzeuge.
+
+
+2. Was können Sie auf der Seite machen?
+
+Sie können auf der Seite:
+
+- ein Konto anlegen
+- sich anmelden
+- Ihr Profil ansehen
+- den Chat benutzen
+- den Übersetzer benutzen
+- Dolmetscher suchen
+- eine Bewerbung als Dolmetscher senden
+- Kontakt aufnehmen
+- Hilfeseiten zu Themen wie Krankenkasse, Aufenthaltstitel oder Artikel lesen
+
+
+3. Registrierung
+
+Wenn Sie die geschützten Bereiche benutzen wollen,
+müssen Sie zuerst ein Konto anlegen.
+
+So geht es:
+
+1. Öffnen Sie die Seite "Registrieren".
+2. Schreiben Sie Ihre E-Mail-Adresse in das Formular.
+3. Denken Sie sich ein Passwort aus.
+4. Wiederholen Sie das Passwort.
+5. Wenn Sie möchten, können Sie ein Profilbild hochladen.
+6. Klicken Sie auf "Konto anlegen".
+
+Danach werden Sie in der Regel direkt eingeloggt.
+
+
+4. Anmeldung
+
+Wenn Sie schon ein Konto haben,
+können Sie sich über die Seite "Login" anmelden.
+
+Dafür brauchen Sie:
+
+- Ihre E-Mail-Adresse
+- Ihr Passwort
+
+Wenn Sie Ihr Passwort vergessen haben,
+nutzen Sie die Funktion "Passwort vergessen?".
+
+Wichtig:
+
+- Schauen Sie auch in Ihren Spam-Ordner.
+- Wenn keine E-Mail kommt, prüfen Sie die eingegebene Adresse.
+
+Neues Sicherheits-Update:
+
+Wenn Sie 3 Minuten lang nichts in der App machen,
+werden Sie automatisch abgemeldet.
+
+Das passiert aus Sicherheitsgründen.
+
+Die Abmeldung gilt auf allen Geräten,
+auf denen Ihr Konto gerade angemeldet ist.
+
+
+5. Ihr Bereich nach dem Login
+
+Nach dem Login sehen Sie mehr Inhalte.
+
+Dazu gehören zum Beispiel:
+
+- persönliche Kontaktmöglichkeiten
+- Ihr Profil
+- geschützte Bereiche
+- Funktionen zum Bearbeiten Ihres Kontos
+
+Sie sollten sich nach der Nutzung wieder abmelden.
+Das ist sicherer.
+
+Wenn die App Sie wegen Inaktivität abmeldet,
+können Sie sich einfach neu anmelden.
+
+
+6. Kontakt aufnehmen
+
+Im Kontaktbereich auf der Startseite sehen Sie die schnellen Kontaktwege.
+
+Dort können je nach Einstellung zum Beispiel diese Wege angeboten werden:
+
+- Chat
+- E-Mail
+- WhatsApp
+- Signal
+- Telegram
+
+Am schnellsten ist oft der Chat für kurze Fragen.
+
+Für Dokumente ist E-Mail oft besser.
+
+Zum Beispiel für:
+
+- Briefe
+- PDF-Dateien
+- Fotos von Unterlagen
+- Screenshots
+
+Gut ist,
+wenn Sie in Ihrer Nachricht gleich wichtige Informationen schreiben:
+
+- Worum geht es?
+- Welche Sprache sprechen Sie?
+- Gibt es einen Termin?
+- Gibt es eine Frist?
+- Haben Sie Unterlagen?
+
+
+7. Chat benutzen
+
+Der Chat ist für kurze Fragen und erste Anfragen.
+
+Sie können dort kurz schreiben,
+wobei Sie Hilfe brauchen.
+
+Zum Beispiel:
+
+- Ich brauche Hilfe mit einem Brief.
+- Ich habe einen Arzt-Termin.
+- Ich verstehe ein Formular nicht.
+
+Wenn Unterlagen wichtig sind,
+sollten Sie diese zusätzlich per E-Mail schicken.
+
+
+8. Übersetzer benutzen
+
+Auf der Seite "Übersetzer" können Sie Text eingeben und übersetzen.
+
+Das Werkzeug hilft schnell bei kurzen Texten.
+
+Zum Beispiel:
+
+- einzelne Sätze
+- kurze Nachrichten
+- einfache Formulare
+
+Wichtig:
+
+Automatische Übersetzungen können Fehler haben.
+
+Bei wichtigen Dokumenten sollten Sie die Übersetzung immer noch einmal prüfen lassen.
+
+
+9. Dolmetscher finden
+
+Auf der Seite "Dolmetscher" können Sie nach passenden Personen suchen.
+
+Dort können Sie zum Beispiel auf Folgendes achten:
+
+- Sprache
+- Region
+- Erfahrung
+- Verfügbarkeit
+
+Manche Bereiche sind erst nach dem Login sichtbar.
+
+Wenn Sie einen Dolmetscher brauchen,
+sollten Sie Ihr Anliegen kurz erklären.
+
+Wichtig sind:
+
+- Sprache
+- Ort
+- Datum
+- Thema des Termins
+
+
+10. Bewerbung als Dolmetscher
+
+Es gibt auch eine Seite für die Bewerbung als Dolmetscher.
+
+Dort können Interessierte ihre Angaben senden.
+
+Zum Beispiel:
+
+- Name
+- Sprachen
+- Erfahrungen
+- Einsatzbereich
+
+Nach der Prüfung kann ein Profil freigeschaltet werden.
+
+
+11. Profil
+
+Auf der Profil-Seite können Sie Ihre Daten ansehen
+und zum Teil ändern.
+
+Dazu können gehören:
+
+- Profilbild
+- persönliche Angaben
+- Konto-Einstellungen
+
+Pflegen Sie Ihre Daten sorgfältig,
+damit Kontakt und Hilfe gut funktionieren.
+
+
+12. Konto löschen
+
+Wenn Sie Ihr Konto nicht mehr brauchen,
+können Sie es löschen.
+
+Die Löschung ist endgültig.
+
+Das bedeutet:
+
+Danach ist das Konto weg.
+
+Prüfen Sie deshalb vorher gut,
+ob Sie das wirklich wollen.
+
+
+13. Weitere Hilfeseiten
+
+Beirit Digital Sprachdienstleistungen hat auch Seiten mit Informationen zu wichtigen Themen.
+
+Dazu gehören zum Beispiel:
+
+- Krankenkasse
+- Aufenthaltstitel
+- Wetter
+- Essensplan
+- Rechtliches
+
+Diese Seiten helfen beim Verstehen
+und bei der Orientierung im Alltag.
+
+
+14. Wichtige Hinweise
+
+- Nutzen Sie für wichtige Anfragen möglichst klare und kurze Sätze.
+- Senden Sie wichtige Unterlagen möglichst gut lesbar.
+- Schreiben Sie Termine und Fristen immer dazu.
+- Melden Sie sich nach der Nutzung wieder ab.
+- Nach 3 Minuten ohne Aktivität meldet die App Sie automatisch ab.
+- Bewahren Sie Ihr Passwort sicher auf.
+
+
+15. Wenn etwas nicht funktioniert
+
+Manchmal kann es technische Probleme geben.
+
+Dann hilft oft:
+
+1. Seite neu laden.
+2. Später noch einmal versuchen.
+3. Login-Daten noch einmal prüfen.
+4. Prüfen, ob Sie wegen Inaktivität automatisch abgemeldet wurden.
+5. Einen anderen Browser probieren.
+6. Kontakt über E-Mail oder Chat aufnehmen.
+
+
+16. Zusammenfassung
+
+Beirit Digital Sprachdienstleistungen ist eine Seite für sprachliche Hilfe.
+
+Sie können dort:
+
+- Hilfe anfragen
+- Kontakt aufnehmen
+- Texte übersetzen
+- Dolmetscher suchen
+- Informationen lesen
+
+Das Ziel der Seite ist:
+
+Menschen bei Sprache,
+Verstehen und wichtigen Terminen zu unterstützen.

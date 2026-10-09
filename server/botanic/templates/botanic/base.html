@@ -1,0 +1,48 @@
+{% load static botanic_ui %}
+<!doctype html>
+<html lang="de" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Pflanzen entdecken, die eigene Sammlung pflegen und persönliche Gießtermine verwalten mit ENBT Botanic.">
+  {% if tab != 'search' or plant %}<meta name="robots" content="noindex, nofollow">{% endif %}
+  <title>{% block title %}ENBT Botanic{% endblock %} | Beirit Digital</title>
+  <link rel="icon" href="{% static 'images/logo-light.ico' %}">
+  <link rel="stylesheet" href="{% asset_url 'botanic/style.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'css/project-home.css' %}">
+  <script src="{% asset_url 'botanic/app.js' %}" defer></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt</a>
+  <nav class="project-home-nav" aria-label="Projekt"><a href="/projekte/enbt-botanic" aria-label="Zur Startseite von ENBT Botanic">Zur Startseite</a></nav>
+  <header class="app-header">
+    <a class="brand" href="{% url 'botanic:index' %}"><span class="brand-mark">{% botanic_icon 'sprout' %}</span><h1>ENBT <span>Botanic</span></h1></a>
+    <div class="account-actions">
+      {% if request.user.is_authenticated %}
+        <a class="account-link" href="{% url 'pages:profile' %}" title="Mein Konto: {{ request.user.username }}">{% botanic_icon 'user' %}<span>{{ request.user.username }}</span></a>
+      {% else %}
+        <a class="button button--quiet" href="{{ login_url }}">{% botanic_icon 'user' %}<span>Anmelden</span></a>
+      {% endif %}
+    </div>
+  </header>
+  <div class="app-layout">
+    <aside class="navigation">
+      <nav aria-label="Botanic">
+        <a href="{% url 'botanic:index' %}?tab=search" {% if tab == 'search' %}aria-current="page"{% endif %}>{% botanic_icon 'search' %}<span>Entdecken</span></a>
+        <a href="{% url 'botanic:index' %}?tab=plants" {% if tab == 'plants' %}aria-current="page"{% endif %}>{% botanic_icon 'plants' %}<span>Meine Pflanzen</span><small>{{ plant_count }}</small></a>
+        <a href="{% url 'botanic:index' %}?tab=watering" {% if tab == 'watering' %}aria-current="page"{% endif %}>{% botanic_icon 'calendar' %}<span>Gießplan</span>{% if due_count %}<small class="due-count">{{ due_count }}</small>{% endif %}</a>
+        <a href="{% url 'botanic:weather' %}" {% if tab == 'weather' %}aria-current="page"{% endif %}>{% botanic_icon 'weather' %}<span>Wetter</span></a>
+      </nav>
+      <div class="nav-footer"><a href="/projekte">Beirit Digital{% botanic_icon 'arrow' %}</a><a href="/datenschutz">Datenschutz</a></div>
+    </aside>
+    <main id="main" tabindex="-1">
+      {% if messages %}<div class="messages" aria-live="polite">{% for message in messages %}<p class="message message--{{ message.tags }}" {% if message.tags == 'error' %}role="alert"{% endif %}>{% if message.tags == 'error' %}{% botanic_icon 'alert' %}{% else %}{% botanic_icon 'check' %}{% endif %}{{ message }}</p>{% endfor %}</div>{% endif %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

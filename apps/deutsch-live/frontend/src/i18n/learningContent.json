@@ -1,0 +1,10 @@
+{
+  "learning": {
+    "bakery": {
+      "title": "Пекарня",
+      "germanTitle": "Bäckerei",
+      "sampleSentence": "Guten Morgen. Ich hätte gern zwei Brötchen und einen Kaffee. Zum Mitnehmen, bitte.",
+      "exerciseTemplate": "Ich hätte gern ________."
+    }
+  }
+}

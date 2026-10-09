@@ -1,0 +1,9 @@
+{% load asset_tags %}
+<a class="backstube-brand{% if brand_heading %} brand{% endif %}" href="{% url 'storefront:catalog' %}">
+  <img class="backstube-brand__mark{% if brand_heading %} brand-mark{% endif %}" src="{% asset_url 'shop/brand-mark.svg' %}" alt="" width="72" height="72">
+  {% if brand_heading %}
+    <h1 class="backstube-brand__wordmark">Beirit <span>Backstube</span></h1>
+  {% else %}
+    <span class="backstube-brand__wordmark">Beirit <span>Backstube</span></span>
+  {% endif %}
+</a>

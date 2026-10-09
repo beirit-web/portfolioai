@@ -1,0 +1,27 @@
+{% extends "base_public.html" %}
+
+{% block title %}Wartung – bitte kurz gedulden{% endblock %}
+
+{% block body_attrs %} class="has-topnav error-page error-page--500"{% endblock %}
+
+{% block content %}
+  <main class="page-shell has-topnav template-page template-page--narrow">
+    <header class="hero-card hero-card--static template-hero">
+      <p class="section-kicker">Service-Hinweis</p>
+      <h1>Wir schrauben kurz am Server</h1>
+      <span class="template-status template-status--danger">500 – Bitte später erneut versuchen</span>
+      <p class="section-intro">
+        Gerade laufen Wartungsarbeiten oder ein Update. Dadurch kann die
+        Registrierung aktuell nicht verarbeitet werden.
+      </p>
+      <p class="template-inline-note">
+        Русский: Сервис временно недоступен из-за работ или обновления.
+        Попробуйте снова позже.
+      </p>
+      <div class="template-actions">
+        <a class="btn-primary" href="/login/" aria-label="Zum Login">Login</a>
+        <a class="btn-ghost" href="{% url 'pages:home' %}">Startseite</a>
+      </div>
+    </header>
+  </main>
+{% endblock %}

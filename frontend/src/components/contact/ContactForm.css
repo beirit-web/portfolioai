@@ -1,0 +1,185 @@
+.contact-form.contact-form--shadcn {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+}
+
+.contact-form--shadcn .contact-form__grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.contact-form__honeypot {
+  display: none;
+}
+
+/* Keep the form below the fixed header when it starts the contact page. */
+.site-shell .home-main#top > .contact-section.contact-page-section--compact:first-child {
+  padding-top: calc(var(--site-header-height, 4.5rem) + 1.5rem);
+}
+
+.site-shell .home-main#top .contact-form--loading {
+  min-height: 550px;
+}
+
+@media (max-width: 47.99rem) {
+  .site-shell .home-main#top .contact-form--loading {
+    /* Reserve the card height before the lazy form mounts. */
+    min-height: 27.2rem;
+  }
+}
+
+.bd-upload {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: center;
+  min-height: 5.35rem;
+  border: 1px dashed rgba(15, 118, 110, 0.38);
+  border-radius: 8px;
+  background: rgba(240, 253, 250, 0.48);
+  padding: 0.92rem;
+  color: #0f172a;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.bd-upload:hover,
+.bd-upload:focus-within {
+  border-color: rgba(15, 118, 110, 0.72);
+  background: rgba(236, 253, 245, 0.74);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.bd-upload--error {
+  border-color: rgba(220, 38, 38, 0.68);
+  background: rgba(254, 242, 242, 0.74);
+}
+
+.bd-upload__icon {
+  display: grid;
+  width: 2.45rem;
+  height: 2.45rem;
+  place-items: center;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #ffffff;
+}
+
+.bd-upload__icon-svg,
+.contact-form-status__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+}
+
+.bd-upload__body {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.bd-upload__body strong {
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.bd-upload__body small,
+.bd-upload__help {
+  color: #475569;
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.bd-upload__body small {
+  overflow-wrap: anywhere;
+}
+
+.bd-upload__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+.bd-upload__help {
+  margin: 0;
+}
+
+.submit-button__icon {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+}
+
+.contact-form--shadcn .contact-form-status {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: start;
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 720;
+  line-height: 1.45;
+}
+
+.contact-form--shadcn .contact-form-status span {
+  display: grid;
+  gap: 0.16rem;
+}
+
+.contact-form--shadcn .contact-form-status--success {
+  border: 1px solid rgba(13, 148, 136, 0.24);
+  background: rgba(240, 253, 250, 0.82);
+  color: #115e59;
+}
+
+.contact-form--shadcn .contact-form-status--loading {
+  border: 1px solid rgba(14, 116, 144, 0.24);
+  background: rgba(236, 254, 255, 0.88);
+  color: #155e75;
+}
+
+.contact-form--shadcn .contact-form-status--loading svg {
+  animation: contact-status-pulse 1.15s ease-in-out infinite;
+}
+
+.contact-form--shadcn .contact-form-status--error {
+  border: 1px solid rgba(220, 38, 38, 0.22);
+  background: rgba(254, 242, 242, 0.88);
+  color: #991b1b;
+}
+
+@keyframes contact-status-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translateX(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(0.15rem);
+  }
+}
+
+@media (min-width: 48rem) {
+  .contact-form--shadcn .contact-form__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 47.99rem) {
+  .bd-button {
+    width: 100%;
+  }
+}

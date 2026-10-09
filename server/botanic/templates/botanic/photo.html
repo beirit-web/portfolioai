@@ -1,0 +1,5 @@
+{% load botanic_ui %}
+<div class="plant-photo{% if species.image_url %} has-image{% endif %}">
+  {% if species.image_url %}<img src="{{ species.image_url }}" alt="{{ species.name }}" loading="lazy" referrerpolicy="no-referrer" width="600" height="450">{% endif %}
+  <span class="photo-fallback">{% botanic_icon 'sprout' %}<span>Kein freigegebenes Foto</span></span>
+</div>

@@ -1,0 +1,432 @@
+html body.home-page .home-main.home-main--local {
+  width: min(100% - clamp(1rem, 2.4vw, 2.2rem), 86rem);
+}
+
+html body.home-page .home-service-grid,
+html body.home-page .home-price-example-list {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+}
+
+html body.home-page .home-service-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+html body.home-page .home-price-example-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  html body.home-page .topnav .nav-cube-link:has(.nav-service-mark),
+  html body.home-page .topnav .nav-cube-link {
+    --nav-cube-link-width: clamp(10.15rem, 21vw, 11.25rem);
+    flex: 0 0 var(--nav-cube-link-width);
+    width: var(--nav-cube-link-width);
+    min-width: var(--nav-cube-link-width);
+    max-width: var(--nav-cube-link-width);
+    margin-right: clamp(0.82rem, 2vw, 1.08rem);
+  }
+
+  html body.home-page .topnav .nav-cube-link + .nav-link {
+    margin-left: clamp(0.72rem, 1.8vw, 1rem);
+  }
+
+  html body.home-page .topnav .nav-service-mark,
+  html
+    body.home-page
+    .topnav
+    .nav-service-mark__logo.nav-service-mark__logo--text {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  html
+    body.home-page
+    .topnav
+    .nav-service-mark__logo.nav-service-mark__logo--text {
+    box-sizing: border-box;
+    width: 100%;
+    gap: 0.42rem;
+    overflow: hidden;
+    padding: 0.22rem 0.34rem;
+  }
+
+  html body.home-page .topnav .nav-service-mark__badge {
+    width: 2.08rem;
+    height: 2.08rem;
+    font-size: 0.7rem;
+  }
+
+  html body.home-page .topnav .nav-service-mark__copy {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  html body.home-page .topnav .nav-service-mark__name,
+  html body.home-page .topnav .nav-service-mark__service {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  html body.home-page .topnav .nav-service-mark__name {
+    font-size: 0.86rem;
+    line-height: 1.14;
+  }
+
+  html body.home-page .topnav .nav-service-mark__service {
+    font-size: 0.58rem;
+    line-height: 1.18;
+  }
+}
+
+html body.home-page .home-profile-facts--local,
+html body.home-page .home-contact-simple--local {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 760px) {
+  html body.home-page .home-contact-area {
+    grid-template-columns: minmax(0, 1fr) max-content;
+    align-items: start;
+  }
+
+  html body.home-page .home-contact-heading {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  html body.home-page .home-appointment-cta {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: end;
+  }
+
+  html body.home-page .home-appointment-cta__button {
+    white-space: nowrap;
+  }
+
+  html body.home-page .home-contact-simple--local {
+    grid-column: 1 / -1;
+  }
+}
+
+html body.home-page .home-main--local > .home-pricing-section,
+html body.home-page .home-main--local > #preise.home-pricing-section,
+html[data-theme="light"]
+  body.home-page
+  .home-main--local
+  > .home-pricing-section,
+html[data-theme="light"]
+  body.home-page
+  .home-main--local
+  > #preise.home-pricing-section {
+  border: 0;
+  box-shadow: none;
+}
+
+html body.home-page .home-faq-section .home-faq-item summary,
+html body.home-page .home-faq-section .home-faq-item p {
+  padding-inline: clamp(1rem, 4vw, 1.35rem);
+}
+
+html body.home-page .home-faq-section .home-faq-list {
+  gap: clamp(0.55rem, 1.6vw, 0.85rem);
+}
+
+html body.home-page .home-faq-section .home-faq-item.motion-hover-lift,
+html body.home-page .home-faq-section .home-faq-item.motion-hover-lift:hover,
+html
+  body.home-page
+  .home-faq-section
+  .home-faq-item.motion-hover-lift:focus-visible,
+html
+  body.home-page
+  .home-faq-section
+  .home-faq-item.motion-hover-lift:focus-within,
+html body.home-page .home-faq-section .home-faq-item.motion-hover-lift[open] {
+  transform: scale(1, 1);
+}
+
+@media (min-width: 1500px) {
+  html body.home-page .home-main.home-main--local {
+    width: min(100% - 3rem, 92rem);
+  }
+
+  html body.home-page .home-service-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1399.98px) {
+  html body.home-page .hero.hero--platform,
+  html[data-theme="light"] body.home-page .hero.hero--platform {
+    min-height: auto;
+    height: auto;
+  }
+
+  html body.home-page .hero.hero--platform .hero-surface.hero-surface--platform,
+  html[data-theme="light"]
+    body.home-page
+    .hero.hero--platform
+    .hero-surface.hero-surface--platform {
+    grid-template-columns: minmax(8.75rem, 10.5rem) minmax(0, 35rem);
+    justify-content: center;
+    align-items: center;
+    gap: clamp(0.9rem, 1.4vw, 1.35rem);
+    min-height: auto;
+    height: auto;
+    padding: clamp(2.6rem, 5vh, 3.4rem) clamp(1rem, 2vw, 1.5rem)
+      clamp(2.2rem, 4vh, 2.8rem);
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait {
+    width: clamp(8.75rem, 12vw, 10.5rem);
+    max-width: 10.5rem;
+    justify-self: end;
+  }
+
+  html body.home-page .hero.hero--platform .hero-content-body {
+    max-width: 35rem;
+    justify-self: start;
+  }
+
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    max-width: 13ch;
+    font-size: clamp(3rem, 4vw, 3.65rem);
+    line-height: 0.98;
+  }
+
+  html body.home-page .hero-copy {
+    max-width: 52ch;
+  }
+
+  html body.home-page .home-main.home-main--local {
+    width: min(100% - 2rem, 78rem);
+  }
+
+  html body.home-page .home-price-groups {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: 1rem;
+  }
+
+  html body.home-page .home-price-group {
+    min-width: 0;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  html body.home-page .hero.hero--platform,
+  html[data-theme="light"] body.home-page .hero.hero--platform {
+    min-height: auto;
+    height: auto;
+  }
+
+  html body.home-page .hero.hero--platform .hero-surface.hero-surface--platform,
+  html[data-theme="light"]
+    body.home-page
+    .hero.hero--platform
+    .hero-surface.hero-surface--platform {
+    display: grid;
+    grid-template-columns: minmax(0, min(100%, clamp(34rem, 82vw, 44rem)));
+    justify-content: center;
+    align-content: start;
+    align-items: start;
+    justify-items: center;
+    min-height: auto;
+    height: auto;
+    overflow: clip;
+    padding: 3rem 1.35rem 2.4rem;
+    text-align: center;
+  }
+
+  html
+    body.home-page
+    .hero.hero--platform
+    .hero-surface.hero-surface--platform
+    > .hero-card-portrait,
+  html
+    body.home-page
+    .hero.hero--platform
+    .hero-surface.hero-surface--platform
+    > .hero-content-body {
+    grid-area: auto;
+    position: relative;
+    inset: auto;
+    transform: none;
+    min-width: 0;
+    opacity: 1;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait,
+  html[data-theme="light"]
+    body.home-page
+    .hero.hero--platform
+    .hero-card-portrait {
+    display: none;
+  }
+
+  html body.home-page .hero.hero--platform .hero-content-body {
+    box-sizing: border-box;
+    width: min(100%, clamp(34rem, 82vw, 44rem));
+    max-width: 100%;
+    justify-self: center;
+    text-align: center;
+  }
+
+  html body.home-page .hero.hero--platform .hero-subtitle::before,
+  html body.home-page .hero.hero--platform .hero-subtitle::after,
+  html[data-theme="light"]
+    body.home-page
+    .hero.hero--platform
+    .hero-subtitle::before,
+  html[data-theme="light"]
+    body.home-page
+    .hero.hero--platform
+    .hero-subtitle::after {
+    content: none;
+    display: none;
+  }
+
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    max-width: 15ch;
+    font-size: 2.65rem;
+    line-height: 1;
+  }
+
+  html body.home-page .home-price-groups,
+  html body.home-page .home-about-contact {
+    grid-template-columns: 1fr;
+  }
+
+  html body.home-page .home-price-example-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  html body.home-page .home-price-example:nth-child(3n) {
+    border-right: 1px solid rgba(120, 143, 166, 0.24);
+  }
+
+  html body.home-page .home-price-example:nth-child(2n) {
+    border-right: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  html body.home-page .hero.hero--platform,
+  html[data-theme="light"] body.home-page .hero.hero--platform {
+    min-height: auto;
+    height: auto;
+  }
+
+  html body.home-page .hero.hero--platform .hero-surface.hero-surface--platform,
+  html[data-theme="light"]
+    body.home-page
+    .hero.hero--platform
+    .hero-surface.hero-surface--platform {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    align-items: start;
+    justify-items: center;
+    min-height: auto;
+    height: auto;
+    padding: 2.3rem 1rem 2rem;
+    text-align: center;
+  }
+
+  html body.home-page .hero.hero--platform .hero-card-portrait,
+  html[data-theme="light"]
+    body.home-page
+    .hero.hero--platform
+    .hero-card-portrait {
+    display: none;
+  }
+
+  html body.home-page .hero.hero--platform .hero-content-body {
+    width: min(100%, 32rem);
+    justify-self: center;
+  }
+
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    max-width: 12ch;
+    margin-inline: auto;
+    color: #16231c;
+    font-size: 2.7rem;
+    line-height: 1;
+  }
+
+  html body.home-page .hero-subtitle,
+  html body.home-page .hero-copy {
+    margin-inline: auto;
+  }
+
+  html body.home-page .hero.hero--platform .hero-subtitle::before,
+  html body.home-page .hero.hero--platform .hero-subtitle::after,
+  html[data-theme="light"]
+    body.home-page
+    .hero.hero--platform
+    .hero-subtitle::before,
+  html[data-theme="light"]
+    body.home-page
+    .hero.hero--platform
+    .hero-subtitle::after {
+    content: none;
+    display: none;
+  }
+
+  html body.home-page .home-main.home-main--local {
+    width: min(100% - 1rem, 42rem);
+  }
+
+  html body.home-page .home-service-grid,
+  html body.home-page .home-price-groups,
+  html body.home-page .home-price-example-list,
+  html body.home-page .home-about-contact,
+  html body.home-page .home-profile-facts--local,
+  html body.home-page .home-contact-simple--local {
+    grid-template-columns: 1fr;
+  }
+
+  html body.home-page .home-contact-area {
+    grid-template-columns: 1fr;
+  }
+
+  html body.home-page .home-appointment-cta {
+    justify-self: stretch;
+  }
+
+  html body.home-page .home-appointment-cta__button {
+    width: 100%;
+    justify-content: center;
+    white-space: normal;
+  }
+
+  html body.home-page .home-service-item,
+  html body.home-page .home-price-example {
+    border-right: 0;
+  }
+}
+
+@media (max-width: 479.98px) {
+  html body.home-page #hero-title,
+  html body.home-page .hero-title {
+    font-size: 2.25rem;
+  }
+
+  html body.home-page .hero-subtitle,
+  html body.home-page .hero-copy,
+  html body.home-page .home-section-lead,
+  html body.home-page .home-price-note,
+  html body.home-page .home-price-item,
+  html body.home-page .home-price-example {
+    font-size: 0.95rem;
+  }
+}

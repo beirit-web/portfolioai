@@ -1,0 +1,10 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+  {% if add and not is_popup and account_notice_back_url %}
+    <li>
+      <a href="{{ account_notice_back_url }}">Zurück zum Rückrufwunsch</a>
+    </li>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

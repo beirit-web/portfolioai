@@ -1,0 +1,70 @@
+{% extends "base_public.html" %}
+{% load static %}
+
+{% block title %}Weltfrauentag | Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen{% endblock %}
+
+{% block body_attrs %} class="has-topnav"{% endblock %}
+
+{% block content %}
+    <div class="page-shell">
+      <main class="womens-day-page">
+        <header class="womens-day-page__hero">
+          <p class="section-kicker" data-i18n="womens_day.page.kicker">
+            Sonderseite
+          </p>
+          <h1 class="womens-day-page__title" data-i18n="womens_day.page.title">
+            Weltfrauentag 2026
+          </h1>
+          <p class="womens-day-page__intro" data-i18n="womens_day.page.intro">
+            Eine kleine Seite mit Blumen, Wärme und einem freundlichen Gruß zum
+            8. März.
+          </p>
+          <div class="womens-day-page__meta">
+            <span class="womens-day-page__pill" data-i18n="womens_day.page.pill_date">
+              8. März 2026
+            </span>
+            <span class="womens-day-page__pill" data-i18n="womens_day.page.pill_note">
+              Ein kleiner warmer Gruß
+            </span>
+          </div>
+        </header>
+
+        <section class="womens-day-page__layout">
+          <section
+            class="womens-day-section womens-day-section--page"
+            aria-labelledby="womens-day-title"
+          >
+            {% include "partials/womens_day_card.html" with womens_day_cta_href=back_home_href womens_day_cta_i18n="womens_day.cta_home" womens_day_cta_label=back_home_label %}
+          </section>
+
+          <aside class="womens-day-page__aside" aria-label="Weltfrauentag Hinweise">
+            <article class="womens-day-page__panel">
+              <p class="womens-day-page__panel-kicker" data-i18n="womens_day.page.cards.0.kicker">
+                Gedanke
+              </p>
+              <h2 data-i18n="womens_day.page.cards.0.title">
+                Ein Moment zum Innehalten
+              </h2>
+              <p data-i18n="womens_day.page.cards.0.text">
+                Diese Seite ist einfach als freundlicher, schöner Moment gedacht
+                – ohne Eile, ohne Lärm, nur mit etwas Farbe und Wertschätzung.
+              </p>
+            </article>
+
+            <article class="womens-day-page__panel">
+              <p class="womens-day-page__panel-kicker" data-i18n="womens_day.page.cards.1.kicker">
+                Gruß
+              </p>
+              <h2 data-i18n="womens_day.page.cards.1.title">
+                Mit Respekt und Dankbarkeit
+              </h2>
+              <p data-i18n="womens_day.page.cards.1.text">
+                Für alles, was Frauen im Alltag tragen, organisieren, trösten,
+                aufbauen und mit Herz zusammenhalten.
+              </p>
+            </article>
+          </aside>
+        </section>
+      </main>
+    </div>
+{% endblock %}

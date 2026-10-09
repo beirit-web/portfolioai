@@ -1,0 +1,75 @@
+{% extends "base_public.html" %}
+{% load static %}
+
+{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Написать e-mail | Евгений Байрит – устный перевод и языковые услуги{% else %}E-Mail schreiben | Eugen Beirit – Dolmetsch- &amp; Sprachdienstleistungen{% endif %}{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block body_attrs %} class="has-topnav template-body email-contact-body"{% endblock %}
+
+{% block content %}
+  <main class="page-shell has-topnav template-page email-contact-shell">
+    <section class="email-contact-panel" aria-labelledby="email-contact-title">
+      <div class="email-contact-panel__copy">
+        <h1 id="email-contact-title" data-i18n="email_contact.title">{% if initial_lang|slice:':2' == 'ru' %}Выбрать почтовый сервис{% else %}E-Mail-Anbieter wählen{% endif %}</h1>
+        <p class="section-intro" data-i18n="email_contact.intro">
+          {% if initial_lang|slice:':2' == 'ru' %}
+            Скопируйте адрес или откройте Ваш почтовый сервис.
+            Можно использовать Gmail, GMX, WEB.DE, Outlook и другие сервисы.
+          {% else %}
+            Kopieren Sie die Adresse oder öffnen Sie Ihren Webmail-Anbieter.
+            Gmail, GMX, WEB.DE, Outlook und andere Anbieter können genutzt werden.
+          {% endif %}
+        </p>
+      </div>
+
+      <div class="email-contact-card" aria-label="{% if initial_lang|slice:':2' == 'ru' %}E-mail-адрес{% else %}E-Mail-Adresse{% endif %}" data-i18n-aria-label="email_contact.address_aria">
+        <span class="email-contact-card__label" data-i18n="email_contact.recipient">{% if initial_lang|slice:':2' == 'ru' %}Получатель{% else %}Empfänger{% endif %}</span>
+        <strong id="email-address">{{ email_contact.email }}</strong>
+        <button
+          class="email-contact-copy"
+          type="button"
+          data-copy-email="{{ email_contact.email }}"
+          aria-describedby="email-copy-status"
+          data-i18n="email_contact.copy"
+        >
+          {% if initial_lang|slice:':2' == 'ru' %}Скопировать{% else %}Kopieren{% endif %}
+        </button>
+        <span class="email-contact-copy__status" id="email-copy-status" aria-live="polite"></span>
+      </div>
+
+      <div class="email-contact-actions" aria-label="{% if initial_lang|slice:':2' == 'ru' %}Почтовые сервисы{% else %}E-Mail-Anbieter{% endif %}" data-i18n-aria-label="email_contact.providers_aria">
+        {% for provider in email_contact.providers %}
+          <a
+            class="email-contact-action{% if forloop.first %} email-contact-action--primary{% endif %}"
+            href="{{ provider.url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{ provider.label }}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+{% endblock %}
+
+{% block before_base_scripts %}
+  <script>
+    document.addEventListener("click", function (event) {
+      const button = event.target.closest("[data-copy-email]");
+      if (!button || !navigator.clipboard) {
+        return;
+      }
+
+      navigator.clipboard.writeText(button.dataset.copyEmail).then(function () {
+        const status = document.getElementById("email-copy-status");
+        if (status) {
+          const lang = (document.documentElement.lang || "de").slice(0, 2);
+          const translations = window.TRANSLATIONS || {};
+          status.textContent =
+            translations[lang]?.email_contact?.copied ||
+            (lang === "ru" ? "Скопировано" : "Kopiert");
+        }
+      });
+    });
+  </script>
+{% endblock %}

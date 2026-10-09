@@ -1,0 +1,101 @@
+/* Small-screen styles for contact and skills. The full desktop sheets use a
+   matching media attribute so their selectors do not enter the mobile layout. */
+@import "./about-shell.css";
+@import "./components/shared/serviceIllustrations.css";
+@tailwind base;
+@tailwind utilities;
+
+:root {
+  --page-x: clamp(1.15rem, 5.6vw, 1.45rem);
+  --section-y: clamp(2.75rem, 10vw, 4rem);
+  --font-display: "Iowan Old Style", Georgia, serif;
+}
+
+body, .site-shell {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(13, 148, 136, .1), transparent 20rem),
+    radial-gradient(circle at 92% 8%, rgba(3, 105, 161, .08), transparent 20rem),
+    linear-gradient(180deg, #f0fdfa 0, #f7f6f2 24rem, #f8fafc 100%);
+  color: #0f172a;
+  font: 1rem / 1.5 var(--font-main);
+}
+.site-shell :where(h1, h2, h3, p) { margin: 0; letter-spacing: 0; }
+.site-shell :where(h1, h2, h3) { color: #111827; font-weight: 850; text-wrap: balance; }
+.site-shell :where(p, li) { text-wrap: pretty; }
+.site-shell :where(p, li, span) { overflow-wrap: anywhere; }
+.site-shell--page .home-main.site-page-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  row-gap: 1rem;
+  padding-bottom: 0;
+  background: transparent;
+}
+.site-page-main > section {
+  min-width: 0;
+  width: min(100%, 92rem);
+  margin-inline: auto;
+  padding: var(--section-y) var(--page-x);
+}
+
+.site-shell .contact-hero-grid.contact-hero-grid--simple {
+  display: block;
+  padding-top: 6.25rem;
+  padding-bottom: 0;
+}
+.contact-hero-copy { width: min(100%, 52rem); margin-inline: auto; text-align: center; }
+.contact-hero-copy p { width: min(100%, 42rem); margin-inline: auto; color: #4b5563; font-size: 1.02rem; line-height: 1.68; }
+.site-shell .contact-section.contact-page-section {
+  display: block;
+  width: min(calc(100% - 1rem), 58rem);
+  padding-block: 3.5rem;
+}
+.contact-panel { width: 100%; border: 0; background: transparent; box-shadow: none; }
+
+.site-shell--page .page-hero { padding-top: clamp(6.5rem, 12vw, 9rem); padding-bottom: .75rem; }
+.site-shell--page .page-hero h1 {
+  max-width: 56rem;
+  margin-top: .75rem;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.06;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.site-shell--page .page-hero p { margin-top: 1.25rem; color: #4b5563; font-size: 1rem; line-height: 1.58; }
+.service-overview-grid { display: grid; gap: 1rem; }
+.service-overview-grid .service-card { display: grid; min-width: 0; gap: 1.1rem; padding: 1.1rem 1rem; }
+.service-overview-grid h2 { font-size: 1.875rem; font-weight: 820; line-height: 1.08; }
+.service-card__path { display: grid; gap: .8rem; margin-top: 1.15rem; }
+.service-card__path > div { display: grid; gap: .2rem; padding-top: .8rem; }
+.service-card__path dt { color: #0f766e; font-size: .72rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+.service-card__path dd { margin: 0; color: #44403c; font-size: .94rem; line-height: 1.65; }
+.portfolio-card__features { display: grid; gap: .65rem; margin-top: 1.25rem; }
+.portfolio-card__features-title { color: #0f172a; font-size: .82rem; font-weight: 900; line-height: 1.2; text-transform: uppercase; }
+.portfolio-card__feature-list { display: grid; gap: .28rem .8rem; margin: 0; padding: 0; list-style: none; }
+.portfolio-card__feature-list > li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr); gap: .75rem; align-items: start; padding: .08rem 0; color: #0f766e; font-weight: 800; line-height: 1.35; }
+.portfolio-card__feature-list-icon-wrap { display: grid; place-items: center; }
+.portfolio-card__feature-list-icon { width: 1.1rem; height: 1.1rem; }
+.site-info-panel, .site-info-panel__card { border: 0; background: transparent; box-shadow: none; }
+.site-info-panel h2 { font-family: var(--font-display); font-size: 1.875rem; font-weight: 820; line-height: 1.08; }
+.site-shell .site-info-panel p { color: #334155; font-size: .984375rem; line-height: 1.62; }
+.site-shell .site-info-panel__card h3 { color: #0f172a; font-size: 1.265625rem; font-weight: 780; line-height: 1.24; }
+
+.site-shell .site-footer {
+  position: relative;
+  border: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(248, 250, 252, .98)), radial-gradient(circle at 12% 0%, rgba(20, 184, 166, .08), transparent 32%);
+  color: #1e293b;
+  box-shadow: inset 0 1.2rem 2.2rem rgba(255, 255, 255, .86), inset 0 -1.35rem 2.4rem rgba(15, 23, 42, .1);
+}
+.site-shell .site-footer__inner { display: flex; flex-direction: column; align-items: flex-start; gap: 1.1rem; padding-right: 0; }
+.site-shell .site-footer__brand { display: grid; gap: .52rem; text-align: center; }
+.site-footer__brand-main { color: #0f172a; font-size: .875rem; font-weight: 850; line-height: 1.25; }
+.site-shell .site-footer__meta { display: flex; flex-direction: column; align-items: center; gap: .56rem; }
+.site-shell .site-footer__small { color: #475569; font-size: .78rem; font-weight: 720; line-height: 1.45; }
+.site-footer__meta-separator { display: none; }
+.site-shell .site-footer__links { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; padding: 0; }
+.site-shell > header .site-menuicon__circle { opacity: 0; }
+.site-shell .footer-link { display: block; padding: .34rem 0 .42rem; color: #334155; font-weight: 780; line-height: 1.2; }
+.site-shell .footer-link:is(:hover, :focus-visible) { color: #0f766e; }

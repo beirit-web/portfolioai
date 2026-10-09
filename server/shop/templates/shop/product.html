@@ -1,0 +1,9 @@
+{% extends 'shop/base.html' %}
+{% load shop_ui %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+  <a class="back-link" href="{% url 'storefront:catalog' %}">{% shop_icon 'back' %}Zum Sortiment</a>
+  <div class="product-detail"><div class="product-photo"><img src="{{ product.image_url }}" alt="{{ product.name }}" width="620" height="620"></div><section class="product-information"><p class="eyebrow">{{ product.get_category_display }}</p><h2>{{ product.name }}</h2><p class="description">{{ product.description }}</p><strong class="detail-price">{{ product.price|euros }}</strong><dl class="detail-facts"><div><dt>Portionen</dt><dd>{{ product.serves }}</dd></div><div><dt>Vorlaufzeit</dt><dd>{{ product.lead_time_days }} Tag{{ product.lead_time_days|pluralize:'e' }}</dd></div><div><dt>Verfügbarkeit</dt><dd>{% if product.is_available %}{{ product.stock_status }}{% else %}Momentan nicht bestellbar{% endif %}</dd></div></dl>
+  {% if product.is_available %}<form class="add-product-form" method="post" action="{% url 'storefront:add' product.pk %}">{% csrf_token %}<input type="hidden" name="next" value="{% url 'storefront:cart' %}"><label for="productQuantity">Menge<input type="number" id="productQuantity" name="quantity" min="1" max="20" value="1" required></label><button class="button button--primary" type="submit">{% shop_icon 'bag' %}In den Warenkorb</button></form>{% endif %}
+  <section class="ingredient-section"><h3>Zutaten</h3><p>{{ product.ingredients|default:'Keine Angaben' }}</p><h3>Allergene</h3><p>{{ product.allergens|default:'Keine Angaben' }}</p></section></section></div>
+{% endblock %}

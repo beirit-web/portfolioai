@@ -1,0 +1,168 @@
+{% extends "base_public.html" %}
+{% load static %}
+
+{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов | Beirit Digital{% else %}Projektbedingungen | Beirit Digital{% endif %}{% endblock %}
+{% block meta_description %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов Beirit Digital: цифровые услуги, веб-проекты, предложения, проектные соглашения, оплата, права использования и конфиденциальность.{% else %}Projektbedingungen von Beirit Digital: digitale Leistungen, Webprojekte, Angebote, Projektvereinbarungen, Zahlung, Nutzungsrechte und Datenschutz.{% endif %}{% endblock %}
+{% block og_title %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов | Beirit Digital{% else %}Projektbedingungen | Beirit Digital{% endif %}{% endblock %}
+{% block og_description %}{% if initial_lang|slice:':2' == 'ru' %}Рамочные условия для цифровых услуг, веб-проектов, предложений и сотрудничества с Beirit Digital.{% else %}Rahmenbedingungen für digitale Leistungen, Webprojekte, Angebote und Zusammenarbeit mit Beirit Digital.{% endif %}{% endblock %}
+{% block twitter_title %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов | Beirit Digital{% else %}Projektbedingungen | Beirit Digital{% endif %}{% endblock %}
+{% block twitter_description %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов для цифровых услуг и веб-проектов Beirit Digital.{% else %}Projektbedingungen für digitale Leistungen und Webprojekte bei Beirit Digital.{% endif %}{% endblock %}
+
+{% block body_attrs %} class="has-topnav legal-body legal-body--terms template-body"{% endblock %}
+
+{% block topnav %}
+  <div class="topnav" id="mainTopnav">
+    <a
+      class="nav-cube-link"
+      href="{% url 'pages:home' %}#top"
+      aria-label="{% if initial_lang|slice:':2' == 'ru' %}Beirit Digital Главная{% else %}Beirit Digital Startseite{% endif %}"
+    >
+      <img
+        src="{% static 'images/aktueles-logo-160.webp' %}"
+        sizes="56px"
+        alt="Beirit Digital"
+        class="legal-topnav-logo"
+        width="80"
+        height="80"
+        decoding="async"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </a>
+    <a href="{% url 'pages:home' %}#top" class="nav-link nav-link--home" data-i18n="nav.home">{% if initial_lang|slice:':2' == 'ru' %}Главная{% else %}Start{% endif %}</a>
+    <a href="{% url 'pages:home' %}#leistungen" class="nav-link" data-i18n="nav.interpreters">{% if initial_lang|slice:':2' == 'ru' %}Услуги{% else %}Leistungen{% endif %}</a>
+    <a href="{% url 'pages:home' %}#preise" class="nav-link" data-i18n="nav.prices">{% if initial_lang|slice:':2' == 'ru' %}Цены{% else %}Preise{% endif %}</a>
+    <a href="{% url 'pages:home' %}#profil" class="nav-link" data-i18n="nav.about">{% if initial_lang|slice:':2' == 'ru' %}Обо мне{% else %}Über{% endif %}</a>
+    <a href="{% url 'pages:home' %}#kontakt" class="nav-link nav-link--contact" data-i18n="nav.contact">{% if initial_lang|slice:':2' == 'ru' %}Контакты{% else %}Kontakt{% endif %}</a>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <main class="page-shell has-topnav template-page template-page--wide legal-page-shell legal-page-shell--terms">
+    <header class="terms-hero" aria-labelledby="terms-title">
+      <div class="terms-hero__copy">
+        <p class="section-kicker" data-i18n="projectTermsPage.kicker">Rechtliches</p>
+        <h1 id="terms-title" data-i18n="projectTermsPage.title">Projektbedingungen</h1>
+        <p class="section-intro" data-i18n="projectTermsPage.lead">
+          Rahmenbedingungen für digitale Leistungen, Webprojekte, Angebote und
+          Zusammenarbeit mit Beirit Digital.
+        </p>
+        <p class="legal-authoritative-note" data-i18n="legal.authoritative_note">
+          Die deutsche Fassung ist maßgeblich.
+        </p>
+      </div>
+      <div class="terms-hero__facts" aria-label="Kurzüberblick" data-i18n-aria-label="projectTermsPage.facts_aria">
+        <span data-i18n="projectTermsPage.facts.0">Angebot vor Umsetzung</span>
+        <span data-i18n="projectTermsPage.facts.1">Projektvereinbarung möglich</span>
+        <span data-i18n="projectTermsPage.facts.2">PDF-Rechnung</span>
+        <span data-i18n="projectTermsPage.facts.3">Nutzungsrechte nach Vereinbarung</span>
+      </div>
+    </header>
+
+    <div class="legal-page">
+      <p class="legal-callout">{% if initial_lang|slice:':2' == 'ru' %}Вымышленные примерные данные для демонстрации портфолио.{% else %}Fiktive Musterangaben für die Portfolio-Demonstration.{% endif %}</p>
+      <section class="template-panel legal-section" id="geltung">
+        <h2 data-i18n="projectTermsPage.sections.scope.title">Geltungsbereich</h2>
+        <p data-i18n="projectTermsPage.sections.scope.text">
+          Diese Projektbedingungen gelten für digitale Leistungen von Beirit Digital,
+          insbesondere Webentwicklung, Webseiten-Anpassungen, Reparaturen, Lokalisierung
+          und digitale Inhalte.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="kontakt">
+        <h2 data-i18n="projectTermsPage.sections.request.title">Anfrage & Angebot</h2>
+        <p data-i18n="projectTermsPage.sections.request.text">
+          Anfragen können über das Kontaktformular oder die angegebenen Kontaktwege erfolgen.
+          Eine erste Einschätzung dient der Orientierung und stellt noch keine verbindliche
+          Beauftragung dar.
+        </p>
+        <ul>
+          <li data-i18n="projectTermsPage.sections.request.items.0">Kleinere Änderungen sind nach Absprache möglich.</li>
+          <li data-i18n="projectTermsPage.sections.request.items.1">Größere Projekte erfolgen auf Basis eines Angebots.</li>
+          <li data-i18n="projectTermsPage.sections.request.items.2">Umfang und Preis richten sich nach Aufwand und Vereinbarung.</li>
+          <li data-i18n="projectTermsPage.sections.request.items.3">Änderungen am Umfang können Zeit und Preis beeinflussen.</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="projektvereinbarung">
+        <h2 data-i18n="projectTermsPage.sections.agreement.title">Projektvereinbarung</h2>
+        <p data-i18n="projectTermsPage.sections.agreement.text">
+          Bei größeren Projekten können Umfang, Lieferung, Nutzungsrechte,
+          Zahlungsbedingungen und Kommunikation schriftlich festgehalten werden.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="mitwirkung">
+        <h2 data-i18n="projectTermsPage.sections.material.title">Mitwirkung und Material</h2>
+        <ul>
+          <li data-i18n="projectTermsPage.sections.material.items.0">Für die Umsetzung benötigte Inhalte, Zugangsdaten oder Materialien sollten rechtzeitig bereitgestellt werden.</li>
+          <li data-i18n="projectTermsPage.sections.material.items.1">Verzögerungen können den Projektzeitraum beeinflussen.</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="lieferung">
+        <h2 data-i18n="projectTermsPage.sections.delivery.title">Lieferung und Abnahme</h2>
+        <ul>
+          <li data-i18n="projectTermsPage.sections.delivery.items.0">Die Lieferung erfolgt digital, beispielsweise als Datei, Deployment, Repository oder dokumentierte Änderung.</li>
+          <li data-i18n="projectTermsPage.sections.delivery.items.1">Korrekturen innerhalb des vereinbarten Umfangs werden nachvollziehbar abgestimmt.</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="zahlung">
+        <h2 data-i18n="projectTermsPage.sections.payment.title">Rechnung und Zahlung</h2>
+        <ul>
+          <li data-i18n="projectTermsPage.sections.payment.items.0">Die dargestellten Rechnungen sind fiktive Beispiele.</li>
+          <li data-i18n="projectTermsPage.sections.payment.items.1">PayPal und echte Zahlungen sind in diesem Portfolio deaktiviert.</li>
+          <li data-i18n="projectTermsPage.sections.payment.items.2">Es werden keine Zahlungsdienste geöffnet oder Bestellungen ausgeführt.</li>
+          <li data-i18n="projectTermsPage.sections.payment.items.3">Angezeigte Beträge und Zahlungsstatus sind ausschließlich Musterdaten.</li>
+          <li data-i18n="projectTermsPage.sections.payment.items.4">Die Anbieter- und Steuerangaben sind fiktive Musterangaben.</li>
+          <li data-i18n="projectTermsPage.sections.payment.items.5">Das Portfolio bietet über diese Demonstration keine Leistungen zum Verkauf an.</li>
+          <li data-i18n="projectTermsPage.sections.payment.items.6">Spenden sind in dieser Portfolio-Demonstration deaktiviert.</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="rechte">
+        <h2 data-i18n="projectTermsPage.sections.rights.title">Nutzungsrechte</h2>
+        <ul>
+          <li data-i18n="projectTermsPage.sections.rights.items.0">Nutzungsrechte werden projektbezogen und im vereinbarten Umfang eingeräumt.</li>
+          <li data-i18n="projectTermsPage.sections.rights.items.1">Ohne ausdrückliche Vereinbarung verbleiben Quellcode, Konzepte, Entwürfe, Texte und sonstige Arbeitsergebnisse bei den jeweiligen Rechteinhabern.</li>
+          <li data-i18n="projectTermsPage.sections.rights.items.2">Verwendete Open-Source-Bestandteile unterliegen ihren jeweiligen Lizenzen.</li>
+          <li data-i18n="projectTermsPage.sections.rights.items.3">Bereitgestellte Inhalte wie Texte, Bilder oder Dateien dürfen für das vereinbarte Projekt verwendet werden.</li>
+          <li data-i18n="projectTermsPage.sections.rights.items.4">Für Rechte an bereitgestellten Materialien bleibt die bereitstellende Person verantwortlich.</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="haftung">
+        <h2 data-i18n="projectTermsPage.sections.liability.title">Haftung und externe Dienste</h2>
+        <p data-i18n="projectTermsPage.sections.liability.text">
+          Für externe Dienste, Hosting, APIs oder Drittanbieter gelten die Bedingungen
+          der jeweiligen Anbieter. Allgemeine Informationen auf dieser Website ersetzen
+          keine Rechts-, Steuer- oder Fachberatung.
+        </p>
+      </section>
+
+      <section class="template-panel legal-section" id="deutschlive-aufnahmen">
+        {% if initial_lang|slice:":2" == "ru" %}
+        <h2>DeutschLive: собственные аудиозаписи</h2>
+        <p>Функция «Мои записи» хранит выбранные аудиофайлы локально в используемом браузере. Записи не загружаются на сервер; синхронизации и серверных резервных копий нет. Сохраняйте важные файлы с помощью команды «Скачать». Данные браузера могут быть удалены; удаление аккаунта не очищает локальную коллекцию автоматически.</p>
+        <p>Используйте только файлы, на которые у вас есть необходимые права, и соблюдайте права записанных людей. Права на файлы остаются у соответствующих правообладателей. Локальное добавление не предоставляет поставщику права использования записей.</p>
+        <p>Подробности: <a href="/deutschlive/nutzungsbedingungen">условия использования DeutschLive</a> и <a href="/deutschlive/datenschutz">политика конфиденциальности DeutschLive</a>.</p>
+        {% else %}
+        <h2>DeutschLive: eigene Audioaufnahmen</h2>
+        <p>Die Funktion „Meine Aufnahmen“ speichert ausgewählte Audiodateien lokal im verwendeten Browser. Es gibt keinen Upload, keine Synchronisierung und keine serverseitige Sicherung dieser Dateien. Sichern Sie wichtige Aufnahmen über „Herunterladen“. Browserdaten können gelöscht werden; eine Kontolöschung entfernt die lokale Sammlung nicht automatisch.</p>
+        <p>Verwenden Sie nur Dateien, zu deren Nutzung Sie berechtigt sind, und beachten Sie die Rechte aufgenommener Personen. Die Rechte an den Dateien verbleiben bei den jeweiligen Rechteinhabern. Das lokale Hinzufügen räumt dem Anbieter keine Nutzungsrechte an den Aufnahmen ein.</p>
+        <p>Einzelheiten stehen in den <a href="/deutschlive/nutzungsbedingungen">Nutzungsbedingungen von DeutschLive</a> und der <a href="/deutschlive/datenschutz">Datenschutzerklärung von DeutschLive</a>.</p>
+        {% endif %}
+      </section>
+
+      <section class="template-panel legal-section" id="datenschutz-hinweis">
+        <h2 data-i18n="projectTermsPage.sections.privacy.title">Datenschutz</h2>
+        <p>
+          <span data-i18n="projectTermsPage.sections.privacy.text_before">Informationen zur Verarbeitung personenbezogener Daten stehen in der</span>
+          <a href="{% url 'pages:privacy' %}" data-i18n="projectTermsPage.sections.privacy.link">Datenschutzerklärung</a>.
+        </p>
+      </section>
+    </div>
+  </main>
+{% endblock %}

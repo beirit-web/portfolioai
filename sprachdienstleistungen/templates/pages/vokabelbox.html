@@ -1,0 +1,104 @@
+{% extends "base_public.html" %}
+{% load static %}
+{% block title %}Vokabelbox | Sprachplattform{% endblock %}
+{% block meta_description %}Deutsch lernen mit der Vokabelbox: Wortsuche, Artikelfilter, Favoriten und Artikel-Quiz direkt in der Sprachplattform.{% endblock %}
+{% block body_attrs %} class="has-topnav template-body vocab-page"{% endblock %}
+{% block site_work_notice %}{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% asset_url 'vokabelbox/style.css' %}" />
+{% endblock %}
+{% block content %}
+    <main class="vocab-shell" data-storage-key="{{ vocab_storage_key }}">
+      <section class="vocab-hero" aria-labelledby="app-title">
+        <a class="vocab-back-link" href="{% url 'pages:home' %}" data-i18n="vocab.back">Zur Sprachplattform</a>
+        <p class="eyebrow" data-i18n="vocab.module">Lernmodul der Sprachplattform</p>
+        <h1 id="app-title">Vokabelbox</h1>
+        <p data-i18n="vocab.intro">
+          Lerne deutsche Nomen mit Artikeln. Suche, filtere, markiere schwierige
+          Wörter und prüfe dein Wissen im schnellen Artikel-Quiz.
+        </p>
+      </section>
+
+      <section class="vocab-dashboard" aria-label="Lernübersicht" data-i18n-aria-label="vocab.overview">
+        <article>
+          <span id="totalCount">0</span>
+          <p data-i18n="vocab.words">Vokabeln</p>
+        </article>
+        <article>
+          <span id="knownCount">0</span>
+          <p data-i18n="vocab.known">gelernt</p>
+        </article>
+        <article>
+          <span id="favoriteCount">0</span>
+          <p data-i18n="vocab.favorites">Favoriten</p>
+        </article>
+      </section>
+
+      <section class="vocab-workspace">
+        <section class="vocab-panel catalog-panel" aria-labelledby="catalog-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow" data-i18n="vocab.word_list">Wortliste</p>
+              <h2 id="catalog-title" data-i18n="vocab.words">Vokabeln</h2>
+            </div>
+            <span id="visibleCount">0 Treffer</span>
+          </div>
+
+          <div class="toolbar">
+            <label for="searchInput">
+              <span data-i18n="vocab.search">Suche</span>
+              <input id="searchInput" type="search" placeholder="z. B. Apfel oder Schule" autocomplete="off" data-i18n-placeholder="vocab.search_placeholder" />
+            </label>
+            <label for="articleFilter">
+              <span data-i18n="vocab.article">Artikel</span>
+              <select id="articleFilter">
+                <option value="all" data-i18n="vocab.all">Alle</option>
+                <option value="der">der</option>
+                <option value="die">die</option>
+                <option value="das">das</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="word-grid" id="wordGrid"></div>
+        </section>
+
+        <aside class="vocab-panel trainer-panel" aria-labelledby="trainer-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow" data-i18n="vocab.training">Training</p>
+              <h2 id="trainer-title" data-i18n="vocab.quiz">Artikel-Quiz</h2>
+            </div>
+            <span id="quizScore">0/0</span>
+          </div>
+
+          <div class="quiz-card">
+            <p data-i18n="vocab.question">Welcher Artikel passt?</p>
+            <strong id="quizWord">-</strong>
+            <div class="quiz-options" aria-label="Antworten" data-i18n-aria-label="vocab.answers">
+              <button type="button" data-answer="der">der</button>
+              <button type="button" data-answer="die">die</button>
+              <button type="button" data-answer="das">das</button>
+            </div>
+            <p class="quiz-feedback" id="quizFeedback" role="status" aria-live="polite"></p>
+            <button type="button" class="next-button" id="nextQuestion" data-i18n="vocab.next">Nächste Frage</button>
+          </div>
+
+          <section class="details-card" aria-labelledby="details-title">
+            <p class="eyebrow" data-i18n="vocab.selection">Auswahl</p>
+            <h3 id="details-title">Noch kein Wort gewählt</h3>
+            <p id="detailsTranslation">Wähle eine Vokabel aus der Liste.</p>
+            <div class="details-actions">
+              <button type="button" id="knownButton">Als gelernt markieren</button>
+              <button type="button" id="favoriteButton">Favorit</button>
+            </div>
+          </section>
+        </aside>
+      </section>
+      <p class="vocab-storage-note" data-i18n="vocab.storage">Lernstand und Favoriten werden in diesem Browser gespeichert.</p>
+    </main>
+
+{% endblock %}
+{% block extra_scripts %}
+  <script src="{% asset_url 'vokabelbox/app.js' %}" defer></script>
+{% endblock %}
