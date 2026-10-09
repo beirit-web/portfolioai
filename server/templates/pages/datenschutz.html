@@ -1,12 +1,13 @@
 {% extends "base_public.html" %}
 {% load static %}
 
-{% block title %}{% if initial_lang|slice:":2" == "ru" %}Политика конфиденциальности{% else %}Datenschutz{% endif %} | Beirit Digital{% endblock %}
-{% block meta_description %}{% if initial_lang|slice:":2" == "ru" %}Политика конфиденциальности Beirit Digital: обработка персональных данных при контактной форме, коммуникации и переводах по договоренности.{% else %}Datenschutz bei Beirit Digital: Verarbeitung personenbezogener Daten bei Kontaktformular, Kommunikation und Übersetzung nach Absprache.{% endif %}{% endblock %}
-{% block og_title %}{% if initial_lang|slice:":2" == "ru" %}Политика конфиденциальности{% else %}Datenschutz{% endif %} | Beirit Digital{% endblock %}
-{% block og_description %}{% if initial_lang|slice:":2" == "ru" %}Информация об обработке персональных данных в Beirit Digital.{% else %}Informationen zur Verarbeitung personenbezogener Daten bei Beirit Digital.{% endif %}{% endblock %}
-{% block twitter_title %}{% if initial_lang|slice:":2" == "ru" %}Политика конфиденциальности{% else %}Datenschutz{% endif %} | Beirit Digital{% endblock %}
-{% block twitter_description %}{% if initial_lang|slice:":2" == "ru" %}Информация о защите данных для Beirit Digital.{% else %}Datenschutzinformationen für Beirit Digital.{% endif %}{% endblock %}
+{% block title %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности{% else %}Muster-Datenschutz{% endif %} | Beirit Web Portfolio{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block meta_description %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Datenschutzerklärung mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
+{% block og_title %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности{% else %}Muster-Datenschutz{% endif %} | Beirit Web Portfolio{% endblock %}
+{% block og_description %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Datenschutzerklärung mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
+{% block twitter_title %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности{% else %}Muster-Datenschutz{% endif %} | Beirit Web Portfolio{% endblock %}
+{% block twitter_description %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Datenschutzerklärung mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
 
 {% block body_attrs %} class="has-topnav legal-body legal-body--privacy template-body"{% endblock %}
 

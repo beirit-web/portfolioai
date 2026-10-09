@@ -23,6 +23,7 @@ run_step() {
 
 cd "$ROOT_DIR"
 
+run_step "Portfolio sample environment tests" python3 "$ROOT_DIR/scripts/test_portfolio_data.py"
 run_step "Portfolio source data audit" python3 "$ROOT_DIR/scripts/check_portfolio_data.py"
 
 run_step "Beirit regression, backend and browser checks" "$(python_for "$ROOT_DIR/server")" "$ROOT_DIR/server/bin/check_beirit.py"

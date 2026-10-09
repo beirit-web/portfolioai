@@ -20,6 +20,35 @@ RULES = {
     "infrastructure identifier": re.compile(r"\bvol_(?!example)[a-z0-9]{8,}\b|\bdeployment-(?!EXAMPLE)[A-Z0-9]{15,}\b"),
 }
 PRIVATE_SUFFIXES = {".sqlite", ".sqlite3", ".pem", ".key", ".p12", ".pfx", ".bundle"}
+ENV_CREDENTIAL = re.compile(
+    r"(?:PASSWORD|PASSPHRASE|SECRET(?:_KEY)?|API_KEY|CLIENT_ID|WEBHOOK_ID|(?:^|_)TOKEN)$",
+    re.I,
+)
+ENV_PLACEHOLDER = re.compile(r"(?:fake-|demo-|example-|replace-|change-me(?:$|-)|\$\{[A-Z_][A-Z0-9_]*\})", re.I)
+
+
+def sample_env_findings(path, text):
+    """Only publish matching fictional env samples; never print their values."""
+    findings = []
+    if path.name == ".env":
+        template = path.with_name(".env.example")
+        if not template.is_file() or path.read_bytes() != template.read_bytes():
+            findings.append("public .env does not match its sample template")
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.removeprefix("export ").strip()
+        value = value.strip().strip("\"'")
+        if ENV_CREDENTIAL.search(key) and value and not ENV_PLACEHOLDER.match(value):
+            findings.append(f"{key}: credential must be empty or an explicit fake placeholder")
+        for match in EMAIL_PATTERN.finditer(value):
+            domain = match.group().rsplit("@", 1)[1].lower()
+            if not any(domain == suffix or domain.endswith("." + suffix) for suffix in
+                       ("example.com", "example.net", "example.org", "example.invalid")):
+                findings.append(f"{key}: use a fictional email domain")
+    return findings
 
 
 def source_files():
@@ -36,7 +65,8 @@ def main():
         path = ROOT / name
         if not path.is_file():
             continue
-        if path.suffix.lower() in PRIVATE_SUFFIXES or (path.name.startswith(".env") and path.name != ".env.example"):
+        public_env = path.name in {".env", ".env.example"}
+        if path.suffix.lower() in PRIVATE_SUFFIXES or (path.name.startswith(".env") and not public_env):
             failures.append((name, "private runtime file"))
             continue
         data = path.read_bytes()
@@ -47,6 +77,8 @@ def main():
         except UnicodeDecodeError:
             continue
         inspected += 1
+        if public_env:
+            failures.extend((name, finding) for finding in sample_env_findings(path, text))
         if name.endswith("pages/migrations/0006_load_january2026_appointments.py"):
             allowed = {
                 "username": {"Erika Beispiel", "Max Mustermann"},
@@ -68,7 +100,7 @@ def main():
             or name.endswith("templates/pages/kontakt.html")
             or name.endswith("templates/pages/email_contact.html")
         )
-        checked = EMAIL_PATTERN.sub("email@example.invalid", text)
+        checked = text if public_env else EMAIL_PATTERN.sub("email@example.invalid", text)
         if name.endswith(".json") and "/locales/" in name:
             document = json.loads(text)
             document.pop("contact", None)

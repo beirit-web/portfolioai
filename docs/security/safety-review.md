@@ -37,8 +37,11 @@ begrenztes CORS und externe Secret-Verwaltung erklären die ursprüngliche
 Architektur. Hosting-Zuordnungen und automatische Deployments sind deaktiviert.
 Alle Pushes gehen an `git@github.com:beiritdigital/angefangenes-portfolio.git`.
 
-`.env`, Datenbanken, Medien, Backups, Schlüsselfiles und Git-Historien-Bundles
-werden ignoriert. Der Quellcode-Audit prüft zusätzlich veröffentlichbare Dateien:
+Veröffentlichte `.env`-Dateien enthalten ausschließlich fiktive Musterdaten und
+stimmen mit `.env.example` überein. Lokale Varianten wie `.env.local`,
+`.env.production` und `.env.original`, Datenbanken, Medien, Backups,
+Schlüsselfiles und Git-Historien-Bundles werden ignoriert. Der Quellcode-Audit
+prüft zusätzlich veröffentlichbare Dateien:
 
 ```bash
 python3 scripts/check_portfolio_data.py
@@ -48,7 +51,7 @@ python3 scripts/check_portfolio_data.py
 
 SQLite-Demos erzeugen lokale konsistente Snapshots. Der bisherige PostgreSQL-
 Entwurf würde `pg_dump` für Sicherungen und `psql` für einen Restore verwenden.
-Snapshots und Umgebungsvariablen werden nicht im Portfolio veröffentlicht.
+Snapshots und echte Zugangsdaten werden nicht im Portfolio veröffentlicht.
 Ein Restore wird ausschließlich mit synthetischen Daten in einer lokalen
 Testumgebung durchgeführt. Medien werden separat gesichert.
 

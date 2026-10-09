@@ -24,9 +24,9 @@ id_rsa.*
 *_rsa
 *_rsa.pub
 
-# Environment files
-.env
+# Public sample environment; local variants remain private
 .env.*
+!.env
 !.env.example
 !.env*.example
 .env.local

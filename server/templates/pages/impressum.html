@@ -1,12 +1,13 @@
 {% extends "base_public.html" %}
 {% load static i18n %}
 
-{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Импрессум | Beirit Web{% else %}Impressum | Beirit Web{% endif %}{% endblock %}
-{% block meta_description %}{% if initial_lang|slice:':2' == 'ru' %}Импрессум Beirit Web: данные согласно § 5 DDG, контакты, правовые примечания и услуги перевода по договоренности.{% else %}Impressum von Beirit Web mit Angaben gemäß § 5 DDG, Kontakt, rechtlichen Hinweisen und Übersetzung nach Absprache.{% endif %}{% endblock %}
-{% block og_title %}{% if initial_lang|slice:':2' == 'ru' %}Импрессум | Beirit Web{% else %}Impressum | Beirit Web{% endif %}{% endblock %}
-{% block og_description %}{% if initial_lang|slice:':2' == 'ru' %}Данные поставщика услуги и правовые примечания для Beirit Web.{% else %}Anbieterkennzeichnung und rechtliche Hinweise für Beirit Web.{% endif %}{% endblock %}
-{% block twitter_title %}{% if initial_lang|slice:':2' == 'ru' %}Импрессум | Beirit Web{% else %}Impressum | Beirit Web{% endif %}{% endblock %}
-{% block twitter_description %}{% if initial_lang|slice:':2' == 'ru' %}Данные поставщика услуги и контакт Beirit Web.{% else %}Anbieterangaben und Kontakt für Beirit Web.{% endif %}{% endblock %}
+{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума | Портфолио Beirit Web{% else %}Muster-Impressum | Beirit Web Portfolio{% endif %}{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block meta_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Impressum mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
+{% block og_title %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума | Портфолио Beirit Web{% else %}Muster-Impressum | Beirit Web Portfolio{% endif %}{% endblock %}
+{% block og_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Impressum mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
+{% block twitter_title %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума | Портфолио Beirit Web{% else %}Muster-Impressum | Beirit Web Portfolio{% endif %}{% endblock %}
+{% block twitter_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Impressum mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
 
 {% block base_styles %}
   <style>{% inline_asset 'css/root.css' %}</style>
@@ -15,34 +16,6 @@
   <style>{% inline_asset 'css/impressum.css' %}</style>
   <style>{% inline_asset 'css/impressum-nav.css' %}</style>
   <style>{% inline_asset 'css/impressum-list.css' %}</style>
-{% endblock %}
-
-{% block extra_head %}
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": ["Organization", "LocalBusiness"],
-      "name": "Beirit Web",
-      "url": "{{ site_url }}/impressum",
-      "founder": {
-        "@type": "Person",
-        "name": "Max Mustermann"
-      },
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Musterstraße 1",
-        "postalCode": "12345",
-        "addressLocality": "Musterstadt",
-        "addressCountry": "Deutschland"
-      },
-      "email": "max.mustermann@example.com",
-      "telephone": "+490000000000",
-      "knowsAbout": [
-        "Web- und Softwareentwicklung",
-        "Übersetzung von Web- und Softwaretexten nach Absprache"
-      ]
-    }
-  </script>
 {% endblock %}
 
 {% block body_attrs %} class="has-topnav imprint-body template-body"{% endblock %}

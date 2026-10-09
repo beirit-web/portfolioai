@@ -1,12 +1,13 @@
 {% extends "base_public.html" %}
 {% load static %}
 
-{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов | Beirit Digital{% else %}Projektbedingungen | Beirit Digital{% endif %}{% endblock %}
-{% block meta_description %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов Beirit Digital: цифровые услуги, веб-проекты, предложения, проектные соглашения, оплата, права использования и конфиденциальность.{% else %}Projektbedingungen von Beirit Digital: digitale Leistungen, Webprojekte, Angebote, Projektvereinbarungen, Zahlung, Nutzungsrechte und Datenschutz.{% endif %}{% endblock %}
-{% block og_title %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов | Beirit Digital{% else %}Projektbedingungen | Beirit Digital{% endif %}{% endblock %}
-{% block og_description %}{% if initial_lang|slice:':2' == 'ru' %}Рамочные условия для цифровых услуг, веб-проектов, предложений и сотрудничества с Beirit Digital.{% else %}Rahmenbedingungen für digitale Leistungen, Webprojekte, Angebote und Zusammenarbeit mit Beirit Digital.{% endif %}{% endblock %}
-{% block twitter_title %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов | Beirit Digital{% else %}Projektbedingungen | Beirit Digital{% endif %}{% endblock %}
-{% block twitter_description %}{% if initial_lang|slice:':2' == 'ru' %}Условия проектов для цифровых услуг и веб-проектов Beirit Digital.{% else %}Projektbedingungen für digitale Leistungen und Webprojekte bei Beirit Digital.{% endif %}{% endblock %}
+{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта{% else %}Muster-Projektbedingungen{% endif %} | Beirit Web Portfolio{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block meta_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Beispielhafte Projektbedingungen mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
+{% block og_title %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта{% else %}Muster-Projektbedingungen{% endif %} | Beirit Web Portfolio{% endblock %}
+{% block og_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Beispielhafte Projektbedingungen mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
+{% block twitter_title %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта{% else %}Muster-Projektbedingungen{% endif %} | Beirit Web Portfolio{% endblock %}
+{% block twitter_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Beispielhafte Projektbedingungen mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
 
 {% block body_attrs %} class="has-topnav legal-body legal-body--terms template-body"{% endblock %}
 

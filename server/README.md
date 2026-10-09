@@ -13,7 +13,6 @@ Python 3.13 oder neuer verwenden. In `server/`:
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
 python manage.py migrate
 python manage.py runserver
 ```
@@ -21,7 +20,9 @@ python manage.py runserver
 Für die lokale Demo `DJANGO_ENV=local`, `DJANGO_DEBUG=True`,
 `DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,testserver` und
 `EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend` verwenden.
-Die `.env` und lokale Laufzeitdaten bleiben unversioniert. Keine echten SMTP-,
+Die veröffentlichte `.env` enthält dieselben fiktiven Musterdaten wie
+`.env.example`. Lokale Varianten wie `.env.local`, `.env.production` und
+`.env.original` sowie Laufzeitdaten bleiben ignoriert. Keine echten SMTP-,
 Hosting-, Zahlungs- oder Administratorkonten in eine Demo übernehmen.
 
 Das React/Vite-Frontend liegt unter `../frontend/`:

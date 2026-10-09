@@ -45,7 +45,6 @@ Python 3.13 oder neuer verwenden. In diesem Verzeichnis:
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
 python manage.py migrate
 python manage.py runserver
 ```
@@ -55,7 +54,9 @@ Für die lokale Demo `DJANGO_ENV=local`, `DJANGO_DEBUG=True`,
 `EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend` verwenden.
 Anfragen und Passwort-Reset-Mails werden damit auf der Konsole ausgegeben.
 Echte SMTP-, Hosting-, Zahlungs- und Administratordaten gehören nicht in die Demo.
-`.env`, SQLite-Dateien, Medien und Backups bleiben lokal und werden ignoriert.
+Die veröffentlichte `.env` enthält dieselben fiktiven Musterdaten wie
+`.env.example`. Lokale Varianten wie `.env.local`, `.env.production` und
+`.env.original`, SQLite-Dateien, Medien und Backups bleiben ignoriert.
 
 Statische Dateien liegen unter `assets/`, Templates unter `templates/pages/`.
 Der lokale Frontend-Build erfolgt vom Repository-Stamm aus:

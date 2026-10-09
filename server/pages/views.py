@@ -85,6 +85,12 @@ from .models import (
     UnavailableDay,
     WeatherSearch,
 )
+from .seo import (
+    INTEGRATED_PROJECT_SLUGS,
+    portfolio_page_metadata,
+    portfolio_structured_data,
+    structured_data_json,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -95,13 +101,10 @@ INTRO_VIDEO_COOLDOWN = timedelta(hours=24)
 
 SEO_SITEMAP_ITEMS = [
     ("pages:home", "daily", "1.0", "templates/pages/index.html"),
-    ("pages:skills_page", "monthly", "0.8", "templates/pages/index.html"),
-    ("pages:projects_page", "weekly", "0.7", "templates/pages/index.html"),
-    ("pages:about_page", "monthly", "0.6", "templates/pages/index.html"),
-    ("pages:contact", "monthly", "0.7", "templates/pages/index.html"),
-    ("pages:manual", "weekly", "0.8", "assets/files/handbuch.html"),
-    ("pages:privacy", "monthly", "0.3", "templates/pages/datenschutz.html"),
-    ("pages:imprint", "monthly", "0.3", "templates/pages/impressum.html"),
+    ("pages:skills_page_no_slash", "monthly", "0.8", "templates/pages/index.html"),
+    ("pages:projects_page_no_slash", "weekly", "0.7", "templates/pages/index.html"),
+    ("pages:about_page_no_slash", "monthly", "0.6", "templates/pages/index.html"),
+    ("pages:contact_no_slash", "monthly", "0.7", "templates/pages/index.html"),
 ]
 
 GOOGLE_SITE_VERIFICATION_FILE = "google-example-verification.html"
@@ -289,7 +292,7 @@ def serialize_project(project: Project) -> dict:
 
 @require_GET
 def projects_api(_request):
-    projects = list(Project.objects.filter(published=True).exclude(slug__in=("vokabelbox", "wetter", "musikplayer", "deutschlive")).order_by("sort_order", "title"))
+    projects = list(Project.objects.filter(published=True).exclude(slug__in=INTEGRATED_PROJECT_SLUGS).order_by("sort_order", "title"))
     featured_projects = [project for project in projects if project.featured][:6]
     return JsonResponse(
         {
@@ -456,6 +459,17 @@ def build_sitemap_entries() -> list[dict[str, str]]:
                 "lastmod": lastmod,
             }
         )
+    for project in Project.objects.filter(published=True).exclude(
+        slug__in=INTEGRATED_PROJECT_SLUGS
+    ).order_by("sort_order", "title"):
+        entries.append({
+            "loc": build_absolute_site_url(reverse(
+                "pages:project_detail_page_no_slash", kwargs={"project_slug": project.slug}
+            )),
+            "changefreq": "monthly",
+            "priority": "0.7",
+            "lastmod": project.updated_at.date().isoformat(),
+        })
     return entries
 
 
@@ -1204,45 +1218,22 @@ def home(request, project_slug=None):
     route_path = request.path.rstrip("/") or "/"
     ctx["react_route_path"] = route_path
     ctx["react_is_home_route"] = route_path == "/"
-    route_meta = {
-        "/": {
-            "title": "Beirit Web | Web-, Software- und Digitalprojekte",
-            "description": "Portfolio von Eugen Beirit mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.",
-            "keywords": "Beirit Web, Beirit Digital, Portfolio, Webentwicklung, Softwareentwicklung, React, Django, Python, Fullstack, digitale Projekte",
-        },
-        "/kompetenzen": {
-            "title": "Technologien und Kompetenzen | Beirit Web",
-            "description": "Technische Kompetenzen und Projekterfahrung mit React, Django, Python, APIs und responsiven Weboberflächen.",
-        },
-        "/projekte": {
-            "title": "Projekte | Beirit Digital",
-            "description": "Webprojekte, Django-Anwendungen, Python-Tools und weitere Softwarelösungen von Beirit Digital ansehen und testen.",
-        },
-        "/ueber-mich": {
-            "title": "Über Eugen Beirit | Beirit Digital",
-            "description": "Informationen zu Eugen Beirit, Arbeitsweise, technischem Hintergrund und Webentwicklung mit React, JavaScript, Python und Django.",
-        },
-        "/kontakt": {
-            "title": "Kontakt | Beirit Web",
-            "description": "Kontakt für Fragen zu den Projekten, fachlichen Austausch und berufliche Kontakte.",
-        },
-        "/wetter": {
-            "title": "Wetter | Beirit Digital",
-            "description": "Aktuelles Wetter, Regenfenster, Sonnenzeiten und 5-Tage-Ausblick direkt im Browser.",
-            "robots": "noindex, follow",
-        },
-    }
-    if project_slug and (route_path.startswith("/referenzen/") or route_path.startswith("/projekte/")):
-        project = Project.objects.filter(slug=project_slug, published=True).first()
-        ctx["react_page_meta"] = {
-            "title": f"{project.title} | Projekte | Beirit Digital" if project else "Projekt | Beirit Digital",
-            "description": project.short_description if project else "Einzelnes Projekt von Beirit Digital mit Ausgangslage, Umsetzung, Ergebnis und Projektmerkmalen.",
-        }
-    else:
-        ctx["react_page_meta"] = route_meta.get(route_path, route_meta["/"])
-    ctx["react_page_meta"]["canonical_path"] = route_path if route_path != "/" else "/"
+    project = Project.objects.filter(slug=project_slug, published=True).first() if project_slug else None
+    page_meta = portfolio_page_metadata(
+        route_path, build_absolute_site_url, project=project, project_slug=project_slug
+    )
+    ctx["react_page_meta"] = page_meta
+    listed_projects = (
+        Project.objects.filter(published=True).exclude(slug__in=INTEGRATED_PROJECT_SLUGS)
+        .order_by("sort_order", "title")
+        if route_path == "/projekte" else ()
+    )
+    ctx["portfolio_structured_data_json"] = structured_data_json(
+        portfolio_structured_data(page_meta, build_absolute_site_url, project, listed_projects)
+    )
 
     ctx["react_home_config"] = {
+        "pageMeta": page_meta,
         "contactApiUrl": reverse("pages:contact_request_api"),
         "logoUrl": safe_static_url("images/aktueles-logo-160.webp"),
         "logoSmallUrl": safe_static_url("images/aktueles-logo-160.webp"),

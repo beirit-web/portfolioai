@@ -217,13 +217,15 @@ const footerLinkItems = [
   { href: publicPageUrl("/datenschutz/"), labelKey: "footer.links.privacy" },
 ];
 
+const portfolioKeywords = "Beirit Web, Portfolio, Webentwicklung, Softwareentwicklung, React, Django, Python, JavaScript, Fullstack";
+
 const appRoutes = {
-  "/": { key: "home", title: "Beirit Web | Web-, Software- und Digitalprojekte", description: "Portfolio von Eugen Beirit mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.", keywords: "Beirit Web, Beirit Digital, Portfolio, Webentwicklung, Softwareentwicklung, React, Django, Python, Fullstack, digitale Projekte" },
+  "/": { key: "home", title: "Beirit Web | Portfolio für Web- und Softwareentwicklung", description: "Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python." },
   "/kompetenzen": { key: "services", title: "Technologien und Kompetenzen | Beirit Web", description: "Technische Kompetenzen und Projekterfahrung mit React, Django, Python, APIs und responsiven Weboberflächen." },
-  "/projekte": { key: "projects", title: "Projekte | Beirit Digital", description: "Webprojekte, Django-Anwendungen, Python-Tools und weitere Softwarelösungen von Beirit Digital ansehen und testen." },
-  "/ueber-mich": { key: "about", title: "Über Eugen Beirit | Beirit Digital", description: "Persönlicher Hintergrund, Arbeitsweise und technische Schwerpunkte von Eugen Beirit." },
+  "/projekte": { key: "projects", title: "Web- und Softwareprojekte | Beirit Web", description: "Webanwendungen, Django-Projekte und Python-Tools mit technischen Einblicken, Live-Demos und Quellcode." },
+  "/ueber-mich": { key: "about", title: "Über mich | Beirit Web", description: "Persönlicher Hintergrund, Arbeitsweise und technische Schwerpunkte von Eugen Beirit." },
   "/kontakt": { key: "contact", title: "Kontakt | Beirit Web", description: "Kontakt für Fragen zu den Projekten, fachlichen Austausch und berufliche Kontakte." },
-  "/wetter": { key: "weather", title: "Wetter | Beirit Digital", description: "Aktuelles Wetter, Regenfenster, Sonnenzeiten und 5-Tage-Ausblick direkt im Browser.", robots: "noindex, follow" },
+  "/wetter": { key: "weather", title: "Wetter | Beirit Web", description: "Aktuelles Wetter, Regenfenster, Sonnenzeiten und 5-Tage-Ausblick direkt im Browser.", robots: "noindex, follow" },
 };
 
 const routeAliases = {
@@ -434,34 +436,38 @@ function navigateToAppPath(path, setPath) {
 function useDocumentMeta(route) {
   React.useEffect(() => {
     if (!route) return undefined;
-    document.title = route.title;
-    let description = document.querySelector('meta[name="description"]');
-    if (!description) {
-      description = document.createElement("meta");
-      description.setAttribute("name", "description");
-      document.head.append(description);
-    }
-    description.setAttribute("content", route.description);
-    if (route.keywords) {
-      let keywords = document.querySelector('meta[name="keywords"]');
-      if (!keywords) {
-        keywords = document.createElement("meta");
-        keywords.setAttribute("name", "keywords");
-        document.head.append(keywords);
+    const pageMeta = config.pageMeta || {};
+    const title = pageMeta.title || route.title;
+    const description = pageMeta.description || route.description;
+    const keywords = pageMeta.keywords || route.keywords || portfolioKeywords;
+    const updateMeta = (attribute, key, content) => {
+      let meta = document.querySelector(`meta[${attribute}="${key}"]`);
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute(attribute, key);
+        document.head.append(meta);
       }
-      keywords.setAttribute("content", route.keywords);
-    }
+      meta.setAttribute("content", content);
+    };
+    document.title = title;
+    updateMeta("name", "description", description);
+    updateMeta("name", "keywords", keywords);
     let canonical = document.querySelector('link[rel="canonical"]');
+    const canonicalUrl = pageMeta.canonical || route.canonical || canonical?.href || `${window.location.origin}${normalizeAppPath()}`;
     if (!canonical) {
       canonical = document.createElement("link");
       canonical.setAttribute("rel", "canonical");
       document.head.append(canonical);
     }
-    canonical.setAttribute("href", route.canonical || `${window.location.origin}${normalizeAppPath() === "/" ? "/" : `${normalizeAppPath()}/`}`);
-    const robots = document.querySelector('meta[name="robots"]');
-    if (robots) {
-      robots.setAttribute("content", route.robots || "index, follow");
-    }
+    canonical.setAttribute("href", canonicalUrl);
+    updateMeta("name", "robots", pageMeta.robots || route.robots || "index, follow");
+    updateMeta("property", "og:title", title);
+    updateMeta("property", "og:description", description);
+    updateMeta("property", "og:url", canonicalUrl);
+    updateMeta("property", "og:type", pageMeta.ogType || "website");
+    updateMeta("name", "twitter:title", title);
+    updateMeta("name", "twitter:description", description);
+    updateMeta("name", "twitter:url", canonicalUrl);
     return undefined;
   }, [route]);
 }
@@ -2427,11 +2433,11 @@ export default function App() {
   const route = appRoutes[path] || (projectSlug
     ? {
         key: "portfolioProject",
-        title: `${projectItem?.title || "Projekt"} | Projekte | Beirit Digital`,
-        description: projectItem?.text || "Einzelnes Projekt von Beirit Digital mit Beschreibung, Technologien, Live-Demo und optionalem GitHub-Link.",
+        title: `${projectItem?.title || "Projekt"} | Projekte | Beirit Web`,
+        description: projectItem?.text || "Portfolio-Projekt mit Beschreibung, Technologien, Live-Demo und optionalem GitHub-Link.",
       }
     : null);
-  useDocumentMeta(route || { title: "Seite nicht gefunden | Beirit Digital", description: "Diese Seite wurde nicht gefunden." });
+  useDocumentMeta(route || { title: "Seite nicht gefunden | Beirit Web", description: "Diese Seite wurde nicht gefunden.", robots: "noindex, follow" });
 
   if (path === "/") {
     return <HomePage onNavigate={(nextPath) => navigateToAppPath(nextPath, setPath)} />;

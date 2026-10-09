@@ -3,22 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Handbuch | Beirit Digital</title>
+    <title>Handbuch – Portfolio-Demo | Beirit Web</title>
     <meta
       name="description"
-      content="Handbuch zu Beirit Digital: Leistungen, Kontakt, Konto, Wetterseite und rechtliche Informationen schnell finden."
+      content="Beispiel eines Benutzerhandbuchs für die Portfolio-Demo mit Konto, Kontaktformularen und weiteren Anwendungsfunktionen."
     />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://portfolio.example.com/handbuch/" />
-    <meta property="og:site_name" content="Beirit Digital" />
-    <meta property="og:title" content="Handbuch | Beirit Digital" />
+    <meta name="robots" content="noindex, follow" />
+    <meta property="og:site_name" content="Beirit Web Portfolio" />
+    <meta property="og:title" content="Handbuch – Portfolio-Demo | Beirit Web" />
     <meta
       property="og:description"
-      content="Praktische Orientierung zu Leistungen, Kontakt, Konto und Zusatzseiten von Beirit Digital."
+      content="Beispiel eines Benutzerhandbuchs für die Portfolio-Demo mit Konto, Kontaktformularen und weiteren Anwendungsfunktionen."
     />
     <meta property="og:type" content="article" />
-    <meta property="og:url" content="https://portfolio.example.com/handbuch/" />
-    <meta property="og:image" content="https://portfolio.example.com/static/images/aktueles-logo.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Handbuch – Portfolio-Demo | Beirit Web" />
+    <meta name="twitter:description" content="Beispiel eines Benutzerhandbuchs für die Portfolio-Demo mit Konto, Kontaktformularen und weiteren Anwendungsfunktionen." />
     <link rel="icon" type="image/svg+xml" href="/static/images/beirit-web-favicon-mini.svg" />
     <link rel="apple-touch-icon" href="/static/images/aktueles-logo-180.png" />
     <link rel="shortcut icon" type="image/svg+xml" href="/static/images/beirit-web-favicon-mini.svg" />
@@ -597,7 +597,13 @@
           });
 
           document.documentElement.lang = "ru";
-          document.title = "Руководство | Beirit Digital";
+          document.title = "Руководство — демонстрация портфолио | Beirit Web";
+          const description = "Пример руководства пользователя для демонстрации портфолио с аккаунтом, контактными формами и другими функциями приложения.";
+          document.querySelector('meta[name="description"]').content = description;
+          document.querySelector('meta[property="og:title"]').content = document.title;
+          document.querySelector('meta[property="og:description"]').content = description;
+          document.querySelector('meta[name="twitter:title"]').content = document.title;
+          document.querySelector('meta[name="twitter:description"]').content = description;
         })();
       </script>
       <script>

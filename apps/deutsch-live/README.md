@@ -29,15 +29,19 @@ Fullstack-Version der ursprünglichen statischen Lernseite: React rendert die Ob
 
 ENV-Struktur:
 
-- `backend/.env` - allgemeine lokale Werte, ignoriert
+- `backend/.env` - veröffentlichte fiktive Musterdaten, identisch mit `.env.example`
 - `backend/.env.local` - lokale Overrides, ignoriert
 - `backend/.env.production` - Produktionswerte, ignoriert
-- `backend/.env.example` - getrackte Vorlage ohne echte Secrets
+- `backend/.env.example` - getrackte Vorlage mit fiktiven Musterdaten
+- `frontend/.env` - veröffentlichte fiktive Musterdaten, identisch mit `.env.example`
 - `frontend/.env.local` - lokale Frontend-Werte, ignoriert
 - `frontend/.env.production` - Produktionswerte, ignoriert
 - `frontend/.env.example` - getrackte Vorlage
 
-`DJANGO_ENV=local` lädt `.env.local`, `DJANGO_ENV=production` lädt `.env.production`. Echte Secrets niemals committen.
+`DJANGO_ENV=local` lädt zusätzlich `.env.local`, `DJANGO_ENV=production` zusätzlich
+`.env.production`. Diese lokalen Overrides und `.env.original` bleiben ignoriert.
+Alle ENV-Dateien enthalten ausschließlich Musterdaten; echte Zugangsdaten gehören
+nicht in diese Portfolio-Demo.
 
 Sicherheitsrelevante Werte wie `DJANGO_DEBUG`, `DJANGO_ALLOWED_HOSTS`, `DJANGO_CORS_ALLOWED_ORIGINS`, `DJANGO_CSRF_TRUSTED_ORIGINS`, sichere Cookies, SSL-Redirect und HSTS werden über ENV gesteuert. In Production bricht Django absichtlich ab, wenn `DJANGO_SECRET_KEY` oder `DJANGO_ALLOWED_HOSTS` nicht sicher gesetzt sind.
 

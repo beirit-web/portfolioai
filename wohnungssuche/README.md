@@ -4,6 +4,11 @@ Django-MVP fuer gespeicherte Wohnungssuchen, Fake-Provider, Matching, Treffersta
 
 ## Entwicklung
 
+Die veröffentlichte `.env` enthält ausschließlich fiktive Musterdaten und stimmt
+mit `.env.example` überein. Lokale Varianten wie `.env.local`, `.env.production`
+und `.env.original`, Datenbanken und Backups bleiben ignoriert. Echte Zugangsdaten
+gehören nicht in die Portfolio-Demo.
+
 ```bash
 ../.venv/bin/python manage.py migrate
 ../.venv/bin/python manage.py createsuperuser

@@ -16,6 +16,11 @@ Die verbleibenden TOML-Dateien sind Architekturbeispiele mit Musterdaten.
 Produktionskonten, DNS-Records oder Zugangsdaten. Eine neue Hosting-Anbindung würde
 eine eigenständige Konfiguration außerhalb dieser Portfolio-Vorgaben erfordern.
 
+Die veröffentlichten `.env`-Dateien sind fiktive Muster und stimmen mit ihren
+`.env.example`-Vorlagen überein. Lokale Varianten wie `.env.local`,
+`.env.production` und `.env.original` bleiben ignoriert. Echte Zugangsdaten
+dürfen in keiner Portfolio-Umgebungsdatei stehen.
+
 ## Lokale Prüfung
 
 ```bash

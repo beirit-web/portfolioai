@@ -13,20 +13,8 @@ from pages.auth_session import (
 from pages.models import InterpreterApplication
 
 SEO_KEYWORDS = (
-    "Beirit Digital, Eugen Beirit, Webentwicklung, Softwareentwicklung, "
-    "Web- und Softwareentwicklung, Webseiten erstellen, Website erstellen lassen, "
-    "Seite erstellen, Seite erstellen lassen, Homepage erstellen, "
-    "Homepage erstellen lassen, Webseite bauen, Webseite bauen lassen, "
-    "Website bauen lassen, Seite bauen, Seite bauen lassen, Homepage bauen, "
-    "Homepage bauen lassen, Webapps erstellen, Webapp erstellen lassen, "
-    "Webapps bauen, Webapps bauen lassen, Apps erstellen, App erstellen lassen, "
-    "Apps bauen, Apps bauen lassen, individuelle Webapps, Webanwendungen, "
-    "React Entwickler, Django Entwickler, Webseiten verbessern, "
-    "Webseiten reparieren, individuelle Webfunktionen, Übersetzung Webtexte "
-    "Softwaretexte Deutsch Russisch Ukrainisch, Webtexte übersetzen, Softwaretexte übersetzen, "
-    "Website Übersetzung Deutsch Russisch Ukrainisch, Webseiten Übersetzung Deutsch Russisch Ukrainisch, "
-    "App Übersetzung Deutsch Russisch Ukrainisch, Deutsch Russisch Ukrainisch Übersetzung, "
-    "Russisch Ukrainisch Deutsch Übersetzung, digitale Lösungen"
+    "Beirit Web, Portfolio, Webentwicklung, Softwareentwicklung, "
+    "React, Django, Python, JavaScript, Fullstack"
 )
 
 

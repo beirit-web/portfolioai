@@ -217,17 +217,17 @@ class ProjectPortfolioTests(TestCase):
 
         self.assertEqual(canonical.status_code, 200)
         self.assertEqual(legacy.status_code, 200)
-        self.assertContains(canonical, "Detailprojekt | Projekte | Beirit Digital")
+        self.assertContains(canonical, "Detailprojekt | Projekte | Beirit Web")
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_projects_page_uses_expected_meta_description(self):
         response = self.client.get(reverse("pages:projects_page"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Projekte | Beirit Digital")
+        self.assertContains(response, "Web- und Softwareprojekte | Beirit Web")
         self.assertContains(
             response,
-            "Webprojekte, Django-Anwendungen, Python-Tools und weitere Softwarelösungen von Beirit Digital ansehen und testen.",
+            "Webanwendungen, Django-Projekte und Python-Tools mit technischen Einblicken, Live-Demos und Quellcode.",
         )
 
     @override_settings(LOGIN_REQUIRED=False)

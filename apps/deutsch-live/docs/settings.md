@@ -7,11 +7,15 @@ Die zentrale Django-Settings-Datei bleibt `backend/config/settings.py`. Sie ist 
 ## Lade-Reihenfolge
 
 1. echte Shell-ENV-Werte
-2. `backend/.env`
+2. `backend/.env` mit veröffentlichten fiktiven Musterdaten aus `.env.example`
 3. `backend/.env.local` bei `DJANGO_ENV!=production`
 4. `backend/.env.production` bei `DJANGO_ENV=production`
 
 Echte Shell-ENV-Werte haben Vorrang vor Dateien.
+
+Die Portfolio-Demo verwendet ausschließlich Musterdaten. Lokale Varianten wie
+`.env.local`, `.env.production` und `.env.original` bleiben ignoriert; echte
+Zugangsdaten dürfen in keiner dieser Dateien stehen.
 
 ## Themenblöcke
 

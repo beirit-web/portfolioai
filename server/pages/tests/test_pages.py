@@ -764,7 +764,7 @@ class ChatContactDisplayTests(TestCase):
 @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
 class SeoSignalTests(TestCase):
     @override_settings(SITE_URL="https://portfolio.example.invalid", LOGIN_REQUIRED=False)
-    def test_homepage_uses_fly_domain_for_canonical_and_open_graph(self):
+    def test_homepage_uses_configured_portfolio_domain_for_canonical_and_open_graph(self):
         response = self.client.get(reverse("pages:home"))
 
         self.assertEqual(response.status_code, 200)
@@ -802,7 +802,7 @@ class SeoSignalTests(TestCase):
         self.assertContains(response, "Host: portfolio.example.invalid")
 
     @override_settings(SITE_URL="https://portfolio.example.invalid", LOGIN_REQUIRED=False)
-    def test_sitemap_xml_lists_public_pages_under_fly_domain(self):
+    def test_sitemap_xml_lists_public_pages_under_portfolio_domain(self):
         response = self.client.get(reverse("pages:sitemap_xml"))
 
         self.assertEqual(response.status_code, 200)
@@ -817,13 +817,16 @@ class SeoSignalTests(TestCase):
         )
 
     @override_settings(SITE_URL="https://portfolio.example.invalid", LOGIN_REQUIRED=False)
-    def test_homepage_exposes_business_and_faq_schema(self):
+    def test_homepage_exposes_portfolio_schema_without_business_or_faq_claims(self):
         response = self.client.get(reverse("pages:home"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '"@type": ["LocalBusiness", "ProfessionalService"]')
-        self.assertContains(response, '"@type": "FAQPage"')
-        self.assertContains(response, "Lokalisierung nach Absprache")
+        self.assertContains(response, '"@type": "WebSite"')
+        self.assertContains(response, '"@type": "WebPage"')
+        self.assertNotContains(response, '"LocalBusiness"')
+        self.assertNotContains(response, '"ProfessionalService"')
+        self.assertNotContains(response, '"FAQPage"')
+        self.assertNotContains(response, '"priceRange"')
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_public_utility_pages_are_noindexed(self):

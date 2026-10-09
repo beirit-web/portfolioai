@@ -15,10 +15,10 @@ verwaltung.html
 events.json
 data/
 
-# Environment files
-.env
-.env.example
+# Public sample environment; local variants remain private
 .env.*
+!.env
+!.env.example
 .env.backup
 .env.production
 .env.original

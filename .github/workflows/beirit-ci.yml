@@ -8,6 +8,7 @@ on:
       - "sprachdienstleistungen/**"
       - "apps/deutsch-live/frontend/**"
       - "scripts/check_portfolio_data.py"
+      - "scripts/test_portfolio_data.py"
       - ".gitignore"
       - ".github/workflows/beirit-ci.yml"
   push:
@@ -20,6 +21,7 @@ on:
       - "sprachdienstleistungen/**"
       - "apps/deutsch-live/frontend/**"
       - "scripts/check_portfolio_data.py"
+      - "scripts/test_portfolio_data.py"
       - ".gitignore"
       - ".github/workflows/beirit-ci.yml"
   workflow_dispatch:
@@ -76,7 +78,9 @@ jobs:
           cache-dependency-path: server/requirements.txt
 
       - name: Check portfolio source data
-        run: python3 scripts/check_portfolio_data.py
+        run: |
+          python3 scripts/test_portfolio_data.py
+          python3 scripts/check_portfolio_data.py
 
       - name: Install backend dependencies
         working-directory: server
