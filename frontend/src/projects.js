@@ -8,4 +8,3 @@ if (!renderedOverview || !Array.isArray(window.BEIRIT_HOME_CONFIG?.initialProjec
 } else {
   enhanceProjectPage();
 }
-

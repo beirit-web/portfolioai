@@ -209,5 +209,3 @@ export default function PortfolioProjectPage({ item, t, language, onNavigate }) 
     </>
   );
 }
-
-
