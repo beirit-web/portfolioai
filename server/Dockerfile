@@ -10,12 +10,16 @@ RUN mkdir -p /code
 
 WORKDIR /code
 
-COPY requirements.txt /tmp/requirements.txt
+# Build context: repository root, with -f server/Dockerfile.
+COPY server/requirements.txt /tmp/requirements.txt
 RUN set -ex && \
     pip install --upgrade pip && \
     pip install -r /tmp/requirements.txt && \
     rm -rf /root/.cache/
-COPY . /code
+COPY server/ /code
+COPY apps/portfolio-demos/sprachdienstleistungen/assets/vokabelbox/ /apps/portfolio-demos/sprachdienstleistungen/assets/vokabelbox/
+COPY apps/portfolio-demos/sprachdienstleistungen/templates/modules/ /apps/portfolio-demos/sprachdienstleistungen/templates/modules/
+COPY apps/portfolio-demos/vokabelbox/LICENSE /licenses/vokabelbox-MIT.txt
 
 ENV DJANGO_DEBUG=False
 ENV NODE_ENV=production

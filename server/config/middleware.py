@@ -289,7 +289,7 @@ class LoginRequiredMiddleware:
     }
     login_url = _ensure_leading_slash(settings.LOGIN_URL)
     self.login_url = login_url
-    self.exempt_paths = {login_url, "/login/", "/logout/", "/register/", "/favicon.ico", "/wetter", "/wetter/"}
+    self.exempt_paths = {login_url, "/login/", "/logout/", "/register/", "/favicon.ico", "/wetter", "/wetter/", "/vokabelbox", "/vokabelbox/"}
 
   def __call__(self, request):
     if not getattr(settings, "LOGIN_REQUIRED", True):

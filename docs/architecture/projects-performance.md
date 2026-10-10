@@ -127,16 +127,42 @@ Umbruchregeln für lange Wörter bleiben erhalten. `content-visibility` wird auf
 der Detailseite nicht eingesetzt: Es verschob lange Layoutaufgaben hinter den
 ersten Bildaufbau und erhöhte dadurch die Blocking-Zeit. Die Browserprüfungen
 vergleichen weiterhin alle Berichte und prüfen echten Tastaturzugriff.
-Berichtscontainer und technische Entscheidung verwenden keinen Hintergrund,
-Rahmen, Radius oder Schatten. Dekorative Pseudoelemente des Containers entfallen.
+Alle Berichtscontainer verwenden die gewünschte gedeckte Fläche `#e6e0d7` ohne
+Rahmen, Radius oder Schatten. Technische Entscheidungen bleiben transparent.
+Die Abschnittstitel verwenden `#115e59`, damit der Kontrast auf der gedeckten
+Fläche ausreicht. Dekorative Pseudoelemente des Containers entfallen.
+Die Galerie begrenzt Layout und Zeichenarbeit mit `contain: layout paint`; Inhalte
+bleiben direkt im normalen Dokument und per Tastatur erreichbar.
 
-Cover verwenden `srcset` mit 480, 768, 960 und 1254 Pixeln. Der responsive
+Detail-Cover verwenden `srcset` mit 480, 640, 768, 960 und 1254 Pixeln. Der responsive
 Preload im HTML muss dieselben Quellen und `sizes` wie das Hero-Bild verwenden;
-die Detailgrößen stehen in Python und JavaScript. Das Hero-Bild wird eager mit
-hoher Priorität geladen. Die Galerie verwendet responsive Desktop- und
+Django übernimmt die Bilddefinition des Detail-Preloads direkt aus dem Build-Katalog,
+sodass Bild und Preload dieselbe kanonische Definition verwenden. Nur bei fehlendem
+Katalog bleibt eine explizite Python-Definition als Fallback erhalten. Das Hero-Bild wird eager mit
+hoher Priorität geladen. Auf allen Detailseiten gilt der zusätzliche Head-Preload erst ab
+1100 Pixeln: auf schmalen Bildschirmen entdeckt der Browser das Bild bereits
+im initialen HTML. Das vermeidet doppelte Cover-Downloads während der frühen
+Quellenauswahl in Chromium. Die Galerie verwendet responsive Desktop- und
 Mobilaufnahmen, Lazy Loading und `sizes="auto"` mit einem Layout-Fallback.
 Links öffnen weiterhin die unverkleinerten Originale. Das Aufnahme-Skript
-erneuert die Galerievarianten bei jeder Aufnahme.
+erneuert die Galerievarianten bei jeder Aufnahme über
+`scripts/build_responsive_image_variants.py`. Desktop-Zwischengrößen mit 640 Pixeln
+und Mobilbilder mit 320 Pixeln schließen die bisherigen Lücken. Originale und
+Galerie-Zieladressen bleiben erhalten.
+
+Alle Projektseiten zeigen ab 1100 Pixeln die Detailkarten links und das Cover rechts.
+Unterhalb davon bleibt das Cover über den Karten. Django verwendet dafür
+`project_detail_summary.html` und `project_detail_preview.html`; der Client-Fallback
+verwendet dieselbe Struktur über `PortfolioProjectContent.jsx`. Hauptbuttons und Modulaktionen
+bleiben kompakt und rechts ausgerichtet, die Überschrift zentriert. Die gemeinsame
+`sizes`-Definition berücksichtigt diesen Spaltenwechsel. Modul-Links und ihre
+Übersetzungen stammen aus `projectModuleActions.mjs`; der Build schreibt sie
+in den Katalog für Django. Dadurch bleiben beide Rendering-Pfade identisch,
+ohne die Linkdefinitionen im Servercode zu wiederholen.
+
+Der vollständige Ablauf für die übrigen Projekte und die Messwerte vom
+10. Oktober 2026 stehen in
+[Alle Projektseiten: Refactoring und Lighthouse](../performance/all-projects-lighthouse-2026-10-10.md).
 
 Prüfungen der Detailansicht:
 

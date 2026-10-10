@@ -9,8 +9,8 @@ DeutschLive ist jetzt Teil der Webplattform für Sprachdienstleistungen unter
 `http://127.0.0.1:8000/deutschlive/`. Der gemeinsame Frontend-Quellcode
 liegt weiterhin hier. `npm --prefix apps/deutsch-live/frontend run build:platform`
 baut die Plattformvariante mit gemeinsamer Anmeldung und lokalem Audioplayer nach
-`sprachdienstleistungen/assets/deutschlive-dist`. Das integrierte Backend liegt in
-`sprachdienstleistungen/lessons`; das nachfolgend beschriebene eigenständige Backend
+`apps/portfolio-demos/sprachdienstleistungen/assets/deutschlive-dist`. Das integrierte Backend liegt in
+`apps/portfolio-demos/sprachdienstleistungen/lessons`; das nachfolgend beschriebene eigenständige Backend
 bleibt als Entwicklungsstand erhalten. DeutschLive wird im Beirit-Portfolio nicht
 mehr als separates Projekt aufgeführt.
 

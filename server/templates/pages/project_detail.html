@@ -15,28 +15,10 @@
           {% if detail.showPrimaryAction %}<a href="{{ detail.primaryHref }}" class="portfolio-contact-button"{% if detail.primaryExternal %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ detail.primaryLabel }}</a>{% endif %}
           {% for module in detail.modules %}<a id="{{ module.id }}" href="{{ module.href }}" class="project-overview-card__secondary-button"{% if module.external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ module.label }}</a>{% endfor %}
         </div>
-        {% if detail.hero %}
-          <figure class="portfolio-project-hero__preview {% if detail.hero.variant == 'cover' %}portfolio-project-hero__cover{% else %}portfolio-card__desktop-preview{% endif %}">
-            <img src="{{ detail.hero.src }}"{% if detail.hero.srcSet %} srcset="{{ detail.hero.srcSet }}" sizes="{{ detail.hero.sizes }}"{% endif %} alt="{{ detail.hero.alt }}" decoding="async" width="{{ detail.hero.width }}" height="{{ detail.hero.height }}" loading="eager" fetchpriority="high" />
-            {% if detail.hero.variant != 'cover' %}<figcaption>{{ detail.hero.label }}</figcaption>{% endif %}
-          </figure>
-        {% else %}
-          <div class="portfolio-card__preview portfolio-project-hero__preview" aria-hidden="true">
-            <div class="portfolio-card__browser-bar"><span></span><span></span><span></span></div>
-            <div class="portfolio-card__mockup"><strong>{{ detail.project.title }}</strong><span>{{ detail.project.type }}</span></div>
-          </div>
-        {% endif %}
       </div>
     </section>
     <section id="projektdetails" class="portfolio-project-page mx-auto max-w-7xl scroll-mt-24 px-3 pb-16 sm:px-8 lg:px-10">
-      <div class="portfolio-card__details-grid">
-        <article class="portfolio-card__situation"><span>{{ detail.copy.situationLabel }}</span>{% for paragraph in detail.situation %}<p>{{ paragraph }}</p>{% endfor %}</article>
-        <article class="portfolio-card__implementation">
-          <span>{{ detail.copy.ownContributionLabel }}</span>{% for paragraph in detail.implementation %}<p>{{ paragraph }}</p>{% endfor %}
-          {% if detail.project.implementationFeatures %}<ul class="portfolio-project-checklist">{% for feature in detail.project.implementationFeatures %}<li>{% include "pages/project_icon.html" with nodes=detail.checkIcon icon_class='h-4 w-4' only %}<span>{{ feature }}</span></li>{% endfor %}</ul>{% endif %}
-        </article>
-        <article class="portfolio-card__result"><span>{{ detail.copy.resultLabel }}</span>{% for paragraph in detail.result %}<p>{{ paragraph }}</p>{% endfor %}</article>
-      </div>
+      {% include "pages/project_detail_summary.html" %}
       {% if detail.decision %}<section class="portfolio-project-decision" aria-labelledby="technical-decision-title"><h2 id="technical-decision-title">{{ detail.copy.decisionLabel }}</h2>{% for paragraph in detail.decision %}<p>{{ paragraph }}</p>{% endfor %}</section>{% endif %}
       {% if detail.screenshots %}
         <section class="portfolio-project-gallery" aria-labelledby="project-gallery-title">

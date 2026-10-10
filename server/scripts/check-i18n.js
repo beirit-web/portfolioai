@@ -2,13 +2,15 @@
  * Konsistenz-Check fuer Uebersetzungen:
  * - Sammelt alle statischen i18n-Keys aus allen HTML-Templates unter templates/
  * - Prueft data-i18n, data-i18n-title, data-i18n-aria-label, data-i18n-placeholder
- * - Prueft, ob DE/RU in assets/js/i18n-data.js dafuer Werte liefern
+ * - Prueft DE/RU aus i18n-data.js, Locale-Overlays und gemeinsamem Vokabelbox-Modul
  * Exit-Code 1 bei fehlenden Keys (fuer CI/Pre-Commit nutzbar).
  */
 
 const fs = require("fs");
 const path = require("path");
 const TRANSLATIONS = require("../assets/js/i18n-data.js");
+const languageModuleDir = path.resolve(__dirname, "../../apps/portfolio-demos/sprachdienstleistungen");
+const VOCAB_TRANSLATIONS = require(path.join(languageModuleDir, "assets/vokabelbox/translations.js"));
 
 const templateDir = path.join(__dirname, "..", "templates");
 const localesDir = path.join(__dirname, "..", "assets", "locales");
@@ -36,8 +38,14 @@ const readLocaleOverlay = (lang) => {
 
 const translations = {
   ...TRANSLATIONS,
-  de: mergeTranslationTree(TRANSLATIONS.de, readLocaleOverlay("de")),
-  ru: mergeTranslationTree(TRANSLATIONS.ru, readLocaleOverlay("ru")),
+  de: mergeTranslationTree(
+    mergeTranslationTree(TRANSLATIONS.de, { vocab: VOCAB_TRANSLATIONS.de }),
+    readLocaleOverlay("de"),
+  ),
+  ru: mergeTranslationTree(
+    mergeTranslationTree(TRANSLATIONS.ru, { vocab: VOCAB_TRANSLATIONS.ru }),
+    readLocaleOverlay("ru"),
+  ),
 };
 
 const collectHtmlFiles = (dir) => {
@@ -51,7 +59,10 @@ const collectHtmlFiles = (dir) => {
   });
 };
 
-const htmlFiles = collectHtmlFiles(templateDir);
+const htmlFiles = [
+  ...collectHtmlFiles(templateDir),
+  ...collectHtmlFiles(path.join(languageModuleDir, "templates/modules")),
+];
 
 const htmlKeys = new Set();
 const regex = /data-i18n(?:-title|-aria-label|-placeholder)?="([^"]+)"/g;
@@ -76,6 +87,9 @@ for (const key of htmlKeys) {
   const ruVal = getNested(translations.ru, key);
   if (deVal === undefined || ruVal === undefined) {
     missing.push({ key, de: deVal, ru: ruVal });
+  }
+  if (key.startsWith("vocab.") && getNested({ vocab: VOCAB_TRANSLATIONS.uk }, key) === undefined) {
+    missing.push({ key, uk: undefined });
   }
 }
 

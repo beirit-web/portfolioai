@@ -1,0 +1,689 @@
+{
+  "checked_date": "2026-10-10",
+  "scope": "Erneute Prüfung nach den Nutzer-Löschungen und der Integration der Vokabelbox; bestätigte ungenutzte Dateien auf Nutzerwunsch nach Bilder/Bilder ausgelagert.",
+  "summary": {
+    "unused_count": 0,
+    "unused_bytes": 0,
+    "review_count": 22,
+    "review_bytes": 7100999,
+    "already_removed_count": 27,
+    "already_removed_bytes": 330975060,
+    "archived_count": 43,
+    "archived_bytes": 1871214
+  },
+  "unused_candidates": [],
+  "review_candidates": [
+    {
+      "path": "server/assets/images/enbt-blur-336.webp",
+      "bytes": 2702,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/enbt-blur-463.webp",
+      "bytes": 4772,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/enbt-blur.png",
+      "bytes": 258896,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/enbt-retouched-336.webp",
+      "bytes": 10332,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/enbt-retouched-463.webp",
+      "bytes": 17050,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logotype_dark-320.webp",
+      "bytes": 26812,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/portfolio-deutschlive-mobile.webp",
+      "bytes": 32810,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/portfolio-deutschlive-tablet.webp",
+      "bytes": 51830,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/digital-avatar-336.webp",
+      "bytes": 18964,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/digital-avatar-463.webp",
+      "bytes": 33172,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/digital-avatar-hair.png",
+      "bytes": 1934001,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/digital-avatar.png",
+      "bytes": 1934001,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/digital-man-portrait-336.webp",
+      "bytes": 18592,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/digital-man-portrait-463.webp",
+      "bytes": 33136,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/digital-man-portrait.png",
+      "bytes": 1907257,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/enbt-blur-336.webp",
+      "bytes": 2702,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/enbt-blur-463.webp",
+      "bytes": 4772,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/enbt-blur.png",
+      "bytes": 258896,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/enbt-retouched-336.webp",
+      "bytes": 10332,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/enbt-retouched-463.webp",
+      "bytes": 17050,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/enbt-retouched-balanced.png",
+      "bytes": 246139,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/images/enbt-retouched.png",
+      "bytes": 276781,
+      "evidence": "Keine aktuelle Dateireferenz gefunden. Vor Entfernen entscheiden, ob die Bildvariante oder Originalquelle als Gestaltungsmaterial erhalten bleiben soll.",
+      "category": "unreferenced_image_review"
+    }
+  ],
+  "already_removed": [
+    {
+      "path": "server/assets/images/Mein _alter_Freund.mp4",
+      "bytes": 26675750,
+      "previous_category": "unused_video"
+    },
+    {
+      "path": "server/assets/images/Mein_alter_Freund_960p.mp4",
+      "bytes": 77608779,
+      "previous_category": "unused_video"
+    },
+    {
+      "path": "server/assets/images/android-chrome-192.png",
+      "bytes": 29351,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/android-chrome-512.png",
+      "bytes": 140544,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/futuristic_android_mobile.mp4",
+      "bytes": 142646162,
+      "previous_category": "unused_video"
+    },
+    {
+      "path": "server/assets/images/futuristic_android_mobile_preview.mp4",
+      "bytes": 4608198,
+      "previous_category": "unused_video"
+    },
+    {
+      "path": "server/assets/images/futuristic_android_pc.mp4",
+      "bytes": 54184156,
+      "previous_category": "test_only_video"
+    },
+    {
+      "path": "server/assets/images/futuristic_android_pc_preview.mp4",
+      "bytes": 6635637,
+      "previous_category": "unused_video"
+    },
+    {
+      "path": "server/assets/images/hero.mp4",
+      "bytes": 7815022,
+      "previous_category": "unused_video"
+    },
+    {
+      "path": "server/assets/images/logo-dark-130.webp",
+      "bytes": 2870,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-dark-160.webp",
+      "bytes": 5196,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-dark-320.webp",
+      "bytes": 15308,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-dark.png",
+      "bytes": 953356,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-light.ico",
+      "bytes": 10385,
+      "previous_category": "previously_referenced_logo"
+    },
+    {
+      "path": "server/assets/images/logo-light.png",
+      "bytes": 1052708,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-round-dark.png",
+      "bytes": 957686,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-round-light-160.webp",
+      "bytes": 8186,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-round-light-320.webp",
+      "bytes": 20762,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-round-light.png",
+      "bytes": 1148498,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-transparent-130.webp",
+      "bytes": 5152,
+      "previous_category": "previously_referenced_logo"
+    },
+    {
+      "path": "server/assets/images/logo-transparent-160.webp",
+      "bytes": 7106,
+      "previous_category": "previously_referenced_logo"
+    },
+    {
+      "path": "server/assets/images/logo-transparent-260.webp",
+      "bytes": 14888,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-transparent-320.webp",
+      "bytes": 20596,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logo-transparent.png",
+      "bytes": 1611003,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logotype_dark-160.webp",
+      "bytes": 10178,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/logotype_dark-80.webp",
+      "bytes": 4238,
+      "previous_category": "unreferenced_image_review"
+    },
+    {
+      "path": "server/assets/images/ladeseite.mp4",
+      "bytes": 4783345,
+      "previous_category": "unused_video"
+    }
+  ],
+  "reference_repairs": [
+    {
+      "path": "server/botanic/templates/botanic/base.html",
+      "change": "Gelöschtes logo-light.ico durch vorhandenes beirit-web-favicon-mini.svg ersetzt."
+    },
+    {
+      "path": "server/contracts/templates/contracts/generator.html",
+      "change": "Gelöschtes Favicon durch vorhandenes SVG-Favicon und gelöschtes Signaturlogo durch aktueles-logo-160.webp ersetzt."
+    },
+    {
+      "path": "frontend/scripts/check-contract-editor.cjs",
+      "change": "Logo-Upload-Prüfung verwendet das vorhandene aktueles-logo-160.webp statt der entfernten 160px-Variante."
+    },
+    {
+      "path": "server/pages/tests/test_pages.py",
+      "change": "Manifest-Fallback-Test verwendet einen fiktiven fehlenden SVG-Dateinamen und das aktive SVG-Favicon statt alter Videos."
+    }
+  ],
+  "archived_files": [
+    {
+      "path": "frontend/src/brand.scss",
+      "bytes": 16399,
+      "category": "unused_source_or_template",
+      "evidence": "Kein Import und kein Vite-Einstieg.",
+      "sha256": "e17c2b1efc9a015add0c62d072d3050fe7c8d09910763bd6ed88841fb2d4dc1d",
+      "archive_path": "frontend/src/brand.scss"
+    },
+    {
+      "path": "frontend/src/components/home/hero/Hero3d.scss",
+      "bytes": 13766,
+      "category": "unused_source_or_template",
+      "evidence": "Kein Import und kein Vite-Einstieg.",
+      "sha256": "a83c8e2db8134fc6698fae48f4b6173396d3e4c9714c896385704c333cdf8664",
+      "archive_path": "frontend/src/components/home/hero/Hero3d.scss"
+    },
+    {
+      "path": "frontend/src/components/home/faqsection/FaqSection.jsx",
+      "bytes": 1149,
+      "category": "unused_source_or_template",
+      "evidence": "Nicht importiert; die aktive FAQ-Darstellung liegt in App.jsx. FaqSection.css bleibt aktiv.",
+      "sha256": "2efd543af87d7403a8cf43f699758f4caa7899dd1e6b12235aa70df8c70e3c1e",
+      "archive_path": "frontend/src/components/home/faqsection/FaqSection.jsx"
+    },
+    {
+      "path": "frontend/src/components/home/technologyproofsection/TechnologyProofSection.jsx",
+      "bytes": 2537,
+      "category": "unused_source_or_template",
+      "evidence": "Nicht importiert; aktive Darstellung in App.jsx. Die gleichnamige CSS-Datei bleibt aktiv.",
+      "sha256": "6afe3d2936c65b70e49a097dfc4e146336de4c2537597e3710b4fbab2abdcb42",
+      "archive_path": "frontend/src/components/home/technologyproofsection/TechnologyProofSection.jsx"
+    },
+    {
+      "path": "frontend/src/components/payment/PaymentPages.jsx",
+      "bytes": 5555,
+      "category": "unused_source_or_template",
+      "evidence": "Kein Import; Zahlungsrouten führen zur Projektübersicht.",
+      "sha256": "52fb3c52536dbff9c75cd16a9d8df8330e6ef06a3af970042c5be1ac5bacab45",
+      "archive_path": "frontend/src/components/payment/PaymentPages.jsx"
+    },
+    {
+      "path": "frontend/src/components/ui/select.jsx",
+      "bytes": 426,
+      "category": "unused_source_or_template",
+      "evidence": "Kein Import aus den aktiven Frontend-Einstiegen.",
+      "sha256": "b2d352de8c0ba5fe7110623d5da0772a19cc8631c51101515357c7497eb78f70",
+      "archive_path": "frontend/src/components/ui/select.jsx"
+    },
+    {
+      "path": "server/scripts/force_migrate.py",
+      "bytes": 163,
+      "category": "unused_source_or_template",
+      "evidence": "Nur ein Kommentar, keine ausführbare Migration und kein Aufrufer.",
+      "sha256": "bed6e8b68ea2ad93ba25ea39b499f813eb18c1876f5216a2d53a69cb36fd72cc",
+      "archive_path": "server/scripts/force_migrate.py"
+    },
+    {
+      "path": "server/templates/pages/donate.html",
+      "bytes": 3088,
+      "category": "unused_source_or_template",
+      "evidence": "Die Donate-View leitet weiter und rendert diese Datei nicht.",
+      "sha256": "edc7bca49d38b696a6fd6067e79c46f55bebcbb18d404f7d094c707ee1662456",
+      "archive_path": "server/templates/pages/donate.html"
+    },
+    {
+      "path": "server/templates/partials/home_trust_strip.html",
+      "bytes": 924,
+      "category": "unused_source_or_template",
+      "evidence": "Kein Template-Include oder Render-Aufruf.",
+      "sha256": "2641a673997ac13e2b425cf7ab8c360a137eca7383c0e0e820eb9fa5cf228b07",
+      "archive_path": "server/templates/partials/home_trust_strip.html"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/templates/pages/donate.html",
+      "bytes": 2347,
+      "category": "unused_source_or_template",
+      "evidence": "Die Donate-View leitet weiter.",
+      "sha256": "42a7d619b46a84a007f883aa32587d343406b03068c75369c355b11767c9fc6e",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/templates/pages/donate.html"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/templates/partials/home_trust_strip.html",
+      "bytes": 924,
+      "category": "unused_source_or_template",
+      "evidence": "Kein Template-Include oder Render-Aufruf.",
+      "sha256": "2641a673997ac13e2b425cf7ab8c360a137eca7383c0e0e820eb9fa5cf228b07",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/templates/partials/home_trust_strip.html"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/templates/partials/weather_widget.html",
+      "bytes": 3194,
+      "category": "unused_source_or_template",
+      "evidence": "Kein Template-Include oder Render-Aufruf.",
+      "sha256": "e6efa9f2cdc9f86c5d9d323dbffe9058ce674b0f5a279f85d043c7ffff23310a",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/templates/partials/weather_widget.html"
+    },
+    {
+      "path": "server/assets/css/home-platform.min.css",
+      "bytes": 175701,
+      "evidence": "Templates laden die CSS-Dateien mit ihrem genauen Namen; es gibt keine automatische Auswahl der .min.css-Kopie.",
+      "category": "unused_minified_css",
+      "sha256": "941e52d35c7a705d92a248f72b4d43df26d6535ec6f28b9dd2905d990d78291e",
+      "archive_path": "server/assets/css/home-platform.min.css"
+    },
+    {
+      "path": "server/assets/css/home-shell.min.css",
+      "bytes": 63942,
+      "evidence": "Templates laden die CSS-Dateien mit ihrem genauen Namen; es gibt keine automatische Auswahl der .min.css-Kopie.",
+      "category": "unused_minified_css",
+      "sha256": "726be6e549ea389d4556da2f89ec6f7e93a895eede9a98949d83555163be84a3",
+      "archive_path": "server/assets/css/home-shell.min.css"
+    },
+    {
+      "path": "server/assets/css/main.min.css",
+      "bytes": 498391,
+      "evidence": "Templates laden die CSS-Dateien mit ihrem genauen Namen; es gibt keine automatische Auswahl der .min.css-Kopie.",
+      "category": "unused_minified_css",
+      "sha256": "b23ec7b56ecb6529fc2ffb3d164c5f1448645395dc2c5751f25e2c5f5c09723c",
+      "archive_path": "server/assets/css/main.min.css"
+    },
+    {
+      "path": "server/assets/css/root.min.css",
+      "bytes": 4185,
+      "evidence": "Templates laden die CSS-Dateien mit ihrem genauen Namen; es gibt keine automatische Auswahl der .min.css-Kopie.",
+      "category": "unused_minified_css",
+      "sha256": "722c8408d1cc16a4874a4689fdd597a0aa766e26d2d341615e484c0370e3b899",
+      "archive_path": "server/assets/css/root.min.css"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/index-Cl4SS1QI.js",
+      "bytes": 155751,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "9b419d216b48e01fab44726b941ba1da68717b036040e8d43531735a430625c1",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/index-Cl4SS1QI.js"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/camp-lantern.jpg",
+      "bytes": 20743,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "d512ff8dae8ef3f16e6dcb4850089aa608c240b15b58471759c5f1ed87cddaef",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/camp-lantern.jpg"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/camp-lantern.webp",
+      "bytes": 9670,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "bca39174db3b48d5ae37a0b1db6a14d0e3f9ff18961f4077d21ace89b7292351",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/camp-lantern.webp"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/merino-beanie.jpg",
+      "bytes": 40531,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "453366ef3096e809cd317c03d156760f662ce9d7ecf5cbd6a67e3de9802fe621",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/merino-beanie.jpg"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/merino-beanie.webp",
+      "bytes": 31486,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "e6e3d04d60e486c9d6d5248cbecadafdd99852e27c9f5180a4a292f2262f5651",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/merino-beanie.webp"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/rain-shell.jpg",
+      "bytes": 30873,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "004d7347f948aecbf792a32aac32cb1860adf1b9d8f0e8b5ad23de6936508349",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/rain-shell.jpg"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/rain-shell.webp",
+      "bytes": 15574,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "b7d669f27272646fcb50b4079ad847476f621221f30363fd43d4d5681518c5d2",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/rain-shell.webp"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/ridge-runners.jpg",
+      "bytes": 35009,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "128bcdceeef903151d997b92b35b6cfd25e32bb60e20dda83d4a79448693cc40",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/ridge-runners.jpg"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/ridge-runners.webp",
+      "bytes": 23690,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "5f265bf003d8fce119476a04f97b957a8ae31fa46dffeb378d7e927c6218b600",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/ridge-runners.webp"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/thermal-bottle.jpg",
+      "bytes": 18909,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "a2c7b787b0a93fc032c41d349059c8d4fe9231b48e5a422f825f34e413883e82",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/thermal-bottle.jpg"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/thermal-bottle.webp",
+      "bytes": 7166,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "47e916c5c49362a8b282a9d70f41a0715bb1f5293fe9119dda2e6d6c0057368e",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/thermal-bottle.webp"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/trail-pack.jpg",
+      "bytes": 36113,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "6342c3ca2052c28ddce70a5ee839a6eb609579aa2eb018dc2a5c61bfe4122954",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/trail-pack.jpg"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/trail-pack.webp",
+      "bytes": 20194,
+      "category": "unreferenced_language_shop_assets",
+      "evidence": "Der aktuelle Shop-Einstieg lädt einen anderen Bundle; diese Dateien werden nicht referenziert.",
+      "sha256": "df88fbaa29a338fb0cc1879a447e7656c221d500a4af0ed0767d0242773036d0",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/assets/portfolio/online-shop/assets/trail-pack.webp"
+    },
+    {
+      "path": "server/assets/portfolio/online-shop/assets/index-Cm5kXj6C.js",
+      "bytes": 155265,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Der frühere statische Einstieg führt jetzt zu einer integrierten Demo beziehungsweise zum Projektbericht und lädt diese Dateien nicht mehr.",
+      "sha256": "256c783087b6db90986737bfca091268f96cf9b3a71b488732e417ad2ee31034",
+      "archive_path": "server/assets/portfolio/online-shop/assets/index-Cm5kXj6C.js"
+    },
+    {
+      "path": "server/assets/portfolio/online-shop/assets/index-CB85SIjK.css",
+      "bytes": 7143,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Der frühere statische Einstieg führt jetzt zu einer integrierten Demo beziehungsweise zum Projektbericht und lädt diese Dateien nicht mehr.",
+      "sha256": "18e5156b888d4b9ead47a1875e200931b1bc5d40507c92c2cf8a41f78c3e5fae",
+      "archive_path": "server/assets/portfolio/online-shop/assets/index-CB85SIjK.css"
+    },
+    {
+      "path": "server/assets/portfolio/enbt-botanic/assets/index-013d7fe6.js",
+      "bytes": 148161,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Der frühere statische Einstieg führt jetzt zu einer integrierten Demo beziehungsweise zum Projektbericht und lädt diese Dateien nicht mehr.",
+      "sha256": "73b95a2a0206055966d7721e0505c26f293232f7a529f8c9f20592e5d148729e",
+      "archive_path": "server/assets/portfolio/enbt-botanic/assets/index-013d7fe6.js"
+    },
+    {
+      "path": "server/assets/portfolio/enbt-botanic/assets/index-cb9c3c84.css",
+      "bytes": 5078,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Der frühere statische Einstieg führt jetzt zu einer integrierten Demo beziehungsweise zum Projektbericht und lädt diese Dateien nicht mehr.",
+      "sha256": "cb9c3c84808a426165f3e7595ef798b486ccf1bdd734aefab6ca50ca5ea2cda0",
+      "archive_path": "server/assets/portfolio/enbt-botanic/assets/index-cb9c3c84.css"
+    },
+    {
+      "path": "server/assets/portfolio/enbt-botanic/vite.svg",
+      "bytes": 1497,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Der frühere statische Einstieg führt jetzt zu einer integrierten Demo beziehungsweise zum Projektbericht und lädt diese Dateien nicht mehr.",
+      "sha256": "4a748afd443918bb16591c834c401dae33e87861ab5dbad0811c3a3b4a9214fb",
+      "archive_path": "server/assets/portfolio/enbt-botanic/vite.svg"
+    },
+    {
+      "path": "server/assets/portfolio/musikplayer/app.js",
+      "bytes": 9588,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Der frühere statische Einstieg führt jetzt zu einer integrierten Demo beziehungsweise zum Projektbericht und lädt diese Dateien nicht mehr.",
+      "sha256": "61910df39b59097713d7bac81aa382d44b90006d1211e93bc8330ce0ee022ebe",
+      "archive_path": "server/assets/portfolio/musikplayer/app.js"
+    },
+    {
+      "path": "server/assets/portfolio/musikplayer/style.css",
+      "bytes": 7698,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Der frühere statische Einstieg führt jetzt zu einer integrierten Demo beziehungsweise zum Projektbericht und lädt diese Dateien nicht mehr.",
+      "sha256": "325a616fa92aadd992a94606b158d770c6b9508fbff2cbaf5e40532ec631e608",
+      "archive_path": "server/assets/portfolio/musikplayer/style.css"
+    },
+    {
+      "path": "server/assets/portfolio/musikplayer/assets/track-image.webp",
+      "bytes": 283936,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Der frühere statische Einstieg führt jetzt zu einer integrierten Demo beziehungsweise zum Projektbericht und lädt diese Dateien nicht mehr.",
+      "sha256": "e75bf1169fd6f37e7f578c4cf77af08a7f9ecbc8d058df20c4303877e8c8e936",
+      "archive_path": "server/assets/portfolio/musikplayer/assets/track-image.webp"
+    },
+    {
+      "path": "server/assets/portfolio/vokabelbox-main/app.js",
+      "bytes": 7263,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Alter statischer Einstieg leitet nach /vokabelbox/ weiter; aktive JS/CSS-Quellen liegen in apps/portfolio-demos/sprachdienstleistungen/assets/vokabelbox/ und werden unter /static/vokabelbox/ geladen. Diese alten Sidecars werden nicht eingebunden.",
+      "sha256": "4b2cfdb7e5f0fd16aa95b2ecad221f015e8cf0e547267195bd5945be26403ab0",
+      "archive_path": "server/assets/portfolio/vokabelbox-main/app.js"
+    },
+    {
+      "path": "server/assets/portfolio/vokabelbox-main/style.css",
+      "bytes": 5967,
+      "category": "orphaned_main_legacy_builds",
+      "evidence": "Alter statischer Einstieg leitet nach /vokabelbox/ weiter; aktive JS/CSS-Quellen liegen in apps/portfolio-demos/sprachdienstleistungen/assets/vokabelbox/ und werden unter /static/vokabelbox/ geladen. Diese alten Sidecars werden nicht eingebunden.",
+      "sha256": "77d98ec8530d8b3e026b87c65693ca3e695a2009f4a16fbfb20c5da57e841f92",
+      "archive_path": "server/assets/portfolio/vokabelbox-main/style.css"
+    },
+    {
+      "path": "apps/portfolio-demos/sprachdienstleistungen/utils/force_migrate.py",
+      "bytes": 178,
+      "category": "unused_source_or_template",
+      "evidence": "Datei enthält nur einen unreferenzierten Hinweistext; kein ausführbarer Code und kein Aufrufer.",
+      "sha256": "933cd2f14d3cbdd0c64cc4da13827b4d73cafbdc1fb05da39d657430f1fb0aeb",
+      "archive_path": "apps/portfolio-demos/sprachdienstleistungen/utils/force_migrate.py"
+    },
+    {
+      "path": "apps/portfolio-demos/botanic/client/src/components/PlantList.jsx",
+      "bytes": 452,
+      "category": "unused_source_or_template",
+      "evidence": "Nicht im eigenen Botanic-Demo-Importgraph verwendet. main.jsx lädt App.jsx, das die Pflanzenliste direkt rendert; kein Import von PlantList.",
+      "sha256": "f071e31dbd3f04e0410abb4528e5bb211dbe849241dce7491deb2cc956001d54",
+      "archive_path": "apps/portfolio-demos/botanic/client/src/components/PlantList.jsx"
+    },
+    {
+      "path": "apps/portfolio-demos/botanic/client/src/components/SearchBar.jsx",
+      "bytes": 519,
+      "category": "unused_source_or_template",
+      "evidence": "Nicht im eigenen Botanic-Demo-Importgraph verwendet. Die Suche wird direkt in App.jsx gerendert; kein Import von SearchBar.",
+      "sha256": "48714a6117149f2a51711e0705742b09e47c657a6bbeb5ab0ffdc4c9295fd8b7",
+      "archive_path": "apps/portfolio-demos/botanic/client/src/components/SearchBar.jsx"
+    },
+    {
+      "path": "apps/portfolio-demos/botanic/client/src/index.css",
+      "bytes": 69,
+      "category": "unused_source_or_template",
+      "evidence": "Kein Import aus main.jsx/App.jsx, keine HTML-Einbindung und kein Vite-Einstieg im Botanic-Demoprojekt; App.css bleibt aktiv.",
+      "sha256": "b7e18cdfaa2f1c2129e6b92b24e8cfff46433c5c514917028152ff3ae123ecc9",
+      "archive_path": "apps/portfolio-demos/botanic/client/src/index.css"
+    }
+  ],
+  "archive": {
+    "directory": "~/Bilder/Bilder/Beirit-Digital-ungenutzt-2026-10-10",
+    "manifest": "verschiebung.json",
+    "readme": "README.md",
+    "moved_at": "2026-10-10T20:52:30+02:00",
+    "verified_sha256_count": 43,
+    "license_copies_count": 6
+  },
+  "validation_before_move": {
+    "django_tests_passed": 59,
+    "browser_navigation_checks_passed": 8,
+    "static_template_references_checked": 72,
+    "missing_static_template_references": 0,
+    "vite_build_files_including_catalogs": 41,
+    "missing_or_orphaned_vite_build_files": 0,
+    "frontend_regression_tests": "passed",
+    "portfolio_data_check": "passed"
+  },
+  "validation": {
+    "status": "passed",
+    "archive_sha256_files_verified": 43,
+    "independent_archive_review": "passed",
+    "license_originals_and_copies_verified": 6,
+    "review_images_preserved": 22,
+    "django_tests_passed": 86,
+    "browser_navigation_checks_passed": 8,
+    "browser_vocabulary_checks_passed": 20,
+    "browser_checks_total_passed": 28,
+    "static_template_references_checked": 72,
+    "missing_static_template_references": 0,
+    "vite_build_files_including_catalogs": 41,
+    "missing_or_orphaned_vite_build_files": 0,
+    "unique_static_assets_checked": 42,
+    "frontend_build": "passed",
+    "botanic_example_build_in_temporary_directory": "passed",
+    "frontend_regression_tests": "passed",
+    "portfolio_data_check": "passed",
+    "git_diff_check": "passed"
+  }
+}

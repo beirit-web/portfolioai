@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { PROJECT_COVERS, PROJECT_OVERVIEW_IMAGE_SIZES, projectDetailImage, projectScreenshotImages, portfolioSlugFor } from "../components/home/portfolio/portfolioPresentation.mjs";
 import { languageServicesCaseStudy } from "../components/home/portfolio/languageServicesCaseStudy.mjs";
+import { projectModuleActions } from "../components/projects/projectModuleActions.mjs";
 import { PROJECTS_OVERVIEW_COPY } from "../components/projects/projectsCopy.mjs";
 import { technicalGlossary } from "../components/shared/technicalGlossary.mjs";
 import { TECHNOLOGIES } from "../components/shared/technologyLogos.mjs";
@@ -70,6 +71,7 @@ export function createProjectsPresentationCatalog(locales) {
         copy: PROJECTS_OVERVIEW_COPY[language],
         items: subset.home.portfolio.items,
         detail: {
+          modules: Object.fromEntries(Object.keys(PROJECT_COVERS).map(slug => [slug, projectModuleActions(slug, language)])),
           copy: Object.fromEntries(Object.entries(locale.home.portfolio).filter(([key, value]) => key !== "items" && typeof value === "string")),
           items: locale.home.portfolio.items.map(item => ({ ...item, slug: portfolioSlugFor(item) })),
         },

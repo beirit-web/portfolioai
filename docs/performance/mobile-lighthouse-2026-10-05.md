@@ -1,5 +1,10 @@
 # Mobile Lighthouse – 5. Oktober 2026
 
+Die historischen Berichte und Bildvorschauen wurden am 10. Oktober 2026 nach
+`~/Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10` archiviert. Die
+Berichtslinks öffnen diese lokalen Archivdateien; neue Prüfläufe verwenden
+weiterhin ihre bisherigen Ausgabepfade im Projekt.
+
 Erster Optimierungslauf für Startseite, Kontakt, Kompetenzen und Über mich. Gemessen wurde lokal mit den gebauten Vite-Assets über Django auf `http://127.0.0.1:8001`, nicht gegen die veröffentlichte Website.
 
 ## Ergebnisse
@@ -37,10 +42,10 @@ Die vollständigen lokalen Berichte liegen unter `runtime/lighthouse/mobile-2026
 
 | Seite | Vorher | Nachher |
 | --- | --- | --- |
-| Startseite | [HTML](../../runtime/lighthouse/mobile-2026-10-05/home-before.report.html) | [Lauf 1](../../runtime/lighthouse/mobile-2026-10-05/home-run-1.report.html), [Lauf 2](../../runtime/lighthouse/mobile-2026-10-05/home-run-2.report.html), [Lauf 3](../../runtime/lighthouse/mobile-2026-10-05/home-run-3.report.html) |
-| Kontakt | [HTML](../../runtime/lighthouse/mobile-2026-10-05/contact-before.report.html) | [HTML](../../runtime/lighthouse/mobile-2026-10-05/contact-final.report.html) |
-| Kompetenzen | [HTML](../../runtime/lighthouse/mobile-2026-10-05/skills-before.report.html) | [HTML](../../runtime/lighthouse/mobile-2026-10-05/skills-final.report.html) |
-| Über mich | [HTML](../../runtime/lighthouse/mobile-2026-10-05/about-before.report.html) | [HTML](../../runtime/lighthouse/mobile-2026-10-05/about-final.report.html) |
+| Startseite | [HTML](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/home-before.report.html) | [Lauf 1](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/home-run-1.report.html), [Lauf 2](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/home-run-2.report.html), [Lauf 3](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/home-run-3.report.html) |
+| Kontakt | [HTML](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/contact-before.report.html) | [HTML](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/contact-final.report.html) |
+| Kompetenzen | [HTML](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/skills-before.report.html) | [HTML](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/skills-final.report.html) |
+| Über mich | [HTML](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/about-before.report.html) | [HTML](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05/about-final.report.html) |
 
 Für eine erneute Messung zuerst `npm --prefix frontend run build` ausführen und Django lokal mit den statischen Assets starten. Dann die tatsächlich verwendete URL ausdrücklich angeben:
 

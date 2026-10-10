@@ -43,7 +43,7 @@
       <link rel="preload" as="image" href="{% static 'images/about-forest-background.webp' %}" fetchpriority="high" />
     {% endif %}
     {% if react_project_image_preload %}
-      <link rel="preload" as="image" href="{{ react_project_image_preload.src }}"{% if react_project_image_preload.srcset %} imagesrcset="{{ react_project_image_preload.srcset }}" imagesizes="{{ react_project_image_preload.sizes }}"{% endif %} fetchpriority="high" />
+      <link rel="preload" as="image" href="{{ react_project_image_preload.src }}"{% if react_project_image_preload.srcset %} imagesrcset="{{ react_project_image_preload.srcset }}" imagesizes="{{ react_project_image_preload.sizes }}"{% endif %}{% if react_project_image_preload.media %} media="{{ react_project_image_preload.media }}"{% endif %} fetchpriority="high" />
     {% endif %}
     {{ auth_session_js_config|json_script:"auth-session-config-data" }}
     {{ react_home_config|json_script:"beirit-home-config-data" }}

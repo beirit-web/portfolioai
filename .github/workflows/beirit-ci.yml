@@ -5,7 +5,7 @@ on:
     paths:
       - "frontend/**"
       - "server/**"
-      - "sprachdienstleistungen/**"
+      - "apps/portfolio-demos/sprachdienstleistungen/**"
       - "apps/deutsch-live/frontend/**"
       - "scripts/check_portfolio_data.py"
       - "scripts/test_portfolio_data.py"
@@ -18,7 +18,7 @@ on:
     paths:
       - "frontend/**"
       - "server/**"
-      - "sprachdienstleistungen/**"
+      - "apps/portfolio-demos/sprachdienstleistungen/**"
       - "apps/deutsch-live/frontend/**"
       - "scripts/check_portfolio_data.py"
       - "scripts/test_portfolio_data.py"
@@ -111,7 +111,7 @@ jobs:
         run: npm run test:browser
 
       - name: Check integrated language-platform backend
-        working-directory: sprachdienstleistungen
+        working-directory: apps/portfolio-demos/sprachdienstleistungen
         run: python manage.py test lessons.tests pages.tests_domain_isolation pages.tests_vokabelbox
 
       - name: Check integrated language-platform UI

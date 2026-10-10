@@ -151,17 +151,8 @@ async function main() {
           await page.screenshot({ path: png, fullPage: false, animations: "disabled" });
           execFileSync(python, ["-c", "from PIL import Image; import sys; Image.open(sys.argv[1]).convert('RGB').save(sys.argv[2], 'WEBP', quality=88, method=6)", png, webp]);
           // Regenerate responsive candidates with each source capture.
-          execFileSync(python, ["-c", `
-from PIL import Image
-from pathlib import Path
-import sys
-source = Path(sys.argv[1])
-image = Image.open(source)
-for width in ([480, 768, 960] if sys.argv[2] == "desktop" else [256]):
-    height = round(image.height * width / image.width)
-    image.resize((width, height), Image.Resampling.LANCZOS).save(
-        source.with_name(f"{source.stem}-{width}.webp"), "WEBP", quality=82, method=6)
-`, webp, device]);
+          execFileSync(python, [path.join(repository, "scripts/build_responsive_image_variants.py"), webp,
+            "--widths", ...(device === "desktop" ? [480, 640, 768, 960] : [256, 320]).map(String)]);
           console.log(JSON.stringify({ project: project.slug, device, viewport: page.viewportSize(), path: path.relative(repository, webp),
             route: new URL(page.url()).pathname, blockedExternalOrigins: [...externalRequests] }));
         } finally {

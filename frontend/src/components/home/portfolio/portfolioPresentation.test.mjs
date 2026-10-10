@@ -8,6 +8,7 @@ import {
   projectCapabilityLabels,
   projectCarouselImage,
   projectDetailImage,
+  projectScreenshotImages,
   projectPreviewImage,
   projectTechnologyTags,
   selectCarouselProjects,
@@ -42,7 +43,23 @@ test("overview covers offer smaller source candidates and retain custom screensh
   assert.equal(projectPreviewImage({ slug: "custom", images: [desktop] }).srcSet, undefined);
   const customCover = { ...desktop, variant: "cover" };
   assert.equal(projectDetailImage({ slug: "custom", images: [customCover] }), customCover);
+  const customResponsiveCover = { ...customCover, srcSet: "/custom-small.webp 400w, /custom-large.webp 800w", sizes: "50vw" };
+  assert.equal(projectDetailImage({ slug: "custom", images: [customResponsiveCover] }), customResponsiveCover);
   assert.match(projectDetailImage({ slug: "online-shop" }).srcSet, /-960\.webp 960w/);
+});
+
+test("report image candidates exist and all report sizes follow the shared split", () => {
+  for (const slug of ["online-shop", "sprachdienstleistungen", "vertragsgenerator", "wohnungssuche-bodensee", "notenrechner", "enbt-botanic"]) {
+    const images = [projectDetailImage({ slug }), ...projectScreenshotImages({ slug })];
+    for (const image of images) {
+      for (const candidate of image.srcSet.split(", ")) {
+        const src = candidate.split(" ")[0];
+        assert.ok(existsSync(new URL(`../../../../../server/assets/${src.slice(8)}`, import.meta.url)), src);
+      }
+    }
+  }
+  assert.match(projectDetailImage({ slug: "online-shop" }).sizes, /max-width: 1099px/);
+  assert.match(projectDetailImage({ slug: "vertragsgenerator" }).sizes, /max-width: 1099px/);
 });
 
 test("technology-only metadata is not shown as a project capability", () => {

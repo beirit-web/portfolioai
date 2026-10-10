@@ -9,37 +9,42 @@ test("project reports preload responsive covers and use smaller gallery sources"
     if (request.resourceType() === "script") scripts.push(request.url());
     if (new URL(request.url()).pathname === "/api/projects/") projectRequests.push(request.url());
   });
-  await page.goto("/projekte/online-shop");
-  const cover = page.locator(".portfolio-project-hero__cover img");
-  const preload = page.locator('head link[rel="preload"][as="image"]');
-  await expect(cover).toHaveAttribute("loading", "eager");
-  await expect(preload).toHaveAttribute("imagesrcset", await cover.getAttribute("srcset"));
-  await expect(preload).toHaveAttribute("imagesizes", await cover.getAttribute("sizes"));
-  await expect.poll(() => cover.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
-  expect(await cover.evaluate(img => performance.getEntriesByName(img.currentSrc)[0]?.initiatorType)).toBe("link");
-  await expect(page.locator('link[rel="stylesheet"]')).toHaveCount(0);
-  expect(scripts.filter(url => /\/(?:main-|WaveGridHero-|three-vendor-|preact-vendor-|useI18n-|mountSiteApp-|project-detail-app-)/.test(url))).toEqual([]);
-  expect(projectRequests).toEqual([]);
-  await expect(page.locator("[data-project-detail-rendered]")).toHaveCount(1);
-  const desktop = page.locator(".portfolio-project-gallery__figure img").first();
-  await desktop.scrollIntoViewIfNeeded();
-  await expect.poll(() => desktop.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
-  expect(await desktop.evaluate(img => img.currentSrc)).toMatch(/-desktop-(480|768|960)\.webp$/);
-  // Clicking the preview still opens the full-resolution source.
-  await expect(desktop.locator("..")).toHaveAttribute("href", /-desktop\.webp$/);
-  const mobile = page.locator(".portfolio-project-gallery__figure--mobile img");
-  await mobile.scrollIntoViewIfNeeded();
-  await expect.poll(() => mobile.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
-  const preview = await mobile.evaluate(img => {
-    const box = img.getBoundingClientRect();
-    const link = img.parentElement.getBoundingClientRect();
-    return { width: box.width, height: box.height, linkWidth: link.width, naturalRatio: img.naturalWidth / img.naturalHeight };
-  });
-  expect(preview.width).toBeGreaterThan(80);
-  expect(preview.height).toBeGreaterThan(160);
-  expect(Math.abs(preview.width - preview.linkWidth + 2)).toBeLessThan(1);
-  expect(preview.width / preview.height).toBeCloseTo(preview.naturalRatio, 2);
-
+  test.setTimeout(90000);
+  for (const slug of ["online-shop", "vertragsgenerator", "enbt-botanic", "sprachdienstleistungen", "notenrechner", "wohnungssuche-bodensee"]) {
+    await page.goto(`/projekte/${slug}`);
+    const cover = page.locator(".portfolio-project-hero__cover img");
+    const preload = page.locator('head link[rel="preload"][as="image"]');
+    await expect(cover).toHaveAttribute("loading", "eager");
+    await expect(preload).toHaveAttribute("imagesrcset", await cover.getAttribute("srcset"));
+    await expect(preload).toHaveAttribute("imagesizes", await cover.getAttribute("sizes"));
+    await expect.poll(() => cover.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+    await expect(preload).toHaveAttribute("media", "(min-width: 1100px)");
+    expect(await cover.evaluate(img => performance.getEntriesByName(img.currentSrc)[0]?.initiatorType)).toBe(page.viewportSize().width >= 1100 ? "link" : "img");
+    const coverRequests = await cover.evaluate((img, slug) => performance.getEntriesByType("resource").filter(entry => entry.name.includes(`${slug}-cover-v1`)), slug);
+    expect(coverRequests).toHaveLength(1);
+    await expect(page.locator('link[rel="stylesheet"]')).toHaveCount(0);
+    expect(scripts.filter(url => /\/(?:main-|WaveGridHero-|three-vendor-|preact-vendor-|useI18n-|mountSiteApp-|project-detail-app-)/.test(url))).toEqual([]);
+    expect(projectRequests).toEqual([]);
+    await expect(page.locator("[data-project-detail-rendered]")).toHaveCount(1);
+    const desktop = page.locator(".portfolio-project-gallery__figure img").first();
+    await desktop.scrollIntoViewIfNeeded();
+    await expect.poll(() => desktop.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+    expect(await desktop.evaluate(img => img.currentSrc)).toMatch(/-desktop-(480|640|768|960)\.webp$/);
+    // Clicking the preview still opens the full-resolution source.
+    await expect(desktop.locator("..")).toHaveAttribute("href", /-desktop\.webp$/);
+    const mobile = page.locator(".portfolio-project-gallery__figure--mobile img");
+    await mobile.scrollIntoViewIfNeeded();
+    await expect.poll(() => mobile.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+    const preview = await mobile.evaluate(img => {
+      const box = img.getBoundingClientRect();
+      const link = img.parentElement.getBoundingClientRect();
+      return { width: box.width, height: box.height, linkWidth: link.width, naturalRatio: img.naturalWidth / img.naturalHeight };
+    });
+    expect(preview.width).toBeGreaterThan(80);
+    expect(preview.height).toBeGreaterThan(160);
+    expect(Math.abs(preview.width - preview.linkWidth + 2)).toBeLessThan(1);
+    expect(preview.width / preview.height).toBeCloseTo(preview.naturalRatio, 2);
+  }
 });
 
 test("reports are complete without JavaScript and native actions remain available", async ({ browser, baseURL, isMobile }) => {
@@ -74,13 +79,12 @@ test("report links remain reachable by keyboard without deferred layout", async 
   await expect(page.locator(".portfolio-card__proof")).toHaveCSS("content-visibility", "visible");
   for (const selector of [".portfolio-project-page", ".portfolio-project-decision"]) {
     const block = page.locator(selector);
-    await expect(block).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(block).toHaveCSS("background-color", selector === ".portfolio-project-page" ? "rgb(230, 224, 215)" : "rgba(0, 0, 0, 0)");
     await expect(block).toHaveCSS("border-top-width", "0px");
     await expect(block).toHaveCSS("border-radius", "0px");
   }
   const report = page.locator(".portfolio-project-page");
   await expect(report).toHaveCSS("background-image", "none");
-  await expect(report).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   expect(await report.evaluate(element => ["::before", "::after"].map(pseudo => getComputedStyle(element, pseudo).content))).toEqual(["none", "none"]);
 });
 

@@ -303,11 +303,11 @@ class HomeViewHelperTests(TestCase):
     def test_safe_static_url_falls_back_when_manifest_entry_is_missing(self):
         with patch("pages.views.static", side_effect=ValueError("Missing staticfiles manifest entry")):
             url = safe_static_url(
-                "images/futuristic_android_pc.mp4",
-                fallback_path="images/ladeseite.mp4",
+                "images/missing-test-asset.svg",
+                fallback_path="images/beirit-web-favicon-mini.svg",
             )
 
-        self.assertEqual(url, "/static/images/ladeseite.mp4")
+        self.assertEqual(url, "/static/images/beirit-web-favicon-mini.svg")
 
     @override_settings(EMAIL_HOST="", EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend", CONTACT_EMAIL="owner@example.com")
     def test_home_contact_form_stores_request_and_sends_notification(self):

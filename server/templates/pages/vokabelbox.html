@@ -1,0 +1,31 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ initial_lang|default:'de' }}">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="description" content="Deutsche Nomen und ihre Artikel lernen: Wortsuche, Favoriten und ein interaktives Quiz als Lernmodul der Sprachplattform." />
+    <link rel="canonical" href="{{ site_url }}{% url 'pages:vokabelbox' %}" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
+    <title>Vokabelbox | Beirit Web Portfolio</title>
+    <link rel="stylesheet" href="{% asset_url 'vokabelbox/style.css' %}" />
+    <script src="{% asset_url 'vokabelbox/translations.js' %}" defer></script>
+    <script src="{% asset_url 'vokabelbox/app.js' %}" defer></script>
+  </head>
+  <body class="vocab-page">
+    <header class="vocab-module-header">
+      <a class="vocab-module-brand" href="/">Beirit Web <span>Portfolio</span></a>
+      <label class="vocab-language-switch">
+        <span data-i18n="vocab.language">Sprache</span>
+        <select data-vocab-language>
+          <option value="de"{% if initial_lang == 'de' %} selected{% endif %}>Deutsch</option>
+          <option value="ru"{% if initial_lang == 'ru' %} selected{% endif %}>Русский</option>
+          <option value="uk"{% if initial_lang == 'uk' %} selected{% endif %}>Українська</option>
+        </select>
+      </label>
+    </header>
+    {% include "vokabelbox_content.html" with vocab_project_module=True vocab_back_url="/projekte/sprachdienstleistungen/#vokabelbox" %}
+  </body>
+</html>

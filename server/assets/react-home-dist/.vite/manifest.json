@@ -1,10 +1,10 @@
 {
-  "_ProjectsOverviewPage-DqkhD8lk.js": {
-    "file": "assets/ProjectsOverviewPage-DqkhD8lk.js",
+  "_ProjectsOverviewPage-DojwRwtO.js": {
+    "file": "assets/ProjectsOverviewPage-DojwRwtO.js",
     "name": "ProjectsOverviewPage",
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
-      "_mountSiteApp-DgF-uh4m.js",
+      "_mountSiteApp-FB9gTCxg.js",
       "_homeConfig-B0tc2qtY.js"
     ]
   },
@@ -19,8 +19,8 @@
       "_preact-vendor-BzB9ud5D.js"
     ]
   },
-  "_mountSiteApp-DgF-uh4m.js": {
-    "file": "assets/mountSiteApp-DgF-uh4m.js",
+  "_mountSiteApp-FB9gTCxg.js": {
+    "file": "assets/mountSiteApp-FB9gTCxg.js",
     "name": "mountSiteApp",
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
@@ -39,13 +39,13 @@
     "file": "assets/three-vendor-BMZE3j17.js",
     "name": "three-vendor"
   },
-  "_useI18n-6cGXj6oi.js": {
-    "file": "assets/useI18n-6cGXj6oi.js",
+  "_useI18n-C-ab_fRf.js": {
+    "file": "assets/useI18n-C-ab_fRf.js",
     "name": "useI18n",
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
       "_homeConfig-B0tc2qtY.js",
-      "_mountSiteApp-DgF-uh4m.js",
+      "_mountSiteApp-FB9gTCxg.js",
       "_preload-helper-kjavFYca.js"
     ],
     "dynamicImports": [
@@ -86,17 +86,17 @@
     ]
   },
   "src/components/contact/ContactForm.jsx": {
-    "file": "assets/ContactForm-CmUPvNT6.js",
+    "file": "assets/ContactForm-Bw0AoPaB.js",
     "name": "ContactForm",
     "src": "src/components/contact/ContactForm.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
       "_homeConfig-B0tc2qtY.js",
-      "_ProjectsOverviewPage-DqkhD8lk.js",
+      "_ProjectsOverviewPage-DojwRwtO.js",
       "src/main.jsx",
-      "_useI18n-6cGXj6oi.js",
-      "_mountSiteApp-DgF-uh4m.js",
+      "_useI18n-C-ab_fRf.js",
+      "_mountSiteApp-FB9gTCxg.js",
       "_preload-helper-kjavFYca.js"
     ],
     "css": [
@@ -171,17 +171,17 @@
     "isDynamicEntry": true
   },
   "src/main.jsx": {
-    "file": "assets/main-FuaKIaNA.js",
+    "file": "assets/main-hv-Sfigj.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
     "imports": [
       "_preload-helper-kjavFYca.js",
       "_preact-vendor-BzB9ud5D.js",
-      "_useI18n-6cGXj6oi.js",
+      "_useI18n-C-ab_fRf.js",
       "_homeConfig-B0tc2qtY.js",
-      "_mountSiteApp-DgF-uh4m.js",
-      "_ProjectsOverviewPage-DqkhD8lk.js"
+      "_mountSiteApp-FB9gTCxg.js",
+      "_ProjectsOverviewPage-DojwRwtO.js"
     ],
     "dynamicImports": [
       "src/components/home/hero/WaveGridHero.jsx",
@@ -190,12 +190,12 @@
     ]
   },
   "src/mobile-pages.css": {
-    "file": "assets/mobile-pages-CyQKXUR7.css",
+    "file": "assets/mobile-pages-DCnlf6YT.css",
     "src": "src/mobile-pages.css",
     "isEntry": true
   },
   "src/project-detail-page.css": {
-    "file": "assets/project-detail-page-CvzHpn47.css",
+    "file": "assets/project-detail-page-CkixV7r4.css",
     "src": "src/project-detail-page.css",
     "isEntry": true
   },
@@ -205,7 +205,7 @@
     "isEntry": true
   },
   "src/project-detail.js": {
-    "file": "assets/project-detail-CoAdG_0l.js",
+    "file": "assets/project-detail-BWXR-bYJ.js",
     "name": "project-detail",
     "src": "src/project-detail.js",
     "isEntry": true,
@@ -218,15 +218,15 @@
     ]
   },
   "src/project-detail.jsx": {
-    "file": "assets/project-detail-app-Df_lNy9Q.js",
+    "file": "assets/project-detail-app-QZ9_lwnS.js",
     "name": "project-detail-app",
     "src": "src/project-detail.jsx",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
-      "_useI18n-6cGXj6oi.js",
-      "_mountSiteApp-DgF-uh4m.js",
+      "_useI18n-C-ab_fRf.js",
+      "_mountSiteApp-FB9gTCxg.js",
       "_homeConfig-B0tc2qtY.js",
       "_preload-helper-kjavFYca.js"
     ]
@@ -237,7 +237,7 @@
     "isEntry": true
   },
   "src/projects.js": {
-    "file": "assets/projects-i9s-t_Q-.js",
+    "file": "assets/projects-CtzwW5Yr.js",
     "name": "projects",
     "src": "src/projects.js",
     "isEntry": true,
@@ -250,7 +250,7 @@
     ]
   },
   "src/projects.jsx": {
-    "file": "assets/projects-app-Igdry5On.js",
+    "file": "assets/projects-app-CEXRFOJH.js",
     "name": "projects-app",
     "src": "src/projects.jsx",
     "isEntry": true,
@@ -258,8 +258,8 @@
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
       "_preload-helper-kjavFYca.js",
-      "_mountSiteApp-DgF-uh4m.js",
-      "_ProjectsOverviewPage-DqkhD8lk.js",
+      "_mountSiteApp-FB9gTCxg.js",
+      "_ProjectsOverviewPage-DojwRwtO.js",
       "_homeConfig-B0tc2qtY.js"
     ],
     "dynamicImports": [
@@ -268,12 +268,12 @@
     ]
   },
   "src/responsive-overrides.css": {
-    "file": "assets/responsive-overrides-CxANKNRo.css",
+    "file": "assets/responsive-overrides-CcdPdtvp.css",
     "src": "src/responsive-overrides.css",
     "isEntry": true
   },
   "src/styles.css": {
-    "file": "assets/styles-CHjankKK.css",
+    "file": "assets/styles-CgQhFtmN.css",
     "src": "src/styles.css",
     "isEntry": true
   },

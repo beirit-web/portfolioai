@@ -92,7 +92,7 @@ from .seo import (
     structured_data_json,
 )
 from .project_detail import build_project_detail
-from .projects_overview import build_projects_overview
+from .projects_overview import build_projects_overview, projects_presentation_catalog
 
 logger = logging.getLogger(__name__)
 
@@ -110,11 +110,9 @@ PROJECT_OVERVIEW_IMAGE_SIZES = (
 )
 
 PROJECT_DETAIL_IMAGE_SIZES = (
-    "(max-width: 39.99rem) calc(100vw - 1.5rem), "
-    "(max-width: 63.99rem) calc(100vw - 4rem), "
-    "(max-width: 79.99rem) calc(100vw - 5rem), "
-    "(max-width: 89.99rem) calc((100vw - 7rem) * 0.54), "
-    "(max-width: 109.99rem) calc((min(100vw, 94rem) - 8rem) * 0.58), 57.6rem"
+    "(max-width: 47.99rem) calc(88.8vw - 2px), "
+    "(max-width: 1099px) 93vw, "
+    "calc((100vw - clamp(2rem, 7vw, 12rem) - clamp(1rem, 2vw, 1.5rem)) / 2.15)"
 )
 
 
@@ -326,12 +324,23 @@ def portfolio_projects_payload(projects):
 
 
 def project_cover_image_preload(slug, *, detail=False):
+    if detail:
+        catalog = projects_presentation_catalog()
+        hero = (catalog or {}).get("detailImages", {}).get(slug, {}).get("hero")
+        if hero:
+            preload = {"src": hero["src"], "srcset": hero["srcSet"], "sizes": hero["sizes"]}
+            # Covers follow the intro. Their eager HTML images are discoverable
+            # on mobile; head preloads can select a second source while the
+            # initial viewport settles in Chromium.
+            preload["media"] = "(min-width: 1100px)"
+            return preload
     base = f"/static/images/portfolio-covers/{slug}-cover-v1"
-    widths = (480, 768, 960) if detail else (480, 768)
+    widths = (480, 640, 768, 960) if detail else (480, 768)
     return {
         "src": f"{base}.webp",
         "srcset": ", ".join([f"{base}-{width}.webp {width}w" for width in widths] + [f"{base}.webp 1254w"]),
         "sizes": PROJECT_DETAIL_IMAGE_SIZES if detail else PROJECT_OVERVIEW_IMAGE_SIZES,
+        **({"media": "(min-width: 1100px)"} if detail else {}),
     }
 
 
@@ -1198,6 +1207,17 @@ def filter_directory_entries(
             continue
         filtered_entries.append(entry)
     return filtered_entries
+
+
+@require_GET
+@never_cache
+def vokabelbox(request):
+    learner = f"user-{request.user.pk}" if request.user.is_authenticated else "guest"
+    return render(request, "pages/vokabelbox.html", {
+        "site_url": settings.SITE_URL,
+        "initial_lang": get_preferred_language(request),
+        "vocab_storage_key": f"sprachservice:vokabelbox:v1:{learner}",
+    })
 
 
 @ensure_csrf_cookie

@@ -187,14 +187,22 @@ und aktuellen Desktop- und Mobilansichten der Demos.
 | --- | --- |
 | `frontend/` | React/Vite-Frontend des Portfolios |
 | `server/` | Django-Backend, Templates und Portfolio-Assets |
-| `sprachdienstleistungen/` | Eigenständige Sprachplattform mit Vokabelbox und DeutschLive |
+| `apps/portfolio-demos/sprachdienstleistungen/` | Portfolio-Quellen der Sprachplattform mit Vokabelbox und DeutschLive |
 | `apps/deutsch-live/` | DeutschLive-Frontend und separates Django-Demo-Backend |
-| `wohnungssuche/` | Django-MVP für gespeicherte Wohnungssuchen |
+| `apps/portfolio-demos/wohnungssuche/` | Django-MVP als Portfolio-Beispiel für gespeicherte Wohnungssuchen |
 | `apps/portfolio-demos/` | Kleine Demo- und Referenzprojekte |
 | `docs/` | Architektur, Qualität, Struktur und Hosting-Muster |
 | `runtime/` | Ignorierte lokale Daten, Screenshots, Medien und Backups |
 
+Sprachplattform und Wohnungssuche gehören wie die übrigen Projektquellen zu
+`apps/portfolio-demos/`. Die laufenden Demos verwenden den gemeinsamen Server:
+Sprachmodule unter `/deutschlive/`, Wohnungssuche unter
+`/static/portfolio/wohnungssuche/index.html`. Die beiden Django-Beispielstände
+können zusätzlich für ihre eigenen Tests lokal gestartet werden.
+
 Der [Strukturplan](docs/structure-plan.md) erläutert die Ordner ausführlicher.
+Die [geprüfte Bereinigungsliste](docs/maintenance/unused-files-2026-10-10.md)
+unterscheidet ungenutzte Dateien, historische Quellen und aktive Build-Ausgaben.
 
 ## Installation und lokale Entwicklung
 
@@ -221,9 +229,9 @@ Django eingebundenen Assets erneut. Zusätzlich steht für die Frontend-Entwickl
 Backend-Anfragen an den lokalen Django-Server weiter.
 
 Weitere Einrichtungshinweise stehen in [server/README.md](server/README.md),
-[sprachdienstleistungen/README.md](sprachdienstleistungen/README.md),
+[Sprachplattform](apps/portfolio-demos/sprachdienstleistungen/README.md),
 [apps/deutsch-live/README.md](apps/deutsch-live/README.md) und
-[wohnungssuche/README.md](wohnungssuche/README.md).
+[Wohnungssuche](apps/portfolio-demos/wohnungssuche/README.md).
 
 ## Konfiguration und Musterdaten
 
@@ -297,7 +305,7 @@ erlaubt. Die Veröffentlichung des Quellcodes ist keine pauschale Freigabe zur
 
 Im Wurzelverzeichnis liegt derzeit keine gemeinsame `LICENSE`-Datei.
 [server/LICENSE](server/LICENSE) und
-[sprachdienstleistungen/LICENSE](sprachdienstleistungen/LICENSE) enthalten
+[Sprachplattform-Lizenz](apps/portfolio-demos/sprachdienstleistungen/LICENSE) enthalten
 proprietäre Bedingungen, die eine vorherige schriftliche Zustimmung zur Nutzung
 verlangen. Einzelne Demoprojekte haben eigene Lizenzen, beispielsweise die
 MIT-Lizenz in [apps/portfolio-demos/botanic/LICENSE](apps/portfolio-demos/botanic/LICENSE).

@@ -1,0 +1,11 @@
+{% if detail.hero %}
+  <figure class="portfolio-project-hero__preview {% if detail.hero.variant == 'cover' %}portfolio-project-hero__cover{% else %}portfolio-card__desktop-preview{% endif %}">
+    <img src="{{ detail.hero.src }}"{% if detail.hero.srcSet %} srcset="{{ detail.hero.srcSet }}" sizes="{{ detail.hero.sizes }}"{% endif %} alt="{{ detail.hero.alt }}" decoding="async" width="{{ detail.hero.width }}" height="{{ detail.hero.height }}" loading="eager" fetchpriority="high" />
+    {% if detail.hero.variant != 'cover' %}<figcaption>{{ detail.hero.label }}</figcaption>{% endif %}
+  </figure>
+{% else %}
+  <div class="portfolio-card__preview portfolio-project-hero__preview" aria-hidden="true">
+    <div class="portfolio-card__browser-bar"><span></span><span></span><span></span></div>
+    <div class="portfolio-card__mockup"><strong>{{ detail.project.title }}</strong><span>{{ detail.project.type }}</span></div>
+  </div>
+{% endif %}

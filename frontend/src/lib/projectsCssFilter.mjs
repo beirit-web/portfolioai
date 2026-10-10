@@ -39,7 +39,7 @@ const routeClasses = new Set(`
 const detailClasses = new Set(`
   portfolio-project-hero portfolio-project-back portfolio-project-hero__grid
   portfolio-project-hero__copy portfolio-project-hero__preview portfolio-project-hero__cover
-  portfolio-project-page portfolio-project-checklist portfolio-project-decision
+  portfolio-project-page portfolio-project-page__overview portfolio-project-checklist portfolio-project-decision
   portfolio-project-gallery portfolio-project-gallery__grid portfolio-project-gallery__figure
   portfolio-project-gallery__figure--mobile portfolio-project-note portfolio-project-closing
   portfolio-card__meta portfolio-card__type portfolio-card__status portfolio-card__trust

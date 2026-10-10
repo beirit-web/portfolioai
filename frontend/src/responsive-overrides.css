@@ -3633,12 +3633,6 @@ html
   align-items: start;
 }
 
-@media (min-width: 80rem) {
-  .portfolio-project-hero__grid {
-    grid-template-columns: minmax(0, 0.46fr) minmax(0, 0.54fr);
-  }
-}
-
 .portfolio-project-hero__copy {
   display: grid;
   gap: 0.9rem;
@@ -4105,7 +4099,6 @@ html
   }
 
   .portfolio-project-hero__grid {
-    grid-template-columns: minmax(28rem, 0.42fr) minmax(0, 0.58fr);
     gap: clamp(1.8rem, 3vw, 3rem);
   }
 
@@ -4121,10 +4114,6 @@ html
   .portfolio-project-page {
     width: min(100%, 104rem);
     max-width: 104rem;
-  }
-
-  .portfolio-project-hero__grid {
-    grid-template-columns: minmax(30rem, 0.4fr) minmax(0, 0.6fr);
   }
 }
 
@@ -4757,9 +4746,9 @@ html
   color: var(--muted);
 }
 
-/* Project reports use the page surface instead of a separate backdrop. */
+/* Project reports share a muted warm surface without extra decoration. */
 .site-shell .home-main > .portfolio-project-page {
-  background: none;
+  background: #e6e0d7;
   border: 0;
   border-radius: 0;
   box-shadow: none;
@@ -4798,4 +4787,52 @@ html
   background: none;
   border: 0;
   border-radius: 0;
+  contain: layout paint;
+}
+
+/* All project reports share the same responsive cover and details layout. */
+.site-shell .home-main .portfolio-project-hero .portfolio-project-hero__copy h1 {
+  text-align: center;
+}
+
+.site-shell .home-main#top .portfolio-project-hero :where(.portfolio-contact-button, .project-overview-card__secondary-button) {
+  justify-self: end;
+  margin-inline: auto 0;
+  width: fit-content;
+  min-width: 0;
+  max-width: 100%;
+  padding-inline: 1.1rem;
+}
+
+.site-shell .home-main .portfolio-project-page :where(.portfolio-card__features-title, .portfolio-card__proof-title) {
+  color: #115e59;
+}
+
+.portfolio-project-page__overview {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  align-items: start;
+}
+
+.site-shell .home-main .portfolio-project-page__overview .portfolio-card__details-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.portfolio-project-page__overview > * {
+  min-width: 0;
+}
+
+@media (min-width: 1100px) {
+  .portfolio-project-page__overview {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-areas: "details preview";
+  }
+
+  .portfolio-project-page__overview > .portfolio-card__details-grid {
+    grid-area: details;
+  }
+
+  .portfolio-project-page__overview > .portfolio-project-hero__preview {
+    grid-area: preview;
+  }
 }

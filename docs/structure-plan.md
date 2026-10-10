@@ -1,93 +1,64 @@
-# Strukturplan
+# Portfolio-Struktur
 
-Ziel: Das Repository soll leichter wartbar werden, ohne bestehende Deployments, Imports oder statische Pfade unkontrolliert zu brechen. Deshalb wird erst dokumentiert und danach in kleinen Schritten verschoben.
+Das Repository enthält ein gemeinsames Portfolio und die demonstrativen Quellen
+seiner Projekte. Das Hauptfrontend liegt in `frontend/`, der gemeinsame Django-Server
+in `server/`. Frühere Hosting-Konfigurationen sind ausschließlich Muster.
 
-## Beobachtungen
-
-- Das Root-Verzeichnis ist aktuell ein gemischter Workspace aus Hauptprojekt, Nebenprojekten, Portfolio-Demos, Build-Artefakten, Backups und Dokumentation.
-- `server/` und `frontend/` wirken wie das aktuelle Hauptprojekt.
-- `sprachdienstleistungen/` bleibt bewusst als eigener Root-Ordner bestehen, weil sonst die Deploy-Zuordnung irrefuehrend wird.
-- Die alte initiale Wohnungssuche-Implementierungsquelle wurde entfernt. Die weitergefuehrte Variante liegt unter `wohnungssuche/`.
-- `deutschLive/` wurde nach `apps/deutsch-live/` verschoben.
-- Die kleinen Portfolio-Demos wurden aus dem Root nach `apps/portfolio-demos/` verschoben.
-- Root-Runtime wurde nach `runtime/` verschoben. App-spezifische Runtime-Ordner wie `server/staticfiles/`, `server/media/` und `server/db_backups/` bleiben vorerst bei der jeweiligen App.
-
-## Vorgeschlagene Zielstruktur
+## Aktuelle Struktur
 
 ```text
 Beirit-Digital/
+├── frontend/
+├── server/
 ├── apps/
-│   ├── beirit-site/
-│   │   ├── backend/
-│   │   └── frontend/
 │   ├── deutsch-live/
-│   ├── wohnungssuche/
 │   └── portfolio-demos/
 │       ├── 3d-wave-grid/
 │       ├── botanic/
 │       ├── musikplayer/
-│       ├── online-shop/
 │       ├── notenrechner/
+│       ├── online-shop/
+│       ├── sprachdienstleistungen/
 │       ├── vertragsgenerator/
-│       └── vokabelbox/
+│       ├── vokabelbox/
+│       └── wohnungssuche/
 ├── docs/
-│   ├── architecture/
-│   ├── deployment/
-│   ├── security/
-│   └── archive/
-├── infra/
-│   ├── docker/
-│   └── fly/
 ├── runtime/
-│   ├── backups/
-│   ├── media/
-│   ├── screenshots/
-│   └── staticfiles/
-├── scripts/
-└── README.md
+└── scripts/
 ```
 
-## Einordnung der aktuellen Ordner
+## Zuordnung der Quellen
 
-| Aktueller Ordner | Vorschlag | Hinweis |
-| --- | --- | --- |
-| `server/` | `apps/beirit-site/backend/` | Vermutlich aktueller Django-Backend-Teil. Vor dem Verschieben Imports, Dockerfile, Fly-Konfig und statische Pfade pruefen. |
-| `frontend/` | `apps/beirit-site/frontend/` | Vermutlich aktueller React/Vite-Frontend-Teil. Build-Ausgabe im Backend pruefen. |
-| `sprachdienstleistungen/` | Im Root behalten | Bewusst separat wegen Deploy-Zuordnung. Nicht in `apps/` verschieben, solange Deployments daran haengen. |
-| `apps/deutsch-live/` | In `apps/` behalten | Eigenes Produkt mit Frontend, Backend, Docs und Deploy-Dateien. |
-| `wohnungssuche/` | Im Root behalten | Laufende Wohnungssuche-Variante. |
-| Kleine Demo-Projekte | `apps/portfolio-demos/` | Erledigt. Die Quellordner liegen jetzt gesammelt unter `apps/portfolio-demos/`. |
-| `runtime/` | Im Root behalten, aber ignorieren | Enthaelt lokale Laufzeitdaten aus den ehemaligen Root-Ordnern `data/`, `media/`, `staticfiles/` und `screenshots/`. |
-| `docs/` | `docs/` | Untergliedert in `architecture/`, `deployment/`, `security/` und `archive/`. |
+| Verzeichnis | Verwendung |
+| --- | --- |
+| `frontend/` | Gemeinsames Portfolio-Frontend und Projektberichte |
+| `server/` | Gemeinsamer Django-Server, veröffentlichte Demo-Routen und Assets |
+| `apps/portfolio-demos/sprachdienstleistungen/` | Django-Beispiel der Sprachplattform mit integrierten Lernmodulen |
+| `apps/portfolio-demos/wohnungssuche/` | Zusätzlicher Django-MVP der Wohnungssuche |
+| `apps/deutsch-live/` | Gemeinsame DeutschLive-Frontend-Quelle und dokumentierter Backend-Beispielstand |
+| `apps/portfolio-demos/` | Weitere demonstrative Quellen und ältere Projektstände |
+| `runtime/` | Ignorierte lokale Berichte, Screenshots und andere Laufzeitdateien |
 
-## Migrationsphasen
+Sprachdienstleistungen und Wohnungssuche gehören wie die anderen Projekte unter
+`apps/portfolio-demos/`. Ihre bisherigen Root-Ordner wurden vollständig verschoben.
+CI, Build-Ausgabe, Browserprüfungen und Dokumentationslinks verwenden die neuen Pfade.
+Lokale Datenbanken, virtuelle Umgebungen und weitere ignorierte Dateien wurden
+beim Verschieben erhalten und gehören weiterhin nicht in Git.
 
-### Phase 1: Inventar und Entscheidung
+Die laufende Sprach-Demo verwendet `server/lessons/`, `/deutschlive/` und `/vokabelbox/`.
+Die Vokabelbox nutzt direkt die Modulassets und das gemeinsame Inhalts-Template aus
+`apps/portfolio-demos/sprachdienstleistungen/`; ihre Portfolio-Oberfläche liegt in
+`server/templates/pages/vokabelbox.html`. Der frühere statische Einstieg leitet zum
+vollständigen Lernmodul weiter. Die aktive
+Wohnungssuche verwendet `server/assets/portfolio/wohnungssuche/` und die API in
+`server/pages/`. Der zusätzliche Django-MVP ist deshalb kein Ersatz für den
+aktuell veröffentlichten React-Build. Die vorhandenen Projekt- und Demo-URLs
+bleiben gültig.
 
-- Aktive Deployments bestimmen: Welche Ordner werden aktuell wirklich benutzt?
-- Dubletten klaeren: alte Wohnungssuche-Quelle ist entfernt; `sprachdienstleistungen/` bleibt wegen Deploy-Zuordnung separat.
-- Root-README erstellen oder aktualisieren mit kurzer Projektkarte.
-- `.gitignore` gegen Laufzeit- und Build-Dateien pruefen.
+## Bereinigung
 
-### Phase 2: Risikoarme Verschiebungen
-
-- Kleine Portfolio-Demos nach `apps/portfolio-demos/` verschieben. Erledigt.
-- Dokumente nach Thema unter `docs/architecture/`, `docs/deployment/`, `docs/security/` oder `docs/archive/` sortieren. Begonnen.
-- Skripte nach `scripts/` oder in den jeweiligen App-Ordner legen. Begonnen mit `scripts/check-workspace.sh`.
-
-### Phase 3: Hauptprojekt ordnen
-
-- `server/` und `frontend/` unter `apps/beirit-site/` zusammenfuehren.
-- Pfade in `Dockerfile`, `fly.toml`, Build-Skripten, CI und Django-Settings aktualisieren.
-- Lokalen Build und Django-Checks ausfuehren.
-
-### Phase 4: Runtime und Artefakte bereinigen
-
-- Backups, Screenshots, Media und Staticfiles aus dem Projekt-Root entfernen oder nach `runtime/` verlagern. Erledigt fuer Root-Runtime.
-- Pruefen, ob diese Ordner versioniert sein sollen. In der Regel sollten Backups und generierte Staticfiles nicht im Git liegen.
-
-## Empfohlene naechste Schritte
-
-1. Aktiven Produktionspfad bestaetigen: wahrscheinlich `server/` plus `frontend/`.
-2. `sprachdienstleistungen/` vorerst nicht verschieben, weil der Ordner die Deploy-Zuordnung klar haelt.
-3. Nach jeder Verschiebephase `git status`, Builds und relevante Tests ausfuehren.
+Ein fehlender statischer Import reicht als Löschbeleg nicht aus: Django entdeckt
+Templates und Migrationen teilweise anhand ihrer Namen; responsive Bilder und
+Build-Manifeste verweisen auf dynamisch zusammengesetzte Dateipfade.
+Die geprüften Kandidaten und ihre Nutzung stehen im
+[Bereinigungsbericht](maintenance/unused-files-2026-10-10.md).

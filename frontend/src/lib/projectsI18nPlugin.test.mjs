@@ -139,6 +139,13 @@ test("the emitted presentation catalog retains canonical image, technology and g
   for (const language of ["de", "ru", "uk"]) {
     assert.equal(catalog.projectOverrides.sprachdienstleistungen[language].href, "/deutschlive/");
     assert.equal(catalog.projectOverrides.sprachdienstleistungen[language].showContactCta, false);
+    assert.deepEqual(catalog.locales[language].detail.modules.sprachdienstleistungen.map(module => [module.id, module.href, module.external]), [
+      ["deutschlive", "/deutschlive/", true],
+      ["vokabelbox", "/vokabelbox/", true],
+      ["musikplayer", "/deutschlive/recordings", true],
+    ]);
+    assert.equal(catalog.locales[language].detail.modules["enbt-botanic"][0].href, "/botanic/wetter/");
+    assert.equal(catalog.locales[language].detail.modules["enbt-botanic"][0].publicPage, true);
   }
 });
 

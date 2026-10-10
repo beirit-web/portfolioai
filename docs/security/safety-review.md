@@ -68,8 +68,8 @@ Aktuelle lokale Prüfungen:
 ```bash
 python server/manage.py check
 python server/manage.py test pages.tests.test_housing_api
-python wohnungssuche/manage.py check
-python wohnungssuche/manage.py test --verbosity 1
+python apps/portfolio-demos/wohnungssuche/manage.py check
+python apps/portfolio-demos/wohnungssuche/manage.py test --verbosity 1
 ```
 
 Externe RSS-, IMAP- oder API-Quellen sind ein Architekturbeispiel. Das öffentliche

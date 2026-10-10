@@ -3,7 +3,7 @@
 Captured locally on 2026-10-09 from the public applications with a disposable,
 migration-seeded database. Desktop images are 1440 × 1000 pixels; mobile images
 are 390 × 844 pixels. All originals are viewport screenshots encoded as WebP. Responsive desktop
-variants have widths of 480, 768 and 960 pixels; the mobile variant is 256
+variants have widths of 480, 640, 768 and 960 pixels; mobile variants are 256 and 320
 pixels wide. Gallery links still open the original image.
 
 | File prefix | Actual demo route | Captured state |
@@ -44,3 +44,13 @@ node scripts/capture_portfolio_previews.cjs online-shop
 
 The script uses the installed frontend Playwright browser and Pillow in the
 server virtual environment. Temporary PNG intermediates are removed.
+
+Regenerate responsive candidates from existing original files without recapturing:
+
+```sh
+server/.venv/bin/python scripts/build_responsive_image_variants.py server/assets/images/portfolio-previews/*-desktop.webp --widths 480 640 768 960
+server/.venv/bin/python scripts/build_responsive_image_variants.py server/assets/images/portfolio-previews/*-mobile.webp --widths 256 320
+server/.venv/bin/python scripts/build_responsive_image_variants.py server/assets/images/portfolio-covers/*-cover-v1.webp --widths 480 640 768 960
+```
+
+Add `--missing-only` to retain existing variants. Originals remain unchanged.

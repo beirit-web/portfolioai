@@ -94,16 +94,10 @@ def build_project_detail(source, language="de", config=None, catalog=None):
     if hero:
         hero["alt"] = f"{project['title']} - {hero.get('label', 'Vorschau')}"
     screenshots = images["screenshots"] if images else [image for image in project.get("images", []) if image.get("variant") != "cover"]
-    modules = []
-    if slug == "sprachdienstleistungen":
-        for module_id, href, labels in [
-            ("deutschlive", "/deutschlive/", ("DeutschLive öffnen", "Открыть DeutschLive", "Відкрити DeutschLive")),
-            ("vokabelbox", "/static/portfolio/vokabelbox-main/index.html", ("Vokabelbox öffnen", "Открыть Vokabelbox", "Відкрити Vokabelbox")),
-            ("musikplayer", "/deutschlive/recordings", ("Meine Aufnahmen öffnen", "Мои записи", "Мої записи")),
-        ]:
-            modules.append({"id": module_id, "href": href, "label": labels[("de", "ru", "uk").index(language)], "external": True})
-    elif slug == "enbt-botanic":
-        modules.append({"id": "wetter", "href": _public_href("/botanic/wetter/", config), "label": {"de": "Wetter öffnen", "ru": "Открыть погоду", "uk": "Відкрити погоду"}[language]})
+    modules = [
+        {**module, "href": _public_href(module["href"], config) if module.get("publicPage") else module["href"]}
+        for module in detail.get("modules", {}).get(slug, [])
+    ]
     return {
         "shell": shell, "project": project, "copy": copy,
         "backLabel": "Назад к проектам" if language == "ru" else "Zurück zu Projekten",

@@ -16,6 +16,8 @@ urlpatterns = [
   path("robots.txt", views.robots_txt, name="robots_txt"),
   path("sitemap.xml", views.sitemap_xml, name="sitemap_xml"),
   path("", views.home, name="home"),
+  path("vokabelbox/", views.vokabelbox, name="vokabelbox"),
+  path("vokabelbox", RedirectView.as_view(pattern_name="pages:vokabelbox", permanent=True), name="vokabelbox_no_slash"),
   path("leistungen", RedirectView.as_view(url="/kompetenzen", permanent=True), name="services_page_no_slash"),
   path("leistungen/", RedirectView.as_view(url="/kompetenzen", permanent=True), name="service_catalog"),
   path("kompetenzen", views.home, name="skills_page_no_slash"),

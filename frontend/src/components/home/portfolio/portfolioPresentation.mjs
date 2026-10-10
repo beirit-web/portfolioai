@@ -1,5 +1,10 @@
 import { isTechnologyLabel, sortTechnologyLabels } from "../../shared/technologyLogos.mjs";
 
+function responsiveImageSources(src, widths, originalWidth) {
+  return widths.map(width => `${src.replace(".webp", `-${width}.webp`)} ${width}w`)
+    .concat(`${src} ${originalWidth}w`).join(", ");
+}
+
 // Cover files follow one naming convention and share the same square dimensions.
 export const PROJECT_COVERS = Object.fromEntries([
   "sprachdienstleistungen",
@@ -10,11 +15,7 @@ export const PROJECT_COVERS = Object.fromEntries([
   "enbt-botanic",
 ].map((slug) => [slug, {
   src: `/static/images/portfolio-covers/${slug}-cover-v1.webp`,
-  srcSet: [
-    `/static/images/portfolio-covers/${slug}-cover-v1-480.webp 480w`,
-    `/static/images/portfolio-covers/${slug}-cover-v1-768.webp 768w`,
-    `/static/images/portfolio-covers/${slug}-cover-v1.webp 1254w`,
-  ].join(", "),
+  srcSet: responsiveImageSources(`/static/images/portfolio-covers/${slug}-cover-v1.webp`, [480, 768], 1254),
   label: "Cover",
   variant: "cover",
   width: 1254,
@@ -23,16 +24,17 @@ export const PROJECT_COVERS = Object.fromEntries([
 
 export const PROJECT_OVERVIEW_IMAGE_SIZES = "(max-width: 47.99rem) calc(100vw - 2rem), (max-width: 74rem) calc((100vw - 4rem) / 2), calc((min(100vw, 92rem) - 7rem) / 3)";
 
-// Match the single-column hero below 80rem and the wider detail grids above it.
-export const PROJECT_DETAIL_IMAGE_SIZES = "(max-width: 39.99rem) calc(100vw - 1.5rem), (max-width: 63.99rem) calc(100vw - 4rem), (max-width: 79.99rem) calc(100vw - 5rem), (max-width: 89.99rem) calc((100vw - 7rem) * 0.54), (max-width: 109.99rem) calc((min(100vw, 94rem) - 8rem) * 0.58), 57.6rem";
+// All reports place the cover beside the details at 1100px. Keep the
+// source selection aligned with the shared responsive layout.
+export const PROJECT_DETAIL_IMAGE_SIZES = "(max-width: 47.99rem) calc(88.8vw - 2px), (max-width: 1099px) 93vw, calc((100vw - clamp(2rem, 7vw, 12rem) - clamp(1rem, 2vw, 1.5rem)) / 2.15)";
 const PROJECT_SCREENSHOT_SIZES = "(max-width: 600px) calc(100vw - 3.5rem), (max-width: 63.99rem) calc((100vw - 8rem) * 0.75), (max-width: 89.99rem) calc((min(100vw, 80rem) - 9.5rem) * 0.75), (max-width: 109.99rem) calc((min(100vw, 94rem) - 9.5rem) * 0.75), 70.875rem";
 
 export function projectDetailImage(item) {
   const image = projectPreviewImage(item);
-  if (!image?.srcSet || image.variant !== "cover") return image;
+  if (!projectCoverImage(item) || !image?.srcSet || image.variant !== "cover") return image;
   return {
     ...image,
-    srcSet: image.srcSet.replace(`${image.src} 1254w`, `${image.src.replace(".webp", "-960.webp")} 960w, ${image.src} 1254w`),
+    srcSet: responsiveImageSources(image.src, [480, 640, 768, 960], 1254),
     sizes: PROJECT_DETAIL_IMAGE_SIZES,
   };
 }
@@ -45,13 +47,13 @@ export function projectScreenshotImages(item) {
   return [
     {
       src: `/static/images/portfolio-previews/${slug}-desktop.webp`,
-      srcSet: [480, 768, 960].map(width => `/static/images/portfolio-previews/${slug}-desktop-${width}.webp ${width}w`).concat(`/static/images/portfolio-previews/${slug}-desktop.webp 1440w`).join(", "),
+      srcSet: responsiveImageSources(`/static/images/portfolio-previews/${slug}-desktop.webp`, [480, 640, 768, 960], 1440),
       sizes: `auto, ${PROJECT_SCREENSHOT_SIZES}`,
       label: "Desktop", width: 1440, height: 1000,
     },
     {
       src: `/static/images/portfolio-previews/${slug}-mobile.webp`,
-      srcSet: `/static/images/portfolio-previews/${slug}-mobile-256.webp 256w, /static/images/portfolio-previews/${slug}-mobile.webp 390w`,
+      srcSet: responsiveImageSources(`/static/images/portfolio-previews/${slug}-mobile.webp`, [256, 320], 390),
       sizes: "auto, (max-width: 600px) 16rem, (max-width: 89.99rem) calc((min(100vw, 80rem) - 9.5rem) / 4), 24rem",
       label: "Mobile", width: 390, height: slug === "online-shop" ? 764 : 844,
     },

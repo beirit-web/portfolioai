@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "build:platform": "VITE_PLATFORM_INTEGRATION=true VITE_OUT_DIR=../../../sprachdienstleistungen/assets/deutschlive-dist vite build",
+    "build:platform": "VITE_PLATFORM_INTEGRATION=true VITE_OUT_DIR=../../portfolio-demos/sprachdienstleistungen/assets/deutschlive-dist vite build",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {

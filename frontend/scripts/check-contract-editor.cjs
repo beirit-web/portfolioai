@@ -4,7 +4,7 @@ const path = require("node:path");
 
 const baseUrl = process.env.CONTRACTS_BASE_URL || "http://localhost:8000";
 const screenshotDir = process.env.CONTRACTS_SCREENSHOT_DIR || "/tmp/contract-editor-check";
-const logoPath = path.resolve(__dirname, "../../server/assets/images/logo-transparent-160.webp");
+const logoPath = path.resolve(__dirname, "../../server/assets/images/aktueles-logo-160.webp");
 
 async function ready(page) {
   await expect(page.locator("body")).toHaveClass(/is-enhanced/);

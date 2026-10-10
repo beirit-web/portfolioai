@@ -1,5 +1,10 @@
 # Aktueller Mobile-Lighthouse-Stand – 5. Oktober 2026
 
+Die historischen Berichte und Bildvorschauen wurden am 10. Oktober 2026 nach
+`~/Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10` archiviert. Die
+Berichtslinks öffnen diese lokalen Archivdateien; neue Prüfläufe verwenden
+weiterhin ihre bisherigen Ausgabepfade im Projekt.
+
 Erneut gemessen nach den Änderungen an Formular, Neigung, Farben und mobilem Footer. Die Messungen liefen am 5. Oktober 2026 zwischen 13:04 und 13:05 Uhr (Europe/Berlin) nacheinander gegen die lokal gebauten Assets über Django auf `http://127.0.0.1:8001`.
 
 | Seite | Performance | Barrierefreiheit | Best Practices | SEO |
@@ -24,9 +29,9 @@ Lighthouse 12.8.2 nutzte das Mobile-Profil mit 412 × 823 px, simuliertem Netzwe
 
 Die vollständigen HTML- und JSON-Berichte liegen im von Git ignorierten Ordner `runtime/lighthouse/mobile-2026-10-05-current/`:
 
-- [Startseite](../../runtime/lighthouse/mobile-2026-10-05-current/home.report.html)
-- Kontakt: [Lauf 1](../../runtime/lighthouse/mobile-2026-10-05-current/contact-run-1.report.html), [Lauf 2](../../runtime/lighthouse/mobile-2026-10-05-current/contact-run-2.report.html), [Lauf 3](../../runtime/lighthouse/mobile-2026-10-05-current/contact-run-3.report.html)
-- [Kompetenzen](../../runtime/lighthouse/mobile-2026-10-05-current/skills.report.html)
-- [Über mich](../../runtime/lighthouse/mobile-2026-10-05-current/about.report.html)
+- [Startseite](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05-current/home.report.html)
+- Kontakt: [Lauf 1](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05-current/contact-run-1.report.html), [Lauf 2](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05-current/contact-run-2.report.html), [Lauf 3](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05-current/contact-run-3.report.html)
+- [Kompetenzen](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05-current/skills.report.html)
+- [Über mich](../../../../../Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10/runtime/lighthouse/mobile-2026-10-05-current/about.report.html)
 
 Zum Vergleich: [erster Optimierungslauf](mobile-lighthouse-2026-10-05.md).

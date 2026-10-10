@@ -74,7 +74,7 @@ test("the hero gives direct access to projects and contact even on a small scree
   const contact = page.getByRole("link", { name: "Kontakt aufnehmen", exact: true });
   await expect(projects).toBeInViewport({ ratio: 1 });
   await expect(contact).toBeInViewport({ ratio: 1 });
-  await expect(page.locator(".hero-stage__tagline")).toContainText("Eugen Beirit");
+  await expect(page.locator(".hero-stage__tagline")).toContainText("Ich bin Eugen.");
   await projects.click();
   await expect(page).toHaveURL(/\/projekte$/);
   await expect(page.locator(".project-overview-card")).toHaveCount(6);
@@ -89,6 +89,26 @@ test("project reports show current implementation, a decision and real loaded sc
     await page.goto(`/projekte/${slug}`);
     await expect(page.locator(".portfolio-project-decision")).toContainText("Technische Entscheidung");
     await expect(page.locator(".portfolio-project-decision p")).not.toBeEmpty();
+    {
+      const overview = page.locator(".portfolio-project-page__overview");
+      const image = await overview.locator("figure").boundingBox();
+      const details = await overview.locator(".portfolio-card__details-grid").boundingBox();
+      if (page.viewportSize().width >= 1100) {
+        expect(image.x).toBeGreaterThanOrEqual(details.x + details.width);
+        expect(Math.abs(details.y - image.y)).toBeLessThan(2);
+      } else {
+        expect(details.y).toBeGreaterThanOrEqual(image.y + image.height);
+      }
+      const hero = page.locator(".portfolio-project-hero");
+      const copy = await hero.locator(".portfolio-project-hero__copy").boundingBox();
+      for (const action of await hero.locator(".portfolio-contact-button, .project-overview-card__secondary-button").all()) {
+        const button = await action.boundingBox();
+        expect(button.width).toBeLessThan(260);
+        expect(Math.abs(button.x + button.width - copy.x - copy.width)).toBeLessThan(2);
+      }
+      await expect(hero.locator("h1")).toHaveCSS("text-align", "center");
+      await expect(page.locator("#projektdetails")).toHaveCSS("background-color", "rgb(230, 224, 215)");
+    }
     const gallery = page.locator(".portfolio-project-gallery");
     await gallery.scrollIntoViewIfNeeded();
     await expect(gallery.locator("img")).toHaveCount(2);

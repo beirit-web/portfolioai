@@ -68,6 +68,7 @@ def env_json_contact_list(key: str) -> list[dict[str, str]]:
 
 SERVER_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = SERVER_DIR
+PORTFOLIO_LANGUAGE_DIR = SERVER_DIR.parent / "apps" / "portfolio-demos" / "sprachdienstleistungen"
 
 
 def _has_platform_env() -> bool:
@@ -178,7 +179,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [SERVER_DIR / "templates"],
+        "DIRS": [SERVER_DIR / "templates", PORTFOLIO_LANGUAGE_DIR / "templates" / "modules"],
         "APP_DIRS": True,
         "OPTIONS": {
             "builtins": [
@@ -261,6 +262,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     SERVER_DIR / "assets",
+    ("vokabelbox", PORTFOLIO_LANGUAGE_DIR / "assets" / "vokabelbox"),
 ]
 STATIC_ROOT = _ensure_dir(_server_path(
     env_path("STATIC_ROOT", SERVER_DIR / "staticfiles")))

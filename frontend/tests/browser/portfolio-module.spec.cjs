@@ -28,7 +28,7 @@ test("fallback portfolio presents Vokabelbox inside the language platform", asyn
   await expect(page.locator(".project-overview-card--sprachdienstleistungen")).toContainText("Vokabelbox");
   await expect(page.locator(".project-overview-card--vokabelbox")).toHaveCount(0);
   await page.locator('.project-overview-card--sprachdienstleistungen a.project-overview-card__button').click();
-  await expect(page.locator("#vokabelbox")).toHaveAttribute("href", "/static/portfolio/vokabelbox-main/index.html");
+  await expect(page.locator("#vokabelbox")).toHaveAttribute("href", "/vokabelbox/");
   await expect(page.locator(".portfolio-project-hero__copy")).toContainText("Vokabelbox");
 });
 

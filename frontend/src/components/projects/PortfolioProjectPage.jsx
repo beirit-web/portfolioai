@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle2, Code2 } from "lucide-react";
+import { Code2 } from "lucide-react";
 import { publicPageUrl } from "../../lib/homeConfig.js";
 import { isExternalUrl, projectActionHref } from "../../lib/appNavigation.js";
 import { languageServicesCaseStudy } from "../home/portfolio/languageServicesCaseStudy.mjs";
@@ -7,20 +7,12 @@ import { projectDetailImage, portfolioSlugFor, projectScreenshotImages, projectT
 import PortfolioImage from "../home/portfolio/PortfolioImage";
 import PortfolioFeatureList from "../home/portfolio/PortfolioFeatureList";
 import TechnologyTags from "../shared/TechnologyTags";
-
-function paragraphList(text) {
-  if (Array.isArray(text)) return text.filter(Boolean);
-  return String(text || "")
-    .split(/\n{2,}/)
-    .map((entry) => entry.trim())
-    .filter(Boolean);
-}
-
+import { projectModuleActions } from "./projectModuleActions.mjs";
+import { paragraphList, PortfolioProjectPreview, PortfolioProjectDetails } from "./PortfolioProjectContent";
 
 export default function PortfolioProjectPage({ item, t, language, onNavigate }) {
   item = languageServicesCaseStudy(item, language);
   const previewImage = projectDetailImage(item);
-  const hasCover = previewImage?.variant === "cover";
   const projectSlug = portfolioSlugFor(item);
   const isCase = (item.category || "demo") === "case";
   const fallbackActionLabel = t(isCase ? "home.portfolio.caseStudyCta" : "home.portfolio.referenceCta");
@@ -73,87 +65,23 @@ export default function PortfolioProjectPage({ item, t, language, onNavigate }) 
                 {actionLabel}
               </a>
             ) : null}
-            {projectSlug === "sprachdienstleistungen" ? (
-              <a id="deutschlive" href="/deutschlive/"
-                className="project-overview-card__secondary-button" target="_blank" rel="noopener noreferrer">
-                {language === "ru" ? "Открыть DeutschLive" : language === "uk" ? "Відкрити DeutschLive" : "DeutschLive öffnen"}
-              </a>
-            ) : null}
-            {projectSlug === "sprachdienstleistungen" ? (
-              <a
-                id="vokabelbox"
-                href="/static/portfolio/vokabelbox-main/index.html"
+            {projectModuleActions(projectSlug, language).map((module) => (
+              <a key={module.id} id={module.id}
+                href={module.publicPage ? publicPageUrl(module.href) : module.href}
                 className="project-overview-card__secondary-button"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {language === "ru" ? "Открыть Vokabelbox" : language === "uk" ? "Відкрити Vokabelbox" : "Vokabelbox öffnen"}
+                target={module.external ? "_blank" : undefined}
+                rel={module.external ? "noopener noreferrer" : undefined}>
+                {module.label}
               </a>
-            ) : null}
-            {projectSlug === "enbt-botanic" ? (
-              <a
-                id="wetter"
-                href={publicPageUrl("/botanic/wetter/")}
-                className="project-overview-card__secondary-button"
-              >
-                {language === "ru" ? "Открыть погоду" : language === "uk" ? "Відкрити погоду" : "Wetter öffnen"}
-              </a>
-            ) : null}
-            {projectSlug === "sprachdienstleistungen" ? (
-              <a id="musikplayer" href="/deutschlive/recordings"
-                className="project-overview-card__secondary-button" target="_blank" rel="noopener noreferrer">
-                {language === "ru" ? "Мои записи" : language === "uk" ? "Мої записи" : "Meine Aufnahmen öffnen"}
-              </a>
-            ) : null}
+            ))}
           </div>
-          {previewImage ? (
-            <figure className={`portfolio-project-hero__preview ${hasCover ? "portfolio-project-hero__cover" : "portfolio-card__desktop-preview"}`}>
-              <PortfolioImage
-                image={previewImage}
-                title={item.title}
-                loading="eager"
-                fetchPriority="high"
-                width={1440}
-                height={1000}
-              />
-              {!hasCover ? <figcaption>{previewImage.label}</figcaption> : null}
-            </figure>
-          ) : (
-            <div className="portfolio-card__preview portfolio-project-hero__preview" aria-hidden="true">
-              <div className="portfolio-card__browser-bar"><span /><span /><span /></div>
-              <div className="portfolio-card__mockup">
-                <strong>{item.title}</strong>
-                <span>{item.type}</span>
-              </div>
-            </div>
-          )}
         </div>
       </section>
 
       <section id="projektdetails" className="portfolio-project-page mx-auto max-w-7xl scroll-mt-24 px-3 pb-16 sm:px-8 lg:px-10">
-        <div className="portfolio-card__details-grid">
-          <article className="portfolio-card__situation">
-            <span>{t("home.portfolio.situationLabel")}</span>
-            {paragraphList(item.situation).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-          </article>
-          <article className="portfolio-card__implementation">
-            <span>{t("home.portfolio.ownContributionLabel")}</span>
-            {paragraphList(item.implementation || item.text).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            {item.implementationFeatures?.length ? (
-              <ul className="portfolio-project-checklist">
-                {item.implementationFeatures.map((feature) => (
-                  <li key={feature}>
-                    <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </article>
-          <article className="portfolio-card__result">
-            <span>{t("home.portfolio.resultLabel")}</span>
-            {paragraphList(item.result).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-          </article>
+        <div className="portfolio-project-page__overview">
+          <PortfolioProjectPreview image={previewImage} item={item} />
+          <PortfolioProjectDetails item={item} t={t} />
         </div>
         {item.technicalDecision ? (
           <section className="portfolio-project-decision" aria-labelledby="technical-decision-title">
