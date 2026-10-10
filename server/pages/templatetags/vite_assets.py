@@ -15,7 +15,7 @@ def _static_url(path: str) -> str:
 
 
 @register.simple_tag
-def vite_react_assets(entry: str) -> str:
+def vite_react_assets(entry: str, fetchpriority=None) -> str:
     manifest_path = (
         Path(settings.SERVER_DIR)
         / "assets"
@@ -33,24 +33,41 @@ def vite_react_assets(entry: str) -> str:
         return mark_safe(f"<!-- React entry missing: {entry} -->")
 
     tags = []
+    priority_attribute = (
+        format_html(' fetchpriority="{}"', fetchpriority)
+        if fetchpriority in {"high", "low", "auto"}
+        else ""
+    )
     # Only preload the entry's static imports. Dynamic imports are intentionally
     # left lazy so heavy non-critical chunks such as Three.js do not enter the
     # initial critical request chain.
-    preload_entries = chunk.get("imports", [])
-    for imported in preload_entries:
-        imported_chunk = manifest.get(imported, {})
-        imported_file = imported_chunk.get("file")
-        if imported_file:
-            tags.append(
-                format_html(
-                    '<link rel="modulepreload" href="{}">',
-                    _static_url(f"react-home-dist/{imported_file}"),
+    seen = {entry}
+
+    def preload_imports(module):
+        for imported in module.get("imports", []):
+            if imported in seen:
+                continue
+            seen.add(imported)
+            imported_chunk = manifest.get(imported, {})
+            imported_file = imported_chunk.get("file")
+            if imported_file:
+                tags.append(
+                    format_html(
+                        '<link rel="modulepreload" href="{}"{}>',
+                        _static_url(f"react-home-dist/{imported_file}"),
+                        priority_attribute,
+                    )
                 )
-            )
+            preload_imports(imported_chunk)
+
+    # Discover nested static dependencies in the HTML too, rather than waiting
+    # for the browser to fetch and parse each parent module in turn.
+    preload_imports(chunk)
     tags.append(
         format_html(
-            '<script type="module" crossorigin src="{}"></script>',
+            '<script type="module" crossorigin src="{}"{}></script>',
             _static_url(f"react-home-dist/{chunk['file']}"),
+            priority_attribute,
         )
     )
     return format_html_join("\n", "{}", ((tag,) for tag in tags))

@@ -20,6 +20,23 @@ test.afterEach(async ({ page }) => {
 
 const readyCanvas = page => page.locator(".hero-stage__wave-grid-canvas.is-ready");
 
+test("initial page load does not request Three.js before interaction", async ({ page }) => {
+  const animationRequests = [];
+  page.on("request", request => {
+    if (/\/(three-vendor|WaveGridHero)-[^/]+\.js/.test(request.url())) {
+      animationRequests.push(request.url());
+    }
+  });
+  await page.goto("/");
+  await expect(page.locator(".hero-stage__headline")).toBeVisible();
+  await page.waitForTimeout(1200);
+  expect(animationRequests).toEqual([]);
+  await expect(page.locator(".hero-stage__wave-grid-canvas")).toHaveCount(0);
+  await page.keyboard.press("Shift");
+  await expect(readyCanvas(page)).toBeVisible();
+  expect(animationRequests.length).toBeGreaterThan(0);
+});
+
 test("hero renders moving cubes on desktop and touch devices", async ({ page }, testInfo) => {
   await page.addInitScript(() => {
     const draw = WebGL2RenderingContext.prototype.drawElementsInstanced;
@@ -30,6 +47,7 @@ test("hero renders moving cubes on desktop and touch devices", async ({ page }, 
     };
   });
   await page.goto("/");
+  await page.keyboard.press("Shift");
   const canvas = readyCanvas(page);
   await expect(canvas).toBeVisible();
   await expect(canvas).not.toHaveAttribute("data-wave-grid-error", "true");
@@ -39,6 +57,16 @@ test("hero renders moving cubes on desktop and touch devices", async ({ page }, 
   await expect.poll(frameCount).toBeGreaterThan(initialFrame);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect.poll(() => canvas.evaluate(element => {
+    return element.getBoundingClientRect().bottom <= 0;
+  })).toBe(true);
+  await page.waitForTimeout(200);
+  const pausedFrame = await frameCount();
+  await page.waitForTimeout(300);
+  expect(await frameCount()).toBe(pausedFrame);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect.poll(frameCount).toBeGreaterThan(pausedFrame);
 });
 
 test("hardware and connection estimates use an animation instead of hiding it", async ({ page }) => {
@@ -50,19 +78,23 @@ test("hardware and connection estimates use an animation instead of hiding it", 
     });
   });
   await page.goto("/");
+  await page.keyboard.press("Shift");
   await expect(readyCanvas(page)).toBeVisible();
 });
 
 test("motion preferences can disable and restore the animation", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await page.keyboard.press("Shift");
   await expect(page.locator(".hero-stage__headline")).toBeVisible();
   await expect(page.locator(".hero-stage__wave-grid-canvas")).toHaveCount(0);
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.keyboard.press("Shift");
   await expect(readyCanvas(page)).toBeVisible();
   await page.emulateMedia({ reducedMotion: "reduce" });
   await expect(page.locator(".hero-stage__wave-grid-canvas")).toHaveCount(0);
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.keyboard.press("Shift");
   await expect(readyCanvas(page)).toBeVisible();
 });
 
@@ -73,6 +105,7 @@ test("data saving can disable and restore the animation", async ({ page }) => {
     Object.defineProperty(navigator, "connection", { value: connection, configurable: true });
   });
   await page.goto("/");
+  await page.keyboard.press("Shift");
   await expect(page.locator(".hero-stage__headline")).toBeVisible();
   await expect(page.locator(".hero-stage__wave-grid-canvas")).toHaveCount(0);
   await page.evaluate(() => {
@@ -91,6 +124,7 @@ test("the animation stays visible when a small window grows", async ({ page, isM
   test.skip(isMobile, "Desktop window resize.");
   await page.setViewportSize({ width: 640, height: 900 });
   await page.goto("/");
+  await page.keyboard.press("Shift");
   await expect(readyCanvas(page)).toBeVisible();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await expect(readyCanvas(page)).toBeVisible();

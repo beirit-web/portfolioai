@@ -1,0 +1,53 @@
+<div class="site-shell site-shell--page min-h-screen bg-[#f7f6f2] text-stone-950" data-projects-rendered>
+  {% include "pages/project_header.html" with overview=overview only %}
+  <main id="top" class="home-main site-page-main">
+    <section class="page-hero mx-auto max-w-7xl px-3 pb-8 pt-28 sm:px-8 sm:pb-12 sm:pt-36 lg:px-10 xl:max-w-[92rem] 2xl:max-w-[104rem]">
+      <h1 class="mt-3 max-w-6xl font-display text-4xl leading-tight sm:text-6xl lg:text-7xl xl:max-w-7xl 2xl:max-w-none 2xl:text-8xl">{{ overview.copy.title }}</h1>
+      <p class="mt-5 max-w-3xl text-base leading-8 text-stone-700 sm:text-lg">{{ overview.copy.intro }}</p>
+    </section>
+    <section class="project-overview mx-auto max-w-7xl px-3 pb-16 sm:px-8 lg:px-10">
+      {% if overview.cards %}
+        <div class="project-grid">
+          {% for card in overview.cards %}
+            <article class="project-overview-card project-overview-card--{{ card.slug }}">
+              {% if card.image %}
+                <a href="{{ card.detailHref }}" class="project-overview-card__media{% if card.image.variant == 'cover' %} project-overview-card__media--cover{% endif %}">
+                  <img src="{{ card.image.src }}" alt="{{ card.image.alt }}" decoding="async" width="{{ card.image.width }}" height="{{ card.image.height }}" loading="{% if card.image.eager %}eager{% else %}lazy{% endif %}"{% if card.image.eager %} fetchpriority="high"{% endif %}{% if card.image.srcSet %} srcset="{{ card.image.srcSet }}" sizes="{{ card.image.sizes }}"{% endif %} />
+                </a>
+              {% endif %}
+              <div class="project-overview-card__body">
+                <div class="project-overview-card__meta">
+                  <span>{{ card.type }}</span>{% if card.status %}<span>{{ card.status }}</span>{% endif %}
+                </div>
+                <h2>{{ card.title }}{% if card.tooltip %}<span class="info-tooltip"><button type="button" class="info-tooltip__trigger" aria-label="{{ card.tooltip.label }}" aria-expanded="false" data-project-tooltip="{{ card.tooltip.text }}">i</button></span>{% endif %}</h2>
+                <p>{{ card.text }}</p>
+                {% if card.technologyTags %}
+                  <div class="technology-tags project-overview-card__tags" aria-label="{{ overview.copy.technologies }}">
+                    {% for technology in card.technologyTags %}
+                      <span class="technology-tag">{% if technology.logo %}<img src="{{ technology.logo }}" alt="" aria-hidden="true" width="18" height="18" loading="lazy" draggable="false" />{% endif %}{{ technology.label }}</span>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                <div class="project-overview-card__actions">
+                  <a href="{{ card.detailHref }}" class="project-overview-card__button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text h-4 w-4" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>
+                    {{ overview.copy.details }}
+                  </a>
+                  {% if card.liveHref %}
+                    <a href="{{ card.liveHref }}" class="project-overview-card__secondary-button"{% if card.liveExternal %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                      {{ overview.copy.live }}
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="project-overview__empty">{{ overview.copy.empty }}</p>
+      {% endif %}
+    </section>
+  </main>
+  {% include "pages/project_footer.html" with overview=overview only %}
+</div>

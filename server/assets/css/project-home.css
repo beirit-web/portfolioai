@@ -111,6 +111,27 @@
   color: #fff;
 }
 
+@media (max-width: 767px) {
+  .project-home-nav--shop .project-home-nav__links {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #789584 #24342f;
+  }
+
+  .project-home-nav--shop .project-home-nav__links li {
+    flex: 0 0 auto;
+  }
+
+  .project-home-nav--shop a {
+    white-space: nowrap;
+  }
+
+  .project-home-nav--shop .project-home-nav__sort {
+    width: 12rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .project-home-nav__sort select { transition: none; }
 }

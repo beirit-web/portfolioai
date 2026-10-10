@@ -66,3 +66,40 @@ test("technology backgrounds appear only on hover", async ({ page, isMobile }) =
   await expect(tag).toHaveCSS("background-color", "rgb(241, 245, 249)");
   await expect(tag).toHaveCSS("border-top-color", "rgb(219, 227, 235)");
 });
+
+test("the hero gives direct access to projects and contact even on a small screen", async ({ page, isMobile }) => {
+  if (isMobile) await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto("/");
+  const projects = page.getByRole("link", { name: "Projekte ansehen", exact: true });
+  const contact = page.getByRole("link", { name: "Kontakt aufnehmen", exact: true });
+  await expect(projects).toBeInViewport({ ratio: 1 });
+  await expect(contact).toBeInViewport({ ratio: 1 });
+  await expect(page.locator(".hero-stage__tagline")).toContainText("Eugen Beirit");
+  await projects.click();
+  await expect(page).toHaveURL(/\/projekte$/);
+  await expect(page.locator(".project-overview-card")).toHaveCount(6);
+  if (isMobile) await page.locator(".site-nav-toggle").click();
+  const navigation = page.locator(isMobile ? "#site-mobile-navigation" : "#site-navigation");
+  await expect(navigation.getByRole("link", { name: "Projekte", exact: true })).toHaveAttribute("href", "/projekte");
+  await expect(navigation.getByRole("link", { name: "Projekte", exact: true })).toHaveAttribute("aria-current", "page");
+});
+
+test("project reports show current implementation, a decision and real loaded screenshots", async ({ page }) => {
+  for (const slug of ["sprachdienstleistungen", "online-shop", "vertragsgenerator", "wohnungssuche-bodensee", "notenrechner", "enbt-botanic"]) {
+    await page.goto(`/projekte/${slug}`);
+    await expect(page.locator(".portfolio-project-decision")).toContainText("Technische Entscheidung");
+    await expect(page.locator(".portfolio-project-decision p")).not.toBeEmpty();
+    const gallery = page.locator(".portfolio-project-gallery");
+    await gallery.scrollIntoViewIfNeeded();
+    await expect(gallery.locator("img")).toHaveCount(2);
+    await expect.poll(() => gallery.locator("img").evaluateAll(images => images.every(image => image.complete && image.naturalWidth > 0))).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize().width);
+    if (slug === "vertragsgenerator") {
+      await expect(page.locator(".portfolio-card__implementation")).toContainText("Django");
+      await expect(page.locator("main")).not.toContainText("Ohne Backend nutzbar");
+    }
+    if (slug === "sprachdienstleistungen") {
+      await expect(page.locator(".portfolio-card__status")).toHaveText("Portfolio-Fallstudie");
+    }
+  }
+});

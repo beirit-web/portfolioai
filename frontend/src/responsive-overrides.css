@@ -3760,6 +3760,90 @@ html
   gap: clamp(1rem, 2vw, 1.4rem);
 }
 
+.problem-card__project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  justify-self: start;
+  min-height: 2.75rem;
+  color: #0f766e;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.portfolio-project-decision,
+.portfolio-project-gallery {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid rgba(15, 118, 110, 0.14);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.portfolio-project-decision h2,
+.portfolio-project-gallery h2 {
+  margin: 0 0 0.85rem;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  font-weight: 850;
+  line-height: 1.3;
+}
+
+.portfolio-project-decision p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.portfolio-project-gallery__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.5rem);
+  align-items: start;
+}
+
+.portfolio-project-gallery__figure {
+  min-width: 0;
+  margin: 0;
+}
+
+.portfolio-project-gallery__figure a {
+  display: block;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.portfolio-project-gallery__figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.portfolio-project-gallery__figure figcaption {
+  margin-top: 0.6rem;
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.portfolio-project-gallery__figure a:focus-visible,
+.problem-card__project-link:focus-visible {
+  outline: 3px solid #0f766e;
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .portfolio-project-gallery__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portfolio-project-gallery__figure--mobile {
+    width: min(100%, 16rem);
+    justify-self: center;
+  }
+}
+
 .portfolio-project-page .portfolio-card__details-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4314,6 +4398,8 @@ html
   .portfolio-card__feature-list
   > li {
   min-height: 7rem;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 0.8rem;
   border: 1px solid rgba(15, 118, 110, 0.14);
   border-radius: 8px;
   background: linear-gradient(
@@ -4323,6 +4409,15 @@ html
   );
   padding: 0.95rem;
   box-shadow: 0 0.7rem 1.4rem rgba(15, 23, 42, 0.05);
+}
+
+.site-shell .home-main .portfolio-project-page .portfolio-card__features
+  :is(.portfolio-card__feature-list-icon-wrap, .portfolio-card__feature-list-icon) {
+  width: 2.5rem;
+  height: 2.5rem;
+  min-width: 0;
+  object-fit: contain;
+  transform: none;
 }
 
 .site-shell
@@ -4363,6 +4458,29 @@ html
 
 .site-shell .home-main .portfolio-project-page .portfolio-card__proof {
   align-items: center;
+}
+
+.site-shell .home-main .portfolio-project-page .portfolio-card__proof > .technology-tags {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  justify-content: flex-end;
+  gap: 0.65rem 1rem;
+}
+
+.site-shell .home-main .portfolio-project-page .portfolio-card__proof .technology-tag {
+  max-width: 100%;
+  gap: 0.55rem;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.site-shell .home-main .portfolio-project-page .portfolio-card__proof .technology-tag > :is(img, svg) {
+  flex: 0 0 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
 }
 
 .site-shell .home-main .portfolio-project-page .portfolio-card__proof > span {
@@ -4637,4 +4755,47 @@ html
 /* Keep project copy readable after the shared card overrides, in both themes. */
 .site-shell .home-main .portfolio-card__feature-list > li > span:not(.portfolio-card__feature-list-icon-wrap) {
   color: var(--muted);
+}
+
+/* Project reports use the page surface instead of a separate backdrop. */
+.site-shell .home-main > .portfolio-project-page {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.site-shell .home-main > .portfolio-project-page::before,
+.site-shell .home-main > .portfolio-project-page::after {
+  content: none;
+}
+
+.site-shell .home-main .portfolio-project-decision {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Reserve a definite portrait width even before lazy images load. The
+   source capture ratio keeps image and caption within the window height. */
+.portfolio-project-gallery__figure--mobile {
+  width: min(100%, 16rem, calc(max(12rem, calc(100svh - 16rem)) * var(--portfolio-preview-ratio, 390 / 844) + 2px));
+  justify-self: center;
+}
+
+.portfolio-project-gallery__figure--mobile a {
+  width: 100%;
+}
+
+.portfolio-project-gallery__figure--mobile img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.site-shell .home-main .portfolio-project-gallery {
+  background: none;
+  border: 0;
+  border-radius: 0;
 }

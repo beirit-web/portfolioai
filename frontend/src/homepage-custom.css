@@ -5547,12 +5547,12 @@ body:has(.about-hero-grid),
 
 .project-overview-card--online-shop {
   --project-button-background: #ee5f7b;
-  --project-button-text: #ffffff;
+  --project-button-text: #0f172a;
 }
 
 .project-overview-card--wohnungssuche-bodensee {
   --project-button-background: #fd9c5f;
-  --project-button-text: #ffffff;
+  --project-button-text: #0f172a;
 }
 
 .project-overview-card--vertragsgenerator {

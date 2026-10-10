@@ -942,7 +942,7 @@ class PublicAccessTests(TestCase):
     )
     def test_public_pages_hide_sensitive_contact_details_for_anonymous_visitors(self):
         for page_name in ("pages:home", "pages:donate"):
-            response = self.client.get(reverse(page_name))
+            response = self.client.get(reverse(page_name), follow=True)
 
             self.assertEqual(response.status_code, 200)
             self.assertNotContains(response, "private@example.com")

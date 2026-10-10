@@ -7,27 +7,32 @@ from pages.models import PaymentRequest, PayPalPayment
 from pages.paypal import PayPalClient, PayPalError, cancel_paypal_order, capture_paypal_order, create_paypal_order
 
 
+@override_settings(LOGIN_REQUIRED=False)
 class DonationPageTests(TestCase):
     @override_settings(PAYPAL_DONATE_URL="", PAYPAL_BUSINESS_EMAIL="")
-    def test_donation_page_explains_demo(self):
-        response = self.client.get("/spenden/")
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Beispiel einer Spendenoberfläche")
-        self.assertContains(response, "PayPal deaktiviert – Portfolio-Demo")
-        self.assertContains(response, "Spenden und echte Zahlungen sind deaktiviert.")
+    def test_donation_routes_redirect_to_projects(self):
+        for path in ("/spenden", "/spenden/"):
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertRedirects(response, "/projekte", fetch_redirect_response=False)
 
     @override_settings(PORTFOLIO_DEMO_MODE=True, PAYPAL_DONATE_URL="https://www.paypal.com/donate/example")
-    def test_donation_page_hides_legacy_paypal_target(self):
-        response = self.client.get("/spenden/")
+    def test_donation_redirect_hides_legacy_paypal_target(self):
+        response = self.client.get("/spenden/", follow=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "https://www.paypal.com/donate/example")
+        self.assertNotContains(response, "Beispiel einer Spendenoberfläche")
+        self.assertEqual(response.redirect_chain, [("/projekte", 302)])
 
-    def test_legacy_payment_page_redirects_to_donations(self):
-        response = self.client.get("/zahlung")
-
-        self.assertRedirects(response, "/spenden/", fetch_redirect_response=False)
+    def test_legacy_payment_routes_redirect_to_projects_without_payment_calls(self):
+        with patch("pages.paypal.request.urlopen") as provider_request:
+            for path in ("/zahlung", "/zahlung/erfolg", "/zahlung/abbruch"):
+                for suffix in ("", "/"):
+                    with self.subTest(path=path, suffix=suffix):
+                        response = self.client.get(f"{path}{suffix}?token=MUSTER-ORDER")
+                        self.assertRedirects(response, "/projekte", fetch_redirect_response=False)
+            provider_request.assert_not_called()
 
 
 class PayPalInvoiceCheckoutDisabledTests(TestCase):

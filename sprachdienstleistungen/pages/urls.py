@@ -50,6 +50,7 @@ urlpatterns = [
   path("api/session/status/", views.session_status_api, name="session_status"),
   path("api/session/activity/", views.session_activity_api, name="session_activity"),
   path("account/delete/", views.delete_account, name="delete_account"),
+  path("spenden", views.donate, name="donate_no_slash"),
   path("spenden/", views.donate, name="donate"),
   path("api/upload/", views.upload_document, name="upload_document"),
   path("api/events/", views.events_json, name="events_json"),

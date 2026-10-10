@@ -1,10 +1,12 @@
 const { test, expect } = require("@playwright/test");
+const { withoutEmbeddedProjects } = require("./helpers/portfolioConfig.cjs");
 
-test.beforeEach(async ({ context, baseURL }) => {
+test.beforeEach(async ({ context, baseURL, page }) => {
   const origin = new URL(baseURL).origin;
   await context.route(/^https?:\/\//, route => (
     new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
   ));
+  await withoutEmbeddedProjects(page);
 });
 
 test("old API data cannot restore the separate Vokabelbox card", async ({ page }) => {

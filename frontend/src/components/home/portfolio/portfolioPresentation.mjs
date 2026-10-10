@@ -1,7 +1,7 @@
 import { isTechnologyLabel, sortTechnologyLabels } from "../../shared/technologyLogos.mjs";
 
 // Cover files follow one naming convention and share the same square dimensions.
-const PROJECT_COVERS = Object.fromEntries([
+export const PROJECT_COVERS = Object.fromEntries([
   "sprachdienstleistungen",
   "online-shop",
   "vertragsgenerator",
@@ -10,13 +10,53 @@ const PROJECT_COVERS = Object.fromEntries([
   "enbt-botanic",
 ].map((slug) => [slug, {
   src: `/static/images/portfolio-covers/${slug}-cover-v1.webp`,
+  srcSet: [
+    `/static/images/portfolio-covers/${slug}-cover-v1-480.webp 480w`,
+    `/static/images/portfolio-covers/${slug}-cover-v1-768.webp 768w`,
+    `/static/images/portfolio-covers/${slug}-cover-v1.webp 1254w`,
+  ].join(", "),
   label: "Cover",
   variant: "cover",
   width: 1254,
   height: 1254,
 }]));
 
+export const PROJECT_OVERVIEW_IMAGE_SIZES = "(max-width: 47.99rem) calc(100vw - 2rem), (max-width: 74rem) calc((100vw - 4rem) / 2), calc((min(100vw, 92rem) - 7rem) / 3)";
+
+// Match the single-column hero below 80rem and the wider detail grids above it.
+export const PROJECT_DETAIL_IMAGE_SIZES = "(max-width: 39.99rem) calc(100vw - 1.5rem), (max-width: 63.99rem) calc(100vw - 4rem), (max-width: 79.99rem) calc(100vw - 5rem), (max-width: 89.99rem) calc((100vw - 7rem) * 0.54), (max-width: 109.99rem) calc((min(100vw, 94rem) - 8rem) * 0.58), 57.6rem";
+const PROJECT_SCREENSHOT_SIZES = "(max-width: 600px) calc(100vw - 3.5rem), (max-width: 63.99rem) calc((100vw - 8rem) * 0.75), (max-width: 89.99rem) calc((min(100vw, 80rem) - 9.5rem) * 0.75), (max-width: 109.99rem) calc((min(100vw, 94rem) - 9.5rem) * 0.75), 70.875rem";
+
+export function projectDetailImage(item) {
+  const image = projectPreviewImage(item);
+  if (!image?.srcSet || image.variant !== "cover") return image;
+  return {
+    ...image,
+    srcSet: image.srcSet.replace(`${image.src} 1254w`, `${image.src.replace(".webp", "-960.webp")} 960w, ${image.src} 1254w`),
+    sizes: PROJECT_DETAIL_IMAGE_SIZES,
+  };
+}
+
 const TECHNOLOGY_NAMES = /\bReact\b|\bVite\b|\bDjango\b|\bPython\b|\bJavaScript\b|\bHTML\b|\bCSS\b/i;
+
+export function projectScreenshotImages(item) {
+  const slug = portfolioSlugFor(item);
+  if (!PROJECT_COVERS[slug]) return (item.images || []).filter(image => image.variant !== "cover");
+  return [
+    {
+      src: `/static/images/portfolio-previews/${slug}-desktop.webp`,
+      srcSet: [480, 768, 960].map(width => `/static/images/portfolio-previews/${slug}-desktop-${width}.webp ${width}w`).concat(`/static/images/portfolio-previews/${slug}-desktop.webp 1440w`).join(", "),
+      sizes: `auto, ${PROJECT_SCREENSHOT_SIZES}`,
+      label: "Desktop", width: 1440, height: 1000,
+    },
+    {
+      src: `/static/images/portfolio-previews/${slug}-mobile.webp`,
+      srcSet: `/static/images/portfolio-previews/${slug}-mobile-256.webp 256w, /static/images/portfolio-previews/${slug}-mobile.webp 390w`,
+      sizes: "auto, (max-width: 600px) 16rem, (max-width: 89.99rem) calc((min(100vw, 80rem) - 9.5rem) / 4), 24rem",
+      label: "Mobile", width: 390, height: slug === "online-shop" ? 764 : 844,
+    },
+  ];
+}
 
 export function portfolioSlugFor(item) {
   if (item?.slug) return String(item.slug);
@@ -50,6 +90,19 @@ export function isProjectPublished(item) {
   return item?.published !== false && !["vokabelbox", "wetter", "musikplayer", "deutschlive"].includes(portfolioSlugFor(item));
 }
 
+export function sortedPortfolioItems(items) {
+  return [...items]
+    .filter(isProjectPublished)
+    .sort((first, second) => {
+      const firstOrder = Number.isFinite(first.sortOrder) ? first.sortOrder : Number.MAX_SAFE_INTEGER;
+      const secondOrder = Number.isFinite(second.sortOrder) ? second.sortOrder : Number.MAX_SAFE_INTEGER;
+      if (firstOrder !== secondOrder) return firstOrder - secondOrder;
+      // Preserve the server's order for tied records, including localized titles.
+      if (Number.isFinite(first.orderIndex) && Number.isFinite(second.orderIndex)) return first.orderIndex - second.orderIndex;
+      return String(first.title || "").localeCompare(String(second.title || ""), "de");
+    });
+}
+
 export function selectCarouselProjects(items, limit = 6) {
   const candidates = items.filter(item => isProjectPublished(item) && item.images?.[0]);
   const selected = candidates.filter(item => item.featured === true).slice(0, limit);
@@ -78,18 +131,23 @@ export function projectTechnologyTags(item) {
   return sortTechnologyLabels(entries.flatMap(entry => featureLabel(entry).split("/")));
 }
 
-export function normalizeApiProject(project, localizedItem) {
+export function normalizeApiProject(project, localizedItem, { useLocalizedContent = false } = {}) {
   if (!project || typeof project !== "object") return null;
   const title = String(project.title || "").trim();
   if (!title) return null;
   const image = project.image || project.images?.[0]?.src || "";
   return {
+    ...localizedItem,
     ...project,
-    title,
-    text: project.text || project.shortDescription || project.description || "",
+    title: useLocalizedContent && localizedItem ? localizedItem.title : title,
+    text: useLocalizedContent && localizedItem ? localizedItem.text : project.text || project.shortDescription || project.description || "",
+    situation: useLocalizedContent && localizedItem ? localizedItem.situation : project.situation || localizedItem?.situation,
+    implementation: useLocalizedContent && localizedItem ? localizedItem.implementation : project.implementation || localizedItem?.implementation,
+    result: useLocalizedContent && localizedItem ? localizedItem.result : project.result || localizedItem?.result,
+    technicalDecision: project.technicalDecision || localizedItem?.technicalDecision,
     type: localizedItem?.type || project.type || project.category || "Portfolio-Projekt",
     category: project.category || "Weitere",
-    status: project.status || project.statusLabel || "",
+    status: useLocalizedContent && localizedItem ? localizedItem.status : project.status || project.statusLabel || "",
     liveUrl: project.liveUrl || project.href || "",
     href: project.href || project.liveUrl || "",
     githubHref: project.githubUrl || project.githubHref || "",
@@ -100,7 +158,7 @@ export function normalizeApiProject(project, localizedItem) {
         ? [{ src: image, label: project.imageAlt || "Vorschau" }]
         : [],
     technologies: project.technologies ?? project.tags ?? localizedItem?.technologies ?? localizedItem?.tags ?? [],
-    features: project.features?.length ? project.features : project.technologies || project.tags || [],
+    features: useLocalizedContent && localizedItem ? localizedItem.features : project.features?.length ? project.features : localizedItem?.features || project.technologies || project.tags || [],
     tags: project.tags?.length ? project.tags : project.technologies || [],
     published: project.published !== false,
     featured: project.featured === true,

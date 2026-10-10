@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const { withoutEmbeddedProjects } = require("./helpers/portfolioConfig.cjs");
 const fs = require("node:fs");
 const nodePath = require("node:path");
 const previews = nodePath.resolve(__dirname, "../../../runtime/browser-checks/previews");
@@ -16,8 +17,8 @@ test.afterEach(async ({ page }) => {
   expect(page.browserErrors, "Uncaught browser errors").toEqual([]);
 });
 
-async function open(page, path) {
-  const projectsResponse = path.startsWith("/projekte/")
+async function open(page, path, { waitForProjectsApi = /^\/projekte\/[^/?#]/.test(path) } = {}) {
+  const projectsResponse = waitForProjectsApi
     ? page.waitForResponse(response => new URL(response.url()).pathname === "/api/projects/")
     : null;
   const response = await page.goto(path);
@@ -160,10 +161,13 @@ test("portfolio supports keyboard selection and opening project details", async 
 });
 
 test("projects stay available when the portfolio API fails", async ({ page }) => {
+  await withoutEmbeddedProjects(page);
   await page.route("**/api/projects/", route => route.fulfill({ status: 503, json: { message: "Test: API unavailable" } }));
-  await open(page, "/projekte/");
+  await open(page, "/projekte/", { waitForProjectsApi: true });
   await expect(page.locator(".project-overview-card").first()).toBeVisible();
-  await expect(page.locator(".project-overview-card").first()).toContainText(/Projekt|Shop|Wort|Botanik|Vertrag/i);
+  const platform = page.locator(".project-overview-card--sprachdienstleistungen");
+  await expect(platform.getByRole("heading", { name: "Sprachplattform mit Lernmodulen", exact: true })).toBeVisible();
+  await expect(platform.getByRole("link", { name: "Details ansehen", exact: true })).toHaveAttribute("href", "/projekte/sprachdienstleistungen");
   await layout(page);
 });
 

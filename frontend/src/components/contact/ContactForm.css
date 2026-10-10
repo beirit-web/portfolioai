@@ -22,7 +22,7 @@
   min-height: 550px;
 }
 
-@media (max-width: 47.99rem) {
+@media (max-width: 63.99rem) {
   .site-shell .home-main#top .contact-form--loading {
     /* Reserve the card height before the lazy form mounts. */
     min-height: 27.2rem;

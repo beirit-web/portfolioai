@@ -1,11 +1,11 @@
-// Mobile version of the supplied 3D form; isolated from the desktop switcher.
+// Compact phone and tablet form; isolated from the desktop switcher.
 $mobile-blue: #0868e8;
 $mobile-soft-blue: #40b9ec;
 $mobile-text-blue: #1e3a5f;
 // Keep the white button label readable across the entire gradient.
 $mobile-button-soft-blue: #237ab9;
 
-@media (max-width: 47.99rem) {
+@media (max-width: 63.99rem) {
   html:has(.contact-mobile-stage) body:has(.contact-mobile-stage) {
     background: linear-gradient(45deg, #83a4d4, #b6fbff);
   }
@@ -292,6 +292,21 @@ $mobile-button-soft-blue: #237ab9;
   33% { transform: rotateX(-18deg) rotateY(30deg); }
   66% { transform: rotateX(-18deg) rotateY(-20deg); }
 }
+@media (min-width: 48rem) and (max-width: 63.99rem) {
+  .site-shell .home-main#top .contact-mobile-form {
+    width: min(30rem, 100%);
+    padding: 28px 36px;
+  }
+
+  .site-shell .home-main#top .contact-mobile-form__item + .contact-mobile-form__item {
+    margin-top: 16px;
+  }
+
+  .site-shell .home-main#top textarea.contact-mobile-input {
+    min-height: 140px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-shell .home-main#top .contact-mobile-form {
     transition: none;

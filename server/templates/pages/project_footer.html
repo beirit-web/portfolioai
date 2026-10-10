@@ -1,0 +1,20 @@
+  <footer class="site-footer bg-white px-4 py-8 text-sm text-slate-800 sm:px-8 lg:px-10">
+    <div class="site-footer__inner mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div class="site-footer__brand">
+        <span class="site-footer__brand-main">© 2026 Beirit Web - Eugen Beirit</span>
+        <div class="site-footer__meta" aria-label="Website-Informationen">
+          <small class="site-footer__small text-slate-800">{{ overview.footer.business }}</small>
+          <span class="site-footer__meta-separator" aria-hidden="true">·</span>
+          <small class="site-footer__small text-slate-800">{{ overview.footer.location }}</small>
+        </div>
+      </div>
+      <div class="site-footer__links flex flex-wrap gap-x-5 gap-y-2">
+        {% for item in overview.footerLinks %}
+          <a href="{{ item.href }}" class="footer-link transition hover:text-stone-950">{{ item.label }}</a>
+        {% endfor %}
+      </div>
+    </div>
+    <button type="button" class="footer-link--scroll-top" aria-label="{{ overview.footer.scrollTop }}" hidden>
+      <span class="footer-link__scroll-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg></span>
+    </button>
+  </footer>

@@ -88,7 +88,6 @@ SEO_SITEMAP_ITEMS = [
     ("pages:vokabelbox", "monthly", "0.7", "templates/pages/vokabelbox.html"),
     ("deutschlive", "monthly", "0.8", "assets/deutschlive-dist/index.html"),
     ("pages:manual", "weekly", "0.8", "assets/files/handbuch.html"),
-    ("pages:donate", "monthly", "0.5", "templates/pages/donate.html"),
     ("pages:legal", "monthly", "0.3", "templates/pages/rechtliches.html"),
     ("pages:privacy", "monthly", "0.3", "templates/pages/datenschutz.html"),
     ("pages:imprint", "monthly", "0.3", "templates/pages/impressum.html"),
@@ -983,12 +982,8 @@ def imprint(request):
 
 
 def donate(request):
-    """
-    Seite fuer freiwillige Projektunterstuetzung mit Kontaktweg.
-    """
-    context = build_base_context(request)
-    context["paypal_donate_url"] = settings.PAYPAL_DONATE_URL
-    return render(request, "pages/donate.html", context)
+    """Hide the donation demo while preserving old bookmarks."""
+    return redirect("pages:home")
 
 
 def register(request):

@@ -1,5 +1,5 @@
 // Order: languages, frameworks, presentation, databases, tools, external APIs.
-const TECHNOLOGIES = [
+export const TECHNOLOGIES = [
   ["Python", "python.svg"],
   ["JavaScript", "js.svg", ["JS"]],
   ["TypeScript", "ts.svg", ["TS"]],

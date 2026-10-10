@@ -111,6 +111,16 @@ class ShopStorefrontTests(TestCase):
 
     def test_filter_search_sort_and_no_results(self):
         url = reverse("storefront:catalog")
+        for parameters in ({}, {"sort": "invalid"}):
+            with self.subTest(parameters=parameters):
+                response = self.client.get(url, parameters)
+                prices = [product.price for product in response.context["products"]]
+                self.assertEqual(response.context["sort"], "priceAsc")
+                self.assertEqual(prices, sorted(prices))
+        descending = self.client.get(url, {"category": "stueck", "sort": "priceDesc"})
+        prices = [product.price for product in descending.context["products"]]
+        self.assertEqual(len(prices), 2)
+        self.assertEqual(prices, sorted(prices, reverse=True))
         response = self.client.get(url, {"category": "stueck", "sort": "priceAsc"})
         products = list(response.context["products"])
         self.assertEqual(len(products), 2)

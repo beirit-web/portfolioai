@@ -21,6 +21,24 @@ import "./ContactSwitch.scss";
 
 const contactApiUrl = config.contactApiUrl || "/api/contact/";
 
+const contactCopy = {
+  de: {
+    details: "Ihre Kontaktdaten", message: "Ihre Nachricht", next: "Weiter", back: "Zurück",
+    firstTitle: "Fragen oder Zusammenarbeit?", firstText: "Ob Frage zu meinen Projekten oder berufliche Zusammenarbeit: Ich freue mich auf Ihre Nachricht.",
+    secondTitle: "Worum geht es?", secondText: "Beschreiben Sie Ihre Frage oder Ihr Anliegen. Ich antworte Ihnen per E-Mail.",
+  },
+  ru: {
+    details: "Ваши контакты", message: "Ваше сообщение", next: "Далее", back: "Назад",
+    firstTitle: "Вопросы или сотрудничество?", firstText: "Есть вопрос о моих проектах или предложение о профессиональном сотрудничестве? Напишите мне.",
+    secondTitle: "О чём хотите поговорить?", secondText: "Опишите ваш вопрос или предложение. Я отвечу вам по электронной почте.",
+  },
+  uk: {
+    details: "Ваші контакти", message: "Ваше повідомлення", next: "Далі", back: "Назад",
+    firstTitle: "Питання або співпраця?", firstText: "Маєте питання про мої проєкти чи пропозицію професійної співпраці? Напишіть мені.",
+    secondTitle: "Про що хочете поговорити?", secondText: "Опишіть ваше питання чи пропозицію. Я відповім вам електронною поштою.",
+  },
+};
+
 export default function ContactForm({ selectedSubject, initialMessage = "", t, language = "de" }) {
   const form = useForm({
     mode: "onBlur",
@@ -33,17 +51,9 @@ export default function ContactForm({ selectedSubject, initialMessage = "", t, l
       company: "",
     },
   });
-  const isMobile = useMediaQuery("(max-width: 47.99rem)");
+  const isCompact = useMediaQuery("(max-width: 63.99rem)");
   const [switched, setSwitched] = React.useState(false);
-  const copy = language === "ru" ? {
-    details: "Ваши контакты", message: "Ваше сообщение", next: "Далее", back: "Назад",
-    firstTitle: "Обсудим ваш проект?", firstText: "Сначала укажите имя и электронную почту, затем расскажите о своей задаче.",
-    secondTitle: "Рады вашему сообщению!", secondText: "Опишите вашу идею или вопрос. Я отвечу вам по электронной почте.",
-  } : {
-    details: "Ihre Kontaktdaten", message: "Ihre Nachricht", next: "Weiter", back: "Zurück",
-    firstTitle: "Ein Projekt im Kopf?", firstText: "Kurz Ihre Kontaktdaten eintragen und anschließend von Ihrem Anliegen erzählen.",
-    secondTitle: "Lassen Sie uns sprechen!", secondText: "Beschreiben Sie Ihre Idee oder Frage. Ich melde mich bei Ihnen per E-Mail.",
-  };
+  const copy = contactCopy[language] || contactCopy.de;
   function toggleStep() {
     setSwitched((previous) => !previous);
   }
@@ -161,7 +171,7 @@ export default function ContactForm({ selectedSubject, initialMessage = "", t, l
     </div>
   ) : null;
 
-  if (isMobile) {
+  if (isCompact) {
     return (
       <Form {...form}>
         <MobileContactForm

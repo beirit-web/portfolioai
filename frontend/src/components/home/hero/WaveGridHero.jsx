@@ -185,6 +185,7 @@ function createWaveGridExperience(canvas) {
   let timeSincePointer = 0;
   let randomPointTimer = 0;
   let rafId = 0;
+  let isVisible = true;
   let lastTime = performance.now();
   let pointerX = 0;
   let pointerY = 0;
@@ -280,6 +281,8 @@ function createWaveGridExperience(canvas) {
   }
 
   function animate(now) {
+    rafId = 0;
+    if (!isVisible || document.hidden) return;
     const delta = Math.min((now - lastTime) / 1000, 0.05);
     lastTime = now;
     pointerX += (targetPointerX - pointerX) * 0.045;
@@ -302,6 +305,21 @@ function createWaveGridExperience(canvas) {
   updateCamera();
   for (let i = 0; i < 7; i += 1) addRandomPoint();
 
+  function syncAnimation() {
+    window.cancelAnimationFrame(rafId);
+    rafId = 0;
+    if (isVisible && !document.hidden) {
+      lastTime = performance.now();
+      rafId = window.requestAnimationFrame(animate);
+    }
+  }
+
+  const visibilityObserver = new IntersectionObserver(([entry]) => {
+    isVisible = entry.isIntersecting;
+    syncAnimation();
+  });
+  visibilityObserver.observe(canvas);
+  document.addEventListener("visibilitychange", syncAnimation);
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(canvas);
   window.addEventListener("pointermove", onPointerMove, { passive: true });
@@ -312,6 +330,8 @@ function createWaveGridExperience(canvas) {
       window.cancelAnimationFrame(rafId);
       window.removeEventListener("pointermove", onPointerMove);
       resizeObserver.disconnect();
+      visibilityObserver.disconnect();
+      document.removeEventListener("visibilitychange", syncAnimation);
       scene.remove(mesh, rayPlane);
       geometry.dispose();
       material.dispose();

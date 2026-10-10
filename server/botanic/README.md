@@ -109,10 +109,8 @@ API-Quellen: [Dokumentation](https://api.inaturalist.org/v1/docs/),
 [empfohlene Nutzung](https://www.inaturalist.org/pages/api+recommended+practices),
 [Bildlizenzen](https://help.inaturalist.org/en/support/solutions/articles/151000169918).
 
-Bekannter unabhaengiger Teststand: `pages.tests.test_portfolio_transition`
-erwartet fuer Zahlung und Spenden eine Weiterleitung nach `/projekte`, waehrend
-die bereits vorhandenen Routen nach `/spenden/` bzw. auf die Spendenseite fuehren.
-Diese beiden Abweichungen wurden nicht im Rahmen von Botanic veraendert.
+Die Spendenoberfläche ist im Portfolio ausgeblendet. Alte Spenden- und
+Zahlungsadressen leiten zur Projektübersicht unter `/projekte` weiter.
 
 ## Integriertes Wetter
 

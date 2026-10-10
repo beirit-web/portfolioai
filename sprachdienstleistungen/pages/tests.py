@@ -840,6 +840,7 @@ class SeoSignalTests(TestCase):
             "<loc>https://languages.example.invalid/</loc>",
         )
         self.assertContains(response, "<lastmod>")
+        self.assertNotContains(response, "/spenden/")
         self.assertNotContains(
             response,
             "<loc>https://languages.example.invalid/dolmetscher/</loc>",
@@ -972,6 +973,16 @@ class LegacyHostRedirectTests(TestCase):
 @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
 class PublicAccessTests(TestCase):
     @override_settings(LOGIN_REQUIRED=False)
+    def test_donation_routes_redirect_to_home_without_showing_the_page(self):
+        for path in ("/spenden", "/spenden/"):
+            with self.subTest(path=path):
+                response = self.client.get(path, follow=True)
+                self.assertEqual(response.redirect_chain, [(reverse("pages:home"), 302)])
+                self.assertEqual(response.status_code, 200)
+                self.assertNotContains(response, "Beispiel einer Spendenoberfläche")
+                self.assertNotContains(response, 'href="/spenden/')
+
+    @override_settings(LOGIN_REQUIRED=False)
     def test_home_is_public_for_anonymous_visitors(self):
         response = self.client.get(reverse("pages:home"))
 
@@ -1013,7 +1024,7 @@ class PublicAccessTests(TestCase):
     )
     def test_public_pages_hide_sensitive_contact_details_for_anonymous_visitors(self):
         for page_name in ("pages:home", "pages:donate"):
-            response = self.client.get(reverse(page_name))
+            response = self.client.get(reverse(page_name), follow=True)
 
             self.assertEqual(response.status_code, 200)
             self.assertNotContains(response, "private@example.com")

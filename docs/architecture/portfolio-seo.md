@@ -25,7 +25,8 @@ Die Sitemap enthält die fünf Hauptseiten und veröffentlichte Projektberichte.
 In andere Projekte integrierte Module, Weiterleitungen und Muster-Rechtstexte
 sind ausgenommen. Impressum, Datenschutz und Projektbedingungen tragen
 `noindex, follow`; unveröffentlichte oder fehlende Projektberichte sowie
-Demo-Handbuch, Spendenoberfläche und Grußseite ebenfalls.
+Demo-Handbuch und Grußseite ebenfalls. Die Spendenoberfläche ist ausgeblendet;
+alte Spenden- und Zahlungsadressen leiten zur Projektübersicht weiter.
 
 Die Sprachumschaltung verwendet bisher dieselben URLs. Deshalb werden keine
 mehrfachen `hreflang`-Einträge auf eine identische URL ausgegeben. Eigene

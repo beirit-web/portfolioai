@@ -1,4 +1,5 @@
 from importlib import import_module
+import json
 from types import SimpleNamespace
 
 from django.apps import apps
@@ -11,6 +12,29 @@ from pages.models import Project
 
 
 class ProjectPortfolioTests(TestCase):
+    def test_case_study_refresh_corrects_sample_content_and_preserves_custom_edits(self):
+        migration = import_module("pages.migrations.0050_refresh_portfolio_case_studies")
+        contract = self.create_project(
+            slug="vertragsgenerator",
+            description=migration.CONTRACT_FIELDS["description"][0],
+            implementation="Eigene Beschreibung der Umsetzung",
+        )
+        platform = self.create_project(
+            slug="sprachdienstleistungen", status="live", status_label="Live",
+            short_description=migration.OLD_PLATFORM_INTRO + " Mit DeutschLive.",
+            description="Individuell gepflegte Fallstudie",
+        )
+        editor = SimpleNamespace(connection=connection)
+        migration.forwards(apps, editor)
+        migration.forwards(apps, editor)
+        contract.refresh_from_db()
+        platform.refresh_from_db()
+        self.assertEqual(contract.description, migration.CONTRACT_FIELDS["description"][1])
+        self.assertEqual(contract.implementation, "Eigene Beschreibung der Umsetzung")
+        self.assertEqual(platform.status_label, "Portfolio-Fallstudie")
+        self.assertEqual(platform.short_description, migration.NEW_PLATFORM_INTRO + " Mit DeutschLive.")
+        self.assertEqual(platform.description, "Individuell gepflegte Fallstudie")
+
     @override_settings(LOGIN_REQUIRED=False)
     def test_grade_calculator_uses_standalone_assets_and_local_links(self):
         project = self.create_project(slug="notenrechner", technologies="React, TypeScript", live_url="/deutschlive/grades")
@@ -227,8 +251,69 @@ class ProjectPortfolioTests(TestCase):
         self.assertContains(response, "Web- und Softwareprojekte | Beirit Web")
         self.assertContains(
             response,
-            "Webanwendungen, Django-Projekte und Python-Tools mit technischen Einblicken, Live-Demos und Quellcode.",
+            "Webanwendungen, Django-Projekte und Python-Tools mit technischen Einblicken und Live-Demos.",
         )
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_projects_page_embeds_the_same_published_records_and_order_as_the_api(self):
+        self.create_project(title="Zulu", slug="zulu", sort_order=5, image_url="/static/images/zulu.webp")
+        self.create_project(title="Äpfel", slug="apfel", sort_order=5, featured=True)
+        self.create_project(title="Entwurf", slug="entwurf", published=False, sort_order=0)
+        self.create_project(title="Wetter", slug="wetter", sort_order=0)
+
+        response = self.client.get(reverse("pages:projects_page"))
+        api_projects = self.client.get(reverse("pages:projects_api")).json()["projects"]
+
+        self.assertEqual(response.context["react_home_config"]["initialProjects"], api_projects)
+        self.assertEqual([item["slug"] for item in api_projects], ["zulu", "apfel"])
+        self.assertEqual([item["orderIndex"] for item in api_projects], [0, 1])
+        self.assertEqual(response.context["react_project_image_preload"], {"src": "/static/images/zulu.webp"})
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_overview_preload_uses_the_first_displayed_cover_with_responsive_sources(self):
+        self.create_project(title="Ohne Bild", slug="ohne-bild", sort_order=0)
+        self.create_project(slug="online-shop", sort_order=1, image_url="/static/images/shop-screenshot.webp")
+
+        response = self.client.get(reverse("pages:projects_page"))
+        preload = response.context["react_project_image_preload"]
+
+        self.assertEqual(preload["src"], "/static/images/portfolio-covers/online-shop-cover-v1.webp")
+        self.assertEqual(preload["srcset"], (
+            "/static/images/portfolio-covers/online-shop-cover-v1-480.webp 480w, "
+            "/static/images/portfolio-covers/online-shop-cover-v1-768.webp 768w, "
+            "/static/images/portfolio-covers/online-shop-cover-v1.webp 1254w"
+        ))
+        self.assertIn("(max-width: 47.99rem)", preload["sizes"])
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_project_report_preloads_responsive_cover_and_only_inlines_report_css(self):
+        self.create_project(slug="online-shop")
+        for suffix in ("", "/"):
+            response = self.client.get(f"/projekte/online-shop{suffix}")
+            preload = response.context["react_project_image_preload"]
+            self.assertTrue(response.context["react_is_project_detail"])
+            self.assertIn("online-shop-cover-v1-960.webp 960w", preload["srcset"])
+            self.assertContains(response, f'imagesizes="{preload["sizes"]}"')
+            self.assertContains(response, "data-vite-inline='src/project-detail-page.css'")
+            self.assertNotContains(response, '<link rel="stylesheet"')
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_empty_projects_are_embedded_without_preloading_or_adding_data_to_the_homepage(self):
+        response = self.client.get(reverse("pages:projects_page"))
+        self.assertEqual(response.context["react_home_config"]["initialProjects"], [])
+        self.assertIsNone(response.context["react_project_image_preload"])
+        home = self.client.get(reverse("pages:home"))
+        self.assertNotIn("initialProjects", home.context["react_home_config"])
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_embedded_project_content_cannot_close_the_configuration_script(self):
+        content = '</script><script>alert("sample")</script>'
+        self.create_project(title=content, slug="script-sample")
+        response = self.client.get(reverse("pages:projects_page"))
+        document = response.content.decode()
+        script_data = document.split('<script id="beirit-home-config-data" type="application/json">', 1)[1].split("</script>", 1)[0]
+        self.assertEqual(json.loads(script_data)["initialProjects"][0]["title"], content)
+        self.assertNotIn("<script>", script_data)
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_integrated_vokabelbox_is_excluded_even_from_stale_published_records(self):

@@ -16,7 +16,9 @@ for (const [slug, routes] of [
   test(`${slug} returns to its own project page from the app and its subpages`, async ({ page }) => {
     for (const route of routes) {
       await page.goto(route);
-      const home = page.getByRole("navigation", { name: "Projekt", exact: true }).getByRole("link");
+      const home = slug === "online-shop"
+        ? page.getByRole("navigation", { name: "Shop-Schnellnavigation", exact: true }).getByRole("link", { name: "Zur Startseite des Torten- und Kuchen-Shops", exact: true })
+        : page.getByRole("navigation", { name: "Projekt", exact: true }).getByRole("link");
       await expect(home).toBeVisible();
       await expect(home).toBeInViewport();
       await expect(home).toHaveAttribute("href", `/projekte/${slug}`);

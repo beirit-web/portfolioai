@@ -1,12 +1,13 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { projectsI18nPlugin } from "./src/lib/projectsI18nPlugin.mjs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), projectsI18nPlugin()],
   root: path.resolve(__dirname),
   base: "/static/react-home-dist/",
   resolve: {
@@ -35,10 +36,17 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "src/main.jsx"),
+        projects: path.resolve(__dirname, "src/projects.js"),
+        "project-detail": path.resolve(__dirname, "src/project-detail.js"),
+        "project-detail-app": path.resolve(__dirname, "src/project-detail.jsx"),
+        "projects-app": path.resolve(__dirname, "src/projects.jsx"),
         "botanic-weather": path.resolve(__dirname, "src/botanic-weather.jsx"),
         "styles": path.resolve(__dirname, "src/styles.css"),
         "about-shell": path.resolve(__dirname, "src/about-shell.css"),
         "mobile-pages": path.resolve(__dirname, "src/mobile-pages.css"),
+        "project-detail-page": path.resolve(__dirname, "src/project-detail-page.css"),
+        "project-detail-rendering": path.resolve(__dirname, "src/project-detail-rendering.css"),
+        "projects-page": path.resolve(__dirname, "src/projects-page.css"),
         "header-nav": path.resolve(__dirname, "src/header-nav.css"),
         "homepage-layout": path.resolve(__dirname, "src/homepage-layout.css"),
         "homepage-custom": path.resolve(__dirname, "src/homepage-custom.css"),

@@ -71,7 +71,7 @@ def catalog(request):
     products = CakeProduct.objects.all()
     query = request.GET.get("q", "").strip()[:80]
     category = request.GET.get("category", "all")
-    sort = request.GET.get("sort", "featured")
+    sort = request.GET.get("sort", "priceAsc")
     if category in dict(CakeProduct.CATEGORY_CHOICES):
         products = products.filter(category=category)
     else:
@@ -81,7 +81,7 @@ def catalog(request):
     sorts = {"featured": ("-is_available", "-is_featured", "sort_order", "id"), "priceAsc": ("price", "id"),
              "priceDesc": ("-price", "id"), "leadTime": ("lead_time_days", "id")}
     if sort not in sorts:
-        sort = "featured"
+        sort = "priceAsc"
     products = products.order_by(*sorts[sort])
     return render(request, "shop/catalog.html", _context(request, products=products, query=query, category=category,
                   sort=sort, categories=CakeProduct.CATEGORY_CHOICES))

@@ -49,19 +49,19 @@
     "hero": {
       "eyebrow": "Beirit Web",
       "headline": "Beirit Web",
-      "tagline": "Ausgewählte Anwendungen, technische Fallstudien und Experimente von Eugen Beirit.",
+      "tagline": "Ich bin Eugen Beirit. Ich entwickle Webanwendungen mit React, Python und Django und zeige hier meine Projekte und die technischen Entscheidungen dahinter.",
       "ctaAria": "Projekte ansehen",
       "ctas": [
         {
-          "label": "Projekte",
+          "label": "Projekte ansehen",
           "href": "/projekte"
         },
         {
-          "label": "Technologien",
-          "href": "/kompetenzen"
+          "label": "Kontakt aufnehmen",
+          "href": "/kontakt"
         }
       ],
-      "trustAria": "Schwerpunkte und Arbeitsweise",
+      "trustAria": "Technische Schwerpunkte",
       "trustBadges": [
         "React & moderne Frontends",
         "Python & Django",
@@ -107,7 +107,9 @@
         ]
       },
       "next": "Kompetenzen",
-      "nextAria": "Zu den Kompetenzen"
+      "nextAria": "Zu den Kompetenzen",
+      "projectsCta": "Projekte ansehen",
+      "contactCta": "Kontakt aufnehmen"
     },
     "beforeAfter": {
       "kicker": "Konkrete Verbesserung",
@@ -133,41 +135,53 @@
     },
     "problems": {
       "kicker": "Projekterfahrung",
-      "title": "Technische Herausforderungen, die ich gelöst habe",
-      "intro": "Die Projekte verbinden belastbare Backends, zugängliche Oberflächen und saubere Abläufe vom Datenmodell bis zum Deployment.",
+      "title": "Technische Herausforderungen aus meinen Projekten",
+      "intro": "Konkrete Beispiele zeigen, wie Darstellung, Datenverarbeitung und Bedienung in den Projekten zusammenkommen.",
       "items": [
         {
           "icon": "Cpu",
-          "title": "Langsame Ladezeiten",
-          "text": "Besucher springen schneller ab, wenn Seiten, Bilder oder Skripte zu lange laden."
+          "title": "3D-Effekt gezielt laden",
+          "text": "Die 3D-Animation der Startseite wird separat und verzögert geladen. Bei reduzierter Bewegung oder Datensparmodus wird sie ausgelassen.",
+          "projectLabel": "Startseite ansehen",
+          "projectHref": "/"
         },
         {
           "icon": "LayoutTemplate",
-          "title": "Nicht mobil optimiert",
-          "text": "Layouts wirken auf Smartphone und Tablet oft enger, verschoben oder schwer bedienbar."
+          "title": "Dokumente auf kleinen Bildschirmen",
+          "text": "Im Vertragsgenerator wechseln Formular und Vorschau auf kleinen Bildschirmen zwischen zwei Ansichten. Fehlerlinks führen zum passenden Eingabefeld.",
+          "projectLabel": "Vertragsgenerator ansehen",
+          "projectHref": "/projekte/vertragsgenerator"
         },
         {
           "icon": "PencilLine",
-          "title": "Gewachsene Inhalte",
-          "text": "Inhalte und Informationsarchitektur werden neu geordnet und verständlich präsentiert."
+          "title": "Warenkorb und Anfragen prüfen",
+          "text": "Der Shop speichert den Warenkorb in der Session und prüft Preise, Mengen und Vorlaufzeiten auf dem Server. Wiederholtes Absenden erzeugt keine zweite Anfrage.",
+          "projectLabel": "Shop ansehen",
+          "projectHref": "/projekte/online-shop"
         },
         {
           "icon": "Image",
-          "title": "Darstellungsfehler",
-          "text": "Bilder, Abstände oder Elemente brechen und schwächen dadurch den professionellen Eindruck."
+          "title": "Suchdaten nach Nutzer trennen",
+          "text": "Im Django-Quellprojekt der Wohnungssuche werden Suchprofile und Angebotsstatus nach dem angemeldeten Nutzer gefiltert. Die Portfolio-Oberfläche zeigt fiktive Demo-Angebote.",
+          "projectLabel": "Wohnungssuche ansehen",
+          "projectHref": "/projekte/wohnungssuche-bodensee"
         },
         {
           "icon": "Workflow",
-          "title": "Fehlende Wartung",
-          "text": "Kleine technische Probleme bleiben liegen und wachsen später zu größeren Baustellen."
+          "title": "Lernmodule und lokale Aufnahmen",
+          "text": "DeutschLive nutzt das Plattformkonto für Lernfortschritt. Eigene Audioaufnahmen bleiben lokal in der Browser-Datenbank und werden nicht hochgeladen.",
+          "projectLabel": "Sprachplattform ansehen",
+          "projectHref": "/projekte/sprachdienstleistungen"
         },
         {
           "icon": "ShieldCheck",
-          "title": "Veraltete oder unsichere Komponenten",
-          "text": "Alte Plugins, Pakete oder Einstellungen können Stabilität und Sicherheit beeinträchtigen."
+          "title": "Doppelte Gießeinträge verhindern",
+          "text": "Botanic erlaubt je Pflanze nur einen Gießeintrag pro Tag. Eine Datenbankregel und die Speicherung im Backend fangen wiederholte Klicks ab.",
+          "projectLabel": "Botanic ansehen",
+          "projectHref": "/projekte/enbt-botanic"
         }
       ],
-      "solution": "Die Projektseiten zeigen jeweils Ausgangslage, technische Umsetzung, Funktionen und Ergebnis."
+      "solution": "Die Projektseiten zeigen die Umsetzung, die technischen Entscheidungen und den aktuellen Stand."
     },
     "solutions": {
       "kicker": "Lösungen",
@@ -203,8 +217,8 @@
     "services": {
       "kicker": "Kompetenzen",
       "title": "Technische Schwerpunkte aus meinen Projekten",
-      "intro": "Vier Erfahrungsbereiche mit konkreten Beispielen aus Entwicklung, Optimierung und mehrsprachigen Anwendungen.",
-      "note": "Jeder Schwerpunkt ist durch umgesetzte Projekte und technische Fallstudien belegt.",
+      "intro": "Erfahrungsbereiche mit konkreten Beispielen aus Entwicklung, Optimierung und mehrsprachigen Anwendungen.",
+      "note": "Die Projekte zeigen, wie diese Schwerpunkte praktisch umgesetzt sind.",
       "cardLabels": {
         "problem": "Herausforderung",
         "solution": "Umsetzung",
@@ -243,9 +257,9 @@
     },
     "tech": {
       "kicker": "Umsetzung",
-      "title": "So wird Ihre Webseite umgesetzt",
-      "selectionIntro": "Im Mittelpunkt stehen Nutzen, Stabilität und Verständlichkeit – nicht eine möglichst lange Liste von Fachbegriffen.",
-      "intro": "Die Website wird bewusst ohne klassisches CMS umgesetzt. Inhalte und Funktionen werden direkt im Code gepflegt, damit die Lösung schnell, kontrolliert und wartungsarm bleibt.",
+      "title": "Wie ich meine Projekte umsetze",
+      "selectionIntro": "Die Projektseiten zeigen, welche technische Grundlage verwendet wird und welche Aufgabe sie übernimmt.",
+      "intro": "Die Portfolio-Oberfläche nutzt React und Vite. Django übernimmt Datenmodelle, Formulare, Benutzerkonten und die Verwaltung. Shop, Vertragsgenerator und Botanic verwenden Django-Templates mit ergänzendem JavaScript; kleinere Demos laufen direkt im Browser.",
       "points": [
         "Ladezeiten",
         "Daten",
@@ -383,14 +397,14 @@
         "openProjectAria": "Projektinformationen ansehen",
         "liveDemo": "Live-Demo vorhanden"
       },
-      "kicker": "Referenzen",
-      "title": "Referenzen mit erkennbarem Nutzen",
-      "intro": "Ausgewählte Referenzen, Demos und Fallbeispiele zeigen Ausgangslage, Umsetzung und konkreten Nutzen.",
+      "kicker": "Projekte",
+      "title": "Ausgewählte Projekte und ihre Umsetzung",
+      "intro": "Anwendungen, Demos und Fallstudien zeigen die Aufgabe, die technische Umsetzung und den aktuellen Entwicklungsstand.",
       "situationLabel": "Ausgangssituation",
       "scopeLabel": "Maßnahmen",
       "implementationLabel": "Umsetzung",
       "resultLabel": "Ergebnis",
-      "proofLabel": "Nutzen & Qualität",
+      "proofLabel": "Technologien",
       "evidenceLabel": "Belege",
       "featuresLabel": "Projektmerkmale",
       "deviceViewsLabel": "Ansichten",
@@ -404,18 +418,18 @@
       "caseStudyCta": "Fallbeispiel besprechen",
       "noExtraViews": "Für dieses Projekt ist aktuell ein Desktop-Screenshot hinterlegt. Die Umsetzung ist responsiv angelegt; zusätzliche Smartphone- und Tablet-Ansichten können als nächster Nachweis ergänzt werden.",
       "summary": [
-        "1 Live-Projekt",
-        "4 ausgewählte Demos",
-        "2 Fallbeispiele"
+        "1 Portfolio-Fallstudie",
+        "5 Anwendungen und Demos",
+        "2 Konzeptbeispiele"
       ],
       "groups": {
         "reference": {
-          "title": "Hauptreferenz",
-          "text": "Ein realer Projektaufbau mit Live-Ziel, Benutzerführung und verwaltbaren Inhalten."
+          "title": "Portfolio-Fallstudie",
+          "text": "Eine mehrsprachige Plattform mit Nutzerkonten und integrierten Lernmodulen dokumentiert die technische Umsetzung."
         },
         "demo": {
-          "title": "Portfolio-Demos",
-          "text": "Ausgewählte Beispiele zeigen Shop-, Wetter- und Formularlogik, ohne den Bereich mit zu vielen Einzelprojekten zu überladen."
+          "title": "Anwendungen und Demos",
+          "text": "Shop, Formularwerkzeuge und weitere Anwendungen lassen sich direkt ansehen oder ausprobieren."
         },
         "case": {
           "title": "Fallbeispiele",
@@ -428,59 +442,32 @@
           "published": true,
           "featured": true,
           "sortOrder": 20,
-          "title": "Webplattform für Sprachdienstleistungen",
-          "type": "Service-Plattform",
-          "status": "Live",
-          "text": "Mehrsprachige Webplattform mit Nutzerbereich, DeutschLive und Vokabelbox: Dialoge, Übungen, Quiz und lokale Aufnahmen.",
+          "title": "Sprachplattform mit Lernmodulen",
+          "type": "Webplattform",
+          "status": "Portfolio-Fallstudie",
+          "text": "Mehrsprachige Django-Plattform mit Nutzerkonten, DeutschLive und Vokabelbox: Dialoge, Übungen, Quiz und lokale Audioaufnahmen.",
           "images": [
             {
               "src": "/static/images/portfolio-sprachdienstleistungen-desktop.webp",
               "label": "Desktop"
             }
           ],
-          "situation": "Für einen Anbieter von Sprachdienstleistungen sollte eine zentrale digitale Plattform entstehen, die Informationen, Anfragen und interne Abläufe an einem Ort zusammenführt.\n\nBesonderer Fokus lag dabei auf einer mehrsprachigen Darstellung sowie klar getrennten öffentlichen und geschützten Bereichen.",
-          "implementation": "Die Plattform wurde als individuelle Django-Webanwendung umgesetzt. Neben den öffentlichen Seiten wurden Benutzerkonten und persönliche Profilbereiche integriert. Wortsuche, Artikelfilter, Favoriten und Artikel-Quiz als integriertes Lernmodul. Der Lernstand wird im Browser gespeichert. DeutschLive mit Dialogen, Übungen, Quiz und lokalem Audioplayer. Lernfortschritt nutzt das Plattformkonto; Audiodateien bleiben auf dem Gerät.",
-          "result": "Entstanden ist eine moderne und zentral organisierte Webplattform, die öffentliche Informationen mit individuellen Nutzerbereichen und internen Verwaltungsprozessen verbindet.\n\nDadurch lassen sich Anfragen, Nutzer und relevante Abläufe strukturiert über eine gemeinsame Plattform verwalten.",
+          "situation": "Öffentliche Inhalte, Kontaktwege, Nutzerkonten und Lernfunktionen sollten in einer gemeinsamen, mehrsprachigen Plattform organisiert werden.",
+          "implementation": "Django verbindet öffentliche Seiten, Benutzerkonten, Profile und Verwaltungsbereiche. DeutschLive ergänzt die Plattform um eine React-Oberfläche mit Dialogen, Übungen und Quiz. Vokabelbox bietet Wortsuche, Artikelfilter und Favoriten; eigene Audioaufnahmen lassen sich lokal speichern, abspielen und herunterladen.",
+          "result": "Eine technische Fallstudie mit nutzbaren Lernmodulen und getrennten öffentlichen und geschützten Bereichen. Sprachdienstleistungen werden darüber nicht mehr angeboten oder gebucht.",
           "resultBenefits": [
-            "Zentrale Service-Plattform",
-            "Geschützte Nutzerbereiche",
+            "Integrierte Lernmodule",
+            "Gemeinsames Plattformkonto",
             "Mehrsprachige Inhalte",
-            "Kontakt- und Bewerbungsabläufe",
-            "Admin-gestützte Verwaltung"
+            "Lokale Audioaufnahmen"
           ],
           "features": [
-            {
-              "title": "Django",
-              "text": "Leistungsfähiges Webframework für die individuelle Plattform."
-            },
-            {
-              "title": "Benutzerkonten",
-              "text": "Registrierung, Anmeldung und persönliche Bereiche."
-            },
-            {
-              "title": "Profilbereich",
-              "text": "Individuelle Nutzerinformationen zentral verwaltet."
-            },
-            {
-              "title": "Kontakt & Bewerbungen",
-              "text": "Strukturierte Erfassung von Anfragen."
-            },
-            {
-              "title": "Mehrsprachigkeit",
-              "text": "Inhalte für unterschiedliche Sprachgruppen."
-            },
-            {
-              "title": "Geschützte Bereiche",
-              "text": "Zugriff auf relevante Inhalte nur für angemeldete Nutzer."
-            },
-            {
-              "title": "Vokabelbox",
-              "text": "Wortsuche, Artikelfilter, Favoriten und Artikel-Quiz als integriertes Lernmodul. Der Lernstand wird im Browser gespeichert."
-            },
-            {
-              "title": "DeutschLive",
-              "text": "DeutschLive mit Dialogen, Übungen, Quiz und lokalem Audioplayer. Lernfortschritt nutzt das Plattformkonto; Audiodateien bleiben auf dem Gerät."
-            }
+            "Django-Nutzerkonten",
+            "Mehrsprachige Inhalte",
+            "DeutschLive mit React",
+            "Vokabelbox mit Artikel-Quiz",
+            "Lokale Audioaufnahmen",
+            "Geschützte Profilbereiche"
           ],
           "points": [
             {
@@ -514,19 +501,16 @@
             "Vite"
           ],
           "evidence": [
-            "Live-Produkt auf Musterhosting",
-            "Django-Projektstruktur",
-            "Benutzer- und Profilmodelle",
-            "Kontakt- und Bewerbungsformulare",
-            "Kalender- und Chat-Module",
+            "Django-Modelle und Verwaltung",
             "DeutschLive: /deutschlive/",
-            "Audioplayer: /deutschlive/recordings – lokale Audiodateien, kein Upload"
+            "Vokabelbox mit lokalem Lernstand",
+            "Audioplayer: /deutschlive/recordings – lokale Aufnahmen ohne Upload"
           ],
           "trustSignals": [],
-          "note": "",
-          "cta": "Projekt ansehen",
-          "localHref": "/projekte/sprachdienstleistungen",
-          "href": "/projekte/sprachdienstleistungen",
+          "note": "Portfolio-Fallstudie mit integrierten Lernmodulen. Lokale Aufnahmen und Vokabelbox-Lernstand sind an den jeweiligen Browser gebunden.",
+          "cta": "Lernmodule ausprobieren",
+          "localHref": "/deutschlive/",
+          "href": "/deutschlive/",
           "implementationFeatures": [
             "Wortsuche, Artikelfilter, Favoriten und Artikel-Quiz als integriertes Lernmodul. Der Lernstand wird im Browser gespeichert."
           ],
@@ -542,15 +526,17 @@
             "Sass",
             "SQLite",
             "Vite"
-          ]
+          ],
+          "technicalDecision": "Lernfortschritt in DeutschLive nutzt das Plattformkonto. Audioaufnahmen bleiben in der lokalen Browser-Datenbank und werden nicht hochgeladen; Vokabelbox speichert ihren Lernstand im Browser. So sind Kontodaten und lokale Medien getrennt.",
+          "slug": "sprachdienstleistungen"
         },
         {
           "category": "demo",
           "showInPortfolio": true,
           "title": "Notenrechner",
           "type": "Notenberechnung",
-          "status": "Eigenständige Browser-Demo",
-          "text": "Kompakte Browser-Anwendung, die Eingaben prüft und Durchschnittsnoten direkt verständlich auswertet.",
+          "status": "Browser-Demo",
+          "text": "Browser-Anwendung für Durchschnittsnoten mit schrittweiser Eingabe, Prüfung von Komma- und Punktwerten und direktem Ergebnis.",
           "images": [
             {
               "src": "/static/images/portfolio-test-main-desktop.webp",
@@ -558,7 +544,7 @@
             }
           ],
           "situation": "Eine kleine Lern- und Bewertungsfunktion sollte ohne Login, Backend oder Installation direkt im Browser nutzbar sein.",
-          "implementation": "Eigenständige Browser-Anwendung mit HTML, CSS und JavaScript: schrittweise Eingabe, Formularvalidierung, responsive Darstellung und direktes Ergebnis-Feedback.",
+          "implementation": "HTML, CSS und JavaScript führen durch die Anzahl der Fächer und die Noteneingabe. Eingaben werden vollständig geprüft, anschließend wird die Durchschnittsnote mit Text sowie visuellen und akustischen Rückmeldungen angezeigt.",
           "result": "Die Demo führt Schritt für Schritt durch die Eingabe, verhindert fehlerhafte Werte und macht das Ergebnis visuell sowie akustisch verständlich.",
           "resultBenefits": [
             "Ohne Installation nutzbar",
@@ -605,7 +591,7 @@
           "trustSignals": [
             "Eigenständige Browser-Demo"
           ],
-          "note": "Die Anwendung läuft ohne Framework und ohne Backend direkt im Browser.",
+          "note": "Eigenständige Browser-Demo ohne Anmeldung und Backend. Sie zeigt eine vereinfachte Notenberechnung.",
           "cta": "Projekt starten",
           "href": "/static/portfolio/test-main/index.html",
           "technologies": [
@@ -616,7 +602,8 @@
           "slug": "notenrechner",
           "published": true,
           "sortOrder": 110,
-          "localHref": "/static/portfolio/test-main/index.html"
+          "localHref": "/static/portfolio/test-main/index.html",
+          "technicalDecision": "Die Berechnung läuft vollständig im Browser. Für die kleine, abgeschlossene Aufgabe sind weder Konto noch Backend erforderlich; Noten mit Komma oder Punkt werden vor der Berechnung geprüft."
         },
         {
           "category": "demo",
@@ -626,7 +613,7 @@
           "slug": "online-shop",
           "title": "Torten- und Kuchen-Shop",
           "type": "Online-Shop",
-          "status": "Portfolio-Projekt / Beirit Backstube",
+          "status": "Django-Demo",
           "text": "Django-Shop für Torten und Kuchen mit gespeichertem Warenkorb, Wunschdatum und Bestellanfragen.",
           "images": [
             {
@@ -634,7 +621,7 @@
               "label": "Desktop"
             }
           ],
-          "situation": "Aus einer einfachen Shop-Demo sollte ein realistisch ausbaufähiger Onlineshop entstehen, der später tatsächlich für Torten und Kuchen betrieben werden kann.",
+          "situation": "Ein Beispielshop sollte Produktverwaltung, gespeicherten Warenkorb und nachvollziehbare Bestellanfragen in einer gemeinsamen Anwendung zeigen.",
           "implementation": "Django-Storefront mit Produkt- und Bestellmodellen, Session-Warenkorb, gemeinsamer HTML-/API-Validierung und Admin-Verwaltung.",
           "result": "Produkte suchen, dauerhaft im Session-Warenkorb sammeln und serverseitig geprüfte Bestellanfragen mit Wunschdatum und Übergabe senden.",
           "resultBenefits": [
@@ -688,7 +675,7 @@
             "Portfolio-Projekt",
             "Django-Backend"
           ],
-          "note": "Anfrageshop ohne Zahlungsabbuchung oder automatische Lieferzusage.",
+          "note": "Portfolio-Demo mit Beispielprodukten und Bestellanfragen. Zahlungsabbuchungen und automatische Lieferzusagen sind deaktiviert.",
           "cta": "Shop öffnen",
           "href": "/shop/",
           "technologies": [
@@ -698,7 +685,8 @@
             "HTML",
             "CSS",
             "SQLite"
-          ]
+          ],
+          "technicalDecision": "Preise, Mengen und Vorlaufzeiten werden serverseitig geprüft. HTML-Oberfläche und API verwenden dieselbe Validierung; ein Schlüssel in der Session verhindert doppelte Anfragen beim wiederholten Absenden."
         },
         {
           "category": "demo",
@@ -707,8 +695,8 @@
           "sortOrder": 40,
           "title": "Wohnungssuche Bodensee",
           "type": "Wohnungssuche",
-          "status": "Portfolio-Projekt / Wohnungssuche",
-          "text": "Dashboard-Demo für erlaubniskonforme Wohnungssuche mit Suchprofilen, Quellenverwaltung, Matching-Score und Demo-Angeboten.",
+          "status": "Dashboard-Demo",
+          "text": "React-Dashboard für Wohnungssuche mit Suchprofilen, Filtern, Angebotsstatus und Matching-Score. Die Portfolio-Ansicht enthält fiktive Angebote.",
           "images": [
             {
               "src": "/static/images/portfolio-wohnungssuche-desktop.webp",
@@ -716,8 +704,8 @@
             }
           ],
           "situation": "Wohnungsangebote aus unterschiedlichen erlaubten Quellen sollten strukturiert gesammelt, bewertet und für die weitere Kontaktaufnahme übersichtlich verwaltet werden.",
-          "implementation": "Umsetzung als React/Vite-Frontend mit Django-REST-Backend, Suchprofilen, Quellenverwaltung, Angebotsstatus, Scoring-Logik und Demo-Modus bei nicht erreichbarer API.",
-          "result": "Die Oberfläche zeigt passende Angebote, Sozialwohnungen, Kontaktstatus und Suchfilter in einem nutzbaren Dashboard und bleibt als statische Portfolio-Demo ohne Login erreichbar.",
+          "implementation": "React und Vite bilden die Dashboard-Demo mit Filtern, Suchprofilen und Angebotsstatus. Das Django-Quellprojekt enthält nutzerbezogene Suchprofile und Angebotsverwaltung. Der Portfolio-Server stellt vereinfachte Demo-Endpunkte bereit; bei nicht erreichbarer API zeigt die Oberfläche fiktive Beispielangebote.",
+          "result": "Angebote lassen sich filtern und vergleichen. Suchprofile, Matching-Score und Kontaktstatus sind in einem gemeinsamen Dashboard sichtbar.",
           "resultBenefits": [
             "Dashboard für Angebote",
             "Matching-Score sichtbar",
@@ -771,7 +759,7 @@
             "Portfolio-Demo",
             "Live erreichbar"
           ],
-          "note": "Eigenständige Demo-Anwendung aus Wohnungssuche.",
+          "note": "Portfolio-Demo mit fiktiven Angeboten und vereinfachtem API-Adapter. Die Demo-Endpunkte für Suchprofile und Orte speichern Änderungen nicht dauerhaft; die nutzerbezogene Verwaltung ist im separaten Django-Quellprojekt dokumentiert.",
           "cta": "Demo öffnen",
           "href": "/static/portfolio/wohnungssuche/index.html",
           "technologies": [
@@ -783,14 +771,16 @@
             "CSS",
             "SQLite",
             "Vite"
-          ]
+          ],
+          "technicalDecision": "Ein Demo-Modus hält die Oberfläche auch ohne erreichbare API bedienbar und trennt die Beispieldaten vom Backend. So lassen sich Filter und Angebotsdarstellung ohne echte Wohnungsangebote nachvollziehen.",
+          "slug": "wohnungssuche-bodensee"
         },
         {
           "category": "demo",
           "showInPortfolio": false,
           "title": "ENBT Botanic",
           "type": "Pflanzenverwaltung",
-          "status": "Portfolio-Projekt / enbt-botanic",
+          "status": "Django-Demo",
           "text": "Pflanzensuche mit persönlicher Sammlung, individuellem Gießplan und integriertem Wettermodul mit Ortssuche und Vorhersage.",
           "images": [
             {
@@ -861,7 +851,7 @@
             "Portfolio-Demo",
             "Live erreichbar"
           ],
-          "note": "Django-Anwendung mit vorhandener Kontoanmeldung.",
+          "note": "Die Pflanzensuche ist öffentlich. Persönliche Sammlung und Gießplan benötigen ein Konto; Pflanzenbilder und Suchergebnisse hängen von iNaturalist ab.",
           "cta": "Botanic öffnen",
           "href": "/botanic/",
           "technologies": [
@@ -873,7 +863,9 @@
             "SQLite",
             "iNaturalist API",
             "Open-Meteo API"
-          ]
+          ],
+          "technicalDecision": "Pflanzenarten werden gemeinsam gespeichert, persönliche Exemplare und Gießprotokolle einem Nutzer zugeordnet. Cache und Abrufbudget begrenzen iNaturalist-Anfragen; die eigene Sammlung bleibt bei API-Ausfällen nutzbar.",
+          "slug": "enbt-botanic"
         },
         {
           "category": "demo",
@@ -882,52 +874,48 @@
           "sortOrder": 60,
           "title": "Vertragsgenerator",
           "type": "Dokumentenerstellung",
-          "status": "Portfolio-Projekt / Vertragsgenerator-main",
-          "text": "Vertragsgenerator mit Vorlagenwahl, Abschnittsformularen, Fortschrittsprüfung, Live-Vorschau und Export.",
+          "status": "Django-Demo",
+          "text": "Django-Vertragsgenerator mit Vorlagenwahl, Abschnittsformularen, serverseitiger Prüfung, Live-Vorschau und Text-Export.",
           "images": [
             {
               "src": "/static/images/portfolio-vertragsgenerator-main-desktop.webp",
               "label": "Desktop"
             }
           ],
-          "situation": "Mehrere einzelne HTML-Vertragsseiten sollten zu einer zentralen, präsentierbaren Generator-Oberfläche ohne externe CDN-Abhängigkeit zusammengeführt werden.",
-          "implementation": "Umsetzung als eigenständige HTML-, CSS- und JavaScript-App mit auswählbaren Vertragstypen, gruppierten Formularabschnitten, Pflichtfeldstatus, Vorschau, Kopieren, Download und Druck/PDF-Ausgabe.",
-          "result": "Mehrere Vorlagen werden über eine übersichtliche Arbeitsoberfläche ausgefüllt, live geprüft und als kopierbarer, druckbarer oder herunterladbarer Entwurf ausgegeben.",
+          "situation": "Mehrere Vertragsvorlagen sollten über einen gemeinsamen Editor ausgefüllt, geprüft und als Entwurf ausgegeben werden.",
+          "implementation": "Django-Formulare prüfen Pflichtangaben, Datum und Geldbeträge. Django-Templates erzeugen den Dokumenttext. JavaScript ergänzt Abschnittsnavigation, Live-Vorschau, Kopieren und Druck/PDF-Ausgabe; Vorschau und TXT-Download verwenden CSRF-geschützte Endpunkte.",
+          "result": "Drei Vorlagen lassen sich abschnittsweise ausfüllen. Die Vorschau zeigt den Entwurf und Eingabefehler; ein TXT-Download wird erst nach erfolgreicher serverseitiger Prüfung ausgegeben.",
           "resultBenefits": [
-            "Ohne Backend nutzbar",
-            "Mehrere Vertragstypen",
-            "Live-Vorschau",
-            "Pflichtfeldprüfung",
-            "Kopieren, Druck und Text-Download"
+            "Serverseitige Eingabeprüfung",
+            "Drei Vertragstypen",
+            "Live-Vorschau mit Fehlerstatus",
+            "CSRF-geschützte Endpunkte",
+            "TXT-Download und Druck/PDF"
           ],
           "features": [
-            "HTML, CSS und JavaScript",
-            "Dynamische Formulare",
-            "Vertragsvorlagen",
-            "Live Preview",
-            "Text-Export",
-            "Print/PDF-Layout"
+            "Django-Formulare",
+            "Drei Vertragsvorlagen",
+            "Abschnittsnavigation",
+            "Serverseitige Validierung",
+            "Live-Vorschau",
+            "TXT-Download und Druck/PDF"
           ],
           "points": [
             {
-              "label": "Zentrale Vorlage-Auswahl",
-              "explanation": "Mietvertrag, Fahrzeug-Kaufvertrag und einfacher Kaufvertrag werden über eine Oberfläche gesteuert."
+              "label": "Gemeinsame Vorlage-Auswahl",
+              "explanation": "Mietvertrag, Fahrzeug-Kaufvertrag und einfacher Kaufvertrag werden über einen Editor ausgefüllt."
             },
             {
               "label": "Abschnittsformular",
-              "explanation": "Parteien, Objekt, Zahlung, Vereinbarungen und Abschluss werden in klaren Gruppen erfasst."
+              "explanation": "Parteien, Objekt, Zahlung, Vereinbarungen und Abschluss werden in getrennten Formularabschnitten erfasst."
             },
             {
-              "label": "Live-Vorschau",
-              "explanation": "Eingaben erscheinen sofort im Vertragsentwurf und fehlende Pflichtangaben werden im Status sichtbar."
+              "label": "Geprüfte Vorschau",
+              "explanation": "Die Vorschau zeigt den aktuellen Dokumenttext und die serverseitig ermittelten Eingabefehler."
             },
             {
-              "label": "Export ohne externe Bibliothek",
-              "explanation": "Der Entwurf kann kopiert, als Textdatei heruntergeladen oder über die Browser-Druckfunktion als PDF gespeichert werden."
-            },
-            {
-              "label": "Statische Veröffentlichung",
-              "explanation": "Die Anwendung läuft als eigenständige Browser-Demo über die vorhandene Website."
+              "label": "Validierter Text-Export",
+              "explanation": "Der TXT-Download wird bei ungültigen Angaben abgelehnt. Kopieren und Druck/PDF ergänzen die Ausgabe im Browser."
             }
           ],
           "tags": [
@@ -938,18 +926,18 @@
             "CSS"
           ],
           "evidence": [
-            "Mehrere Vertragstypen",
-            "Abschnittsformular",
-            "Pflichtfeldprüfung",
-            "Live-Vorschau",
-            "Kopieren, Druck und Text-Download"
+            "Django-Formulare und Dokumentvorlagen",
+            "Serverseitige Validierung",
+            "CSRF-Schutz",
+            "Vorschau- und Download-Endpunkte",
+            "Abschnittsnavigation und Druckansicht"
           ],
           "trustSignals": [
             "Portfolio-Demo",
             "Live erreichbar"
           ],
-          "note": "Eigenständige Demo-Anwendung aus Vertragsgenerator-main. Keine Rechtsberatung.",
-          "cta": "Demo öffnen",
+          "note": "Portfolio-Demo mit Beispielvorlagen für Vertragsentwürfe. Keine Rechtsberatung.",
+          "cta": "Generator ausprobieren",
           "href": "/vertragsgenerator/",
           "technologies": [
             "Python",
@@ -957,7 +945,9 @@
             "Django",
             "HTML",
             "CSS"
-          ]
+          ],
+          "technicalDecision": "Vorschau und Download verwenden dieselben Django-Formulare und Dokumentvorlagen. Dadurch bleibt die Prüfung konsistent, und fehlerhafte Eingaben werden auch beim direkten Aufruf des Download-Endpunkts zurückgewiesen.",
+          "slug": "vertragsgenerator"
         },
         {
           "category": "case",
@@ -1040,7 +1030,10 @@
           "cta": "Websystem anfragen"
         }
       ],
-      "projectCta": "Projekt starten"
+      "projectCta": "Projekt starten",
+      "previewGalleryLabel": "Einblicke in die Anwendung",
+      "ownContributionLabel": "Umsetzung im Projekt",
+      "decisionLabel": "Technische Entscheidung"
     },
     "benefits": {
       "kicker": "Vertrauen",
@@ -1176,7 +1169,7 @@
       "kicker": "Über mich",
       "title": "Entwickler hinter Beirit Web",
       "paragraphs": [
-        "Ich bin Eugen Beirit und entwickle Webanwendungen, Softwareprojekte und digitale Werkzeuge.",
+        "Ich bin Eugen und entwickle Webanwendungen, Softwareprojekte und digitale Werkzeuge.",
         "Mein Schwerpunkt liegt auf React, JavaScript, Python und Django sowie auf verständlichen, responsiven Benutzeroberflächen."
       ],
       "trustPoints": [

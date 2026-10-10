@@ -2,17 +2,48 @@ import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 import test from "node:test";
 import {
+  PROJECT_OVERVIEW_IMAGE_SIZES,
   normalizeApiProject,
   portfolioProjectPath,
   projectCapabilityLabels,
   projectCarouselImage,
+  projectDetailImage,
   projectPreviewImage,
   projectTechnologyTags,
   selectCarouselProjects,
+  sortedPortfolioItems,
 } from "./portfolioPresentation.mjs";
 
 const desktop = { src: "/desktop.webp", label: "Desktop" };
 const mobile = { src: "/mobile.webp", label: "Mobile" };
+
+test("published API records keep the server's order when sort orders tie and titles are localized", () => {
+  const items = [
+    { title: "Äpfel", slug: "apfel", sortOrder: 5, orderIndex: 2 },
+    { title: "Zulu", slug: "zulu", sortOrder: 5, orderIndex: 1 },
+    { title: "Erstes", slug: "erstes", sortOrder: 1, orderIndex: 0 },
+    { title: "Entwurf", slug: "entwurf", sortOrder: 0, published: false },
+    { title: "Wetter", slug: "wetter", sortOrder: 0 },
+  ];
+  assert.deepEqual(sortedPortfolioItems(items).map(item => item.slug), ["erstes", "zulu", "apfel"]);
+  assert.deepEqual(sortedPortfolioItems([
+    { title: "Zulu", slug: "zulu" }, { title: "Äpfel", slug: "apfel" },
+  ]).map(item => item.slug), ["apfel", "zulu"]);
+});
+
+test("overview covers offer smaller source candidates and retain custom screenshot data", () => {
+  const cover = projectPreviewImage({ slug: "online-shop", images: [desktop] });
+  assert.equal(cover.srcSet, [
+    "/static/images/portfolio-covers/online-shop-cover-v1-480.webp 480w",
+    "/static/images/portfolio-covers/online-shop-cover-v1-768.webp 768w",
+    "/static/images/portfolio-covers/online-shop-cover-v1.webp 1254w",
+  ].join(", "));
+  assert.match(PROJECT_OVERVIEW_IMAGE_SIZES, /max-width: 47\.99rem/);
+  assert.equal(projectPreviewImage({ slug: "custom", images: [desktop] }).srcSet, undefined);
+  const customCover = { ...desktop, variant: "cover" };
+  assert.equal(projectDetailImage({ slug: "custom", images: [customCover] }), customCover);
+  assert.match(projectDetailImage({ slug: "online-shop" }).srcSet, /-960\.webp 960w/);
+});
 
 test("technology-only metadata is not shown as a project capability", () => {
   assert.deepEqual(projectCapabilityLabels({ features: ["TypeScript", "SQLite", "iNaturalist API", "Quiz"] }), ["Quiz"]);
@@ -59,6 +90,16 @@ test("an explicitly configured API carousel image takes priority over the locali
   const custom = { src: "/custom.png", label: "Mobile" };
   const project = normalizeApiProject({ title: "Shop", carouselImage: custom }, { carouselImage: mobile });
   assert.equal(projectCarouselImage(project), custom);
+});
+
+test("localized project details survive API loading while new projects retain their saved content", () => {
+  const localized = { title: "Локалізований проєкт", text: "Опис", implementation: "Django-форми", technicalDecision: "Перевірка на сервері", features: ["TXT-експорт"], status: "Демо" };
+  const project = normalizeApiProject({ title: "German project", shortDescription: "German description", implementation: "Old implementation", features: ["Old feature"] }, localized, { useLocalizedContent: true });
+  assert.equal(project.title, localized.title);
+  assert.equal(project.implementation, localized.implementation);
+  assert.equal(project.technicalDecision, localized.technicalDecision);
+  assert.deepEqual(project.features, localized.features);
+  assert.equal(normalizeApiProject({ title: "Custom", implementation: "Saved" }, undefined, { useLocalizedContent: true }).implementation, "Saved");
 });
 
 test("known projects share cover artwork across previews and carousel while preserving source screenshots", () => {

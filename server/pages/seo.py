@@ -19,7 +19,7 @@ PORTFOLIO_ROUTES = {
     },
     "/projekte": {
         "title": "Web- und Softwareprojekte | Beirit Web",
-        "description": "Webanwendungen, Django-Projekte und Python-Tools mit technischen Einblicken, Live-Demos und Quellcode.",
+        "description": "Webanwendungen, Django-Projekte und Python-Tools mit technischen Einblicken und Live-Demos.",
     },
     "/ueber-mich": {
         "title": "Über mich | Beirit Web",

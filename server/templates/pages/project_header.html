@@ -1,0 +1,49 @@
+{# Inline SVG icons: Lucide; the ISC notice is retained in assets/images/lucide-LICENSE.txt. #}
+<!--
+Lucide icons, ISC License.
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part
+of Feather (MIT). All other copyright (c) for Lucide are held by Lucide
+Contributors 2022.
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+-->
+  <header class="site-header site-header--optimized fixed inset-x-0 top-0 z-40 bg-white/90 shadow-line backdrop-blur-xl">
+    <div class="site-header-nav site-header-nav--optimized">
+      <a href="/" class="site-logo group inline-flex min-w-0 max-w-[68vw] items-center rounded-lg py-1 pr-1 outline-none transition focus-visible:ring-4 focus-visible:ring-emerald-200 sm:max-w-none">
+        <img src="{{ overview.logo.src }}"{% if overview.logo.srcSet %} srcset="{{ overview.logo.srcSet }}"{% endif %} sizes="56px" alt="{{ overview.brand }}" class="site-logo__mark h-12 w-auto max-w-[11rem] shrink-0 object-contain sm:h-14 sm:max-w-[13rem]" width="80" height="80" decoding="async" loading="eager" fetchpriority="high" />
+      </a>
+      <button type="button" class="site-nav-toggle" aria-label="{{ overview.menu.menuOpen }}" aria-controls="site-mobile-navigation" aria-expanded="false" data-menu-open-label="{{ overview.menu.menuOpen }}" data-menu-close-label="{{ overview.menu.menuClose }}">
+        <span class="site-nav-toggle__icon" aria-hidden="true">
+          <svg class="site-menuicon" width="50" height="50" viewBox="0 0 50 50" focusable="false">
+            <g>
+              <line class="site-menuicon__bar" x1="13" y1="16.5" x2="37" y2="16.5" />
+              <line class="site-menuicon__bar" x1="13" y1="24.5" x2="37" y2="24.5" />
+              <line class="site-menuicon__bar" x1="13" y1="24.5" x2="37" y2="24.5" />
+              <line class="site-menuicon__bar" x1="13" y1="32.5" x2="37" y2="32.5" />
+              <circle class="site-menuicon__circle" r="23" cx="25" cy="25" />
+            </g>
+          </svg>
+        </span>
+        <span class="site-nav-toggle__text">{{ overview.menu.menu }}</span>
+      </button>
+      <nav id="site-navigation" class="site-nav-links" aria-label="Hauptnavigation">
+        {% for item in overview.nav %}
+          <a href="{{ item.href }}" class="site-nav-link{% if item.active %} is-active{% endif %}"{% if item.active %} aria-current="page"{% endif %}>{{ item.label }}</a>
+        {% endfor %}
+      </nav>
+    </div>
+  </header>
+  <span class="site-nav-splash" aria-hidden="true"></span>
+  <nav id="site-mobile-navigation" class="site-mobile-menu-panel" aria-label="Hauptnavigation" hidden>
+    {% for item in overview.nav %}
+      <a href="{{ item.href }}" class="site-mobile-menu-panel__link{% if item.active %} is-active{% endif %}"{% if item.active %} aria-current="page"{% endif %}>{{ item.label }}</a>
+    {% endfor %}
+  </nav>

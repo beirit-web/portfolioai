@@ -91,12 +91,31 @@ from .seo import (
     portfolio_structured_data,
     structured_data_json,
 )
+from .project_detail import build_project_detail
+from .projects_overview import build_projects_overview
 
 logger = logging.getLogger(__name__)
 
 
 INTRO_CLIENT_COOKIE = "beirit_client_id"
 INTRO_VIDEO_COOLDOWN = timedelta(hours=24)
+PROJECT_COVER_SLUGS = {
+    "sprachdienstleistungen", "online-shop", "vertragsgenerator",
+    "wohnungssuche-bodensee", "notenrechner", "enbt-botanic",
+}
+PROJECT_OVERVIEW_IMAGE_SIZES = (
+    "(max-width: 47.99rem) calc(100vw - 2rem), "
+    "(max-width: 74rem) calc((100vw - 4rem) / 2), "
+    "calc((min(100vw, 92rem) - 7rem) / 3)"
+)
+
+PROJECT_DETAIL_IMAGE_SIZES = (
+    "(max-width: 39.99rem) calc(100vw - 1.5rem), "
+    "(max-width: 63.99rem) calc(100vw - 4rem), "
+    "(max-width: 79.99rem) calc(100vw - 5rem), "
+    "(max-width: 89.99rem) calc((100vw - 7rem) * 0.54), "
+    "(max-width: 109.99rem) calc((min(100vw, 94rem) - 8rem) * 0.58), 57.6rem"
+)
 
 
 SEO_SITEMAP_ITEMS = [
@@ -290,16 +309,44 @@ def serialize_project(project: Project) -> dict:
     }
 
 
+def published_portfolio_projects():
+    return list(
+        Project.objects.filter(published=True)
+        .exclude(slug__in=INTEGRATED_PROJECT_SLUGS)
+        .order_by("sort_order", "title")
+    )
+
+
+def portfolio_projects_payload(projects):
+    items = [dict(serialize_project(project), orderIndex=index) for index, project in enumerate(projects)]
+    return {
+        "projects": items,
+        "featuredProjects": [item for item in items if item["featured"]][:6],
+    }
+
+
+def project_cover_image_preload(slug, *, detail=False):
+    base = f"/static/images/portfolio-covers/{slug}-cover-v1"
+    widths = (480, 768, 960) if detail else (480, 768)
+    return {
+        "src": f"{base}.webp",
+        "srcset": ", ".join([f"{base}-{width}.webp {width}w" for width in widths] + [f"{base}.webp 1254w"]),
+        "sizes": PROJECT_DETAIL_IMAGE_SIZES if detail else PROJECT_OVERVIEW_IMAGE_SIZES,
+    }
+
+
+def project_overview_image_preload(projects):
+    for project in projects:
+        if project.slug in PROJECT_COVER_SLUGS:
+            return project_cover_image_preload(project.slug)
+        if project.preview_image_url:
+            return {"src": project.preview_image_url}
+    return None
+
+
 @require_GET
 def projects_api(_request):
-    projects = list(Project.objects.filter(published=True).exclude(slug__in=INTEGRATED_PROJECT_SLUGS).order_by("sort_order", "title"))
-    featured_projects = [project for project in projects if project.featured][:6]
-    return JsonResponse(
-        {
-            "projects": [serialize_project(project) for project in projects],
-            "featuredProjects": [serialize_project(project) for project in featured_projects],
-        }
-    )
+    return JsonResponse(portfolio_projects_payload(published_portfolio_projects()))
 
 
 @csrf_exempt
@@ -1223,11 +1270,7 @@ def home(request, project_slug=None):
         route_path, build_absolute_site_url, project=project, project_slug=project_slug
     )
     ctx["react_page_meta"] = page_meta
-    listed_projects = (
-        Project.objects.filter(published=True).exclude(slug__in=INTEGRATED_PROJECT_SLUGS)
-        .order_by("sort_order", "title")
-        if route_path == "/projekte" else ()
-    )
+    listed_projects = published_portfolio_projects() if route_path == "/projekte" else ()
     ctx["portfolio_structured_data_json"] = structured_data_json(
         portfolio_structured_data(page_meta, build_absolute_site_url, project, listed_projects)
     )
@@ -1245,6 +1288,17 @@ def home(request, project_slug=None):
         "profileUrl": reverse("pages:profile"),
         "logoutUrl": reverse("pages:logout"),
     }
+    ctx["react_is_project_detail"] = bool(project_slug)
+    if project_slug in PROJECT_COVER_SLUGS:
+        ctx["react_project_image_preload"] = project_cover_image_preload(project_slug, detail=True)
+    if project:
+        ctx["project_detail"] = build_project_detail(serialize_project(project), lang, ctx["react_home_config"])
+    if route_path == "/projekte":
+        ctx["react_home_config"]["initialProjects"] = portfolio_projects_payload(listed_projects)["projects"]
+        ctx["react_project_image_preload"] = project_overview_image_preload(listed_projects)
+        ctx["projects_overview"] = build_projects_overview(
+            ctx["react_home_config"]["initialProjects"], lang, ctx["react_home_config"]
+        )
 
     return render(request, "pages/index.html", ctx)
 
@@ -1395,12 +1449,8 @@ def imprint(request):
 
 
 def donate(request):
-    """
-    Seite fuer freiwillige Projektunterstuetzung mit Kontaktweg.
-    """
-    context = build_base_context(request)
-    context["paypal_donate_url"] = "" if getattr(settings, "PORTFOLIO_DEMO_MODE", True) else settings.PAYPAL_DONATE_URL
-    return render(request, "pages/donate.html", context)
+    """Keep old donation bookmarks usable without exposing the hidden page."""
+    return redirect("pages:projects_page_no_slash")
 
 
 def register(request):

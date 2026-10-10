@@ -488,7 +488,7 @@ body:has(.about-hero-grid),
 
   .site-shell .home-main .about-tech-carousel__rail {
     display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     align-items: start;
     gap: clamp(0.85rem, 2vw, 1.4rem);
     min-height: 6.75rem;

@@ -9,6 +9,8 @@ export default function PortfolioImage({
 }) {
   return (
     <img
+      srcSet={image.srcSet}
+      sizes={image.sizes}
       {...props}
       src={image.src}
       alt={`${title} - ${image.label}`}

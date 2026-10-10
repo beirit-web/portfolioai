@@ -1,0 +1,17 @@
+/* Preserve the shared cascade; the build retains only project route selectors. */
+@import "./styles.css";
+@import "./homepage-custom.css";
+@import "./responsive-overrides.css";
+
+[data-projects-rendered] [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 47.99rem) {
+  /* Keep cover geometry exact while postponing offscreen text and tag layout.
+     Once rendered, auto remembers the body's measured height when skipped. */
+  .project-overview-card__body {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 25rem;
+  }
+}

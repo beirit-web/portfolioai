@@ -1,0 +1,80 @@
+<div class="site-shell site-shell--page min-h-screen bg-[#f7f6f2] text-stone-950" data-project-detail-rendered>
+  {% include "pages/project_header.html" with overview=detail.shell only %}
+  <main id="top" class="home-main site-page-main">
+    <section class="portfolio-project-hero portfolio-project-hero--{{ detail.project.slug }} mx-auto max-w-7xl px-3 sm:px-8 lg:px-10">
+      <a href="/projekte/" class="portfolio-project-back">{{ detail.backLabel }}</a>
+      <div class="portfolio-project-hero__grid">
+        <div class="portfolio-project-hero__copy">
+          <h1>{{ detail.project.title }}</h1>
+          <p>{{ detail.project.text }}</p>
+          <div class="portfolio-card__meta">
+            <span class="portfolio-card__type">{{ detail.project.type }}</span>
+            {% if detail.project.status %}<span class="portfolio-card__status">{{ detail.project.status }}</span>{% endif %}
+            {% for signal in detail.project.trustSignals %}<span class="portfolio-card__trust portfolio-card__trust--reference">{{ signal }}</span>{% endfor %}
+          </div>
+          {% if detail.showPrimaryAction %}<a href="{{ detail.primaryHref }}" class="portfolio-contact-button"{% if detail.primaryExternal %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ detail.primaryLabel }}</a>{% endif %}
+          {% for module in detail.modules %}<a id="{{ module.id }}" href="{{ module.href }}" class="project-overview-card__secondary-button"{% if module.external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ module.label }}</a>{% endfor %}
+        </div>
+        {% if detail.hero %}
+          <figure class="portfolio-project-hero__preview {% if detail.hero.variant == 'cover' %}portfolio-project-hero__cover{% else %}portfolio-card__desktop-preview{% endif %}">
+            <img src="{{ detail.hero.src }}"{% if detail.hero.srcSet %} srcset="{{ detail.hero.srcSet }}" sizes="{{ detail.hero.sizes }}"{% endif %} alt="{{ detail.hero.alt }}" decoding="async" width="{{ detail.hero.width }}" height="{{ detail.hero.height }}" loading="eager" fetchpriority="high" />
+            {% if detail.hero.variant != 'cover' %}<figcaption>{{ detail.hero.label }}</figcaption>{% endif %}
+          </figure>
+        {% else %}
+          <div class="portfolio-card__preview portfolio-project-hero__preview" aria-hidden="true">
+            <div class="portfolio-card__browser-bar"><span></span><span></span><span></span></div>
+            <div class="portfolio-card__mockup"><strong>{{ detail.project.title }}</strong><span>{{ detail.project.type }}</span></div>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+    <section id="projektdetails" class="portfolio-project-page mx-auto max-w-7xl scroll-mt-24 px-3 pb-16 sm:px-8 lg:px-10">
+      <div class="portfolio-card__details-grid">
+        <article class="portfolio-card__situation"><span>{{ detail.copy.situationLabel }}</span>{% for paragraph in detail.situation %}<p>{{ paragraph }}</p>{% endfor %}</article>
+        <article class="portfolio-card__implementation">
+          <span>{{ detail.copy.ownContributionLabel }}</span>{% for paragraph in detail.implementation %}<p>{{ paragraph }}</p>{% endfor %}
+          {% if detail.project.implementationFeatures %}<ul class="portfolio-project-checklist">{% for feature in detail.project.implementationFeatures %}<li>{% include "pages/project_icon.html" with nodes=detail.checkIcon icon_class='h-4 w-4' only %}<span>{{ feature }}</span></li>{% endfor %}</ul>{% endif %}
+        </article>
+        <article class="portfolio-card__result"><span>{{ detail.copy.resultLabel }}</span>{% for paragraph in detail.result %}<p>{{ paragraph }}</p>{% endfor %}</article>
+      </div>
+      {% if detail.decision %}<section class="portfolio-project-decision" aria-labelledby="technical-decision-title"><h2 id="technical-decision-title">{{ detail.copy.decisionLabel }}</h2>{% for paragraph in detail.decision %}<p>{{ paragraph }}</p>{% endfor %}</section>{% endif %}
+      {% if detail.screenshots %}
+        <section class="portfolio-project-gallery" aria-labelledby="project-gallery-title">
+          <h2 id="project-gallery-title">{{ detail.copy.previewGalleryLabel }}</h2>
+          <div class="portfolio-project-gallery__grid">
+            {% for image in detail.screenshots %}
+              <figure class="portfolio-project-gallery__figure{% if image.label == 'Mobile' %} portfolio-project-gallery__figure--mobile{% endif %}"{% if image.label == 'Mobile' %} style="--portfolio-preview-ratio: {{ image.width|default:390 }} / {{ image.height|default:844 }}"{% endif %}>
+                <a href="{{ image.src }}" target="_blank" rel="noopener noreferrer" aria-label="{{ detail.project.title }} – {{ image.label }}">
+                  <img src="{{ image.src }}"{% if image.srcSet %} srcset="{{ image.srcSet }}" sizes="{{ image.sizes }}"{% endif %} alt="{{ detail.project.title }} - {{ image.label }}" decoding="async" width="{{ image.width|default:960 }}" height="{{ image.height|default:600 }}" loading="lazy" />
+                </a>
+                <figcaption>{{ image.label }}</figcaption>
+              </figure>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+      {% if detail.features %}
+        <section class="portfolio-card__features" aria-label="{{ detail.copy.featuresLabel }}">
+          <strong class="portfolio-card__features-title">{{ detail.copy.featuresLabel }}</strong>
+          <ul class="portfolio-card__feature-list">{% for feature in detail.features %}<li>
+            <span class="portfolio-card__feature-list-icon-wrap" aria-hidden="true">{% if feature.src %}<img class="portfolio-card__feature-list-icon" src="{{ feature.src }}" alt="" aria-hidden="true" width="64" height="64" loading="lazy" draggable="false" />{% else %}{% include "pages/project_icon.html" with nodes=feature.iconNodes icon_class='portfolio-card__feature-list-icon' only %}{% endif %}</span>
+            <span><strong>{{ feature.label }}</strong>{% if feature.description %}<small>{{ feature.description }}</small>{% endif %}</span>
+          </li>{% endfor %}</ul>
+        </section>
+      {% endif %}
+      <section class="portfolio-card__proof" aria-label="{{ detail.copy.proofLabel }}">
+        <strong class="portfolio-card__proof-title">{{ detail.project.proofLabel|default:detail.copy.proofLabel }}</strong>
+        {% if detail.technologies %}<div class="technology-tags" aria-label="{{ detail.copy.proofLabel }}">{% for technology in detail.technologies %}<span class="technology-tag">{% if technology.logo %}<img src="{{ technology.logo }}" alt="" aria-hidden="true" width="28" height="28" loading="lazy" draggable="false" />{% else %}{% include "pages/project_icon.html" with nodes=detail.codeIcon only %}{% endif %}{{ technology.label }}</span>{% endfor %}</div>{% endif %}
+      </section>
+      {% if detail.project.note %}<p class="portfolio-project-note">{{ detail.project.note }}</p>{% endif %}
+      {% if detail.project.closingTitle or detail.project.closingText %}
+        <section class="portfolio-project-closing" aria-label="{{ detail.project.closingTitle|default:detail.closingLabel }}">
+          {% if detail.project.closingTitle %}<h2>{{ detail.project.closingTitle }}</h2>{% endif %}
+          {% if detail.project.closingText %}<p>{{ detail.project.closingText }}</p>{% endif %}
+          {% if detail.showContactCta %}<a href="{{ detail.contactHref }}" class="portfolio-contact-button">{{ detail.closingLabel }}</a>{% endif %}
+        </section>
+      {% endif %}
+    </section>
+  </main>
+  {% include "pages/project_footer.html" with overview=detail.shell only %}
+</div>

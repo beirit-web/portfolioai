@@ -17,7 +17,7 @@
   <nav class="project-home-nav project-home-nav--shop" aria-label="Shop-Schnellnavigation">
     <ul class="project-home-nav__links">
       <li><a href="/projekte/online-shop" aria-label="Zur Startseite des Torten- und Kuchen-Shops">Zur Startseite</a></li>
-      <li><a href="{% url 'storefront:catalog' %}" {% if request.resolver_match.url_name == 'catalog' and category == 'all' and not query and sort == 'featured' %}aria-current="page"{% endif %}>Alle Produkte</a></li>
+      <li><a href="{% url 'storefront:catalog' %}" {% if request.resolver_match.url_name == 'catalog' and category == 'all' and not query and sort == 'priceAsc' %}aria-current="page"{% endif %}>Alle Produkte</a></li>
       <li><a href="{% url 'storefront:catalog' %}#productSearch">Produktsuche</a></li>
       {% for key, label in navigation_categories %}
       <li><a href="{% url 'storefront:catalog' %}?category={{ key|urlencode }}" {% if request.resolver_match.url_name == 'catalog' and category == key and not query %}aria-current="page"{% endif %}>{{ label }}</a></li>
@@ -33,7 +33,7 @@
           <label class="sr-only" for="headerPriceSort">Preis sortieren</label>
           <span class="sr-only" id="headerPriceSortHint">Die Auswahl lädt das Sortiment mit der gewählten Preissortierung neu.</span>
           <select name="sort" id="headerPriceSort" aria-describedby="headerPriceSortHint" required>
-            <option value="" disabled {% if sort != 'priceAsc' and sort != 'priceDesc' %}selected{% endif %}>Preis sortieren</option>
+            <option value="" disabled hidden {% if sort != 'priceAsc' and sort != 'priceDesc' %}selected{% endif %}></option>
             <option value="priceAsc" {% if sort == 'priceAsc' %}selected{% endif %}>Preis aufsteigend</option>
             <option value="priceDesc" {% if sort == 'priceDesc' %}selected{% endif %}>Preis absteigend</option>
           </select>
@@ -65,7 +65,7 @@
     {% if messages %}<div class="messages" aria-live="polite">{% for message in messages %}<p class="message message--{{ message.tags }}" {% if message.tags == 'error' %}role="alert"{% endif %}>{% if message.tags == 'error' %}{% shop_icon 'alert' %}{% else %}{% shop_icon 'check' %}{% endif %}{{ message }}</p>{% endfor %}</div>{% endif %}
     {% block content %}{% endblock %}
   </main>
-  <footer class="shop-footer"><a href="/projekte">Beirit Digital{% shop_icon 'arrow' %}</a><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a></footer>
+  <footer class="shop-footer"><a href="/projekte">Beirit Web{% shop_icon 'arrow' %}</a><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a></footer>
   {% if cart_count and tab == 'catalog' %}<a class="mobile-cart-bar" href="{% url 'storefront:cart' %}"><span>{% shop_icon 'bag' %}{{ cart_count }} Artikel</span><strong>{{ subtotal|euros }}</strong>{% shop_icon 'next' %}</a>{% endif %}
 </body>
 </html>

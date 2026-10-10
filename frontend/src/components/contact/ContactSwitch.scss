@@ -399,7 +399,7 @@
   transform: none;
 }
 .contact-switch .contact-form-status { width: 100%; font-size: 12px; padding: .5rem; }
-.contact-switch .contact-switch__switcher-btn { border-radius: 0; min-height: 0; padding: 0; }
+.contact-switch .contact-switch__switcher-btn { top: 32px; border-radius: 0; min-height: 0; padding: 0; }
 .contact-switch button:focus-visible { outline: 2px solid #d4af7a; outline-offset: 4px; }
 .contact-switch .contact-switch__switcher-btn:focus-visible { outline-color: #fff; outline-offset: -6px; }
 @media (max-width: 40rem) {

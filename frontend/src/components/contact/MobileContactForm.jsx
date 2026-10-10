@@ -10,6 +10,12 @@ const fieldDirections = {
   message: "",
 };
 
+const contactCopy = {
+  de: { label: "Kontaktformular", hint: "Projektfrage oder Interesse an Zusammenarbeit? Schreiben Sie mir." },
+  ru: { label: "Контактная форма", hint: "Вопрос о проекте или предложение о сотрудничестве? Напишите мне." },
+  uk: { label: "Контактна форма", hint: "Питання про проєкт або пропозиція співпраці? Напишіть мені." },
+};
+
 function FieldIcon({ icon: Icon }) {
   return (
     <span className="contact-mobile-icon" aria-hidden="true">
@@ -25,6 +31,7 @@ export default function MobileContactForm({
   const [direction, setDirection] = React.useState("");
   const [submitAttempt, setSubmitAttempt] = React.useState(0);
   const focusedFieldRef = React.useRef(null);
+  const copy = contactCopy[language] || contactCopy.de;
 
   React.useEffect(() => {
     if (focusedFieldRef.current && !isSubmitting) {
@@ -83,7 +90,7 @@ export default function MobileContactForm({
         className={`contact-mobile-form${direction ? ` ${direction}` : ""}`}
         onSubmit={handleSubmit}
         data-success-label={t("forms.successTitle")}
-        aria-label={language === "ru" ? "Контактная форма" : "Kontaktformular"}
+        aria-label={copy.label}
         aria-busy={isSubmitting}
         noValidate
       >
@@ -132,7 +139,7 @@ export default function MobileContactForm({
           <span className="contact-mobile-button__left-right" aria-hidden="true" />
         </button>
         <small className="contact-mobile-hint">
-          {language === "ru" ? "Заполните форму" : "Füllen Sie das Formular aus"}
+          {copy.hint}
         </small>
       </form>
       {feedback ? <div className="contact-mobile-feedback contact-form--shadcn">{feedback}</div> : null}

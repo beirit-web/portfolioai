@@ -7,6 +7,9 @@ mit HTTP 404, ohne Zahlungsdaten zu ändern oder PayPal aufzurufen. Spendenlinks
 Banküberweisungen sind deaktiviert. Der Client prüft den Demo-Modus zusätzlich vor
 jeder Netzwerkoperation.
 
+Die Spendenoberfläche ist ausgeblendet. Alte Spenden- und Zahlungsadressen
+leiten zur Projektübersicht unter `/projekte` weiter.
+
 Die Implementierung zeigt als Codebeispiel, wie serverseitig festgelegte Beträge,
 EUR, interne Referenzen, Idempotenz und Capture-Antworten geprüft werden. Reale
 Konten, Empfänger, Client-IDs und Secrets gehören nicht in dieses Repository.

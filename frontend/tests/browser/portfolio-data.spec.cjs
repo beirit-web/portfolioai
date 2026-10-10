@@ -19,16 +19,31 @@ test("personal details are retained on contact and sample data is shown in the i
   await expect(page.locator('a[href="tel:+4953515989191"]')).toHaveCount(0);
 });
 
-test("donation and payment return routes never contact PayPal", async ({ page }) => {
+test("donation and payment routes lead to projects without contacting PayPal", async ({ page, baseURL }) => {
   const paymentRequests = [];
   page.on("request", request => {
     if (/paypal\.(?:com|me)|\/api\/payments\//i.test(request.url())) paymentRequests.push(request.url());
   });
-  for (const path of ["/spenden/", "/zahlung/erfolg/?token=MUSTER-ORDER", "/zahlung/abbruch/?token=MUSTER-ORDER"]) {
+  for (const path of ["/spenden", "/spenden/", "/zahlung", "/zahlung/erfolg/?token=MUSTER-ORDER", "/zahlung/abbruch/?token=MUSTER-ORDER"]) {
     await page.goto(path);
-    await expect(page.getByRole("button", { name: "PayPal deaktiviert – Portfolio-Demo", exact: true })).toBeDisabled();
-    await expect(page.locator("main")).toContainText("Spenden und echte Zahlungen sind deaktiviert");
+    await expect(page).toHaveURL(`${baseURL}/projekte`);
+    await expect(page.locator(".site-footer")).toBeVisible();
+    await expect(page.locator("main")).not.toContainText("Beispiel einer Spendenoberfläche");
+    await expect(page.locator('a[href*="/spenden"], a[href*="intent=donation"]')).toHaveCount(0);
     await expect(page.locator('a[href*="paypal.com"], a[href*="paypal.me"]')).toHaveCount(0);
   }
   expect(paymentRequests).toEqual([]);
+});
+
+test("portfolio navigation has no donation links and contact stays neutral", async ({ page }) => {
+  for (const path of ["/", "/kompetenzen", "/projekte", "/ueber-mich", "/kontakt", "/projekte/enbt-botanic", "/impressum", "/datenschutz/"]) {
+    await page.goto(path);
+    await expect(page.locator(".site-footer")).toBeVisible();
+    await expect(page.locator('a[href*="/spenden"], a[href*="intent=donation"]')).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /Spenden|Projekt unterstützen|Пожертвования|Добровольно поддержать|Добровільно підтримати/i })).toHaveCount(0);
+  }
+  await page.goto("/kontakt?intent=donation&project=ENBT%20Botanic");
+  await expect(page.locator("#subject")).toHaveValue("Frage zu ENBT Botanic");
+  await expect(page.locator("#message")).toHaveValue("");
+  await expect(page.getByRole("link", { name: "kontakt@beirit.digital", exact: true })).toBeVisible();
 });

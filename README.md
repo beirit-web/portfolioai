@@ -177,6 +177,10 @@ das Portfolio ausgerichtet. Die Sitemap enthält Hauptseiten und veröffentlicht
 Projektberichte. Das ist eine bereits umgesetzte Grundlage für weitere SEO-Arbeit;
 Details stehen unter [Portfolio-SEO](docs/architecture/portfolio-seo.md).
 
+Die [Portfolio-Darstellung](docs/architecture/portfolio-presentation.md) beschreibt
+die direkte Projektnavigation, technischen Entscheidungsberichte
+und aktuellen Desktop- und Mobilansichten der Demos.
+
 ## Projekte und Verzeichnisstruktur
 
 | Pfad | Inhalt |

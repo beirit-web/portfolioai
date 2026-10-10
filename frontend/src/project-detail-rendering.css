@@ -1,0 +1,11 @@
+/* A direct sans-serif family avoids expensive platform UI font resolution
+   during the report's initial layout. No additional font download is needed. */
+.site-shell {
+  --font-main: Arial, sans-serif;
+  font-family: var(--font-main);
+}
+
+.site-shell .home-main :where(h1, h2, h3, h4, p, li, span, strong, small, a, label) {
+  hyphens: none !important;
+  text-wrap: wrap !important;
+}

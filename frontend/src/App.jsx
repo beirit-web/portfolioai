@@ -1,11 +1,18 @@
-import { homeConfig as config, publicPageBaseUrl, publicPageUrl } from "./lib/homeConfig";
+import PortfolioFeatureList, { featureIconFor, ReactBrandIcon, DjangoBrandIcon } from "./components/home/portfolio/PortfolioFeatureList";
+import PortfolioProjectPage from "./components/projects/PortfolioProjectPage";
+import { publicPageUrl } from "./lib/homeConfig.js";
 import React from "react";
-import { createPortal } from "react-dom";
+import { useI18n } from "./i18n/useI18n.js";
+import { useDocumentMeta, useDocumentStateClasses } from "./hooks/useDocumentState.js";
+import { usePortfolioProjects } from "./hooks/usePortfolioProjects.js";
+import { appRoutes, navigateToAppPath, projectLiveHref, scrollToHashTarget, useBrowserPath } from "./lib/appNavigation.js";
+import { PageFooter, PageHero, PageShell, SiteHeader } from "./components/shared/PageShell.jsx";
+import { ProjectsOverviewPage } from "./components/projects/ProjectsOverviewPage.jsx";
+import { languageServicesCaseStudy } from "./components/home/portfolio/languageServicesCaseStudy.mjs";
 import {
   ArrowDown,
   ArrowLeft,
   ArrowRight,
-  ArrowUp,
   Braces,
   Bug,
   Cable,
@@ -19,10 +26,8 @@ import {
   GitBranch,
   Globe2,
   Handshake,
-  Hash,
   HelpCircle,
   Image,
-  Languages,
   Layers3,
   LayoutTemplate,
   Mail,
@@ -37,28 +42,18 @@ import {
   UserRound,
   Workflow,
   Wrench,
+  X,
 } from "lucide-react";
-import {
-  createTranslator,
-  detectInitialLanguage,
-  ensureLanguage,
-  isLanguageLoaded,
-} from "./i18n";
 import Hero from "./components/home/hero/Hero";
 import PortfolioProjectCard from "./components/home/portfolio/PortfolioProjectCard";
-import PortfolioImage from "./components/home/portfolio/PortfolioImage";
 import { usePortfolioStageHeight } from "./components/home/portfolio/usePortfolioStageHeight";
 import {
   featureLabel,
   isProjectPublished,
-  normalizeApiProject,
   portfolioProjectPath,
   portfolioSlugFor,
-  projectPreviewImage,
   projectTechnologyTags,
-  selectCarouselProjects,
 } from "./components/home/portfolio/portfolioPresentation.mjs";
-import { technologyLogos } from "./components/shared/technologyLogos.mjs";
 import TechnologyIcon from "./components/shared/TechnologyIcon";
 import TechnologyTags from "./components/shared/TechnologyTags";
 import CardIllustration from "./components/shared/CardIllustration";
@@ -66,18 +61,6 @@ import { TechnicalLabel } from "./components/shared/TechnicalLabel";
 import { activateCardLink } from "./components/shared/cardActivation";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 
-const projectsApiUrl = config.projectsApiUrl || "/api/projects/";
-const isLocalAppHost = ["localhost", "127.0.0.1", "0.0.0.0"].includes(window.location.hostname);
-const useLocalPortfolioLinks = config.useLocalPortfolioLinks === true && isLocalAppHost;
-const configuredBrandLogoUrl = config.logoUrl || "/static/images/aktueles-logo-160.webp";
-const configuredBrandLogoSmallUrl = config.logoSmallUrl || configuredBrandLogoUrl;
-const configuredBrandLogoLargeUrl = config.logoLargeUrl || configuredBrandLogoSmallUrl;
-const brandLogoUrl = configuredBrandLogoUrl;
-const brandLogoSmallUrl = configuredBrandLogoSmallUrl;
-const brandLogoLargeUrl = configuredBrandLogoLargeUrl;
-const brandLogoSrcSet = brandLogoSmallUrl !== brandLogoLargeUrl
-  ? `${brandLogoSmallUrl} 160w, ${brandLogoLargeUrl} 320w`
-  : undefined;
 const aboutPortraitUrl = "/static/images/eugenbeirit-360.webp";
 const aboutPortraitSrcSet = [
   "/static/images/eugenbeirit-360.webp 360w",
@@ -91,64 +74,6 @@ function WeatherRedirect() {
     window.location.replace(publicPageUrl("/botanic/wetter/"));
   }, []);
   return <a href={publicPageUrl("/botanic/wetter/")}>Wetter in ENBT Botanic öffnen</a>;
-}
-function scrollToHashTarget(hash) {
-  if (!hash || hash === "#top") return;
-  setTimeout(() => {
-    const target = document.getElementById(hash.slice(1));
-    if (!target) return;
-    const headerOffset = 92;
-    const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
-    window.scrollTo({ top: Math.max(0, top), behavior: getScrollBehavior() });
-  }, 0);
-}
-
-function ReactBrandIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.45" {...props}>
-      <circle cx="12" cy="12" r="1.55" fill="currentColor" stroke="none" />
-      <ellipse cx="12" cy="12" rx="10" ry="3.8" />
-      <ellipse cx="12" cy="12" rx="10" ry="3.8" transform="rotate(60 12 12)" />
-      <ellipse cx="12" cy="12" rx="10" ry="3.8" transform="rotate(120 12 12)" />
-    </svg>
-  );
-}
-
-function DjangoBrandIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" {...props}>
-      <path d="M7 4.5h5.2v15H7a4.5 4.5 0 0 1 0-9h5.2" />
-      <path d="M16.5 4.5v10.8a4.2 4.2 0 0 1-4.2 4.2" />
-    </svg>
-  );
-}
-
-function PythonBrandIcon(props) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="M8.5 9.5H15a3 3 0 0 1 3 3v1.2a3 3 0 0 1-3 3h-3v1.8a2 2 0 0 1-2 2H7.5a2 2 0 0 1-2-2v-4.8a4.2 4.2 0 0 1 4.2-4.2H12" />
-      <path d="M15.5 14.5H9a3 3 0 0 1-3-3v-1.2a3 3 0 0 1 3-3h3V5.5a2 2 0 0 1 2-2h2.5a2 2 0 0 1 2 2v4.8a4.2 4.2 0 0 1-4.2 4.2H12" />
-      <path d="M9.3 5.4h.01" />
-      <path d="M14.7 18.6h.01" />
-    </svg>
-  );
-}
-
-function GitHubIcon(props) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
-      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-      <path d="M9 18c-4.51 2-5-2-7-2" />
-    </svg>
-  );
 }
 
 const iconMap = {
@@ -185,146 +110,6 @@ function iconFor(name, fallback = LayoutTemplate) {
   return iconMap[name] || fallback;
 }
 
-function useI18n() {
-  const [language] = React.useState(detectInitialLanguage);
-  const [translationVersion, setTranslationVersion] = React.useState(0);
-
-  React.useEffect(() => {
-    if (isLanguageLoaded(language)) return undefined;
-    let active = true;
-    ensureLanguage(language).then(() => {
-      if (active) setTranslationVersion((version) => version + 1);
-    });
-    return () => {
-      active = false;
-    };
-  }, [language]);
-
-  const t = React.useMemo(() => createTranslator(language), [language, translationVersion]);
-
-  React.useEffect(() => {
-    document.documentElement.lang = language;
-  }, [language]);
-
-  return { language, t };
-}
-
-const footerLinkItems = [
-  { href: "/kompetenzen", appPath: "/kompetenzen", labelKey: "nav.skills" },
-  { href: "/kontakt", appPath: "/kontakt", labelKey: "footer.links.contact" },
-  { href: publicPageUrl("/spenden/"), labelKey: "footer.links.donate" },
-  { href: publicPageUrl("/impressum"), labelKey: "footer.links.imprint" },
-  { href: publicPageUrl("/datenschutz/"), labelKey: "footer.links.privacy" },
-];
-
-const portfolioKeywords = "Beirit Web, Portfolio, Webentwicklung, Softwareentwicklung, React, Django, Python, JavaScript, Fullstack";
-
-const appRoutes = {
-  "/": { key: "home", title: "Beirit Web | Portfolio für Web- und Softwareentwicklung", description: "Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python." },
-  "/kompetenzen": { key: "services", title: "Technologien und Kompetenzen | Beirit Web", description: "Technische Kompetenzen und Projekterfahrung mit React, Django, Python, APIs und responsiven Weboberflächen." },
-  "/projekte": { key: "projects", title: "Web- und Softwareprojekte | Beirit Web", description: "Webanwendungen, Django-Projekte und Python-Tools mit technischen Einblicken, Live-Demos und Quellcode." },
-  "/ueber-mich": { key: "about", title: "Über mich | Beirit Web", description: "Persönlicher Hintergrund, Arbeitsweise und technische Schwerpunkte von Eugen Beirit." },
-  "/kontakt": { key: "contact", title: "Kontakt | Beirit Web", description: "Kontakt für Fragen zu den Projekten, fachlichen Austausch und berufliche Kontakte." },
-  "/wetter": { key: "weather", title: "Wetter | Beirit Web", description: "Aktuelles Wetter, Regenfenster, Sonnenzeiten und 5-Tage-Ausblick direkt im Browser.", robots: "noindex, follow" },
-};
-
-const routeAliases = {
-  "/profil": "/ueber-mich",
-  "/projekte/": "/projekte",
-  "/leistungen": "/kompetenzen",
-  "/preise": "/projekte",
-  "/zahlung": "/projekte",
-  "/zahlung/erfolg": "/projekte",
-  "/zahlung/abbruch": "/projekte",
-  "/faq": "/kontakt",
-  "/referenzen/coachingservice": "/referenzen/sprachdienstleistungen",
-};
-
-function sortedPortfolioItems(items) {
-  return [...items]
-    .filter(isProjectPublished)
-    .sort((first, second) => {
-      const firstOrder = Number.isFinite(first.sortOrder) ? first.sortOrder : Number.MAX_SAFE_INTEGER;
-      const secondOrder = Number.isFinite(second.sortOrder) ? second.sortOrder : Number.MAX_SAFE_INTEGER;
-      if (firstOrder !== secondOrder) return firstOrder - secondOrder;
-      return String(first.title || "").localeCompare(String(second.title || ""), "de");
-    });
-}
-
-function featuredPortfolioItems(items, limit = 6) {
-  return selectCarouselProjects(sortedPortfolioItems(items), limit);
-}
-
-function isAppHandledPath(pathname) {
-  const normalizedPath = normalizeAppPath(pathname);
-  return Boolean(
-    appRoutes[normalizedPath]
-    || normalizedPath.startsWith("/projekte/")
-    || normalizedPath.startsWith("/referenzen/")
-  );
-}
-
-function publicSiteHref(href) {
-  const value = String(href || "");
-  if (!value || isExternalUrl(value) || value.startsWith("#") || !publicPageBaseUrl) return value;
-  if (!value.startsWith("/")) return value;
-
-  const target = new URL(value, window.location.origin);
-  if (isAppHandledPath(target.pathname)) return value;
-
-  return publicPageUrl(`${target.pathname}${target.search}${target.hash}`);
-}
-
-function projectLiveHref(item) {
-  const href = item.liveUrl || item.href || item.localHref || "";
-  if (!href) return "";
-  const category = item.category || "";
-  if (category === "case") return "";
-  return publicSiteHref(href);
-}
-
-function usePortfolioProjects(t, { fetchRemote = true } = {}) {
-  const fallbackItems = React.useMemo(() => sortedPortfolioItems(t("home.portfolio.items")), [t]);
-  const [state, setState] = React.useState({ items: fallbackItems, featuredItems: featuredPortfolioItems(fallbackItems, 6) });
-
-  React.useEffect(() => {
-    let isActive = true;
-    setState((previous) => previous.items === fallbackItems ? previous : {
-      items: fallbackItems,
-      featuredItems: featuredPortfolioItems(fallbackItems, 6),
-    });
-    if (!fetchRemote) {
-      return () => {
-        isActive = false;
-      };
-    }
-
-    fetch(projectsApiUrl, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-      .then((response) => {
-        if (!response.ok) throw new Error("Project API unavailable");
-        return response.json();
-      })
-      .then((payload) => {
-        if (!isActive) return;
-        const localizedBySlug = new Map(fallbackItems.map((item) => [portfolioSlugFor(item), item]));
-        const normalizeProject = (project) => normalizeApiProject(project, localizedBySlug.get(portfolioSlugFor(project)));
-        const apiItems = (payload.projects || []).map(normalizeProject).filter(Boolean);
-        if (!apiItems.length) return;
-        setState({
-          items: sortedPortfolioItems(apiItems),
-          featuredItems: featuredPortfolioItems(apiItems, 6),
-        });
-      })
-      .catch(() => {
-        if (isActive) setState({ items: fallbackItems, featuredItems: featuredPortfolioItems(fallbackItems, 6) });
-      });
-    return () => {
-      isActive = false;
-    };
-  }, [fallbackItems, fetchRemote]);
-
-  return state;
-}
 
 function useDeferredPortfolioFetch(isHomeRoute = false) {
   const [shouldFetchPortfolio, setShouldFetchPortfolio] = React.useState(!isHomeRoute);
@@ -364,129 +149,6 @@ function useDeferredPortfolioFetch(isHomeRoute = false) {
   return shouldFetchPortfolio;
 }
 
-function isExternalUrl(href) {
-  return /^https?:\/\//i.test(String(href || ""));
-}
-
-function featureDescription(item) {
-  if (!item || typeof item !== "object") return "";
-  return String(item.text || item.description || "").trim();
-}
-
-function paragraphList(text) {
-  if (Array.isArray(text)) return text.filter(Boolean);
-  return String(text || "")
-    .split(/\n{2,}/)
-    .map((entry) => entry.trim())
-    .filter(Boolean);
-}
-
-function projectActionHref(item) {
-  if (useLocalPortfolioLinks && item.localHref) return publicSiteHref(item.localHref);
-  return publicSiteHref(item.href || "");
-}
-
-function normalizeAppPath(pathname = window.location.pathname) {
-  const path = pathname.replace(/\/+$/, "") || "/";
-  return routeAliases[path] || path;
-}
-
-function useBrowserPath() {
-  const [path, setPath] = React.useState(() => normalizeAppPath());
-
-  React.useEffect(() => {
-    const handlePopState = () => setPath(normalizeAppPath());
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
-  return [path, setPath];
-}
-
-function navigateToAppPath(path, setPath) {
-  const target = new URL(String(path || "/"), window.location.origin);
-  const normalizedPath = normalizeAppPath(target.pathname || "/");
-  const targetHash = target.hash || "";
-  const targetUrl = `${normalizedPath}${target.search}${targetHash}`;
-  const currentUrl = `${normalizeAppPath()}${window.location.search}${window.location.hash}`;
-  const currentPath = normalizeAppPath();
-  if (targetUrl === currentUrl) {
-    if (targetHash) {
-      scrollToHashTarget(targetHash);
-    } else {
-      window.scrollTo({ top: 0, behavior: getScrollBehavior() });
-    }
-    return;
-  }
-
-  if (normalizedPath !== currentPath) {
-    window.location.assign(targetUrl);
-    return;
-  }
-
-  window.history.pushState({}, "", targetUrl);
-  setPath(normalizedPath);
-  if (targetHash) {
-    setTimeout(() => scrollToHashTarget(targetHash), 50);
-  } else {
-    window.scrollTo({ top: 0, behavior: "auto" });
-  }
-}
-
-function useDocumentMeta(route) {
-  React.useEffect(() => {
-    if (!route) return undefined;
-    const pageMeta = config.pageMeta || {};
-    const title = pageMeta.title || route.title;
-    const description = pageMeta.description || route.description;
-    const keywords = pageMeta.keywords || route.keywords || portfolioKeywords;
-    const updateMeta = (attribute, key, content) => {
-      let meta = document.querySelector(`meta[${attribute}="${key}"]`);
-      if (!meta) {
-        meta = document.createElement("meta");
-        meta.setAttribute(attribute, key);
-        document.head.append(meta);
-      }
-      meta.setAttribute("content", content);
-    };
-    document.title = title;
-    updateMeta("name", "description", description);
-    updateMeta("name", "keywords", keywords);
-    let canonical = document.querySelector('link[rel="canonical"]');
-    const canonicalUrl = pageMeta.canonical || route.canonical || canonical?.href || `${window.location.origin}${normalizeAppPath()}`;
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.setAttribute("rel", "canonical");
-      document.head.append(canonical);
-    }
-    canonical.setAttribute("href", canonicalUrl);
-    updateMeta("name", "robots", pageMeta.robots || route.robots || "index, follow");
-    updateMeta("property", "og:title", title);
-    updateMeta("property", "og:description", description);
-    updateMeta("property", "og:url", canonicalUrl);
-    updateMeta("property", "og:type", pageMeta.ogType || "website");
-    updateMeta("name", "twitter:title", title);
-    updateMeta("name", "twitter:description", description);
-    updateMeta("name", "twitter:url", canonicalUrl);
-    return undefined;
-  }, [route]);
-}
-
-function useDocumentStateClasses() {
-  React.useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-    const root = document.documentElement;
-    const handleLoad = () => root.classList.add("page-is-loaded");
-
-    // These document classes do not require another render of the entire app.
-    if (document.readyState === "complete") handleLoad();
-    else window.addEventListener("load", handleLoad, { once: true });
-    return () => {
-      window.removeEventListener("load", handleLoad);
-      root.classList.remove("page-is-loaded");
-    };
-  }, []);
-}
 
 function useScrollReveal(rootSelector = ".site-shell") {
   React.useEffect(() => {
@@ -573,74 +235,6 @@ function useDeferredHomeSections() {
   return [showSections, revealNow];
 }
 
-function getScrollBehavior() {
-  if (typeof window === "undefined" || !window.matchMedia) return "smooth";
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-}
-
-function PageFooter({ t, onNavigate }) {
-  const [isScrollTopVisible, setIsScrollTopVisible] = React.useState(false);
-
-  React.useEffect(() => {
-    const updateVisibility = () => {
-      setIsScrollTopVisible(window.scrollY > 480);
-    };
-
-    // Let the first layout finish before reading the scroll position.
-    let frame = window.requestAnimationFrame(() => {
-      frame = window.requestAnimationFrame(updateVisibility);
-    });
-    window.addEventListener("scroll", updateVisibility, { passive: true });
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", updateVisibility);
-    };
-  }, []);
-
-  const handleScrollTop = () => {
-    window.scrollTo({ top: 0, behavior: getScrollBehavior() });
-  };
-
-  return (
-    <footer className="site-footer bg-white px-4 py-8 text-sm text-slate-800 sm:px-8 lg:px-10">
-      <div className="site-footer__inner mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="site-footer__brand">
-          <span className="site-footer__brand-main">© 2026 Beirit Web - Eugen Beirit</span>
-          <div className="site-footer__meta" aria-label="Website-Informationen">
-            <small className="site-footer__small text-slate-800">{t("footer.business")}</small>
-            <span className="site-footer__meta-separator" aria-hidden="true">·</span>
-            <small className="site-footer__small text-slate-800">{t("footer.location")}</small>
-          </div>
-        </div>
-        <div className="site-footer__links flex flex-wrap gap-x-5 gap-y-2">
-          {footerLinkItems.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="footer-link transition hover:text-stone-950"
-              onClick={link.appPath && onNavigate ? (event) => {
-                event.preventDefault();
-                onNavigate(link.appPath);
-              } : undefined}
-            >
-              {t(link.labelKey)}
-            </a>
-          ))}
-        </div>
-      </div>
-      <button
-        type="button"
-        className={`footer-link--scroll-top${isScrollTopVisible ? " is-visible" : ""}`}
-        aria-label={t("footer.scrollTop")}
-        onClick={handleScrollTop}
-      >
-        <span className="footer-link__scroll-icon" aria-hidden="true">
-          <ArrowUp />
-        </span>
-      </button>
-    </footer>
-  );
-}
 
 function HeroTrustStrip({ t, language }) {
   const trustBadges = t("home.hero.trustBadges");
@@ -732,7 +326,7 @@ function ProblemsSection({ t, preview = false }) {
         {!preview ? (
           <>
             <ul className="problems-grid">
-              {problems.map(({ icon, title, text }, index) => {
+              {problems.map(({ icon, title, text, projectHref, projectLabel }, index) => {
                 const Icon = iconFor(icon);
                 return (
                   <li key={title} className="problem-card" {...revealProps("up", 130 + index * 45, 680, "0.75rem")}>
@@ -740,6 +334,7 @@ function ProblemsSection({ t, preview = false }) {
                     <span className="problem-card__body">
                       <strong>{title}</strong>
                       {text ? <span>{text}</span> : null}
+                      {projectHref ? <a className="problem-card__project-link" href={projectHref}>{projectLabel}<ArrowRight className="h-4 w-4" aria-hidden="true" /></a> : null}
                     </span>
                   </li>
                 );
@@ -810,165 +405,6 @@ function TestimonialsSection({ t }) {
   );
 }
 
-function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const mobileMenuToggleRef = React.useRef(null);
-  const mobileMenuPanelRef = React.useRef(null);
-  const navItems = [
-    { href: "/", label: t("nav.home") },
-    { href: "/kompetenzen", label: t("nav.skills") },
-    { href: "/ueber-mich", label: t("nav.aboutLink") },
-    { href: "/kontakt", label: t("nav.contact") },
-  ];
-  const closeMobileMenu = React.useCallback((restoreFocus = false) => {
-    setIsMobileMenuOpen(false);
-    if (restoreFocus) {
-      setTimeout(() => mobileMenuToggleRef.current?.focus(), 0);
-    }
-  }, []);
-  const handleNavigate = React.useCallback((event, href) => {
-    event.preventDefault();
-    closeMobileMenu();
-    onNavigate(href);
-  }, [closeMobileMenu, onNavigate]);
-  const renderNavigationLinks = (className = "site-nav-link") => navItems.map((item) => {
-    const isActive = activePath === item.href;
-    return (
-      <a
-        key={item.href}
-        href={item.href}
-        className={`${className}${isActive ? " is-active" : ""}`}
-        aria-current={isActive ? "page" : undefined}
-        onClick={(event) => handleNavigate(event, item.href)}
-      >
-        {item.label}
-      </a>
-    );
-  });
-
-  React.useEffect(() => {
-    if (!isMobileMenuOpen) return undefined;
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        closeMobileMenu(true);
-        return;
-      }
-      if (event.key !== "Tab" || event.ctrlKey || event.metaKey || event.altKey) return;
-      const focusableItems = [
-        mobileMenuToggleRef.current,
-        ...Array.from(mobileMenuPanelRef.current?.querySelectorAll("a[href]") || []),
-      ].filter(Boolean);
-      const firstItem = focusableItems[0];
-      const lastItem = focusableItems[focusableItems.length - 1];
-      if (!firstItem || !lastItem) return;
-      if (event.shiftKey && document.activeElement === firstItem) {
-        lastItem.focus();
-        event.preventDefault();
-      } else if (!event.shiftKey && document.activeElement === lastItem) {
-        firstItem.focus();
-        event.preventDefault();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [closeMobileMenu, isMobileMenuOpen]);
-
-  React.useEffect(() => {
-    if (!isMobileMenuOpen) return undefined;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isMobileMenuOpen]);
-
-  const headerMarkup = (
-    <>
-      <header className={`site-header site-header--optimized fixed inset-x-0 top-0 z-40 bg-white/90 shadow-line backdrop-blur-xl${isMobileMenuOpen ? " is-mobile-menu-open" : ""}`}>
-        <div className="site-header-nav site-header-nav--optimized">
-          <a href="/" className="site-logo group inline-flex min-w-0 max-w-[68vw] items-center rounded-lg py-1 pr-1 outline-none transition focus-visible:ring-4 focus-visible:ring-emerald-200 sm:max-w-none" onClick={(event) => handleNavigate(event, "/")}>
-            <img
-              src={brandLogoUrl}
-              srcSet={brandLogoSrcSet}
-              sizes="56px"
-              alt={t("home.hero.eyebrow")}
-              className="site-logo__mark h-12 w-auto max-w-[11rem] shrink-0 object-contain sm:h-14 sm:max-w-[13rem]"
-              width="80"
-              height="80"
-              decoding="async"
-              loading="eager"
-              fetchpriority="high"
-              onError={(event) => {
-                if (event.currentTarget.dataset.fallbackApplied === "true") return;
-                event.currentTarget.dataset.fallbackApplied = "true";
-                event.currentTarget.src = "/static/images/aktueles-logo-160.webp";
-              }}
-            />
-          </a>
-          <button
-            type="button"
-            ref={mobileMenuToggleRef}
-            className="site-nav-toggle"
-            aria-label={isMobileMenuOpen ? t("nav.menuClose") : t("nav.menuOpen")}
-            aria-controls="site-mobile-navigation"
-            aria-expanded={isMobileMenuOpen}
-            onClick={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
-          >
-            <span className="site-nav-toggle__icon" aria-hidden="true">
-              <svg className="site-menuicon" width="50" height="50" viewBox="0 0 50 50" focusable="false">
-                <g>
-                  <line className="site-menuicon__bar" x1="13" y1="16.5" x2="37" y2="16.5" />
-                  <line className="site-menuicon__bar" x1="13" y1="24.5" x2="37" y2="24.5" />
-                  <line className="site-menuicon__bar" x1="13" y1="24.5" x2="37" y2="24.5" />
-                  <line className="site-menuicon__bar" x1="13" y1="32.5" x2="37" y2="32.5" />
-                  <circle className="site-menuicon__circle" r="23" cx="25" cy="25" />
-                </g>
-              </svg>
-            </span>
-            <span className="site-nav-toggle__text">{t("nav.menu")}</span>
-          </button>
-          <nav id="site-navigation" className={`site-nav-links${isMobileMenuOpen ? " site-nav-links--visible" : ""}`} aria-label="Hauptnavigation">
-            {renderNavigationLinks()}
-          </nav>
-        </div>
-      </header>
-      <span className="site-nav-splash" aria-hidden="true" />
-      {isMobileMenuOpen ? (
-        <nav id="site-mobile-navigation" ref={mobileMenuPanelRef} className="site-mobile-menu-panel" aria-label="Hauptnavigation">
-          {renderNavigationLinks("site-mobile-menu-panel__link")}
-        </nav>
-      ) : null}
-    </>
-  );
-
-  if (portal && typeof document !== "undefined") {
-    return createPortal(headerMarkup, document.body);
-  }
-
-  return headerMarkup;
-}
-
-function PageShell({ t, activePath, onNavigate, children }) {
-  return (
-    <div className="site-shell site-shell--page min-h-screen bg-[#f7f6f2] text-stone-950">
-      <SiteHeader t={t} activePath={activePath} onNavigate={onNavigate} />
-      <main id="top" className="home-main site-page-main">
-        {children}
-      </main>
-      <PageFooter t={t} onNavigate={onNavigate} />
-    </div>
-  );
-}
-
-function PageHero({ eyebrow, title, intro }) {
-  return (
-    <section className="page-hero mx-auto max-w-7xl px-3 pb-8 pt-28 sm:px-8 sm:pb-12 sm:pt-36 lg:px-10 xl:max-w-[92rem] 2xl:max-w-[104rem]">
-      {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-      <h1 className="mt-3 max-w-6xl font-display text-4xl leading-tight sm:text-6xl lg:text-7xl xl:max-w-7xl 2xl:max-w-none 2xl:text-8xl">{title}</h1>
-      <p className="mt-5 max-w-3xl text-base leading-8 text-stone-700 sm:text-lg">{intro}</p>
-    </section>
-  );
-}
 
 function UnderConstructionNote({ t, onNavigate }) {
   return (
@@ -983,57 +419,6 @@ function UnderConstructionNote({ t, onNavigate }) {
   );
 }
 
-
-function featureIconFor(item) {
-  const text = String(item || "").toLowerCase();
-  const matches = (patterns) => patterns.some((pattern) => pattern.test(text));
-
-  if (matches([/react/, /vite/])) return ReactBrandIcon;
-  if (matches([/django/])) return DjangoBrandIcon;
-  if (matches([/^python$/, /python/])) return PythonBrandIcon;
-  if (matches([/^css$/, /css/])) return Hash;
-  if (matches([/^javascript$/, /\bjs\b/, /javascript/])) return Braces;
-  if (matches([/^html$/, /html/])) return Code2;
-  if (matches([/postgres|daten|data|model|database|profilmodel|katalog|quellen|angebote|скоринг|каталог|данн/])) return Database;
-  if (matches([/code|logik|funktion|backend|frontend|api|rest|widget|script|ui-|interface|интерфейс|код|логик|функц|backend|frontend/])) return Code2;
-  if (matches([/mobil|responsive|gerät|darstellung|design|abstand|layout|template|ansicht|bild|bilder|визуал|мобиль|адаптац|изображ|дизайн/])) return MonitorSmartphone;
-  if (matches([/formular|anfrage|kontakt|bewerbung|chat|form|заяв|форм|контакт|чат/])) return MessageSquare;
-  if (matches([/text|übersetz|de\/ru|deutsch|russisch|sprache|hinweis|термин|текст|немец|русск|подсказ/])) return Languages;
-  if (matches([/fehler|bug|ladeproblem|prüfung|sichtung|analyse|problem|ошиб|провер|анализ|загруз/])) return Bug;
-  if (matches([/seite|startseite|unterseite|bereich|veröffentlichung|route|webseite|page|страниц|публикац|раздел/])) return LayoutTemplate;
-  if (matches([/kalender|termin|ablauf|workflow|prozess|verwaltung|организац|процесс|управлен/])) return Workflow;
-  if (matches([/sicher|login|konto|geschützt|auth|безопас|аккаунт|логин/])) return ShieldCheck;
-  if (matches([/schnell|ladezeit|performance|cache|static|статич|быстр/])) return Cpu;
-
-  return Star;
-}
-
-function PortfolioFeatureList({ items, illustrations = [] }) {
-  return (
-    <ul className="portfolio-card__feature-list">
-      {items.map((item, index) => {
-        const label = featureLabel(item);
-        const description = featureDescription(item);
-        const Icon = featureIconFor(label);
-        return (
-          <li key={label}>
-            <span className="portfolio-card__feature-list-icon-wrap" aria-hidden="true">
-              {illustrations[index] ? (
-                <CardIllustration name={illustrations[index]} kind="feature" fallback={Icon} className="portfolio-card__feature-list-icon" />
-              ) : (
-                <TechnologyIcon label={label} fallback={Icon} className="portfolio-card__feature-list-icon" />
-              )}
-            </span>
-            <span>
-              <strong>{label}</strong>
-              {description ? <small>{description}</small> : null}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
 
 function AboutTechCarousel({ items }) {
   const carouselRef = React.useRef(null);
@@ -1133,381 +518,6 @@ function AboutTechCarousel({ items }) {
   );
 }
 
-function languageServicesCaseStudy(item, language) {
-  const slug = item?.slug || portfolioSlugFor(item);
-  if (slug !== "sprachdienstleistungen") return item;
-
-  if (language === "ru") {
-    return {
-      ...item,
-      title: "Языковой сервис DE ↔ RU",
-      text: "Многоязычная веб-платформа с учебными модулями DeutschLive и Vokabelbox: диалоги, упражнения, тесты и локальные аудиозаписи.",
-      status: "Портфолио-кейс",
-      href: "/deutschlive/",
-      liveUrl: "",
-      localHref: "",
-      cta: "Попробовать проект",
-      showPrimaryAction: true,
-      showContactCta: false,
-    };
-  }
-
-  const image = item.images?.[0];
-  return {
-    ...item,
-    title: "Sprachservice DE ↔ RU",
-    text: "Mehrsprachige Webplattform mit Nutzerbereich und den Lernmodulen DeutschLive und Vokabelbox: Dialoge, Übungen, Quiz und lokal gespeicherte Aufnahmen.",
-    status: "Portfolio-Fallstudie",
-    href: "/deutschlive/",
-    liveUrl: "",
-    localHref: "",
-    cta: "Projekt ausprobieren",
-    showPrimaryAction: true,
-    showContactCta: false,
-    trustSignals: [],
-    images: image ? [{ ...image, label: "Desktop" }] : item.images,
-    situation: [
-      "Als Projekt entstand eine zentrale digitale Plattform, die Informationen, Kontaktwege und interne Abläufe an einem Ort zusammenführt.",
-      "Besonderer Fokus lag dabei auf einer mehrsprachigen Darstellung sowie klar getrennten öffentlichen und geschützten Bereichen.",
-    ],
-    implementation: "Die Django-Webplattform bündelt Nutzerkonten, Profile, Vokabelbox und DeutschLive. Der integrierte DeutschLive-Lernbereich bietet Dialoge, Übungen, Quiz und einen Audioplayer für eigene, ausschließlich lokal im Browser gespeicherte Aufnahmen.",
-    implementationFeatures: [
-      "Benutzerregistrierung und Login",
-      "Integrierte Vokabelbox mit Artikel-Quiz und Favoriten",
-      "DeutschLive mit Dialogen, Übungen und gemeinsamem Plattformkonto",
-      "Eigene Aufnahmen lokal speichern, abspielen und herunterladen",
-      "Persönlicher Profilbereich",
-      "Bewerbungs- und Kontaktformulare",
-      "Verwaltung eingehender Anfragen",
-      "Geschützte Nutzerbereiche",
-      "Mehrsprachige Inhalte und Lokalisierung",
-      "Strukturierte Verwaltung über den internen Bereich",
-    ],
-    result: [
-      "Entstanden ist eine moderne und zentral organisierte Webplattform, die öffentliche Informationen mit individuellen Nutzerbereichen und internen Verwaltungsprozessen verbindet.",
-      "Die Fallstudie dokumentiert die technische Umsetzung; Sprachdienstleistungen werden darüber nicht mehr angeboten oder gebucht.",
-    ],
-    features: [
-      { title: "Django", text: "Leistungsfähiges Webframework für die individuelle Plattform." },
-      { title: "Vokabelbox", text: "Deutsch lernen mit Wortsuche, Artikelfilter, Favoriten und Quiz. Der Lernstand bleibt im jeweiligen Browser erhalten." },
-      { title: "DeutschLive", text: "Dialoge, Übungen und Quiz mit dem Plattformkonto. Eigene Aufnahmen bleiben im lokalen Audioplayer auf dem Gerät." },
-      { title: "Benutzerkonten", text: "Registrierung, Anmeldung und persönliche Bereiche." },
-      { title: "Profilbereich", text: "Individuelle Nutzerinformationen zentral verwaltet." },
-      { title: "Kontakt & Bewerbungen", text: "Strukturierte Erfassung von Anfragen." },
-      { title: "Mehrsprachigkeit", text: "Inhalte für unterschiedliche Sprachgruppen." },
-      { title: "Geschützte Bereiche", text: "Zugriff auf relevante Inhalte nur für angemeldete Nutzer." },
-    ],
-    proofLabel: "Technologie",
-    tags: projectTechnologyTags(item),
-    note: "",
-    closingTitle: "Technische Fallstudie",
-    closingText: "Das Projekt verbindet Django-Architektur, Mehrsprachigkeit, geschützte Nutzerbereiche und ein integriertes Vokabeltraining.",
-  };
-}
-
-function PortfolioProjectPage({ item, t, language, onNavigate }) {
-  item = languageServicesCaseStudy(item, language);
-  const previewImage = projectPreviewImage(item);
-  const hasCover = previewImage?.variant === "cover";
-  const projectSlug = portfolioSlugFor(item);
-  const isCase = (item.category || "demo") === "case";
-  const fallbackActionLabel = t(isCase ? "home.portfolio.caseStudyCta" : "home.portfolio.referenceCta");
-  const closingActionLabel = item.contactCta || fallbackActionLabel;
-  const contactPath = `/kontakt?project=${encodeURIComponent(item.title)}${isCase ? "&topic=feature" : ""}`;
-  const actionHref = projectActionHref(item) || contactPath;
-  const actionLabel = actionHref === contactPath ? (item.cta || fallbackActionLabel) : t("home.portfolio.projectCta");
-  const isExternalAction = isExternalUrl(actionHref);
-  const githubHref = item.githubHref || item.githubUrl || "";
-  const handlePrimaryAction = (event) => {
-    if (actionHref !== contactPath) {
-      return;
-    }
-    event.preventDefault();
-    onNavigate(contactPath);
-  };
-
-  return (
-    <>
-      <section className={`portfolio-project-hero portfolio-project-hero--${projectSlug} mx-auto max-w-7xl px-3 sm:px-8 lg:px-10`}>
-        <a
-          href="/projekte/"
-          className="portfolio-project-back"
-          onClick={(event) => {
-            event.preventDefault();
-            onNavigate("/projekte");
-          }}
-        >
-          {language === "ru" ? "Назад к проектам" : "Zurück zu Projekten"}
-        </a>
-        <div className="portfolio-project-hero__grid">
-          <div className="portfolio-project-hero__copy">
-            <h1>{item.title}</h1>
-            <p>{item.text}</p>
-            <div className="portfolio-card__meta">
-              <span className="portfolio-card__type">{item.type}</span>
-              {item.status ? <span className="portfolio-card__status">{item.status}</span> : null}
-              {(item.trustSignals || []).map((signal) => (
-                <span key={signal} className="portfolio-card__trust portfolio-card__trust--reference">{signal}</span>
-              ))}
-            </div>
-            {item.showPrimaryAction !== false ? (
-              <a
-                href={actionHref}
-                className="portfolio-contact-button"
-                target={isExternalAction ? "_blank" : undefined}
-                rel={isExternalAction ? "noopener noreferrer" : undefined}
-                onClick={handlePrimaryAction}
-              >
-                {actionLabel}
-              </a>
-            ) : null}
-            {githubHref ? (
-              <a
-                href={githubHref}
-                className="project-overview-card__secondary-button portfolio-project-github-link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GitHubIcon className="h-4 w-4" aria-hidden="true" />
-                GitHub
-              </a>
-            ) : null}
-            {projectSlug === "sprachdienstleistungen" ? (
-              <a id="deutschlive" href="/deutschlive/"
-                className="project-overview-card__secondary-button" target="_blank" rel="noopener noreferrer">
-                {language === "ru" ? "Открыть DeutschLive" : language === "uk" ? "Відкрити DeutschLive" : "DeutschLive öffnen"}
-              </a>
-            ) : null}
-            {projectSlug === "sprachdienstleistungen" ? (
-              <a
-                id="vokabelbox"
-                href="/static/portfolio/vokabelbox-main/index.html"
-                className="project-overview-card__secondary-button"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {language === "ru" ? "Открыть Vokabelbox" : language === "uk" ? "Відкрити Vokabelbox" : "Vokabelbox öffnen"}
-              </a>
-            ) : null}
-            {projectSlug === "enbt-botanic" ? (
-              <a
-                id="wetter"
-                href={publicPageUrl("/botanic/wetter/")}
-                className="project-overview-card__secondary-button"
-              >
-                {language === "ru" ? "Открыть погоду" : language === "uk" ? "Відкрити погоду" : "Wetter öffnen"}
-              </a>
-            ) : null}
-            {projectSlug === "sprachdienstleistungen" ? (
-              <a id="musikplayer" href="/deutschlive/recordings"
-                className="project-overview-card__secondary-button" target="_blank" rel="noopener noreferrer">
-                {language === "ru" ? "Мои записи" : language === "uk" ? "Мої записи" : "Meine Aufnahmen öffnen"}
-              </a>
-            ) : null}
-          </div>
-          {previewImage ? (
-            <figure className={`portfolio-project-hero__preview ${hasCover ? "portfolio-project-hero__cover" : "portfolio-card__desktop-preview"}`}>
-              <PortfolioImage
-                image={previewImage}
-                title={item.title}
-                loading="eager"
-                fetchPriority="high"
-                width={1440}
-                height={1000}
-              />
-              {!hasCover ? <figcaption>{previewImage.label}</figcaption> : null}
-            </figure>
-          ) : (
-            <div className="portfolio-card__preview portfolio-project-hero__preview" aria-hidden="true">
-              <div className="portfolio-card__browser-bar"><span /><span /><span /></div>
-              <div className="portfolio-card__mockup">
-                <strong>{item.title}</strong>
-                <span>{item.type}</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section id="projektdetails" className="portfolio-project-page mx-auto max-w-7xl scroll-mt-24 px-3 pb-16 sm:px-8 lg:px-10">
-        <div className="portfolio-card__details-grid">
-          <article className="portfolio-card__situation">
-            <span>{t("home.portfolio.situationLabel")}</span>
-            {paragraphList(item.situation).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-          </article>
-          <article className="portfolio-card__implementation">
-            <span>{t("home.portfolio.implementationLabel")}</span>
-            {paragraphList(item.implementation || item.text).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-            {item.implementationFeatures?.length ? (
-              <ul className="portfolio-project-checklist">
-                {item.implementationFeatures.map((feature) => (
-                  <li key={feature}>
-                    <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </article>
-          <article className="portfolio-card__result">
-            <span>{t("home.portfolio.resultLabel")}</span>
-            {paragraphList(item.result).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-          </article>
-        </div>
-        {item.features?.length ? (
-          <section className="portfolio-card__features" aria-label={t("home.portfolio.featuresLabel")}>
-            <strong className="portfolio-card__features-title">{t("home.portfolio.featuresLabel")}</strong>
-            <PortfolioFeatureList items={item.features} />
-          </section>
-        ) : null}
-        <section className="portfolio-card__proof" aria-label={t("home.portfolio.proofLabel")}>
-          <strong className="portfolio-card__proof-title">{item.proofLabel || t("home.portfolio.proofLabel")}</strong>
-          {(item.tags || []).map((tag) => <span key={tag}>{tag}</span>)}
-        </section>
-        {item.note ? <p className="portfolio-project-note">{item.note}</p> : null}
-        {item.closingTitle || item.closingText ? (
-          <section className="portfolio-project-closing" aria-label={item.closingTitle || closingActionLabel}>
-            {item.closingTitle ? <h2>{item.closingTitle}</h2> : null}
-            {item.closingText ? <p>{item.closingText}</p> : null}
-            {item.showContactCta !== false ? (
-              <a
-                href={contactPath}
-                className="portfolio-contact-button"
-                onClick={(event) => {
-                  event.preventDefault();
-                  onNavigate(contactPath);
-                }}
-              >
-                {closingActionLabel}
-              </a>
-            ) : null}
-          </section>
-        ) : null}
-      </section>
-    </>
-  );
-}
-
-function ProjectsOverviewPage({ items, language, onNavigate }) {
-  const copy = {
-    de: {
-      title: "Projekte",
-      intro: "Entdecken Sie weitere Webprojekte, Anwendungen, Tools und Softwarelösungen. Viele Projekte können direkt angesehen oder ausprobiert werden.",
-      details: "Details ansehen",
-      live: "Anschauen",
-      github: "GitHub",
-      technologies: "Technologien",
-      empty: "Aktuell sind keine veröffentlichten Projekte vorhanden.",
-    },
-    ru: {
-      title: "Проекты",
-      intro: "Посмотрите другие web-проекты, приложения, инструменты и программные решения. Многие проекты можно открыть или сразу попробовать.",
-      details: "Подробнее",
-      live: "Открыть live",
-      github: "GitHub",
-      technologies: "Технологии",
-      empty: "Пока нет опубликованных проектов.",
-    },
-  }[language] || {
-    title: "Projekte",
-    intro: "Entdecken Sie weitere Webprojekte, Anwendungen, Tools und Softwarelösungen. Viele Projekte können direkt angesehen oder ausprobiert werden.",
-    details: "Details ansehen",
-    live: "Anschauen",
-    github: "GitHub",
-    technologies: "Technologien",
-    empty: "Aktuell sind keine veröffentlichten Projekte vorhanden.",
-  };
-  const projects = React.useMemo(() => sortedPortfolioItems(items), [items]);
-
-  return (
-    <>
-      <PageHero title={copy.title} intro={copy.intro} />
-
-      <section className="project-overview mx-auto max-w-7xl px-3 pb-16 sm:px-8 lg:px-10">
-        {projects.length ? (
-          <div className="project-grid">
-            {projects.map((item, index) => {
-              const thumbnail = projectPreviewImage(item);
-              const detailPath = portfolioProjectPath(item);
-              const liveHref = projectLiveHref(item);
-              const liveIsExternal = isExternalUrl(liveHref);
-              const githubHref = item.githubHref || item.githubUrl || "";
-              const technologies = projectTechnologyTags(item);
-              return (
-                <article className={`project-overview-card project-overview-card--${portfolioSlugFor(item)}`} key={item.title}>
-                  {thumbnail ? (
-                    <a
-                      href={detailPath}
-                      className={`project-overview-card__media${thumbnail.variant === "cover" ? " project-overview-card__media--cover" : ""}`}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        onNavigate(detailPath);
-                      }}
-                    >
-                      <PortfolioImage
-                        image={thumbnail}
-                        title={item.title}
-                        loading={index < 3 ? "eager" : "lazy"}
-                      />
-                    </a>
-                  ) : null}
-                  <div className="project-overview-card__body">
-                    <div className="project-overview-card__meta">
-                      <span>{item.type}</span>
-                      {item.status ? <span>{item.status}</span> : null}
-                    </div>
-                    <h2>
-                      <TechnicalLabel language={language}>{item.title}</TechnicalLabel>
-                    </h2>
-                    <p>{item.text}</p>
-                    <TechnologyTags technologies={technologies} className="project-overview-card__tags" label={copy.technologies} />
-                    <div className="project-overview-card__actions">
-                      <a
-                        href={detailPath}
-                        className="project-overview-card__button"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          onNavigate(detailPath);
-                        }}
-                      >
-                        <FileText className="h-4 w-4" aria-hidden="true" />
-                        {copy.details}
-                      </a>
-                      {liveHref ? (
-                        <a
-                          href={liveHref}
-                          className="project-overview-card__secondary-button"
-                          target={liveIsExternal ? "_blank" : undefined}
-                          rel={liveIsExternal ? "noopener noreferrer" : undefined}
-                        >
-                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                          {copy.live}
-                        </a>
-                      ) : null}
-                      {githubHref ? (
-                        <a
-                          href={githubHref}
-                          className="project-overview-card__secondary-button"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <GitHubIcon className="h-4 w-4" aria-hidden="true" />
-                          {copy.github}
-                        </a>
-                      ) : null}
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="project-overview__empty">{copy.empty}</p>
-        )}
-      </section>
-    </>
-  );
-}
 
 function FaqPageContent({ t, language, onNavigate }) {
   const faqs = t("home.faq.items");
@@ -1590,7 +600,7 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
   useScrollReveal();
   const services = t("home.services.items");
   const shouldFetchPortfolio = routeKey === "projects" || routeKey === "portfolioProject";
-  const { items: portfolioItems } = usePortfolioProjects(t, { fetchRemote: shouldFetchPortfolio });
+  const { items: portfolioItems } = usePortfolioProjects(t, { fetchRemote: shouldFetchPortfolio, language });
   const aboutParagraphs = t("home.about.paragraphs");
 
   if (routeKey === "portfolioProject") {
@@ -1607,7 +617,7 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
   }
 
   if (routeKey === "projects") {
-    return <ProjectsOverviewPage items={portfolioItems} language={language} onNavigate={onNavigate} />;
+    return <ProjectsOverviewPage items={portfolioItems.map(item => languageServicesCaseStudy(item, language))} language={language} onNavigate={onNavigate} />;
   }
 
   if (routeKey === "services") {
@@ -1635,6 +645,12 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
         Bug: ["исправить ошибки форм", "проверить ошибки отображения", "найти причины медленной загрузки"],
         Workflow: ["расширить форму заявки", "спланировать небольшой клиентский раздел", "упростить внутреннюю обработку"],
         Globe2: ["тексты сайта DE/RU", "тексты интерфейса для форм", "понятно адаптировать подсказки программы"],
+      },
+      uk: {
+        LayoutTemplate: ["упорядкувати головну сторінку", "поліпшити мобільне відображення", "структурувати тексти та зображення"],
+        Bug: ["виправити помилки форм", "перевірити відображення", "знайти причини повільного завантаження"],
+        Workflow: ["розширити форму запиту", "спланувати особистий кабінет", "спростити внутрішні процеси"],
+        Globe2: ["тексти вебсайту DE/RU", "тексти інтерфейсу для форм", "зрозумілі підказки застосунку"],
       },
     }[language] || {};
     const techPoints = t("home.tech.points");
@@ -1690,7 +706,7 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
     const aboutContent = {
       de: {
         intro: [
-          "Ich bin Eugen Beirit und entwickle Webanwendungen, Softwareprojekte und digitale Werkzeuge.",
+          "Ich bin Eugen und entwickle Webanwendungen, Softwareprojekte und digitale Werkzeuge.",
           "Dieses Portfolio dokumentiert ausgewählte Projekte, technische Entscheidungen und die dabei gewonnenen Erfahrungen.",
         ],
         backgroundTitle: "Beruflicher und technischer Hintergrund",
@@ -1703,7 +719,7 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
           "Im Mittelpunkt stehen verständliche Absprachen, direkte Kommunikation und eine zuverlässige Umsetzung.",
           "Bei technischen Projekten lege ich Wert auf nachvollziehbare, wartbare und bedarfsgerechte Lösungen. Statt unnötig komplizierter Funktionen soll eine Lösung das konkrete Problem zuverlässig lösen.",
         ],
-        techStack: ["Python", "Django", "React", "JavaScript", "PostgreSQL", "HTML", "CSS"],
+        techStack: ["Python", "Django", "React", "JavaScript", "Node.js", "Express.js", "MongoDB", "PostgreSQL", "HTML", "CSS", "Bootstrap", "Tailwind CSS"],
         valuesTitle: "Werte und Vorteile",
         values: ["persönliche und direkte Kommunikation", "realistische Einschätzung von Aufwand und Möglichkeiten", "verständliche Absprachen", "wartbare technische Lösungen", "responsive Webentwicklung", "individuelle Web- und Softwarelösungen", "deutschlandweite Zusammenarbeit"],
         hobbyTitle: "Hobby",
@@ -1713,12 +729,12 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
         cta: "Projekt oder Termin besprechen",
       },
       ru: {
-        intro: "Я Евген Байрит и разрабатываю веб-приложения, программные проекты и цифровые инструменты.",
+        intro: "Я Евген и разрабатываю веб-приложения, программные проекты и цифровые инструменты.",
         backgroundTitle: "Профессиональный и технический фон",
         background: "Моя основа - обучение на full-stack web developer. В портфолио представлены проекты на React, JavaScript, Python и Django.",
         workflowTitle: "Формат работы",
         workflow: "В центре работы - понятные договоренности, поддерживаемые решения и прямое общение без лишних технических терминов.",
-        techStack: ["Python", "Django", "React", "JavaScript", "PostgreSQL", "HTML", "CSS"],
+        techStack: ["Python", "Django", "React", "JavaScript", "Node.js", "Express.js", "MongoDB", "PostgreSQL", "HTML", "CSS", "Bootstrap", "Tailwind CSS"],
         valuesTitle: "Ценности и преимущества",
         values: ["прямая коммуникация", "реалистичная оценка", "поддерживаемая реализация", "адаптация под устройства", "онлайн-сотрудничество по Германии", "немецкий/русский/украинский для сайтов и software-текстов"],
         hobbyTitle: "Хобби",
@@ -1726,6 +742,21 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
         hobbyVideoTitle: "Мой старый друг",
         hobbyVideoText: "Небольшой личный фрагмент вне проектной работы.",
         cta: "Обсудить проект",
+      },
+      uk: {
+        intro: "Я Євген. Розробляю вебзастосунки, програмні проєкти та цифрові інструменти.",
+        backgroundTitle: "Професійний і технічний досвід",
+        background: "Моя основа в ІТ — навчання на Full-Stack веброзробника. Працюю з React, JavaScript, Python і Django та постійно розширюю свої знання.",
+        workflowTitle: "Як я працюю",
+        workflow: "Зрозумілі домовленості, пряме спілкування та підтримувані технічні рішення допомагають розв'язувати конкретні завдання.",
+        techStack: ["Python", "Django", "React", "JavaScript", "Node.js", "Express.js", "MongoDB", "PostgreSQL", "HTML", "CSS", "Bootstrap", "Tailwind CSS"],
+        valuesTitle: "Принципи роботи",
+        values: ["пряме спілкування", "реалістична оцінка обсягу роботи", "зрозумілі домовленості", "підтримуваний код", "адаптивна веброзробка", "онлайн-співпраця в Німеччині"],
+        hobbyTitle: "Хобі",
+        hobbyEyebrow: "Особисте",
+        hobbyVideoTitle: "Мій старий друг",
+        hobbyVideoText: "Невеликий особистий погляд поза роботою над проєктами.",
+        cta: "Зв'язатися",
       },
     }[language];
     const renderParagraphs = (content) => (
@@ -1735,14 +766,12 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
     );
     const techStack = [...new Set([
       ...(aboutContent.techStack || t("home.tech.stack").map((item) => item.label)),
-      ...Object.keys(technologyLogos),
     ])];
     const profilePanel = (
       <aside className="about-profile-panel" aria-label={t("nav.about")}>
         <div className="about-photo-card">
           <div className="about-photo-card__placeholder">
             <div className="about-hero-copy">
-              <p className="about-hero__eyebrow">{t("nav.about")}</p>
               <h1>{t("home.about.title")}</h1>
               {Array.isArray(aboutContent.intro)
                 ? aboutContent.intro.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
@@ -1824,18 +853,8 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
   if (routeKey === "contact") {
     const params = new URLSearchParams(window.location.search);
     const selectedProject = params.get("project") || "";
-    const isDonationIntent = params.get("intent") === "donation";
-    const donationSubject = language === "ru"
-      ? "Добровольная поддержка / пожертвование"
-      : "Freiwillige Unterstützung / Spende";
-    const donationMessage = language === "ru"
-      ? "Я хотел(а) бы добровольно поддержать проект. Пожалуйста, сообщите мне возможный способ."
-      : "Ich möchte das Projekt freiwillig unterstützen. Bitte teilen Sie mir eine passende Möglichkeit mit.";
-    const selectedSubject = isDonationIntent
-      ? donationSubject
-      : selectedProject
-        ? `Frage zu ${selectedProject}`
-        : "";
+    const subjectPrefix = { de: "Frage zu", ru: "Вопрос о", uk: "Питання про" }[language] || "Frage zu";
+    const selectedSubject = selectedProject ? `${subjectPrefix} ${selectedProject}` : "";
     return (
       <section className="contact-section contact-page-section contact-page-section--compact">
         <div className="contact-panel">
@@ -1843,7 +862,6 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
             <LazyContactForm
               language={language}
               selectedSubject={selectedSubject}
-              initialMessage={isDonationIntent ? donationMessage : ""}
               t={t}
             />
             <LazyContactDetails language={language} />
@@ -2132,6 +1150,7 @@ function usePortfolioCarousel(itemCount, initialIndex = 0) {
 function HomePortfolioSection({ t, language, homeOverviewCopy, onNavigate }) {
   const { featuredItems: homePortfolioItems } = usePortfolioProjects(t, {
     fetchRemote: true,
+    language,
   });
   const portfolioStartIndex = React.useMemo(() => {
     const preferredIndex = homePortfolioItems.findIndex(
@@ -2289,6 +1308,11 @@ function HomePage({ onNavigate }) {
       referencesIntro: "Выбранные проекты и demo показывают исходную задачу, реализацию и практическую пользу.",
       referencesLink: "Больше проектов",
     },
+    uk: {
+      learnMore: "Докладніше",
+      referencesIntro: "Вибрані проєкти й демо показують початкове завдання, реалізацію та результат.",
+      referencesLink: "Більше проєктів",
+    },
   }[language];
   const navigateFromHome = React.useCallback((nextPath) => {
     const pathText = String(nextPath || "");
@@ -2434,7 +1458,7 @@ export default function App() {
     ? {
         key: "portfolioProject",
         title: `${projectItem?.title || "Projekt"} | Projekte | Beirit Web`,
-        description: projectItem?.text || "Portfolio-Projekt mit Beschreibung, Technologien, Live-Demo und optionalem GitHub-Link.",
+        description: projectItem?.text || "Portfolio-Projekt mit Beschreibung, Technologien und Live-Demo.",
       }
     : null);
   useDocumentMeta(route || { title: "Seite nicht gefunden | Beirit Web", description: "Diese Seite wurde nicht gefunden.", robots: "noindex, follow" });
@@ -2444,7 +1468,7 @@ export default function App() {
   }
 
   const handleNavigate = (nextPath) => navigateToAppPath(nextPath, setPath);
-  const activePath = projectItem || route?.key === "projects" ? "/#referenzen" : route ? path : "";
+  const activePath = projectItem || route?.key === "projects" ? "/projekte" : route ? path : "";
 
   return (
     <PageShell t={t} activePath={activePath} onNavigate={handleNavigate}>
