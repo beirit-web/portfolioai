@@ -1,31 +1,35 @@
 # Weitere Bereinigung am 10. Oktober 2026
 
-Erneute Prüfung nach dem Verschieben der 43 bestätigten ungenutzten Dateien. Bei dieser Prüfung wurden keine weiteren Projektdateien entfernt oder verschoben. Die nachfolgenden Größen beschreiben vorhandene Dateiinhalte, ohne virtuelle Umgebungen oder Abhängigkeiten als ungenutzt einzustufen.
+Die weitere Bereinigung ist abgeschlossen. **2.052 Dateien mit 530,71 MiB** liegen jetzt unter `~/Bilder/Bilder/Beirit-Digital-Bereinigung-2026-10-10`. Die Verzeichnisstruktur bleibt erhalten; `verschiebung.json` im Archiv enthält Größen und SHA-256-Prüfsummen. Alle Dateiinhalte wurden nach dem Transfer geprüft.
 
-## Größter weiterer Nutzen
+Die 28 bestätigten zusätzlichen ungenutzten Dateien, 15 alten Screenshots, 274 Berichtsdateien und 380 Python-Caches sind ausgelagert. Auch die beiden bisherigen statischen Ausgaben sind dort archiviert; im Projekt stehen frisch aufgebaute und geprüfte Ausgaben. Die 42 historischen Berichtslinks führen in das lokale Archiv.
+
+## Erledigter Transfer
 
 | Bereich | Umfang | Vorgehen |
 | --- | ---: | --- |
-| Veraltete Bilder/Videos in `server/staticfiles/images/` | 31 Dateien / 316,49 MiB | Ausgabe mit `collectstatic --clear` neu aufbauen; WhiteNoise verwendet diesen Ordner. |
-| Python-Caches außerhalb `.venv` und `node_modules` | 45 Ordner / 2,71 MiB | Neu erzeugbare Bytecode-Caches bereinigen. |
-| Alte lokale Screenshots | 15 Dateien / 12,68 MiB | Ohne Quell- oder Dokumentationsverweise; außerhalb des Projekts archivieren. |
-| Weitere bestätigte ungenutzte Dateien | 28 Dateien / 2,78 MiB | Varianten, exakte Dubletten und Startergrafik auslagern; aktive Gegenstücke und Originale bleiben erhalten. |
-| Historische Bilder zur Archivprüfung | 10 Dateien / 9,32 MiB | Originale und Projektarchiv prüfen, dann außerhalb des Projekts aufbewahren. |
-| Generierte Messberichte und Browserausgaben | 137,25 MiB | Dokumentationslinks erhalten oder mit der Archivierung anpassen. |
+| Veraltete Bilder/Videos in `server/staticfiles/images/` | 31 Dateien / 316,49 MiB | Mit den früheren Ausgaben archiviert; im neuen STATIC_ROOT fehlen diese Altdateien. |
+| Python-Caches außerhalb `.venv` und `node_modules` | 45 Ordner / 2,71 MiB | 380 Cachedateien aus 45 Ordnern archiviert. |
+| Alte lokale Screenshots | 15 Dateien / 12,68 MiB | Alle 15 Dateien archiviert. |
+| Weitere bestätigte ungenutzte Dateien | 28 Dateien / 2,78 MiB | Alle 28 Dateien archiviert; aktive Gegenstücke und Originale sind erhalten. |
+| Generierte Messberichte und Browserausgaben | 137,25 MiB | Alle 274 Dateien archiviert; 42 historische Links angepasst. |
 
-Python-Caches und die 15 lokalen Screenshots zusammen belegen **15,40 MiB**. Sie gehören nicht zu den aktiven Builds.
+Die archivierten Python-Caches und 15 lokalen Screenshots belegten **15,40 MiB**. Sie gehören nicht zu den aktiven Builds.
 
-## Collectstatic-Ausgaben gezielt neu aufbauen
+## Statische Ausgaben neu aufgebaut
 
-`server/staticfiles/` enthält insgesamt **344,07 MiB**; davon liegen **316,49 MiB** in 31 Bild- und Videokopien, deren Quellpfade nicht mehr existieren. Darunter sind alle acht früheren Videos, 19 alte Logos/Icons und vier alte Mobile-Vorschauen. Auch nach dem Entfernen oder Auslagern der Quellen liegen diese Kopien noch im Ausgabeordner.
+Die bisherigen Ausgaben unter `server/staticfiles/` und `apps/portfolio-demos/sprachdienstleistungen/staticfiles/` wurden vor dem Austausch vollständig neu erzeugt und geprüft. Erst danach wurden die bisherigen Ausgabeordner in das Archiv verschoben. Beide neuen Ausgaben sind installiert.
 
-Zusätzlich enthält `apps/portfolio-demos/sprachdienstleistungen/staticfiles/` **31,22 MiB** generierte Ausgabe. Beide Pfade sind als `STATIC_ROOT` konfiguriert und werden von WhiteNoise verwendet. Sie deshalb zusammen mit einem sauberen `collectstatic --clear` behandeln und die neu aufgebaute Ausgabe prüfen. Die aktiven Quellassets und Manifeste unter `server/assets/` bleiben erhalten.
+| Aktiver Ausgabeordner | Dateien | Größe |
+| --- | ---: | ---: |
+| `server/staticfiles` | 444 | 19,76 MiB |
+| `apps/portfolio-demos/sprachdienstleistungen/staticfiles` | 865 | 26,20 MiB |
 
-Die exakten 31 veralteten Kopien und ihre fehlenden Quellpfade stehen im JSON unter `generated_files.stale_static_image_copies`.
+Die 31 veralteten Bild-/Videokopien mit 316,49 MiB fehlen in der neuen Hauptserver-Ausgabe. Aktuelle Vite-Bundles, Logos, die gemeinsame Vokabelbox und sämtliche 226 Ziele des Sprachplattform-Manifests sind vorhanden. Die Vite-Manifeste und der Darstellungskatalog unter `server/assets/react-home-dist/.vite/` bleiben als aktive Quelldateien erhalten; versteckte Quellkataloge werden von collectstatic nicht als öffentliche Ausgabe kopiert.
 
-## Weitere bestätigte Einzeldateien
+## Archivierte bestätigte Einzeldateien
 
-28 weitere Kandidaten mit zusammen **2,78 MiB**. Die bisher vorgemerkten 22 Bilder sind vollständig eingeordnet: 15 ungenutzte Varianten/Dubletten können ausgelagert werden; sieben eigenständige Originale bleiben erhalten. Zusätzlich wurden vier ungenutzte 960px-Ausgaben von bereits integrierten Modulen gefunden. Die dokumentierten 1254px-Coveroriginale bleiben erhalten.
+28 archivierte ungenutzte Dateien mit zusammen **2,78 MiB**. Die bisher vorgemerkten 22 Bilder sind vollständig eingeordnet: 15 ungenutzte Varianten/Dubletten sind ausgelagert; sieben eigenständige Originale bleiben erhalten. Zusätzlich wurden vier ungenutzte 960px-Ausgaben von bereits integrierten Modulen gefunden. Die dokumentierten 1254px-Coveroriginale bleiben erhalten.
 
 | Datei | Größe | Beleg |
 | --- | ---: | --- |
@@ -89,7 +93,7 @@ Die folgenden Dateien haben keine aktuellen Dateiverweise. Bei den Musikplayer-B
 | `apps/portfolio-demos/musikplayer/assets/track-image.jpeg` | 8,71 MiB |
 | `apps/portfolio-demos/musikplayer/assets/track-image.webp` | 0,27 MiB |
 
-## Alte lokale Screenshots
+## Archivierte lokale Screenshots
 
 Keine aktuellen Referenzen in Quellcode oder Dokumentation gefunden. Alle Dateien sind bereits von Git ignoriert.
 
@@ -115,11 +119,11 @@ Keine aktuellen Referenzen in Quellcode oder Dokumentation gefunden. Alle Dateie
 
 | Ordner | Größe | Einordnung |
 | --- | ---: | --- |
-| `runtime/lighthouse` | 74,44 MiB | Generierte Auswertung; vorhandene Dokumentationslinks beachten. |
-| `runtime/performance` | 36,64 MiB | Generierte Auswertung; vorhandene Dokumentationslinks beachten. |
-| `runtime/browser-checks` | 25,64 MiB | Generierte Auswertung; vorhandene Dokumentationslinks beachten. |
-| `runtime/vokabelbox-checks` | 0,00 MiB | Generierte Auswertung; vorhandene Dokumentationslinks beachten. |
-| `runtime/vokabelbox-preview` | 0,54 MiB | Generierte Auswertung; vorhandene Dokumentationslinks beachten. |
+| `runtime/lighthouse` | 74,44 MiB | Archiviert; künftige Messläufe können den ursprünglichen Ausgabeordner neu anlegen. |
+| `runtime/performance` | 36,64 MiB | Archiviert; künftige Messläufe können den ursprünglichen Ausgabeordner neu anlegen. |
+| `runtime/browser-checks` | 25,64 MiB | Archiviert; künftige Messläufe können den ursprünglichen Ausgabeordner neu anlegen. |
+| `runtime/vokabelbox-checks` | 0,00 MiB | Archiviert; künftige Messläufe können den ursprünglichen Ausgabeordner neu anlegen. |
+| `runtime/vokabelbox-preview` | 0,54 MiB | Archiviert; künftige Messläufe können den ursprünglichen Ausgabeordner neu anlegen. |
 | `frontend/node_modules` | 302,76 MiB | Aktives Entwicklungswerkzeug oder Fallback; keine bestätigte ungenutzte Datei. |
 | `apps/deutsch-live/frontend/node_modules` | 124,64 MiB | Aktives Entwicklungswerkzeug oder Fallback; keine bestätigte ungenutzte Datei. |
 | `apps/portfolio-demos/botanic/client/node_modules` | 39,98 MiB | Aktives Entwicklungswerkzeug oder Fallback; keine bestätigte ungenutzte Datei. |
@@ -139,10 +143,14 @@ Keine aktuellen Referenzen in Quellcode oder Dokumentation gefunden. Alle Dateie
 - Die Fly-Musterkonfigurationen werden von den Isolationstests gelesen. Das Hint.css-Paket ist im Template eingebunden und als statische Quelle eingetragen; deshalb nicht als ungenutzten Ordner entfernen.
 - Öffentliche Eigentümerdetails, Originalbilder und Urheber-/Lizenzhinweise bleiben erhalten.
 
-## Prüfbelege
+## Prüfung nach dem Transfer
 
-Die Kandidaten wurden über Quell-/Template-/Build-Verweise, den Frontend-Importgraphen, konfigurierte statische Verzeichnisse und SHA-256-Vergleiche geprüft. Die bestätigten doppelten Shopbilder stimmen mit den erhaltenen Dateien in `public/assets/` überein. Alle 28 weiteren Kandidaten wurden anhand ihrer Größen und SHA-256-Prüfsummen geprüft; die jeweils zu behaltenden Gegenstücke sind vorhanden. Bei der Bildprüfung wurden 242 Bilddateien im Repository verglichen und dynamische Cover-/srcset-Pfade berücksichtigt. Die gemeldeten Einzeldateien sind vorhanden und haben die erfassten Größen; alle 31 alten Static-Quellpfade fehlen tatsächlich.
+- Alle 2.052 Archivdateien mit Größen und SHA-256-Prüfsummen geprüft; unabhängige Nachprüfung bestanden.
+- Alle 62 geschützten Originale, aktiven Moduldateien und erhaltenen Bildkopien sind unverändert.
+- Beide statischen Ausgaben vollständig neu aufgebaut und auf benötigte Assets beziehungsweise Manifestziele geprüft.
+- Auf localhost:8000 liefern 44 aktive statische Assets HTTP 200; drei geprüfte entfernte Altdateien liefern HTTP 404.
+- Frontendtests sowie 86 Django-Tests und 28 Browserprüfungen auf Handy/Desktop bestanden. Testdaten und neue Testausgaben lagen ausschließlich in temporären Verzeichnissen.
+- Alle 42 archivierten Dokumentationsziele vorhanden; Links führen in das lokale Archiv.
+- Datenbanken, Medien, Backups, virtuelle Umgebungen, aktive Abhängigkeiten und Lizenzoriginale sind erhalten.
 
-Da diese Prüfung nur einen Bericht erstellt, wurden keine Builds, Browser- oder Datenbanktests erneut ausgeführt.
-
-[Maschinenlesbare Liste einschließlich aller Cacheordner und Static-Kopien](further-cleanup-2026-10-10.json).
+[Maschinenlesbare Übersicht mit Archivstatus, Dateipfaden und Prüfsummen](further-cleanup-2026-10-10.json).
