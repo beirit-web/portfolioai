@@ -249,6 +249,36 @@
   line-height: 1.42;
 }
 
+.problem-card__project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  justify-self: start;
+  min-height: 2.75rem;
+  color: #0f766e;
+  font-weight: 750;
+  line-height: 1.2;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.problem-card .problem-card__project-link > svg {
+  flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: currentColor;
+  box-sizing: border-box;
+}
+
+.problem-card__project-link:focus-visible {
+  outline: 3px solid #0f766e;
+  outline-offset: 4px;
+}
+
 .problem-card svg {
   width: 1.1rem;
   height: 1.1rem;

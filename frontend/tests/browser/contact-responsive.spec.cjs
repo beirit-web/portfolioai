@@ -33,30 +33,25 @@ test("tablet contact layout keeps controls usable and retains input when rotatin
   fs.mkdirSync(previews, { recursive: true });
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.goto("/kontakt/");
-  await expect(page.locator(".contact-mobile-form")).toBeVisible();
+  await expect(page.locator(".portfolio-contact-form")).toBeVisible();
   await page.locator('form button[type="submit"]').click();
   await expect(page.locator("#name")).toHaveAttribute("aria-invalid", "true");
   await page.locator("#name").fill("Tablet-Demo");
   await page.locator("#email").fill("tablet@example.test");
   await page.locator("#subject").fill("Frage zum Portfolio");
   await page.locator("#message").fill("Nachricht aus der lokalen Tablet-Prüfung.");
+  await page.getByRole("checkbox").check();
 
   for (const [width, height] of [[768, 1024], [820, 1180], [1023, 768], [1024, 768], [1180, 820], [820, 600]]) {
     await page.setViewportSize({ width, height });
-    await expect(page.locator(width < 1024 ? ".contact-mobile-form" : ".contact-switch")).toBeVisible();
-    if (width >= 1024) {
-      if (!(await page.locator(".contact-switch").evaluate(element => element.classList.contains("s--switched")))) {
-        await page.locator(".contact-switch__switcher-btn").click();
-      }
-      await expect(page.locator(".contact-switch.s--switched")).toBeVisible();
-    }
+    await expect(page.locator(".portfolio-contact-form")).toBeVisible();
     await expect(page.locator("#name")).toHaveValue("Tablet-Demo");
     await expect(page.locator("#email")).toHaveValue("tablet@example.test");
     await expect(page.locator("#subject")).toHaveValue("Frage zum Portfolio");
     await expect(page.locator("#message")).toHaveValue("Nachricht aus der lokalen Tablet-Prüfung.");
     if (width < 1024) {
       await page.locator("#message").focus();
-      await expect(page.locator(".contact-mobile-form")).not.toHaveClass(/face-up|face-down/);
+      await expect(page.locator(".portfolio-contact-form")).not.toHaveClass(/face-up|face-down/);
     }
     await controlsFit(page);
     if (width === 768 || width === 820 || width === 1024) {

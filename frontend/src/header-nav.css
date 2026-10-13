@@ -485,6 +485,10 @@
 }
 
 @media (min-width: 48rem) {
+  .site-mobile-menu-panel {
+    display: none;
+  }
+
   .site-shell > header,
   .site-header.site-header--optimized {
     height: clamp(4.6rem, 7vw, 6.25rem);
@@ -768,17 +772,27 @@
     box-sizing: border-box;
     position: fixed;
     top: var(--site-header-height, 4.25rem);
-    right: 0.75rem;
-    left: 0.75rem;
+    right: 0;
+    bottom: 0;
+    left: 0;
     z-index: 60;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    align-content: start;
     gap: 0.35rem;
-    max-height: calc(100dvh - var(--site-header-height, 4.25rem) - 1rem);
+    width: 100vw;
+    width: 100dvw;
+    max-width: none;
+    height: calc(100vh - var(--site-header-height, 4.25rem));
+    height: calc(100dvh - var(--site-header-height, 4.25rem));
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior: contain;
-    border: 1px solid rgba(15, 118, 110, 0.16);
-    border-radius: 0.75rem;
+    border: 0;
+    border-radius: 0;
     background:
       linear-gradient(
         180deg,
@@ -786,10 +800,29 @@
         rgba(248, 250, 252, 0.98)
       ),
       #ffffff;
-    padding: 0.6rem;
+    padding: 1rem max(0.9rem, env(safe-area-inset-right, 0px))
+      max(1rem, env(safe-area-inset-bottom, 0px))
+      max(0.9rem, env(safe-area-inset-left, 0px));
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.95) inset,
       0 1.25rem 2.4rem rgba(15, 23, 42, 0.16);
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(100%);
+    transition:
+      transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0s linear 280ms;
+  }
+
+  .site-mobile-menu-panel.is-open {
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(0);
+    transition-delay: 0s;
+  }
+
+  .site-mobile-menu-panel[hidden] {
+    display: none;
   }
 
   .site-mobile-menu-panel__link {
@@ -797,10 +830,10 @@
     box-sizing: border-box;
     display: flex;
     width: 100%;
-    min-height: 2.75rem;
+    min-height: 3.25rem;
     align-items: center;
     justify-content: space-between;
-    border-radius: 0.65rem;
+    border-radius: 0;
     padding: 0.75rem 0.85rem;
     color: #0f172a;
     font-size: clamp(0.95rem, 3.8vw, 1.02rem);
@@ -956,6 +989,12 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .site-mobile-menu-panel {
+    transition: none;
+  }
+}
+
 /* The header is portalled directly below body, outside .site-shell. */
 :root {
   --beirit-logo-ink: #042354;
@@ -1033,6 +1072,12 @@
   background: linear-gradient(135deg, #dff5ff 0%, #a5e3fa 100%) !important;
   color: var(--beirit-logo-ink) !important;
   box-shadow: 0 0.75rem 1.5rem rgba(2, 56, 147, 0.16) !important;
+}
+
+/* Reserve a clear lane for the floating scroll button beside the footer links. */
+.site-shell .site-footer .site-footer__links {
+  min-width: 0;
+  padding-inline-end: 4.75rem;
 }
 
 .site-header .site-nav-link:focus-visible,

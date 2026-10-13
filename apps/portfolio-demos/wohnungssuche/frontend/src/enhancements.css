@@ -1,0 +1,23 @@
+/* Corrections present in the shipped version, followed by CRUD form layout. */
+.muted-score { background: #dfe8e4; }
+.source-card { border-style: dashed; }
+.source-note, .score-context { color: #5b6964; font-size: 0.92rem; }
+.disabled-link { color: #95a19c; cursor: not-allowed; }
+.search-action, .search-reset { justify-content: center; min-width: 0; }
+.card-actions, .form-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.profile-card .card-actions { align-self: start; }
+.location-options { display: grid; gap: 6px; max-height: 160px; overflow: auto; }
+.location-options label { display: flex; gap: 8px; align-items: center; }
+.new-location-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: end; }
+.new-location-row > input { flex: 1 1 12rem; }
+.new-location-row > label { display: grid; gap: 4px; flex: 1 1 8rem; }
+.new-location-row > button { min-width: 44px; }
+.location-manager { margin-top: 12px; }
+.location-card h3 { margin: 0; overflow-wrap: anywhere; }
+.location-card { grid-template-columns: minmax(0, 1fr) auto; }
+.sidebar .error { color: #ffcfbd; }
+@media (max-width: 620px) {
+  .profile-card .card-actions, .location-card .card-actions { grid-column: 1; }
+  .location-card { grid-template-columns: minmax(0, 1fr); }
+  .card-actions > button { flex: 1 1 7rem; }
+}

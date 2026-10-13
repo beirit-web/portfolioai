@@ -73,7 +73,7 @@ export function portfolioSlugFor(item) {
   if (title.includes("vertragsgenerator") || title.includes("генератор")) return "vertragsgenerator";
   if (title.includes("optimierung") || title.includes("оптимизация")) return "webseiten-optimierung";
   if (title.includes("websystem") || title.includes("веб-система")) return "individuelles-websystem";
-  if (imageSources.includes("portfolio-test-main")) return "notenrechner";
+  if (imageSources.includes("portfolio-notenrechner") || imageSources.includes("portfolio-test-main")) return "notenrechner";
   if (imageSources.includes("portfolio-musikplayer")) return "musikplayer";
   if (imageSources.includes("portfolio-vokabelbox")) return "vokabelbox";
   if (imageSources.includes("portfolio-enbt-botanic")) return "enbt-botanic";
@@ -143,6 +143,7 @@ export function normalizeApiProject(project, localizedItem, { useLocalizedConten
     ...project,
     title: useLocalizedContent && localizedItem ? localizedItem.title : title,
     text: useLocalizedContent && localizedItem ? localizedItem.text : project.text || project.shortDescription || project.description || "",
+    overviewText: useLocalizedContent && localizedItem ? localizedItem.overviewText : project.overviewText || localizedItem?.overviewText,
     situation: useLocalizedContent && localizedItem ? localizedItem.situation : project.situation || localizedItem?.situation,
     implementation: useLocalizedContent && localizedItem ? localizedItem.implementation : project.implementation || localizedItem?.implementation,
     result: useLocalizedContent && localizedItem ? localizedItem.result : project.result || localizedItem?.result,

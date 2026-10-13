@@ -58,6 +58,8 @@ button:disabled {
 }
 
 .intro-panel {
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: #ffffff;
 }
 
@@ -65,6 +67,7 @@ button:disabled {
 .step-indicator {
   display: inline-flex;
   width: max-content;
+  max-width: 100%;
   border-radius: 999px;
   padding: 0.35rem 0.7rem;
   background: rgba(255, 255, 255, 0.16);
@@ -73,6 +76,7 @@ button:disabled {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .intro-panel h1 {
@@ -80,6 +84,7 @@ button:disabled {
   margin: 0.8rem 0 1rem;
   font-size: clamp(2.6rem, 8vw, 5rem);
   line-height: 0.96;
+  overflow-wrap: anywhere;
 }
 
 .intro-panel p {
@@ -108,7 +113,10 @@ button:disabled {
 
 .calculator-card {
   position: relative;
-  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  container: standalone-grades / inline-size;
   border: 1px solid rgba(255, 255, 255, 0.65);
   border-radius: 0.75rem;
   background: var(--surface);
@@ -125,6 +133,7 @@ button:disabled {
   margin: 0.8rem 0 0.6rem;
   font-size: clamp(1.55rem, 4vw, 2.1rem);
   line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 
 .status-message {
@@ -135,6 +144,7 @@ button:disabled {
   padding: 0.75rem 0.85rem;
   color: var(--muted);
   line-height: 1.35;
+  overflow-wrap: anywhere;
   transition: background-color 0.18s ease, color 0.18s ease;
 }
 
@@ -150,6 +160,8 @@ button:disabled {
 
 .step-panel {
   display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
 }
 
@@ -165,6 +177,8 @@ label {
 
 input {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid var(--border);
   border-radius: 0.45rem;
   background: #f8fcfd;
@@ -190,8 +204,11 @@ input[aria-invalid="true"] {
 
 .grade-inputs {
   display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.75rem;
-  max-height: min(46vh, 24rem);
+  max-height: clamp(9rem, 46vh, 24rem);
+  max-height: clamp(9rem, 46dvh, 24rem);
   overflow: auto;
   padding-right: 0.15rem;
   scrollbar-color: var(--accent) var(--surface-muted);
@@ -199,27 +216,33 @@ input[aria-invalid="true"] {
 
 .grade-field {
   display: grid;
+  min-width: 0;
   gap: 0.4rem;
 }
 
 .button-row {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.7rem;
 }
 
 .primary-action,
 .secondary-action {
+  min-width: 0;
+  max-width: 100%;
   min-height: 2.85rem;
   border-radius: 0.45rem;
   padding: 0.75rem 0.9rem;
   font-weight: 800;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
   transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
 }
 
 .primary-action {
-  background: var(--accent);
+  background: #0d8067;
   color: #ffffff;
 }
 
@@ -246,6 +269,7 @@ input[aria-invalid="true"] {
 }
 
 .result-panel {
+  min-width: 0;
   margin-top: 1rem;
   border-radius: 0.65rem;
   background: var(--surface-muted);
@@ -260,6 +284,7 @@ input[aria-invalid="true"] {
 .result-panel p {
   margin: 0.35rem 0;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .result-lead {
@@ -268,7 +293,7 @@ input[aria-invalid="true"] {
 
 .result-metrics {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.65rem;
   margin-bottom: 0.85rem;
 }
@@ -289,6 +314,7 @@ input[aria-invalid="true"] {
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .result-metric strong {
@@ -318,10 +344,22 @@ input[aria-invalid="true"] {
   inset: 0;
   width: 100vw;
   height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
   pointer-events: none;
 }
 
-@media (max-width: 760px) {
+@container standalone-grades (min-width: 22rem) {
+  .button-row {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+  }
+
+  .result-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
   .app-shell {
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
@@ -331,7 +369,7 @@ input[aria-invalid="true"] {
 
   .intro-panel h1 {
     max-width: none;
-    font-size: clamp(2.45rem, 13vw, 4rem);
+    font-size: clamp(2rem, 10vw, 4rem);
   }
 
   .intro-panel p {
@@ -345,16 +383,18 @@ input[aria-invalid="true"] {
 }
 
 @media (max-width: 420px) {
-  .button-row {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .calculator-card {
-    padding: 1rem;
+    padding: clamp(0.75rem, 3vw, 1rem);
+  }
+}
+
+@media (max-height: 500px) and (min-width: 600px) and (max-width: 960px) {
+  .intro-panel h1 {
+    font-size: clamp(2rem, 6vw, 3rem);
   }
 
-  .result-metrics {
-    grid-template-columns: minmax(0, 1fr);
+  .feature-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

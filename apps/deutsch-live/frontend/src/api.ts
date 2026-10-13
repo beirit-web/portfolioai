@@ -6,10 +6,10 @@ export type Phrase = {
 };
 
 export type QuizQuestion = {
+  id: string;
   question: string;
   options: string[];
-  answer: number;
-  explain: string;
+  optionIds: string[];
 };
 
 export type LearningScene = {
@@ -65,6 +65,35 @@ export type Topic = TopicSummary & {
   free_answer?: FreeAnswerTask;
   quiz: QuizQuestion[];
 };
+
+export type QuizTopic = Pick<Topic, "id" | "label" | "icon" | "ru" | "quiz" | "free_answer"> & { quizToken: string };
+
+export type QuizEvaluation = {
+  attempt: {
+    id: number | null;
+    topicLabel: string;
+    score: number;
+    total: number;
+    percentage: number;
+    durationSeconds: number;
+    difficulty: string;
+  };
+  saved: boolean;
+  feedback: Array<{
+    questionId: string;
+    selectedOptionId: string | null;
+    correctOptionId: string;
+    correct: boolean;
+    explain: string;
+  }>;
+  writing: { accepted: boolean; explain: string };
+};
+
+export class ApiError extends Error {
+  constructor(message: string, public status: number, public code?: string) {
+    super(message);
+  }
+}
 
 export type PageContent = {
   scenes: string[];
@@ -184,7 +213,7 @@ export function getWebSocketUrl(path: string) {
 async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${getApiBase()}${path}`, { credentials: "include" });
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    throw new ApiError(`Request failed: ${response.status}`, response.status);
   }
   return response.json();
 }
@@ -224,7 +253,7 @@ async function postJson<T>(path: string, body: unknown, method = "POST"): Promis
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.error ?? `Request failed: ${response.status}`);
+    throw new ApiError(data.error ?? `Request failed: ${response.status}`, response.status, data.code);
   }
   return data;
 }
@@ -233,7 +262,10 @@ let csrfReady: Promise<unknown> | null = null;
 
 function ensureCsrf() {
   if (!csrfReady) {
-    csrfReady = getJson("/api/auth/csrf/");
+    csrfReady = getJson("/api/auth/csrf/").catch((error) => {
+      csrfReady = null;
+      throw error;
+    });
   }
   return csrfReady;
 }
@@ -252,7 +284,15 @@ export async function fetchTopics() {
 }
 
 export async function fetchTopic(topicId: string) {
-  return getCachedJson<Topic>(`/api/topics/${topicId}/`, 5 * 60 * 1000);
+  return getCachedJson<Topic>(`/api/topics/${encodeURIComponent(topicId)}/`, 5 * 60 * 1000);
+}
+
+export async function fetchLearningTopic(topicId: string) {
+  return getCachedJson<Topic>(`/api/topics/${encodeURIComponent(topicId)}/?view=learn`, 5 * 60 * 1000);
+}
+
+export async function fetchQuizTopic(topicId: string) {
+  return getJson<QuizTopic>(`/api/topics/${encodeURIComponent(topicId)}/?view=quiz`);
 }
 
 export async function fetchPageContent() {
@@ -307,8 +347,17 @@ export async function clearLearningProgress() {
   return postJson<{ ok: boolean; deleted: Record<string, number> }>("/api/dashboard/clear-progress/", {});
 }
 
-export async function saveQuizAttempt(payload: { topicId: string; score: number; total: number; durationSeconds: number; difficulty: "easy" | "medium" | "hard" }) {
-  return postJson<{ attempt: { id: number; topicLabel: string; score: number; total: number; percentage: number; durationSeconds: number; difficulty: string } }>(
+export async function saveQuizAttempt(payload: {
+  topicId: string;
+  quizToken: string;
+  answers: Array<{ questionId: string; optionId: string | null }>;
+  freeAnswer: string;
+  freeAnswerExpired: boolean;
+  durationSeconds: number;
+  difficulty: "easy" | "medium" | "hard";
+  save: boolean;
+}) {
+  return postJson<QuizEvaluation>(
     "/api/quiz-attempts/",
     payload
   );

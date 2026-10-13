@@ -1,21 +1,11 @@
 # Vokabelbox
 
-Die Vokabelbox ist als Lernmodul in die Sprachdienstleistungsplattform integriert.
+Der kleine statische Einstieg leitet auf `/vokabelbox/` im gemeinsamen Server.
+Die aktiven Quellen liegen in `server/assets/vokabelbox/`,
+`server/templates/modules/vokabelbox_content.html` und
+`server/templates/pages/vokabelbox.html`.
 
-Aktive Quellen:
-- `server/templates/pages/vokabelbox.html`: schlanke Portfolio-Oberfläche
-- `apps/portfolio-demos/sprachdienstleistungen/templates/pages/vokabelbox.html`
-- `apps/portfolio-demos/sprachdienstleistungen/templates/modules/vokabelbox_content.html`: gemeinsame Wortliste und Quiz-Oberfläche
-- `apps/portfolio-demos/sprachdienstleistungen/assets/vokabelbox/`
-- Django-Route: `/vokabelbox/` im gemeinsamen Portfolio-Server und im zusätzlichen Sprachplattform-Beispiel.
-
-Der gemeinsame Server bindet die Modulassets direkt aus der Sprachplattform ein.
-Es gibt keine zweite Kopie des Trainers. Lernstand und Favoriten bleiben im Browser,
-getrennt für Gäste und angemeldete Konten. Die Portfolio-Oberfläche bietet Deutsch,
-Russisch und Ukrainisch an und führt zurück zum Bericht der Sprachplattform.
-
-Dieser Demo-Ordner bleibt als Altbestand erhalten. Sein Einstieg und der bisherige
-Link `/static/portfolio/vokabelbox-main/index.html` öffnen das aktive Lernmodul unter
-`/vokabelbox/`. Die Vokabelbox wird weiterhin als Teil des Projekts Sprachdienstleistungen geführt.
-
-Die ursprüngliche MIT-Lizenz und der Urheberhinweis stehen unverändert in `LICENSE`.
+Wortsuche, Artikelfilter, Favoriten, Lernmarkierungen und Quiz funktionieren lokal.
+Der Browser speichert Fortschritt getrennt für Gäste und angemeldete Demo-Konten.
+Prüfungen: `server/.venv/bin/python server/manage.py test pages.tests.test_vokabelbox`
+und die gemeinsame Playwright-Suite.

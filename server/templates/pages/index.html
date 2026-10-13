@@ -25,7 +25,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Beirit Web" />
     <meta property="og:url" content="{{ react_page_meta.canonical }}" />
-    <meta property="og:image" content="{{ site_url }}{% static 'images/aktueles-logo.png' %}" />
+    <meta property="og:image" content="{{ site_url }}{% static 'images/beirit-digital-logo.png' %}" />
     <meta property="og:image:width" content="1254" />
     <meta property="og:image:height" content="1254" />
     <meta property="og:image:alt" content="Beirit Web Portfolio" />
@@ -36,11 +36,12 @@
       name="twitter:description"
       content="{{ react_page_meta.description|default:'Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.' }}"
     />
-    <meta name="twitter:image" content="{{ site_url }}{% static 'images/aktueles-logo.png' %}" />
+    <meta name="twitter:image" content="{{ site_url }}{% static 'images/beirit-digital-logo.png' %}" />
     <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
     <link rel="shortcut icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
     {% if react_route_path == '/ueber-mich' %}
       <link rel="preload" as="image" href="{% static 'images/about-forest-background.webp' %}" fetchpriority="high" />
+      <link rel="preload" as="image" href="{% static 'images/eugenbeirit-360.webp' %}" imagesrcset="{% static 'images/eugenbeirit-360.webp' %} 360w, {% static 'images/eugenbeirit-540.webp' %} 540w" imagesizes="(min-width: 48rem) 22rem, calc(100vw - 2px)" />
     {% endif %}
     {% if react_project_image_preload %}
       <link rel="preload" as="image" href="{{ react_project_image_preload.src }}"{% if react_project_image_preload.srcset %} imagesrcset="{{ react_project_image_preload.srcset }}" imagesizes="{{ react_project_image_preload.sizes }}"{% endif %}{% if react_project_image_preload.media %} media="{{ react_project_image_preload.media }}"{% endif %} fetchpriority="high" />
@@ -66,15 +67,15 @@
     {% elif react_is_project_detail %}
       {% vite_inline_css_assets 'src/project-detail-page.css' 'src/project-detail-rendering.css' 'src/header-nav.css' %}
     {% elif react_route_path == '/ueber-mich' %}
-      {% vite_css_assets 'src/about-shell.css' 'src/about-page.css' 'src/header-nav.css' %}
+      {% vite_inline_css_assets 'src/about-shell.css' 'src/about-page.css' 'src/header-nav.css' %}
     {% elif react_route_path == '/wetter' %}
-      {% vite_css_assets 'src/styles.css' 'src/header-nav.css' 'src/components/weather/WeatherPage.css' %}
+      {% vite_css_assets 'src/site.css' 'src/header-nav.css' 'src/components/weather/WeatherPage.css' %}
     {% elif react_route_path == '/kontakt' or react_route_path == '/kompetenzen' %}
       <script>
         {
           const anchor = document.currentScript;
           const desktop = window.matchMedia("(min-width: 48rem)");
-          const desktopCss = {% vite_css_asset_urls 'src/styles.css' 'src/homepage-custom.css' 'src/responsive-overrides.css' %};
+          const desktopCss = {% vite_css_asset_urls 'src/site.css' %};
           const mobileCss = {% vite_css_asset_urls 'src/mobile-pages.css' %};
           const loaded = new Map();
           const loadPageCss = (isDesktop) => Promise.all((isDesktop ? desktopCss : mobileCss).map((href) => {
@@ -97,10 +98,10 @@
           else desktop.addListener(onViewportChange);
         }
       </script>
-      <noscript>{% vite_css_assets 'src/styles.css' 'src/homepage-custom.css' 'src/responsive-overrides.css' %}</noscript>
+      <noscript>{% vite_css_assets 'src/site.css' %}</noscript>
       {% vite_css_assets 'src/header-nav.css' %}
     {% else %}
-      {% vite_css_assets 'src/styles.css' 'src/homepage-custom.css' 'src/responsive-overrides.css' 'src/header-nav.css' %}
+      {% vite_css_assets 'src/site.css' 'src/header-nav.css' %}
     {% endif %}
     <script>
       window.BEIRIT_DEFERRED_CSS = [];
@@ -113,6 +114,8 @@
       {% vite_react_assets 'src/projects.js' fetchpriority='low' %}
     {% elif react_is_project_detail %}
       {% vite_react_assets 'src/project-detail.js' fetchpriority='low' %}
+    {% elif react_route_path == '/ueber-mich' %}
+      {% vite_react_assets 'src/about.jsx' %}
     {% else %}
       {% vite_react_assets 'src/main.jsx' %}
     {% endif %}

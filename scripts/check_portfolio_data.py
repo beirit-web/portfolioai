@@ -96,7 +96,7 @@ def main():
         # contact translations. The bundled UI also contains those public details.
         public_contact_source = (
             name == CONTACT_COMPONENT
-            or name.startswith("server/assets/react-home-dist/")
+            or name.startswith("server/assets/portfolio-dist/")
             or name.endswith("templates/pages/kontakt.html")
             or name.endswith("templates/pages/email_contact.html")
         )

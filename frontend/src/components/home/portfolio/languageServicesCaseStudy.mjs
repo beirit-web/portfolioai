@@ -8,7 +8,7 @@ export function languageServicesCaseStudy(item, language) {
     href: "/deutschlive/",
     liveUrl: "",
     localHref: "",
-    showPrimaryAction: true,
+    showPrimaryAction: false,
     showContactCta: false,
   };
 }

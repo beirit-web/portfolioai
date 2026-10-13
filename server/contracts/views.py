@@ -1,10 +1,11 @@
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_POST
+
+from pages.templatetags.asset_tags import asset_url
 
 from .definitions import OPTIONAL_FIELDS, TEMPLATES
 from .forms import ContractForm
@@ -27,7 +28,7 @@ def generator(request):
         "selectedTemplate": form.template_key,
         "previewUrl": reverse("contracts:preview"),
         "downloadUrl": reverse("contracts:download"),
-        "iconsUrl": static("contracts/icons.svg"),
+        "iconsUrl": asset_url("contracts/icons.svg"),
     }
     return render(request, "contracts/generator.html", {
         "form": form, "groups": form.groups(), "config": config,

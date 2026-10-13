@@ -1,14 +1,11 @@
 {% extends "botanic/base.html" %}
-{% load vite_assets %}
+{% load asset_tags vite_assets %}
 
-{% block title %}Wetter | ENBT Botanic{% endblock %}
 {% block extra_head %}
-  {% vite_css_assets 'src/components/weather/WeatherPage.css' 'src/botanic-weather.jsx' %}
+  {% vite_css_assets 'src/components/weather/WeatherPage.css' %}
+  <script src="{% asset_url 'js/weather-widget.js' %}" defer></script>
 {% endblock %}
 {% block content %}
-  <div id="botanic-weather-root"></div>
+  <div id="botanic-weather-root">{% include 'botanic/weather_widget.html' %}</div>
   <noscript><p class="care-notice">Bitte aktivieren Sie JavaScript, um Wetterdaten nach Ort abzurufen.</p></noscript>
-{% endblock %}
-{% block extra_scripts %}
-  {% vite_react_assets 'src/botanic-weather.jsx' %}
 {% endblock %}

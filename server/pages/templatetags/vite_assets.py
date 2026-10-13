@@ -19,7 +19,7 @@ def vite_react_assets(entry: str, fetchpriority=None) -> str:
     manifest_path = (
         Path(settings.SERVER_DIR)
         / "assets"
-        / "react-home-dist"
+        / "portfolio-dist"
         / ".vite"
         / "manifest.json"
     )
@@ -54,7 +54,7 @@ def vite_react_assets(entry: str, fetchpriority=None) -> str:
                 tags.append(
                     format_html(
                         '<link rel="modulepreload" href="{}"{}>',
-                        _static_url(f"react-home-dist/{imported_file}"),
+                        _static_url(f"portfolio-dist/{imported_file}"),
                         priority_attribute,
                     )
                 )
@@ -66,7 +66,7 @@ def vite_react_assets(entry: str, fetchpriority=None) -> str:
     tags.append(
         format_html(
             '<script type="module" crossorigin src="{}"{}></script>',
-            _static_url(f"react-home-dist/{chunk['file']}"),
+            _static_url(f"portfolio-dist/{chunk['file']}"),
             priority_attribute,
         )
     )
@@ -79,7 +79,7 @@ def vite_modulepreload_assets(*entries: str) -> str:
     manifest_path = (
         Path(settings.SERVER_DIR)
         / "assets"
-        / "react-home-dist"
+        / "portfolio-dist"
         / ".vite"
         / "manifest.json"
     )
@@ -97,7 +97,7 @@ def vite_modulepreload_assets(*entries: str) -> str:
         seen.add(module_file)
         tags.append(format_html(
             '<link rel="modulepreload" href="{}">',
-            _static_url(f"react-home-dist/{module_file}"),
+            _static_url(f"portfolio-dist/{module_file}"),
         ))
     return format_html_join("\n", "{}", ((tag,) for tag in tags))
 
@@ -107,7 +107,7 @@ def vite_css_assets(*entries: str) -> str:
     manifest_path = (
         Path(settings.SERVER_DIR)
         / "assets"
-        / "react-home-dist"
+        / "portfolio-dist"
         / ".vite"
         / "manifest.json"
     )
@@ -132,7 +132,7 @@ def vite_css_assets(*entries: str) -> str:
             tags.append(
                 format_html(
                     '<link rel="stylesheet" href="{}">',
-                    _static_url(f"react-home-dist/{css_file}"),
+                    _static_url(f"portfolio-dist/{css_file}"),
                 )
             )
 
@@ -144,7 +144,7 @@ def vite_css_assets_async(*entries: str) -> str:
     manifest_path = (
         Path(settings.SERVER_DIR)
         / "assets"
-        / "react-home-dist"
+        / "portfolio-dist"
         / ".vite"
         / "manifest.json"
     )
@@ -166,7 +166,7 @@ def vite_css_assets_async(*entries: str) -> str:
             if css_file in seen:
                 continue
             seen.add(css_file)
-            css_url = _static_url(f"react-home-dist/{css_file}")
+            css_url = _static_url(f"portfolio-dist/{css_file}")
             tags.append(
                 format_html(
                     '<link rel="stylesheet" href="{}" media="print" onload="this.onload=null;this.media=\'all\'">',
@@ -188,11 +188,11 @@ def vite_inline_css_assets(*entries: str) -> str:
     manifest_path = (
         Path(settings.SERVER_DIR)
         / "assets"
-        / "react-home-dist"
+        / "portfolio-dist"
         / ".vite"
         / "manifest.json"
     )
-    assets_dir = Path(settings.SERVER_DIR) / "assets" / "react-home-dist"
+    assets_dir = Path(settings.SERVER_DIR) / "assets" / "portfolio-dist"
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
@@ -225,7 +225,7 @@ def vite_css_asset_urls(*entries: str) -> str:
     manifest_path = (
         Path(settings.SERVER_DIR)
         / "assets"
-        / "react-home-dist"
+        / "portfolio-dist"
         / ".vite"
         / "manifest.json"
     )
@@ -247,6 +247,6 @@ def vite_css_asset_urls(*entries: str) -> str:
             if css_file in seen:
                 continue
             seen.add(css_file)
-            urls.append(_static_url(f"react-home-dist/{css_file}"))
+            urls.append(_static_url(f"portfolio-dist/{css_file}"))
 
     return mark_safe(json.dumps(urls))

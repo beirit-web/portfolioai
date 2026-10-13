@@ -1,47 +1,26 @@
-# Wohnungssuche als Portfolio-Demo
+# Wohnungssuche
 
-Dieses Verzeichnis enthält den demonstrativen Django-MVP für gespeicherte
-Wohnungssuchen, fiktive Anbieter, Matching, Trefferstatus und lokale
-E-Mail-Benachrichtigungen. Es gehört wie die anderen Projektquellen unter
-`apps/portfolio-demos/`.
-
-## Gemeinsames Portfolio
-
-Der Projektbericht liegt unter `/projekte/wohnungssuche-bodensee`. Die aktive
-React-Demo wird vom gemeinsamen Portfolio-Server unter
-`/static/portfolio/wohnungssuche/index.html` bereitgestellt. Ihre Dateien liegen in
-`server/assets/portfolio/wohnungssuche/`, die Demo-API in `server/pages/`.
-Dieser Django-MVP dokumentiert einen zusätzlichen Backend-Stand und ersetzt
-nicht den bestehenden React-Build.
-
-Das gemeinsame Portfolio wird vom Repository-Stamm mit
-`server/.venv/bin/python server/manage.py runserver` gestartet.
-
-## Den Django-MVP lokal prüfen
-
-Im Verzeichnis `apps/portfolio-demos/wohnungssuche/`:
+Die aktive React/Preact-Oberfläche liegt in `frontend/`; die persistente API
+und ihre Eigentümerprüfungen liegen in `server/pages/housing_api.py`.
+Der frühere zusätzliche Django-MVP ist extern archiviert.
 
 ```bash
-python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python manage.py check
-.venv/bin/python manage.py test
+npm --prefix frontend ci
+npm --prefix frontend run build:housing
+server/.venv/bin/python server/manage.py migrate
+server/.venv/bin/python server/manage.py runserver
 ```
 
-Für eine separate lokale Demonstration:
+Einstieg: `http://127.0.0.1:8000/wohnungssuche/`. Der Build nutzt das gemeinsame
+Vite-Werkzeugpaket und schreibt nach `server/assets/portfolio/wohnungssuche/`.
+Für Entwicklung: `npm --prefix apps/portfolio-demos/wohnungssuche/frontend run dev`.
 
-```bash
-.venv/bin/python manage.py migrate
-.venv/bin/python manage.py runserver 127.0.0.1:8001
-.venv/bin/python manage.py run_housing_search
-```
+Unter `/wohnungssuche-api/` liegen Registrierung, Anmeldung, Abmeldung,
+Suchprofile, Suchorte, Beispielangebote und Quellen. Änderungen prüfen den
+Eigentümer. Abmeldung sperrt den Token; nach Anmeldung entsteht ein neuer.
+Gastangebote und Konten in den Prüfungen sind fiktiv. Quellenlinks sind manuell
+zu öffnen; automatische Anbieterabfragen und Benachrichtigungen sind nicht aktiviert.
 
-Der Befehl `run_housing_search --send-email` verwendet den konfigurierten
-Mail-Backend; die Portfolio-Muster verwenden ausschließlich Konsolenausgabe.
-Echte Anbieter sind nicht aktiviert. Vor einer anderen Anbindung sind API,
-RSS, Nutzungsbedingungen oder ein manueller Import gesondert zu prüfen.
-
-Die veröffentlichten `.env`- und `.env.example`-Dateien enthalten identische
-fiktive Musterdaten. Lokale Overrides, Datenbanken, Medien und virtuelle
-Umgebungen bleiben ignoriert. Beim Verschieben wurden vorhandene lokale
-Dateien erhalten.
+Backendprüfung: `server/.venv/bin/python server/manage.py test pages.tests.test_housing_api`.
+Browserprüfung: `npm --prefix frontend run test:housing`.
+Die mitgelieferten [Lizenzhinweise](frontend/public/THIRD_PARTY_LICENSES.md) bleiben erhalten.

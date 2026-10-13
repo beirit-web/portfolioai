@@ -26,7 +26,7 @@ const projects = [
   { slug: "vertragsgenerator", route: "/vertragsgenerator/" },
   { slug: "enbt-botanic", route: "/botanic/" },
   { slug: "wohnungssuche-bodensee", route: "/static/portfolio/wohnungssuche/index.html" },
-  { slug: "notenrechner", route: "/static/portfolio/test-main/index.html" },
+  { slug: "notenrechner", route: "/static/portfolio/notenrechner/index.html" },
   { slug: "sprachdienstleistungen", route: "/deutschlive/" },
 ];
 const viewports = {

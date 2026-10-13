@@ -42,10 +42,12 @@
   --about-card-background-size: cover;
   display: grid;
   gap: clamp(0.85rem, 2vw, 1.25rem);
+  row-gap: 0;
+  width: 100%;
   min-width: 0;
   align-items: start;
   border: 1px solid rgba(15, 118, 110, 0.16);
-  border-radius: 0.85rem;
+  border-radius: 0;
   background:
     linear-gradient(90deg, rgba(10, 20, 12, 0.9) 0%, rgba(15, 28, 16, 0.76) 46%, rgba(15, 28, 16, 0.3) 100%),
     url("/static/images/about-forest-background.webp") var(--about-card-background-position) / var(--about-card-background-size) no-repeat;
@@ -56,13 +58,16 @@
 
 .site-shell .home-main .about-hero-grid {
   display: grid;
-  padding-top: clamp(4.25rem, 7vw, 5.75rem);
+  width: 100%;
+  max-width: none;
+  padding-inline: 0;
+  padding-top: calc(max(var(--site-header-height, 4.5rem), clamp(4.6rem, 7vw, 6.25rem)) + 1.25rem);
   padding-bottom: clamp(1.25rem, 3.5vw, 2.5rem);
 }
 
 .site-shell .home-main .about-profile-panel {
   display: grid;
-  gap: 0.95rem;
+  gap: 0;
   min-width: 0;
 }
 
@@ -92,9 +97,11 @@
   text-align: left;
 }
 
-.site-shell .home-main .about-profile-panel__facts svg {
-  width: 1.2rem;
-  height: 1.2rem;
+.site-shell .home-main .about-profile-panel__facts svg,
+.site-shell .home-main .about-profile-panel__facts .about-fact-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
 }
 
 .site-shell .home-main .about-photo-card__placeholder {
@@ -527,20 +534,39 @@ body:has(.about-hero-grid),
   }
 
   .site-shell .home-main .about-photo-card {
-    margin-inline: -0.25rem;
+    margin-inline: 0;
+    padding: 0;
+  }
+
+  .site-shell .home-main .about-photo-card__placeholder {
+    margin-bottom: 0;
+    padding: clamp(0.9rem, 2.5vw, 1.4rem);
   }
 
   .site-shell .home-main .about-profile-panel__facts {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem 0.75rem;
+    margin-top: 0.75rem;
+    padding: 0 clamp(0.9rem, 2.5vw, 1.4rem) clamp(0.9rem, 2.5vw, 1.4rem);
   }
 
   .site-shell .home-main .about-profile-panel__facts span {
+    gap: 0.4rem;
     padding: 0.2rem 0;
+    font-size: clamp(0.8rem, 3.5vw, 0.96rem);
+    line-height: 1.35;
+  }
+
+  .site-shell .home-main .about-profile-panel__facts svg,
+  .site-shell .home-main .about-profile-panel__facts .about-fact-icon {
+    width: 1.5rem;
+    height: 1.5rem;
   }
 
   .site-shell .home-main .about-photo-card__picture {
-    width: min(100%, 20rem);
-    margin-inline: auto;
+    width: 100%;
+    margin-inline: 0;
+    border-radius: 0;
   }
 
   .site-shell .home-main .about-photo-card__picture img {

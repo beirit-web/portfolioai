@@ -110,14 +110,18 @@ if (productCards.length) {
     if (previous) previous.replaceWith(texture);
     else background.copy.prepend(texture);
   };
+  const activeCards = new Set();
+  const renderedGeometry = new WeakMap();
   const pendingCards = new Set();
   let tabletopFrame;
   const refreshTabletop = card => {
+    if (!card || !activeCards.has(card)) return;
     pendingCards.add(card);
     if (tabletopFrame) return;
     tabletopFrame = requestAnimationFrame(() => {
       tabletopFrame = undefined;
       const backgrounds = [...pendingCards].map(element => {
+        if (!activeCards.has(element)) return null;
         const photo = element.querySelector(".product-photo");
         const image = photo?.querySelector("img");
         const copy = element.querySelector(".product-copy");
@@ -126,6 +130,10 @@ if (productCards.length) {
         const photoBox = photo.getBoundingClientRect();
         const copyBox = copy.getBoundingClientRect();
         if (!photoBox.height || !copyBox.height) return null;
+        const source = image.currentSrc || image.src;
+        const geometry = [source, image.naturalWidth, image.naturalHeight, imageBox.width,
+          imageBox.height, photoBox.height, copyBox.width, copyBox.height].join(":");
+        if (renderedGeometry.get(element) === geometry) return null;
         const scale = Math.max(imageBox.width / image.naturalWidth, imageBox.height / image.naturalHeight);
         const photoEdge = 0.5 + photoBox.height / (2 * image.naturalHeight * scale);
         const stripHeight = image.naturalHeight * 0.035;
@@ -134,7 +142,7 @@ if (productCards.length) {
         const cropY = image.naturalHeight * .94;
         const colour = edgeColour(image, cropX, cropY + stripHeight - 1, cropWidth);
         const edge = edgeColour(image, cropX, photoEdge * image.naturalHeight - 1, cropWidth);
-        return { copy, image: image.currentSrc || image.src, naturalWidth: image.naturalWidth,
+        return { card: element, geometry, copy, image: source, naturalWidth: image.naturalWidth,
           naturalHeight: image.naturalHeight, width: copyBox.width, height: copyBox.height,
           cropX, cropWidth, colour: colour.value,
           textTone: colour.luminance < .18 ? "light" : Math.min(colour.luminance, edge.luminance) < .6 ? "strong" : "default",
@@ -142,19 +150,42 @@ if (productCards.length) {
           cropHeight: stripHeight, bandHeight: stripHeight * scale };
       }).filter(Boolean);
       pendingCards.clear();
-      for (const background of backgrounds) renderTabletop(background);
+      for (const background of backgrounds) {
+        renderTabletop(background);
+        renderedGeometry.set(background.card, background.geometry);
+      }
     });
   };
   const tabletopObserver = "ResizeObserver" in window
     ? new ResizeObserver(entries => entries.forEach(entry => refreshTabletop(entry.target.closest(".product-card"))))
     : null;
+  const setActive = (card, active) => {
+    const photo = card.querySelector(".product-photo");
+    const copy = card.querySelector(".product-copy");
+    if (active) {
+      activeCards.add(card);
+      tabletopObserver?.observe(photo);
+      tabletopObserver?.observe(copy);
+      refreshTabletop(card);
+    } else {
+      activeCards.delete(card);
+      tabletopObserver?.unobserve(photo);
+      tabletopObserver?.unobserve(copy);
+    }
+  };
+  // Prepare the same texture shortly before it enters view. Native image lazy
+  // loading can fetch several later cards without requiring their SVG filters.
+  const visibilityObserver = "IntersectionObserver" in window
+    ? new IntersectionObserver(entries => {
+      for (const entry of entries) setActive(entry.target, entry.isIntersecting);
+    }, {rootMargin: "300px 0px"})
+    : null;
   for (const [index, card] of productCards.entries()) {
     card.querySelector(".product-copy").dataset.tabletopId = index;
     const image = card.querySelector(".product-photo img");
     image?.addEventListener("load", () => refreshTabletop(card));
-    refreshTabletop(card);
-    tabletopObserver?.observe(card.querySelector(".product-photo"));
-    tabletopObserver?.observe(card.querySelector(".product-copy"));
+    if (visibilityObserver) visibilityObserver.observe(card);
+    else setActive(card, true);
   }
   if (!tabletopObserver) window.addEventListener("resize", () => productCards.forEach(refreshTabletop));
 }

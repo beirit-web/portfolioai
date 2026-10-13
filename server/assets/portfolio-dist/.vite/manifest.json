@@ -1,0 +1,326 @@
+{
+  "_AboutPage-B0bFuh1e.js": {
+    "file": "assets/AboutPage-B0bFuh1e.js",
+    "name": "AboutPage",
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_PortfolioFeatureList-DJhXbpbD.js",
+      "_mountSiteApp-Cdhy64ng.js",
+      "_arrow-right-GTHOOo-3.js"
+    ]
+  },
+  "_PortfolioFeatureList-DJhXbpbD.js": {
+    "file": "assets/PortfolioFeatureList-DJhXbpbD.js",
+    "name": "PortfolioFeatureList",
+    "imports": [
+      "_mountSiteApp-Cdhy64ng.js",
+      "_preact-vendor-BzB9ud5D.js"
+    ]
+  },
+  "_ProjectsOverviewPage-BbQVqEke.js": {
+    "file": "assets/ProjectsOverviewPage-BbQVqEke.js",
+    "name": "ProjectsOverviewPage",
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_usePortfolioProjects-BGogaZq_.js",
+      "_mountSiteApp-Cdhy64ng.js",
+      "_arrow-right-GTHOOo-3.js"
+    ]
+  },
+  "_arrow-right-GTHOOo-3.js": {
+    "file": "assets/arrow-right-GTHOOo-3.js",
+    "name": "arrow-right",
+    "imports": [
+      "_mountSiteApp-Cdhy64ng.js"
+    ]
+  },
+  "_enhanceProjectPage-uiCm2qW5.js": {
+    "file": "assets/enhanceProjectPage-uiCm2qW5.js",
+    "name": "enhanceProjectPage"
+  },
+  "_mountSiteApp-Cdhy64ng.js": {
+    "file": "assets/mountSiteApp-Cdhy64ng.js",
+    "name": "mountSiteApp",
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js"
+    ]
+  },
+  "_preact-vendor-BzB9ud5D.js": {
+    "file": "assets/preact-vendor-BzB9ud5D.js",
+    "name": "preact-vendor"
+  },
+  "_preload-helper-CGjHJtUW.js": {
+    "file": "assets/preload-helper-CGjHJtUW.js",
+    "name": "preload-helper"
+  },
+  "_three-vendor-BMZE3j17.js": {
+    "file": "assets/three-vendor-BMZE3j17.js",
+    "name": "three-vendor"
+  },
+  "_useI18n-f4mtDyCj.js": {
+    "file": "assets/useI18n-f4mtDyCj.js",
+    "name": "useI18n",
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_mountSiteApp-Cdhy64ng.js",
+      "_usePortfolioProjects-BGogaZq_.js",
+      "_PortfolioFeatureList-DJhXbpbD.js",
+      "_preload-helper-CGjHJtUW.js"
+    ],
+    "dynamicImports": [
+      "src/i18n/locales/ru.json",
+      "src/i18n/locales/uk.json"
+    ]
+  },
+  "_usePortfolioProjects-BGogaZq_.js": {
+    "file": "assets/usePortfolioProjects-BGogaZq_.js",
+    "name": "usePortfolioProjects",
+    "imports": [
+      "_mountSiteApp-Cdhy64ng.js",
+      "_preact-vendor-BzB9ud5D.js"
+    ]
+  },
+  "src/about-page.css": {
+    "file": "assets/about-page-CltnJ0q5.css",
+    "src": "src/about-page.css",
+    "isEntry": true
+  },
+  "src/about-shell.css": {
+    "file": "assets/about-shell-h5YqyhL2.css",
+    "src": "src/about-shell.css",
+    "isEntry": true
+  },
+  "src/about.jsx": {
+    "file": "assets/about-CzbOpQab.js",
+    "name": "about",
+    "src": "src/about.jsx",
+    "isEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_AboutPage-B0bFuh1e.js",
+      "_mountSiteApp-Cdhy64ng.js",
+      "_preload-helper-CGjHJtUW.js",
+      "_PortfolioFeatureList-DJhXbpbD.js",
+      "_arrow-right-GTHOOo-3.js"
+    ],
+    "dynamicImports": [
+      "virtual:about-i18n/ru",
+      "virtual:about-i18n/uk"
+    ]
+  },
+  "src/components/contact/ContactDetails.jsx": {
+    "file": "assets/ContactDetails-38F56bp4.js",
+    "name": "ContactDetails",
+    "src": "src/components/contact/ContactDetails.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js"
+    ]
+  },
+  "src/components/contact/ContactForm.jsx": {
+    "file": "assets/ContactForm-DHNZdSQt.js",
+    "name": "ContactForm",
+    "src": "src/components/contact/ContactForm.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_mountSiteApp-Cdhy64ng.js"
+    ],
+    "css": [
+      "assets/ContactForm-CkVmk3PB.css"
+    ]
+  },
+  "src/components/home/faqsection/FaqSection.css": {
+    "file": "assets/faq-section-CHMXlAnq.css",
+    "src": "src/components/home/faqsection/FaqSection.css",
+    "isEntry": true
+  },
+  "src/components/home/hero/Hero.css": {
+    "file": "assets/hero-D58eR3t_.css",
+    "src": "src/components/home/hero/Hero.css",
+    "isEntry": true
+  },
+  "src/components/home/hero/WaveGridHero.jsx": {
+    "file": "assets/WaveGridHero-DDou8z4Z.js",
+    "name": "WaveGridHero",
+    "src": "src/components/home/hero/WaveGridHero.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_three-vendor-BMZE3j17.js"
+    ]
+  },
+  "src/components/home/homepage/HomePage.css": {
+    "file": "assets/homepage-D1ty2BfT.css",
+    "src": "src/components/home/homepage/HomePage.css",
+    "isEntry": true
+  },
+  "src/components/home/technologyproofsection/TechnologyProofSection.css": {
+    "file": "assets/technology-proof-section-DidIyPQ9.css",
+    "src": "src/components/home/technologyproofsection/TechnologyProofSection.css",
+    "isEntry": true
+  },
+  "src/components/shared/TechnicalLabel.css": {
+    "file": "assets/technical-label-6AOknLyw.css",
+    "src": "src/components/shared/TechnicalLabel.css",
+    "isEntry": true
+  },
+  "src/components/weather/WeatherPage.css": {
+    "file": "assets/weather-page-B6HqAPqh.css",
+    "src": "src/components/weather/WeatherPage.css",
+    "isEntry": true
+  },
+  "src/header-nav.css": {
+    "file": "assets/header-nav-8Um2hDQd.css",
+    "src": "src/header-nav.css",
+    "isEntry": true
+  },
+  "src/homepage-layout.css": {
+    "file": "assets/homepage-layout-CQj-o155.css",
+    "src": "src/homepage-layout.css",
+    "isEntry": true
+  },
+  "src/i18n/locales/ru.json": {
+    "file": "assets/ru-Bp6Jh_g5.js",
+    "name": "ru",
+    "src": "src/i18n/locales/ru.json",
+    "isDynamicEntry": true
+  },
+  "src/i18n/locales/uk.json": {
+    "file": "assets/uk-CNPTIqqp.js",
+    "name": "uk",
+    "src": "src/i18n/locales/uk.json",
+    "isDynamicEntry": true
+  },
+  "src/main.jsx": {
+    "file": "assets/main-CUZ-oe9F.js",
+    "name": "main",
+    "src": "src/main.jsx",
+    "isEntry": true,
+    "imports": [
+      "_preload-helper-CGjHJtUW.js",
+      "_preact-vendor-BzB9ud5D.js",
+      "_PortfolioFeatureList-DJhXbpbD.js",
+      "_useI18n-f4mtDyCj.js",
+      "_mountSiteApp-Cdhy64ng.js",
+      "_usePortfolioProjects-BGogaZq_.js",
+      "_ProjectsOverviewPage-BbQVqEke.js",
+      "_arrow-right-GTHOOo-3.js",
+      "_AboutPage-B0bFuh1e.js"
+    ],
+    "dynamicImports": [
+      "src/components/home/hero/WaveGridHero.jsx",
+      "src/components/contact/ContactForm.jsx",
+      "src/components/contact/ContactDetails.jsx"
+    ]
+  },
+  "src/mobile-pages.css": {
+    "file": "assets/mobile-pages-Cq3Slo7o.css",
+    "src": "src/mobile-pages.css",
+    "isEntry": true
+  },
+  "src/project-detail-page.css": {
+    "file": "assets/project-detail-page-7LuZS6f7.css",
+    "src": "src/project-detail-page.css",
+    "isEntry": true
+  },
+  "src/project-detail-rendering.css": {
+    "file": "assets/project-detail-rendering-Crb9y6RB.css",
+    "src": "src/project-detail-rendering.css",
+    "isEntry": true
+  },
+  "src/project-detail.js": {
+    "file": "assets/project-detail-Co3DYcbA.js",
+    "name": "project-detail",
+    "src": "src/project-detail.js",
+    "isEntry": true,
+    "imports": [
+      "_preload-helper-CGjHJtUW.js",
+      "_enhanceProjectPage-uiCm2qW5.js"
+    ],
+    "dynamicImports": [
+      "src/project-detail.jsx"
+    ]
+  },
+  "src/project-detail.jsx": {
+    "file": "assets/project-detail-app-CrB7oktO.js",
+    "name": "project-detail-app",
+    "src": "src/project-detail.jsx",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_useI18n-f4mtDyCj.js",
+      "_mountSiteApp-Cdhy64ng.js",
+      "_usePortfolioProjects-BGogaZq_.js",
+      "_PortfolioFeatureList-DJhXbpbD.js",
+      "_preload-helper-CGjHJtUW.js"
+    ]
+  },
+  "src/projects-page.css": {
+    "file": "assets/projects-page-EAP0CBTQ.css",
+    "src": "src/projects-page.css",
+    "isEntry": true
+  },
+  "src/projects.js": {
+    "file": "assets/projects-BdMn5MEE.js",
+    "name": "projects",
+    "src": "src/projects.js",
+    "isEntry": true,
+    "imports": [
+      "_preload-helper-CGjHJtUW.js",
+      "_enhanceProjectPage-uiCm2qW5.js"
+    ],
+    "dynamicImports": [
+      "src/projects.jsx"
+    ]
+  },
+  "src/projects.jsx": {
+    "file": "assets/projects-app-CKPfnx9q.js",
+    "name": "projects-app",
+    "src": "src/projects.jsx",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_preload-helper-CGjHJtUW.js",
+      "_mountSiteApp-Cdhy64ng.js",
+      "_usePortfolioProjects-BGogaZq_.js",
+      "_ProjectsOverviewPage-BbQVqEke.js",
+      "_arrow-right-GTHOOo-3.js"
+    ],
+    "dynamicImports": [
+      "virtual:projects-i18n/ru",
+      "virtual:projects-i18n/uk"
+    ]
+  },
+  "src/site.css": {
+    "file": "assets/site-BKi-mm-a.css",
+    "src": "src/site.css",
+    "isEntry": true
+  },
+  "virtual:about-i18n/ru": {
+    "file": "assets/ru-BwUvJ_pQ.js",
+    "name": "ru",
+    "src": "virtual:about-i18n/ru",
+    "isDynamicEntry": true
+  },
+  "virtual:about-i18n/uk": {
+    "file": "assets/uk-CIKLVFiB.js",
+    "name": "uk",
+    "src": "virtual:about-i18n/uk",
+    "isDynamicEntry": true
+  },
+  "virtual:projects-i18n/ru": {
+    "file": "assets/ru-B3rxLdOq.js",
+    "name": "ru",
+    "src": "virtual:projects-i18n/ru",
+    "isDynamicEntry": true
+  },
+  "virtual:projects-i18n/uk": {
+    "file": "assets/uk-D0KZhS4p.js",
+    "name": "uk",
+    "src": "virtual:projects-i18n/uk",
+    "isDynamicEntry": true
+  }
+}

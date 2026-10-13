@@ -1,0 +1,22 @@
+  <footer class="site-footer">
+    <span class="brand">
+      © 2026 Beirit Web – Eugen Beirit
+    </span>
+    <div class="footer-meta">
+      <a href="{% url 'pages:home' %}" class="footer-link">
+        {% if initial_lang|slice:':2' == "ru" %}Главная{% else %}Startseite{% endif %}
+      </a>
+      <a href="{% url 'pages:contact' %}" class="footer-link">
+        {% if initial_lang|slice:':2' == "ru" %}Контакт{% else %}Kontakt{% endif %}
+      </a>
+      <a href="{% url 'pages:imprint' %}" class="footer-link"{% if current_legal_page == "imprint" %} aria-current="page"{% endif %}>
+        {% if initial_lang|slice:':2' == "ru" %}Импрессум{% else %}Impressum{% endif %}
+      </a>
+      <a href="{% url 'pages:privacy' %}" class="footer-link"{% if current_legal_page == "privacy" %} aria-current="page"{% endif %}>
+        {% if initial_lang|slice:':2' == "ru" %}Конфиденциальность{% else %}Datenschutz{% endif %}
+      </a>
+      <a href="{% url 'pages:legal' %}" class="footer-link">
+        {% if initial_lang|slice:':2' == "ru" %}Условия использования{% else %}Nutzungsbedingungen{% endif %}
+      </a>
+    </div>
+  </footer>

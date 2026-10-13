@@ -1,7 +1,5 @@
 /* Preserve the shared cascade; the build retains only project route selectors. */
-@import "./styles.css";
-@import "./homepage-custom.css";
-@import "./responsive-overrides.css";
+@import "./site.css";
 
 [data-projects-rendered] [hidden] {
   display: none !important;

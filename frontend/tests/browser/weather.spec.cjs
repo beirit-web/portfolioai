@@ -119,6 +119,38 @@ async function openWeather(page) {
   await expect(page.locator(".weather-widget")).toHaveAttribute("data-weather-widget-initialized", "true");
 }
 
+test("weather starts from server HTML without a React module waterfall", async ({ page, context }) => {
+  const scripts = [];
+  page.on("request", request => {
+    if (request.resourceType() === "script") scripts.push(request.url());
+  });
+  await mockWeather(context);
+  const response = await page.goto("/botanic/wetter/");
+  const html = await response.text();
+  expect(html).toContain('id="weatherPageTitle"');
+  expect(html).toContain('id="cityInput"');
+  await expect(page.locator(".weather-widget")).toHaveAttribute("data-status", "updated_live");
+  expect(scripts.filter(url => url.includes("weather-widget.js"))).toHaveLength(1);
+  expect(scripts.some(url => url.includes("/portfolio-dist/") && /\.js(?:\?|$)/.test(url))).toBe(false);
+  await expect(page.locator('script[src*="weather-widget.js"]')).toHaveAttribute("defer", "");
+});
+
+test("weather shell and source attribution are visible without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  try {
+    const page = await context.newPage();
+    await page.goto("http://127.0.0.1:8765/botanic/wetter/");
+    await expect(page.getByRole("heading", { name: "Wetter für Garten & Pflanzen", exact: true })).toBeVisible();
+    await expect(page.getByRole("searchbox", { name: "Ort suchen", exact: true })).toHaveValue("Helmstedt");
+    await expect(page.getByRole("navigation", { name: "Gesundheitsquellen", exact: true })).toContainText("DWD Pollen");
+    const notice = page.locator("noscript .care-notice");
+    await expect(notice).toHaveText("Bitte aktivieren Sie JavaScript, um Wetterdaten nach Ort abzurufen.");
+    await expect(notice).toBeVisible();
+  } finally {
+    await context.close();
+  }
+});
+
 test("weather flow loads a searched city with current, hourly and five-day forecasts", async ({ page, context }, testInfo) => {
   const requests = await mockWeather(context);
   await openWeather(page);

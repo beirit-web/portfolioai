@@ -5,8 +5,10 @@ from urllib.error import HTTPError, URLError
 
 from django.contrib.auth import get_user_model
 from django.core.cache import caches
+from django.db import connection
 from django.http import HttpResponse, JsonResponse
 from django.test import Client, RequestFactory, TestCase, override_settings
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 
@@ -14,6 +16,7 @@ from . import api
 from .models import ApiBudget, Plant, Species, Watering
 from .care import care_for
 from .forms import PlantForm
+from .views import _context
 from config.middleware import SafeStatusPageMiddleware
 
 TEST_CACHES = {
@@ -53,7 +56,11 @@ class BotanicViewsTests(TestCase):
             response = self.client.get(reverse("botanic:weather"))
         fetch.assert_not_called()
         self.assertContains(response, 'id="botanic-weather-root"')
-        self.assertContains(response, "botanic-weather-")
+        self.assertContains(response, "js/weather-widget.js")
+        self.assertContains(response, 'id="weatherPageTitle"')
+        self.assertContains(response, 'id="cityInput"')
+        self.assertNotContains(response, 'type="module"')
+        self.assertNotContains(response, "preact-vendor")
         self.assertContains(response, "Wetter | ENBT Botanic")
         self.assertEqual(response.context["tab"], "weather")
         self.assertIn("no-store", response["Cache-Control"])
@@ -74,6 +81,29 @@ class BotanicViewsTests(TestCase):
         self.assertEqual(response.context["due_count"], 1)
         self.plant.refresh_from_db()
         self.assertEqual(self.plant.next_watering, self.today - timedelta(days=4))
+
+    def test_owner_counts_use_one_query_and_ignore_other_owners(self):
+        Plant.objects.create(owner=self.user, species=self.species, paused=True, next_watering=None)
+        Plant.objects.create(owner=self.user, species=self.species, next_watering=self.today + timedelta(days=2))
+        request = RequestFactory().get(reverse("botanic:weather"))
+        request.user = self.user
+        with self.assertNumQueries(1):
+            context = _context(request, "weather")
+        self.assertEqual((context["plant_count"], context["due_count"], context["paused_count"]), (3, 1, 1))
+
+    def test_week_counts_are_grouped_and_ignore_paused_and_foreign_plants(self):
+        self.login()
+        Plant.objects.create(owner=self.user, species=self.species, next_watering=self.today)
+        Plant.objects.create(owner=self.user, species=self.species, next_watering=self.today + timedelta(days=2))
+        Plant.objects.create(owner=self.user, species=self.species, next_watering=self.today + timedelta(days=2))
+        Plant.objects.create(owner=self.user, species=self.species, paused=True, next_watering=self.today)
+        Plant.objects.create(owner=self.other, species=self.species, next_watering=self.today + timedelta(days=2))
+        with CaptureQueriesContext(connection) as queries:
+            response = self.client.get(reverse("botanic:index"), {"tab": "watering"})
+        self.assertEqual([day["count"] for day in response.context["days"]], [1, 0, 2, 0, 0, 0, 0])
+        counted_plant_queries = [query["sql"] for query in queries if '"botanic_plant"' in query["sql"] and "COUNT(" in query["sql"]]
+        # Owner totals, grouped week dates, and the filtered paginator count.
+        self.assertEqual(len(counted_plant_queries), 3)
 
     def setUp(self):
         self.user = get_user_model().objects.create_user(username="botanic@example.test", password="test-password")

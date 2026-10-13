@@ -4,7 +4,7 @@ export function enhanceProjectPage() {
     if (logo.dataset.fallbackApplied === "true") return;
     logo.dataset.fallbackApplied = "true";
     logo.removeAttribute("srcset");
-    logo.src = "/static/images/aktueles-logo-160.webp";
+    logo.src = "/static/images/beirit-digital-logo-160.webp";
   };
   logo?.addEventListener("error", useFallbackLogo);
   if (logo?.complete && !logo.naturalWidth) useFallbackLogo();
@@ -15,6 +15,12 @@ export function enhanceProjectPage() {
   let previousOverflow = "";
   let menuOpen = false;
 
+  if (panel) {
+    panel.setAttribute("aria-hidden", "true");
+    panel.inert = true;
+    panel.hidden = false;
+  }
+
   const setMenuOpen = (open, restoreFocus = false) => {
     if (!toggle || !panel || menuOpen === open) return;
     menuOpen = open;
@@ -24,7 +30,9 @@ export function enhanceProjectPage() {
     } else {
       document.body.style.overflow = previousOverflow;
     }
-    panel.hidden = !open;
+    panel.classList.toggle("is-open", open);
+    panel.setAttribute("aria-hidden", String(!open));
+    panel.inert = !open;
     header?.classList.toggle("is-mobile-menu-open", open);
     toggle.setAttribute("aria-expanded", String(open));
     toggle.setAttribute("aria-label", open ? toggle.dataset.menuCloseLabel : toggle.dataset.menuOpenLabel);

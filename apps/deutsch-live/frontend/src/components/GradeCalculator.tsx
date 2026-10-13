@@ -3,16 +3,16 @@ import type { FormEvent } from "react";
 import { Calculator, CheckCircle2, GraduationCap, RotateCcw, XCircle } from "lucide-react";
 import { AppButton, Panel, SurfaceItem } from "./UiPrimitives";
 import { ui } from "../i18n";
+import successImageUrl from "../assets/grade-calculator/success.webp";
+import failureImageUrl from "../assets/grade-calculator/lost.webp";
+import successAudioUrl from "../assets/grade-calculator/gewonnen.mp3";
+import failureAudioUrl from "../assets/grade-calculator/lost-signal.mp3";
 
 const PASSING_GRADE_LIMIT = 4.0;
 const MIN_GRADE = 1;
 const MAX_GRADE = 6;
 const MAX_SUBJECTS = 20;
 const DECIMAL_PATTERN = /^[1-6](?:[,.]\d{1,2})?$/;
-const SUCCESS_AUDIO_URL = "/static/portfolio/test-main/gewonnen.mp3";
-const FAILURE_AUDIO_URL = "/static/portfolio/test-main/lost-signal.mp3";
-const SUCCESS_IMAGE_URL = "/static/portfolio/test-main/img/favicon.png";
-const FAILURE_IMAGE_URL = "/static/portfolio/test-main/img/lost.png";
 
 type CalculatorStep = 1 | 2 | 3;
 type ResultState = {
@@ -42,6 +42,22 @@ function createEmptyGrades(count: number) {
   return Array.from({ length: count }, () => "");
 }
 
+function summarizeGrades(grades: number[]): ResultState {
+  // Inputs have at most two decimal places. Sum whole hundredths so a value
+  // exactly on a tenth does not round up because of floating-point addition.
+  const totalHundredths = grades.reduce((sum, grade) => sum + Math.round(grade * 100), 0);
+  const average = totalHundredths / (grades.length * 100);
+  return {
+    average,
+    roundedUp: Math.ceil(totalHundredths / (grades.length * 10)) / 10,
+    bestGrade: Math.min(...grades),
+    weakestGrade: Math.max(...grades),
+    distance: Math.abs(PASSING_GRADE_LIMIT - average),
+    passed: average < PASSING_GRADE_LIMIT,
+    count: grades.length
+  };
+}
+
 export default function GradeCalculator() {
   const [step, setStep] = useState<CalculatorStep>(1);
   const [name, setName] = useState("");
@@ -56,7 +72,7 @@ export default function GradeCalculator() {
   const failureAudioRef = useRef<HTMLAudioElement | null>(null);
   const animationRef = useRef<number | null>(null);
 
-  const subjectTotal = Number.parseInt(subjectCount, 10);
+  const subjectTotal = Number(subjectCount);
   const isValidSubjectCount = Number.isInteger(subjectTotal) && subjectTotal >= 1 && subjectTotal <= MAX_SUBJECTS;
   const stepText = ui.gradeCalculator.stepIndicator
     .replace("{step}", String(step))
@@ -64,18 +80,8 @@ export default function GradeCalculator() {
 
   const gradeResult = useMemo(() => {
     const parsedGrades = grades.map(parseGermanDecimal);
-    if (parsedGrades.length === 0 || parsedGrades.some((grade) => !Number.isFinite(grade))) return null;
-
-    const average = parsedGrades.reduce((sum, grade) => sum + grade, 0) / parsedGrades.length;
-    return {
-      average,
-      roundedUp: Math.ceil(average * 10) / 10,
-      bestGrade: Math.min(...parsedGrades),
-      weakestGrade: Math.max(...parsedGrades),
-      distance: Math.abs(PASSING_GRADE_LIMIT - average),
-      passed: average < PASSING_GRADE_LIMIT,
-      count: parsedGrades.length
-    };
+    if (parsedGrades.length === 0 || parsedGrades.some((grade) => !Number.isFinite(grade) || grade < MIN_GRADE || grade > MAX_GRADE)) return null;
+    return summarizeGrades(parsedGrades);
   }, [grades]);
 
   useEffect(() => {
@@ -123,6 +129,7 @@ export default function GradeCalculator() {
 
   function calculate(event: FormEvent) {
     event.preventDefault();
+    resetResult();
     const nextInvalidFields = new Set<string>();
     const parsedGrades = grades.map((value, index) => {
       const grade = parseGermanDecimal(value);
@@ -143,16 +150,7 @@ export default function GradeCalculator() {
       return;
     }
 
-    const average = parsedGrades.reduce((sum, grade) => sum + grade, 0) / parsedGrades.length;
-    const nextResult = {
-      average,
-      roundedUp: Math.ceil(average * 10) / 10,
-      bestGrade: Math.min(...parsedGrades),
-      weakestGrade: Math.max(...parsedGrades),
-      distance: Math.abs(PASSING_GRADE_LIMIT - average),
-      passed: average < PASSING_GRADE_LIMIT,
-      count: parsedGrades.length
-    };
+    const nextResult = summarizeGrades(parsedGrades);
 
     setResult(nextResult);
     updateStatus(nextResult.passed ? ui.gradeCalculator.passedStatus : ui.gradeCalculator.failedStatus, nextResult.passed ? "success" : "error");
@@ -161,12 +159,11 @@ export default function GradeCalculator() {
   }
 
   function restart() {
-    stopCelebration();
+    resetResult();
     setStep(1);
     setName("");
     setSubjectCount("6");
     setGrades(createEmptyGrades(6));
-    setResult(null);
     setInvalidFields(new Set());
     updateStatus(ui.gradeCalculator.initialStatus);
   }
@@ -194,6 +191,7 @@ export default function GradeCalculator() {
     stopResultAudio();
     const audio = passed ? successAudioRef.current : failureAudioRef.current;
     if (!audio) return;
+    audio.src = passed ? successAudioUrl : failureAudioUrl;
     audio.volume = passed ? 0.48 : 0.36;
     void audio.play().catch(() => undefined);
   }
@@ -253,9 +251,9 @@ export default function GradeCalculator() {
       <div className="section-header">
         <div>
           <p className="section-kicker">{ui.gradeCalculator.eyebrow}</p>
-          <h2 className="view-title mt-4 flex items-center gap-3" id="grade-calculator-title">
-            <Calculator className="h-8 w-8 text-indigo-600 dark:text-indigo-200" />
-            {ui.gradeCalculator.title}
+          <h2 className="view-title grade-calculator__title mt-4 flex items-center gap-3" id="grade-calculator-title">
+            <Calculator aria-hidden="true" className="h-8 w-8 text-indigo-600 dark:text-indigo-200" />
+            <span>{ui.gradeCalculator.title}</span>
           </h2>
           <p className="section-copy">{ui.gradeCalculator.description}</p>
         </div>
@@ -335,6 +333,10 @@ export default function GradeCalculator() {
                         max={MAX_GRADE}
                         min={MIN_GRADE}
                         onChange={(event) => {
+                          if (result) {
+                            resetResult();
+                            updateStatus(ui.gradeCalculator.enterGrades.replace("{count}", String(grades.length)));
+                          }
                           const nextGrades = [...grades];
                           nextGrades[index] = event.target.value;
                           setGrades(nextGrades);
@@ -371,7 +373,9 @@ export default function GradeCalculator() {
                   alt=""
                   decoding="async"
                   loading="lazy"
-                  src={result.passed ? SUCCESS_IMAGE_URL : FAILURE_IMAGE_URL}
+                  width={512}
+                  height={result.passed ? 512 : 768}
+                  src={result.passed ? successImageUrl : failureImageUrl}
                 />
               </figure>
               <div className="grade-calculator__result-content">
@@ -407,12 +411,12 @@ export default function GradeCalculator() {
           <div className="grade-calculator__footer-actions">
             <AppButton onClick={restart} variant="ghost">
               <RotateCcw aria-hidden="true" />
-              {ui.gradeCalculator.restart}
+              <span>{ui.gradeCalculator.restart}</span>
             </AppButton>
           </div>
           <canvas className="grade-calculator__canvas" ref={canvasRef} aria-hidden="true" />
-          <audio preload="auto" ref={successAudioRef} src={SUCCESS_AUDIO_URL} />
-          <audio preload="auto" ref={failureAudioRef} src={FAILURE_AUDIO_URL} />
+          <audio preload="none" ref={successAudioRef} />
+          <audio preload="none" ref={failureAudioRef} />
         </Panel>
       </div>
     </section>

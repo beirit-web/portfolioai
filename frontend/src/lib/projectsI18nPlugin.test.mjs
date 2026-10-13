@@ -19,7 +19,7 @@ function overviewSnapshots(items, language) {
   return sortedPortfolioItems(items.map(item => languageServicesCaseStudy(item, language))).map(item => ({
     slug: portfolioSlugFor(item),
     title: item.title,
-    text: item.text,
+    text: item.overviewText || item.text,
     type: item.type,
     status: item.status,
     path: portfolioProjectPath(item),
@@ -113,9 +113,9 @@ test("the emitted presentation catalog retains canonical image, technology and g
   assert.equal(catalog.schemaVersion, 1);
   assert.deepEqual(Object.keys(catalog.locales), ["de", "ru", "uk"]);
   assert.equal(catalog.locales.de.brand, locales.de.home.hero.eyebrow);
-  assert.equal(catalog.locales.de.copy.details, "Details ansehen");
-  assert.equal(catalog.locales.ru.copy.details, "Подробнее");
-  assert.equal(catalog.locales.uk.copy.details, "Детальніше");
+  assert.equal(catalog.locales.de.copy.details, "Projektbericht");
+  assert.equal(catalog.locales.ru.copy.details, "Отчёт о проекте");
+  assert.equal(catalog.locales.uk.copy.details, "Звіт про проєкт");
   for (const item of locales.de.home.portfolio.items) {
     const slug = portfolioSlugFor(item);
     if (catalog.covers[slug]) assert.deepEqual(catalog.covers[slug], projectPreviewImage(item));

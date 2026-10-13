@@ -80,6 +80,8 @@ test("the configured canonical origin survives frontend startup on a different h
   await expect(page.locator("#name")).toBeVisible();
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   expectPortfolioMetadata(await metadata(page), { title: "Kontakt | Beirit Web", canonical });
-  await expect(page.getByRole("link", { name: "kontakt@beirit.digital", exact: true })).toBeVisible();
-  await expect(page.locator('a[href="tel:+4953515989191"]')).toBeVisible();
+  await expect(page.locator("main form")).toBeVisible();
+  await expect(page.locator("main address")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Direkter Kontakt", exact: true })).toBeVisible();
+  await expect(page.locator(".site-footer__brand-main")).toContainText("Eugen Beirit");
 });

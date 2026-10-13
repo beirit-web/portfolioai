@@ -4,6 +4,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Reserve the editor layout before its deferred script runs. -->
+    <script>
+      document.documentElement.classList.add("contracts-js");
+      document.addEventListener("DOMContentLoaded", () => {
+        if (!document.body.classList.contains("is-enhanced")) {
+          document.documentElement.classList.remove("contracts-js");
+        }
+      }, { once: true });
+    </script>
     <meta name="theme-color" content="#ffffff" />
     <meta name="description" content="Vertragsentwürfe mit Beirit Digital erstellen: Mietvertrag, Fahrzeug-Kaufvertrag und Kaufvertrag mit Dokumentvorschau und Export." />
     <link rel="canonical" href="{{ canonical_url }}" />
@@ -60,12 +69,16 @@
     <main class="editor-workspace">
       <aside class="section-nav" aria-label="Vertragsabschnitte">
         <div class="nav-heading"><span>ABSCHNITTE</span><span id="navStepCount">1 / 5</span></div>
-        <ol class="step-list" id="stepList" aria-label="Abschnitte"></ol>
+        <ol class="step-list" id="stepList" aria-label="Abschnitte">
+          {% for group in groups %}
+          <li data-group="{{ group.key }}"{% if forloop.first %} class="is-active"{% endif %}><button type="button" class="step-button"{% if forloop.first %} aria-current="step"{% endif %}><span class="step-number"><span>{{ forloop.counter|stringformat:"02d" }}</span>{% contract_icon 'check' %}</span><span class="step-copy"><strong>{{ group.label }}</strong><small>{{ group.fields|length }} Angaben</small></span></button></li>
+          {% endfor %}
+        </ol>
         <div class="nav-bottom">
           <div class="progress-summary"><span>Pflichtangaben</span><span id="fieldProgress">0/0</span></div>
           <div class="completion" role="progressbar" aria-label="Ausgefüllte Pflichtangaben" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="completionBar"></span></div>
           <button type="button" class="button button--quiet preview-shortcut" id="showPreviewButton">{% contract_icon 'eye' %}<span>Dokument prüfen</span>{% contract_icon 'arrow-up-right' %}</button>
-          <a class="studio-signature" href="/projekte" title="Beirit Digital Projekte"><img src="{% static 'images/aktueles-logo-160.webp' %}" width="160" height="160" alt="Beirit Digital" /><span>Projekte{% contract_icon 'arrow-up-right' %}</span></a>
+          <a class="studio-signature" href="/projekte" title="Beirit Digital Projekte"><img src="{% static 'images/beirit-digital-logo-160.webp' %}" width="160" height="160" alt="Beirit Digital" /><span>Projekte{% contract_icon 'arrow-up-right' %}</span></a>
         </div>
       </aside>
       <section class="form-pane" id="formPane" aria-labelledby="form-title">
@@ -85,19 +98,19 @@
           <input type="hidden" name="template" value="{{ config.selectedTemplate }}" />
           {% for group in groups %}
           <fieldset class="field-group" data-group="{{ group.key }}">
-            <legend>{{ group.label }}</legend>
+            <legend><span>{{ forloop.counter|stringformat:"02d" }}</span>{{ group.label }}</legend>
             <div class="field-grid">
               {% for entry in group.fields %}
               <div class="field{% if entry.wide %} field--wide{% endif %}">
-                <label for="{{ entry.field.id_for_label }}">{{ entry.field.label }}</label>
-                {{ entry.field }}
+                <label for="{{ entry.field.id_for_label }}">{{ entry.field.label }}{% if entry.field.field.required %}<span class="required-mark" aria-hidden="true">*</span>{% else %}<span class="field-optional">Optional</span>{% endif %}</label>
+                {% if entry.kind == 'number' %}<div class="amount-control">{{ entry.field }}<span class="field-unit" aria-hidden="true">€</span></div>{% else %}{{ entry.field }}{% endif %}
                 <small id="{{ entry.field.name }}-error"></small>
               </div>
               {% endfor %}
             </div>
           </fieldset>
           {% endfor %}
-          <noscript><button class="button button--primary" type="submit">Text herunterladen</button></noscript>
+          <button class="button button--primary native-download" type="submit">Text herunterladen</button>
         </form>
         <div class="form-bottom">
           <div class="section-actions">

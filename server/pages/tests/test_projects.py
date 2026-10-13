@@ -40,14 +40,48 @@ class ProjectPortfolioTests(TestCase):
         project = self.create_project(slug="notenrechner", technologies="React, TypeScript", live_url="/deutschlive/grades")
         migration = import_module("pages.migrations.0049_standalone_grade_calculator")
         migration.forwards(apps, SimpleNamespace(connection=connection))
+        rename_migration = import_module("pages.migrations.0051_rename_portfolio_assets")
+        rename_migration.forwards(apps, SimpleNamespace(connection=connection))
         project.refresh_from_db()
         self.assertEqual(project.technology_list, ["HTML", "CSS", "JavaScript"])
-        self.assertEqual(project.live_url, "/static/portfolio/test-main/index.html")
-        self.assertIsNotNone(finders.find("portfolio/test-main/index.html"))
+        self.assertEqual(project.live_url, "/static/portfolio/notenrechner/index.html")
+        self.assertIsNotNone(finders.find("portfolio/notenrechner/index.html"))
         for path in ("/deutschlive/grades", "/deutschlive/grades/", "/deutschLive/grades"):
             response = self.client.get(path)
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response["Location"], project.live_url)
+
+    def test_asset_renaming_preserves_custom_project_metadata(self):
+        migration = import_module("pages.migrations.0051_rename_portfolio_assets")
+        legacy = self.create_project(
+            live_url="/static/portfolio/test-main/index.html",
+            image_url="/static/images/portfolio-test-main-desktop.webp",
+        )
+        custom = self.create_project(
+            live_url="https://demo.example.invalid/noten/",
+            image_url="/media/projects/eigenes-bild.webp",
+            description="Eigene Projektbeschreibung",
+        )
+        editor = SimpleNamespace(connection=connection)
+        migration.forwards(apps, editor)
+        migration.forwards(apps, editor)
+        legacy.refresh_from_db()
+        custom.refresh_from_db()
+        self.assertEqual(legacy.live_url, "/static/portfolio/notenrechner/index.html")
+        self.assertEqual(legacy.image_url, "/static/images/portfolio-notenrechner-desktop.webp")
+        self.assertEqual(custom.live_url, "https://demo.example.invalid/noten/")
+        self.assertEqual(custom.image_url, "/media/projects/eigenes-bild.webp")
+        self.assertEqual(custom.description, "Eigene Projektbeschreibung")
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_api_uses_canonical_asset_names_before_data_migration(self):
+        self.create_project(
+            live_url="/static/portfolio/test-main/index.html",
+            image_url="/static/images/portfolio-test-main-desktop.webp",
+        )
+        project = self.client.get(reverse("pages:projects_api")).json()["projects"][0]
+        self.assertEqual(project["liveUrl"], "/static/portfolio/notenrechner/index.html")
+        self.assertEqual(project["image"], "/static/images/portfolio-notenrechner-desktop.webp")
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_deutschlive_redirects_to_platform_and_migration_is_idempotent(self):

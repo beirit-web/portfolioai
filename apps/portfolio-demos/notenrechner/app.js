@@ -72,7 +72,7 @@ function parseGermanDecimal(value) {
 }
 
 function validateSubjectCount() {
-  const subjects = Number.parseInt(elements.subjectsInput.value, 10);
+  const subjects = Number(elements.subjectsInput.value);
   const isValid = Number.isInteger(subjects) && subjects >= 1 && subjects <= MAX_SUBJECTS;
 
   elements.subjectsInput.setAttribute("aria-invalid", String(!isValid));
@@ -169,8 +169,10 @@ function formatGrade(value) {
 function renderResult(grades) {
   resetResult();
 
-  const average = grades.reduce((sum, grade) => sum + grade, 0) / grades.length;
-  const roundedUp = Math.ceil(average * 10) / 10;
+  // Work in whole hundredths to preserve exact decimal boundaries.
+  const totalHundredths = grades.reduce((sum, grade) => sum + Math.round(grade * 100), 0);
+  const average = totalHundredths / (grades.length * 100);
+  const roundedUp = Math.ceil(totalHundredths / (grades.length * 10)) / 10;
   const passed = average < PASSING_GRADE_LIMIT;
   const bestGrade = Math.min(...grades);
   const weakestGrade = Math.max(...grades);
@@ -218,10 +220,13 @@ function renderResult(grades) {
 
 function addFailureImage() {
   const image = document.createElement("img");
-  image.src = "./img/lost.png";
+  image.src = "./img/lost.webp";
   image.alt = "Nicht bestanden";
   image.className = "result-image";
   image.loading = "lazy";
+  image.decoding = "async";
+  image.width = 512;
+  image.height = 768;
   elements.resultContent.append(image);
 }
 
@@ -338,6 +343,7 @@ document.querySelector('[data-action="back"]').addEventListener("click", () => {
 
 elements.form.addEventListener("submit", (event) => {
   event.preventDefault();
+  resetResult();
   const grades = getGrades();
 
   if (grades === null) {
@@ -368,6 +374,11 @@ elements.subjectsInput.addEventListener("input", () => {
 
 elements.gradeInputs.addEventListener("input", (event) => {
   if (event.target.matches("input")) {
+    if (!elements.result.hidden) {
+      resetResult();
+      const subjects = elements.gradeInputs.querySelectorAll("input").length;
+      setStatus(`Trage jetzt ${subjects} ${subjects === 1 ? "Note" : "Noten"} ein.`);
+    }
     event.target.setAttribute("aria-invalid", "false");
   }
 });

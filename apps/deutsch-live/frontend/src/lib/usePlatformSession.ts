@@ -3,7 +3,7 @@ import { fetchMe, type CurrentUser } from "../api";
 
 export function usePlatformSession(user: CurrentUser | null, onUserChange: (user: CurrentUser | null) => void) {
   useEffect(() => {
-    if (import.meta.env.VITE_PLATFORM_INTEGRATION !== "true") return;
+    const platformIntegration = import.meta.env.VITE_PLATFORM_INTEGRATION === "true";
     let active = true;
     let csrfToken = "";
     let lastActivity = 0;
@@ -16,7 +16,7 @@ export function usePlatformSession(user: CurrentUser | null, onUserChange: (user
       }
     }
     async function activity() {
-      if (!user || !csrfToken || Date.now() - lastActivity < 15000) return;
+      if (!platformIntegration || !user || !csrfToken || Date.now() - lastActivity < 15000) return;
       lastActivity = Date.now();
       try {
         const response = await fetch("/api/session/activity/", {
@@ -28,7 +28,7 @@ export function usePlatformSession(user: CurrentUser | null, onUserChange: (user
         // Local playback remains available while the network is unavailable.
       }
     }
-    if (user) fetch("/deutschlive/api/auth/csrf/", { credentials: "same-origin" })
+    if (platformIntegration && user) fetch("/deutschlive/api/auth/csrf/", { credentials: "same-origin" })
       .then(response => response.json()).then(response => { if (active) csrfToken = response.csrfToken; }).catch(() => {});
     function onVisibility() { if (document.visibilityState === "visible") void refresh(); }
     const timer = window.setInterval(() => { if (document.visibilityState === "visible") void refresh(); }, 30000);

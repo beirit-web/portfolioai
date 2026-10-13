@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
+  {% if tab == 'catalog' %}<meta name="description" content="Torten und Kuchen der Beirit Backstube entdecken, nach Zutaten und Kategorien suchen und eine unverbindliche Bestellanfrage vorbereiten.">{% endif %}
   {% if tab != 'catalog' %}<meta name="robots" content="noindex, nofollow">{% endif %}
   <title>{% block title %}Beirit Backstube{% endblock %} | Beirit Digital</title>
   <link rel="icon" type="image/svg+xml" href="{% asset_url 'shop/brand-mark.svg' %}">

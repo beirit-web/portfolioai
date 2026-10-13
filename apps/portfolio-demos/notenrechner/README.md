@@ -1,42 +1,27 @@
 # Notenrechner
 
-Dies ist ein einfacher Notenrechner, der es dir ermöglicht, deine Durchschnittsnote zu berechnen und zu überprüfen, ob du bestanden hast. Die Anwendung bietet eine interaktive Benutzeroberfläche mit folgenden Funktionen:
+Statische Demo für eine Durchschnittsnote mit bis zu 20 Fächern, optionalem Namen,
+Komma-/Punktwerten und Ergebnisbild samt Ton. Fachzahlen müssen ganzzahlig sein.
+Die Aufrundung verwendet ganze Hundertstel; ein Durchschnitt von `4,0` gilt als
+nicht bestanden. Neue Noten und Neustart verwerfen das Ergebnis und stoppen Audio.
 
-- Eingabe deines Namens (optional).
-- Festlegen der Anzahl der Fächer.
-- Eingabe der Noten für jedes Fach.
-- Berechnung der Durchschnittsnote und Anzeige des Ergebnisses.
+Die gepflegten Quellen liegen in `apps/portfolio-demos/notenrechner/`, die
+Auslieferungskopie in `server/assets/portfolio/notenrechner/`.
+Einstieg: `/static/portfolio/notenrechner/index.html`.
+Die React-Variante gehört zu DeutschLive und wird mit dessen Frontend gebaut.
 
-## Features
-
-- **Responsive Design**: Optimiert für verschiedene Bildschirmgrößen.
-- **Interaktive Benutzerführung**: Schritt-für-Schritt-Eingabe.
-- **Robuste Validierung**: Noten werden vollständig geprüft, inklusive Komma- und Punktwerten.
-- **Visuelles Feedback**: Konfetti bei Erfolg, Bild und Sound bei Nichtbestehen.
-- **Animationen**: Sanfte Übergänge und Effekte.
-
-## Installation
-
-1. Lade die Dateien herunter oder klone das Repository:
+## Prüfen
 
 ```bash
-git clone <repository-url>
+npm --prefix frontend run test:browser -- grade-responsive.spec.cjs
+npm --prefix frontend run test:browser -- learning-performance.spec.cjs
 ```
 
-1. Öffne die Datei `index.html` in deinem Browser.
+Die Prüfungen decken schmale und breite Bildschirme, vergrößerte Schrift,
+Validierung, Rundung, Ergebnisbilder und Audiosteuerung ab.
+Die ursprünglichen PNGs und Audiodateien bleiben als Medienquellen erhalten;
+kleine WebP-Ausgaben und das 32px-Favicon werden im Browser verwendet.
 
-## Vorschau
-
-![Notenrechner Vorschau](./img/favicon.png)
-
-## Lizenz
-
-Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
-
-## Hinweis
-
-Die Anwendung verwendet lokale Ressourcen:
-
-- Audiodateien (`lost-signal.mp3`, `gewonnen.mp3`) und Bilder (`lost.png`) für visuelles und akustisches Feedback.
-
-Viel Spaß beim Ausprobieren!
+Die ursprüngliche Projektbeschreibung nennt die MIT-Lizenz; eine separate
+LICENSE-Datei liegt in diesem Demo-Ordner nicht vor. Medienherkunft des Moduls:
+`apps/deutsch-live/frontend/src/assets/grade-calculator/README.md`.

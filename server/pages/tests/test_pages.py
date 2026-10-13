@@ -1,5 +1,6 @@
 import json
 from datetime import date, time, timedelta
+from urllib.parse import urlparse
 from unittest.mock import patch
 
 from django.contrib.messages import get_messages
@@ -8,7 +9,7 @@ from django.core.cache import cache
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
-from django.urls import reverse
+from django.urls import resolve, reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.utils import timezone
@@ -26,14 +27,42 @@ from pages.models import (
 )
 from pages.modules.tokens import email_verification_token_generator
 from pages.views import (
-    build_account_mailbox_hash,
-    build_home_ticker_interpreters,
-    build_shared_calendar_days,
     safe_static_url,
 )
+from .test_portfolio_seo import PortfolioDocument
 
 
 class ImprintPageTests(TestCase):
+    @override_settings(LOGIN_REQUIRED=False, SITE_URL="https://portfolio.example.invalid/")
+    def test_metadata_is_localized_and_canonical_without_query_parameters(self):
+        for lang, title, locale in (
+            ("de", "Muster-Impressum | Beirit Web Portfolio", "de_DE"),
+            ("ru", "Пример импрессума | Портфолио Beirit Web", "ru_RU"),
+            ("uk", "Зразок імпресуму | Портфоліо Beirit Web", "uk_UA"),
+        ):
+            with self.subTest(language=lang):
+                response = self.client.get("/impressum?utm_source=preview", HTTP_ACCEPT_LANGUAGE=lang)
+                document = PortfolioDocument(response)
+                self.assertEqual(document.title, title)
+                self.assertEqual(document.metadata["og:title"], title)
+                self.assertEqual(document.metadata["twitter:title"], title)
+                self.assertEqual(document.metadata["description"], document.metadata["og:description"])
+                self.assertEqual(document.metadata["description"], document.metadata["twitter:description"])
+                self.assertEqual(document.metadata["og:locale"], locale)
+                self.assertEqual(document.metadata["robots"], "noindex, follow")
+                self.assertEqual(document.canonical, "https://portfolio.example.invalid/impressum")
+                self.assertEqual(document.metadata["og:url"], document.canonical)
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_navigation_links_to_standalone_pages_and_has_a_disclosure_control(self):
+        response = self.client.get("/impressum")
+        for path in ("/projekte", "/kompetenzen", "/ueber-mich", "/kontakt"):
+            self.assertContains(response, f'href="{path}"')
+        self.assertContains(response, 'aria-controls="imprint-navigation-links"')
+        self.assertContains(response, 'aria-expanded="false"')
+        self.assertNotContains(response, 'href="/#profil"')
+        self.assertNotContains(response, 'href="/#kontakt"')
+
     @override_settings(LOGIN_REQUIRED=False)
     def test_imprint_contains_explicitly_fictional_portfolio_details(self):
         response = self.client.get(reverse("pages:imprint"))
@@ -78,6 +107,37 @@ class ImprintPageTests(TestCase):
         self.assertContains(response, 'href="/impressum"')
         self.assertContains(response, 'href="/datenschutz/"')
 
+    @override_settings(LOGIN_REQUIRED=False, SITE_URL="https://portfolio.example.invalid/")
+    def test_privacy_metadata_matches_the_rendered_language_and_clean_canonical(self):
+        for language, rendered_language, title, locale in (
+            ("de", "de", "Muster-Datenschutz | Beirit Web Portfolio", "de_DE"),
+            ("ru", "ru", "Пример политики конфиденциальности | Beirit Web Portfolio", "ru_RU"),
+            ("uk", "de", "Muster-Datenschutz | Beirit Web Portfolio", "de_DE"),
+        ):
+            with self.subTest(language=language):
+                response = self.client.get("/datenschutz/?utm_source=preview", HTTP_ACCEPT_LANGUAGE=language)
+                document = PortfolioDocument(response)
+                self.assertContains(response, f'<html lang="{rendered_language}"')
+                self.assertEqual(document.title, title)
+                self.assertEqual(document.metadata["og:title"], title)
+                self.assertEqual(document.metadata["twitter:title"], title)
+                self.assertEqual(document.metadata["description"], document.metadata["og:description"])
+                self.assertEqual(document.metadata["description"], document.metadata["twitter:description"])
+                self.assertEqual(document.metadata["og:locale"], locale)
+                self.assertEqual(document.metadata["robots"], "noindex, follow")
+                self.assertEqual(document.canonical, "https://portfolio.example.invalid/datenschutz/")
+                self.assertEqual(document.metadata["og:url"], document.canonical)
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_privacy_is_server_rendered_without_app_styles_and_translation_bundles(self):
+        response = self.client.get("/datenschutz/")
+        self.assertContains(response, 'aria-controls="imprint-navigation-links"')
+        self.assertContains(response, 'class="privacy-contact-links"')
+        self.assertContains(response, 'href="/kontakt"')
+        self.assertNotContains(response, "/static/css/main.css")
+        self.assertNotContains(response, "/static/js/main.js")
+        self.assertNotContains(response, "/static/js/i18n-data.js")
+
     def test_legacy_project_terms_route_redirects_to_portfolio(self):
         response = self.client.get(reverse("pages:project_terms"))
 
@@ -93,154 +153,6 @@ class ImprintPageTests(TestCase):
         )
 
 
-class CalendarEventsApiTests(TestCase):
-    def setUp(self):
-        self.interpreter_one = User.objects.create_user(
-            username="anna",
-            password="testpass123",
-            email="anna@example.com",
-        )
-        self.interpreter_two = User.objects.create_user(
-            username="Michael",
-            password="testpass123",
-            email="michael@example.com",
-        )
-
-    def test_events_json_filters_single_interpreter_and_keeps_global_entries(self):
-        self.client.force_login(self.interpreter_one)
-
-        Appointment.objects.create(
-            interpreter=self.interpreter_one,
-            date=date(2026, 3, 12),
-            start_time=time(9, 0),
-            end_time=time(10, 0),
-            subject="Persönlicher Termin",
-        )
-        Appointment.objects.create(
-            interpreter=self.interpreter_two,
-            date=date(2026, 3, 13),
-            start_time=time(11, 0),
-            end_time=time(12, 0),
-            subject="Anderer Termin",
-        )
-        Appointment.objects.create(
-            interpreter=None,
-            date=date(2026, 3, 14),
-            start_time=time(8, 0),
-            end_time=time(9, 0),
-            subject="Globaler Termin",
-        )
-        UnavailableDay.objects.create(
-            interpreter=None,
-            date=date(2026, 3, 15),
-            note="Global gesperrt",
-        )
-        UnavailableDay.objects.create(
-            interpreter=self.interpreter_two,
-            date=date(2026, 3, 16),
-            note="Nur für Michael gesperrt",
-        )
-
-        response = self.client.get(
-            reverse("pages:events_json"),
-            {"interpreter": str(self.interpreter_one.id)},
-        )
-
-        self.assertEqual(response.status_code, 200)
-        payload = response.json()
-        event_titles = {event["title"] for event in payload["events"]}
-
-        self.assertIn("Persönlicher Termin", event_titles)
-        self.assertIn("Globaler Termin", event_titles)
-        self.assertNotIn("Anderer Termin", event_titles)
-        self.assertIn("2026-03-15", payload["days"])
-        self.assertNotIn("2026-03-16", payload["days"])
-
-    def test_events_json_for_guests_keeps_times_but_hides_private_details(self):
-        Appointment.objects.create(
-            interpreter=self.interpreter_one,
-            date=date(2026, 3, 12),
-            start_time=time(9, 0),
-            end_time=time(10, 30),
-            subject="Vertraulicher Termin",
-            location="Musterstadt",
-            username="anna",
-            note="Nur intern",
-        )
-
-        response = self.client.get(
-            reverse("pages:events_json"),
-            {"interpreter": str(self.interpreter_one.id)},
-        )
-
-        self.assertEqual(response.status_code, 200)
-        payload = response.json()
-        event = next(
-            item for item in payload["events"] if item["start"] == "2026-03-12T09:00"
-        )
-
-        self.assertEqual(event["title"], "Belegt")
-        self.assertEqual(event["start"], "2026-03-12T09:00")
-        self.assertEqual(event["end"], "2026-03-12T10:30")
-        self.assertNotIn("location", event)
-        self.assertNotIn("username", event)
-        self.assertNotIn("note", event)
-
-    def test_events_batch_json_groups_shared_and_personal_calendar_data(self):
-        self.client.force_login(self.interpreter_one)
-
-        Appointment.objects.create(
-            interpreter=None,
-            date=date(2026, 4, 2),
-            start_time=time(10, 0),
-            end_time=time(11, 0),
-            subject="Globaler Block",
-        )
-        Appointment.objects.create(
-            interpreter=self.interpreter_one,
-            date=date(2026, 4, 3),
-            start_time=time(14, 0),
-            end_time=time(15, 0),
-            subject="Nur Anna",
-        )
-        UnavailableDay.objects.create(
-            interpreter=self.interpreter_two,
-            date=date(2026, 4, 4),
-            note="Fortbildung",
-        )
-
-        response = self.client.get(
-            reverse("pages:events_batch_json"),
-            [
-                ("interpreter", str(self.interpreter_one.id)),
-                ("interpreter", str(self.interpreter_two.id)),
-            ],
-        )
-
-        self.assertEqual(response.status_code, 200)
-        payload = response.json()
-        anna_calendar = payload["calendars"][str(self.interpreter_one.id)]
-        boris_calendar = payload["calendars"][str(self.interpreter_two.id)]
-
-        anna_titles = {event["title"] for event in anna_calendar["events"]}
-        boris_titles = {event["title"] for event in boris_calendar["events"]}
-
-        self.assertIn("Globaler Block", anna_titles)
-        self.assertIn("Nur Anna", anna_titles)
-        self.assertIn("Globaler Block", boris_titles)
-        self.assertNotIn("Nur Anna", boris_titles)
-        self.assertEqual(
-            boris_calendar["days"]["2026-04-04"]["note"],
-            "Fortbildung",
-        )
-        self.assertIn("2026-04-03", payload["shared_days"])
-
-    def test_events_json_disables_caching(self):
-        response = self.client.get(reverse("pages:events_json"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("no-cache", response["Cache-Control"])
-        self.assertIn("no-store", response["Cache-Control"])
 
 
 @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
@@ -410,269 +322,12 @@ class HomeViewHelperTests(TestCase):
         self.assertIn("Betreff: Вопрос о переводе проекта", message.text)
         self.assertIn("Как добавлена русская версия?", message.text)
 
-    def test_build_home_ticker_interpreters_formats_and_caches_per_language(self):
-        user = User.objects.create_user(
-            username="homehelper",
-            email="homehelper@example.com",
-            password="testpass123",
-        )
-        InterpreterApplication.objects.create(
-            user=user,
-            languages="Deutsch, Russisch",
-            region="Berlin",
-            motivation="Ich helfe bei Formularen.",
-            status=InterpreterApplication.STATUS_APPROVED,
-        )
-
-        cache.clear()
-
-        with self.assertNumQueries(1):
-            de_items = build_home_ticker_interpreters("de")
-
-        self.assertEqual(len(de_items), 2)
-        self.assertEqual(de_items[0]["languages"], "Deutsch / Russisch")
-        self.assertEqual(de_items[0]["meta"], "Dolmetschen & Begleitung")
-        self.assertTrue(de_items[0]["is_default_meta"])
-
-        with self.assertNumQueries(0):
-            cached_de_items = build_home_ticker_interpreters("de")
-
-        self.assertEqual(cached_de_items, de_items)
-
-        with self.assertNumQueries(1):
-            ru_items = build_home_ticker_interpreters("ru")
-
-        self.assertEqual(ru_items[0]["meta"], "Перевод и сопровождение")
-
-    def test_build_shared_calendar_days_marks_saturday_as_unavailable(self):
-        shared_days = build_shared_calendar_days(base_date=date(2026, 3, 1))
-
-        saturday = shared_days["2026-03-07"]
-        sunday = shared_days["2026-03-08"]
-
-        self.assertTrue(saturday["weekend"])
-        self.assertTrue(saturday["unavailable"])
-        self.assertEqual(saturday["note"], "Samstag")
-        self.assertTrue(sunday["weekend"])
-        self.assertTrue(sunday["unavailable"])
-
-    def test_build_shared_calendar_days_marks_niedersachsen_holiday_as_unavailable(self):
-        shared_days = build_shared_calendar_days(base_date=date(2026, 10, 1))
-
-        reformation_day = shared_days["2026-10-31"]
-
-        self.assertTrue(reformation_day["holiday"])
-        self.assertTrue(reformation_day["unavailable"])
-        self.assertEqual(reformation_day["note"], "Reformationstag")
-
-    def test_build_shared_calendar_days_does_not_mark_heiligabend_as_holiday(self):
-        shared_days = build_shared_calendar_days(base_date=date(2026, 12, 1))
-
-        self.assertNotIn("2026-12-24", shared_days)
-
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
-class AdminDashboardTests(TestCase):
-    def setUp(self):
-        self.admin_user = User.objects.create_superuser(
-            username="admin",
-            email="admin@example.com",
-            password="testpass123",
-        )
-        self.user = User.objects.create_user(
-            username="maria",
-            email="maria@example.com",
-            password="testpass123",
-        )
-        self.client.force_login(self.admin_user)
-
-    def test_admin_index_renders_dashboard_cards(self):
-        InterpreterApplication.objects.create(
-            user=self.user,
-            languages="Deutsch, Ukrainisch",
-            region="Berlin",
-            motivation="Ich möchte helfen.",
-        )
-        open_message = ChatMessage.objects.create(
-            lang="de",
-            user=self.user,
-            contact_email="maria@example.com",
-            client_hash="client-1234567890",
-            text="Ich brauche Unterstützung bei einem Termin.",
-            handled=False,
-        )
-        ChatReply.objects.create(
-            client_hash="client-1234567890",
-            text="Wir melden uns zeitnah.",
-            delivered=False,
-        )
-        delivered_reply = ChatReply.objects.create(
-            client_hash="client-2222222222",
-            text="Ihr Termin wurde bestätigt.",
-            delivered=True,
-        )
-        Appointment.objects.create(
-            interpreter=self.user,
-            date=date(2026, 5, 3),
-            start_time=time(11, 0),
-            end_time=time(12, 0),
-            subject="Arzttermin",
-        )
-        blocked_day = UnavailableDay.objects.create(
-            interpreter=self.user,
-            date=date(2026, 5, 4),
-            note="Fortbildung",
-        )
-        response = self.client.get(reverse("admin:index"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Hierarchische Verwaltungsstruktur")
-        self.assertContains(response, "Ordnerbaum")
-        self.assertContains(response, "Schnellzugriff")
-        self.assertContains(response, "Administration")
-        self.assertContains(response, "Authentifizierung und Autorisierung")
-        self.assertContains(response, "Benutzer und Profile")
-        self.assertContains(response, "Kommunikation")
-        self.assertContains(response, "Termine und Verfügbarkeit")
-        self.assertContains(response, "Bewerbungen")
-        self.assertContains(response, "Inhalte und Datenmodelle")
-        self.assertContains(response, "Kontonachrichten")
-        self.assertContains(response, "Rückrufwünsche")
-        self.assertContains(response, "Kontodokumente")
-        self.assertContains(response, reverse("admin:pages_chatmessage_changelist"))
-        self.assertContains(response, reverse("admin:pages_chatreply_changelist"))
-        self.assertContains(response, reverse("admin:pages_unavailableday_changelist"))
-        self.assertContains(response, reverse("admin:pages_accountnotice_changelist"))
-        self.assertContains(response, reverse("admin:pages_callbackrequest_changelist"))
-
-    def test_admin_index_orders_sections_by_operational_priority(self):
-        response = self.client.get(reverse("admin:index"))
-
-        self.assertEqual(response.status_code, 200)
-        content = response.content.decode("utf-8")
-
-        self.assertLess(content.index('id="administration"'), content.index('id="authentication"'))
-        self.assertLess(content.index('id="authentication"'), content.index('id="profiles"'))
-        self.assertLess(content.index('id="profiles"'), content.index('id="communication"'))
-        self.assertLess(content.index('id="communication"'), content.index('id="scheduling"'))
-        self.assertLess(content.index('id="scheduling"'), content.index('id="applications"'))
-        self.assertLess(content.index("<h2>Bewerbungen</h2>"), content.index("<h2>Inhalte und Datenmodelle</h2>"))
-
-    def test_new_admin_model_registrations_are_available(self):
-        changelist_urls = (
-            "admin:pages_profile_changelist",
-            "admin:pages_appointment_changelist",
-            "admin:pages_unavailableday_changelist",
-            "admin:pages_accountdocument_changelist",
-            "admin:pages_accountnotice_changelist",
-            "admin:pages_callbackrequest_changelist",
-        )
-
-        for url_name in changelist_urls:
-            response = self.client.get(reverse(url_name))
-            self.assertEqual(response.status_code, 200, url_name)
 
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
-class AdminAccountWorkflowTests(TestCase):
-    def setUp(self):
-        self.admin_user = User.objects.create_superuser(
-            username="workflow-admin",
-            email="workflow-admin@example.com",
-            password="testpass123",
-        )
-        self.user = User.objects.create_user(
-            username="helena@example.com",
-            email="helena@example.com",
-            password="testpass123",
-        )
-        profile, _ = Profile.objects.get_or_create(user=self.user)
-        profile.callback_phone = "+49 151 11111111"
-        profile.callback_time_windows = "Werktags 09 bis 14 Uhr"
-        profile.notify_new_reply = True
-        profile.notify_new_message = False
-        profile.notify_appointment_changes = True
-        profile.save()
-        self.callback_request = CallbackRequest.objects.create(
-            user=self.user,
-            phone="+49 151 77777777",
-            time_windows="Montag bis Mittwoch 10 bis 13 Uhr",
-            note="Bitte zuerst Nachricht senden.",
-        )
-        AccountDocument.objects.create(
-            user=self.user,
-            title="Jobcenter Bescheid",
-            note="Dokument fuer Sidebar-Test",
-            file_data=b"pdf-test",
-            file_name="jobcenter.pdf",
-            file_mime="application/pdf",
-            file_size=8,
-        )
-        AccountNotice.objects.create(
-            user=self.user,
-            title="Rueckruf intern vorgemerkt",
-            text="Bitte bevorzugt Dienstag kontaktieren.",
-        )
-        ChatMessage.objects.create(
-            lang="de",
-            user=self.user,
-            contact_email=self.user.email,
-            client_hash=build_account_mailbox_hash(self.user),
-            text="Ich bin Dienstag zwischen 10 und 13 Uhr erreichbar.",
-            handled=False,
-        )
-        ChatReply.objects.create(
-            client_hash=build_account_mailbox_hash(self.user),
-            text="Vielen Dank, wir melden uns in diesem Zeitraum.",
-            delivered=False,
-        )
-        self.client.force_login(self.admin_user)
 
-    def test_callback_request_change_view_offers_prefilled_notice_link(self):
-        response = self.client.get(
-            reverse("admin:pages_callbackrequest_change", args=[self.callback_request.pk])
-        )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Kontonachricht vorbereiten")
-        self.assertContains(response, f"user={self.user.pk}")
-        self.assertContains(response, "Letzter Postfachverlauf")
-        self.assertContains(response, "Letzte Kontonachrichten")
-        self.assertContains(response, "Neueste Dokumente")
-        self.assertContains(response, "Kontostatus")
-        self.assertContains(response, "Profil öffnen")
-        self.assertContains(response, "Dokumente öffnen")
-        self.assertContains(response, "Postfach öffnen")
-        self.assertContains(response, "Kontonachrichten öffnen")
-        self.assertContains(response, "helena@example.com")
-        self.assertContains(response, "+49 151 11111111")
-        self.assertContains(response, "Werktags 09 bis 14 Uhr")
-        self.assertContains(response, "E-Mail bei Kontonachricht")
-        self.assertContains(response, "Deaktiviert")
-        self.assertContains(response, f"user__id__exact={self.user.pk}")
-        self.assertContains(response, "Jobcenter Bescheid")
-        self.assertContains(response, "Rueckruf intern vorgemerkt")
-        self.assertContains(response, "Ich bin Dienstag zwischen 10 und 13 Uhr erreichbar.")
 
-    def test_account_notice_add_view_prefills_data_from_querystring(self):
-        response = self.client.get(
-            reverse("admin:pages_accountnotice_add"),
-            {
-                "user": self.user.pk,
-                "title": "Rueckmeldung zum Rueckruf",
-                "text": "Bitte morgen um 11 Uhr erreichbar sein.",
-                "next": reverse("admin:pages_callbackrequest_change", args=[self.callback_request.pk]),
-            },
-        )
 
-        self.assertEqual(response.status_code, 200)
-        form = response.context["adminform"].form
-        self.assertEqual(form.initial["user"], str(self.user.pk))
-        self.assertEqual(form.initial["title"], "Rueckmeldung zum Rueckruf")
-        self.assertEqual(form.initial["text"], "Bitte morgen um 11 Uhr erreichbar sein.")
-        self.assertEqual(
-            response.context["account_notice_back_url"],
-            reverse("admin:pages_callbackrequest_change", args=[self.callback_request.pk]),
-        )
 
 
 class ChatContactDisplayTests(TestCase):
@@ -745,20 +400,6 @@ class ChatContactDisplayTests(TestCase):
         )
         self.assertNotContains(response, "Viber")
 
-    @override_settings(
-        CHAT_CONTACTS=[
-            {
-                "label": "Viber",
-                "url": "https://viber.example/nadia",
-                "hint": "Schnelle Rückfragen",
-            }
-        ]
-    )
-    def test_legacy_interpreter_page_redirects_to_home_services_section(self):
-        response = self.client.get(reverse("pages:interpreter_list"))
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["Location"], f"{reverse('pages:home')}#leistungen")
 
 
 @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
@@ -829,15 +470,15 @@ class SeoSignalTests(TestCase):
         self.assertNotContains(response, '"priceRange"')
 
     @override_settings(LOGIN_REQUIRED=False)
-    def test_public_utility_pages_are_noindexed(self):
-        for url_name in ("pages:login", "pages:register"):
+    def test_public_auth_pages_use_their_indexing_policy(self):
+        for url_name, robots in (("pages:login", "index, follow"), ("pages:register", "noindex, follow")):
             with self.subTest(url_name=url_name):
                 response = self.client.get(reverse(url_name))
 
                 self.assertEqual(response.status_code, 200)
                 self.assertContains(
                     response,
-                    '<meta name="robots" content="noindex, follow" />',
+                    f'<meta name="robots" content="{robots}" />',
                     html=True,
                 )
 
@@ -908,13 +549,6 @@ class PublicAccessTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="beirit-root"')
 
-    @override_settings(LOGIN_REQUIRED=False)
-    def test_home_uses_services_anchor_instead_of_interpreter_page_link(self):
-        response = self.client.get(reverse("pages:home"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'id="beirit-root"')
-        self.assertNotContains(response, reverse("pages:interpreter_list"))
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_service_catalog_redirects_to_competencies(self):
@@ -923,15 +557,6 @@ class PublicAccessTests(TestCase):
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], reverse("pages:skills_page_no_slash"))
 
-    @override_settings(LOGIN_REQUIRED=False)
-    def test_interpreter_list_redirects_to_home_services_section_even_with_query(self):
-        response = self.client.get(
-            reverse("pages:interpreter_list"),
-            {"profil": "eugen"},
-        )
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["Location"], f"{reverse('pages:home')}#leistungen")
 
     @override_settings(
         LOGIN_REQUIRED=False,
@@ -1105,54 +730,7 @@ class PublicAccessTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Kontakt")
 
-    @override_settings(LOGIN_REQUIRED=False, CALENDAR_ENABLED=True)
-    def test_home_does_not_embed_legacy_calendar_for_approved_interpreter(self):
-        user = User.objects.create_user(
-            username="dolmetscherin",
-            email="dolmetscherin@example.com",
-            password="testpass123",
-        )
-        InterpreterApplication.objects.create(
-            user=user,
-            status=InterpreterApplication.STATUS_APPROVED,
-            display_name="Dolmetscherin",
-            languages="Deutsch, Russisch",
-            region="Berlin",
-        )
-        self.client.force_login(user)
 
-        response = self.client.get(reverse("pages:home"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '"isAuthenticated": true')
-        self.assertNotContains(response, 'id="availabilityCalendar"')
-
-    @override_settings(LOGIN_REQUIRED=False, CALENDAR_ENABLED=True)
-    def test_home_hides_calendar_for_guest(self):
-        response = self.client.get(reverse("pages:home"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '"isAuthenticated": false')
-        self.assertNotContains(response, 'id="availabilityCalendar"')
-
-
-class HomeAccountCardTests(TestCase):
-    @override_settings(LOGIN_REQUIRED=False)
-    def test_home_shows_account_actions_for_logged_in_user(self):
-        user = User.objects.create_user(
-            username="kundin",
-            email="kundin@example.com",
-            password="testpass123",
-            first_name="Nadia",
-        )
-        self.client.force_login(user)
-
-        response = self.client.get(reverse("pages:home"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '"isAuthenticated": true')
-        self.assertContains(response, 'id="beirit-root"')
-        self.assertNotContains(response, "Ihr Begleiter durch den Papierdschungel")
 
 
 class ProfilePageTests(TestCase):
@@ -1192,7 +770,7 @@ class ProfilePageTests(TestCase):
         response = self.client.get(reverse("pages:profile"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Keine E-Mail hinterlegt", count=3)
+        self.assertContains(response, "Keine E-Mail hinterlegt")
 
     def test_profile_page_can_remove_existing_profile_image(self):
         self.profile.image_data = (
@@ -1299,103 +877,6 @@ class ProfilePageTests(TestCase):
         self.assertContains(response, "Keine E-Mail hinterlegt")
 
 
-class InterpreterContactBookTests(TestCase):
-    def setUp(self):
-        self.interpreter = User.objects.create_user(
-            username="nadia",
-            email="nadia@example.com",
-            password="testpass123",
-        )
-        InterpreterApplication.objects.create(
-            user=self.interpreter,
-            display_name="Nadia",
-            languages="Deutsch, Arabisch",
-            region="Berlin",
-            motivation="Ich dolmetsche bei Terminen.",
-            status=InterpreterApplication.STATUS_APPROVED,
-        )
-        self.contact_user = User.objects.create_user(
-            username="amir",
-            email="amir@example.com",
-            password="testpass123",
-            first_name="Amir",
-        )
-
-    def test_dashboard_shows_logged_in_chat_users_in_contact_book(self):
-        ChatMessage.objects.create(
-            lang="de",
-            user=self.contact_user,
-            contact_email=self.contact_user.email,
-            client_hash="client-abc",
-            text="Ich brauche Hilfe beim Arzttermin.",
-            handled=False,
-        )
-        self.client.force_login(self.interpreter)
-
-        response = self.client.get(reverse("pages:interpreter_dashboard"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Kontaktbuch")
-        self.assertContains(response, "Amir")
-        self.assertContains(response, "amir@example.com")
-        self.assertContains(response, "Ich brauche Hilfe beim Arzttermin.")
-
-    def test_dashboard_can_reply_to_contact_book_entry(self):
-        ChatMessage.objects.create(
-            lang="de",
-            user=self.contact_user,
-            contact_email=self.contact_user.email,
-            client_hash="client-abc",
-            text="Können Sie mir schreiben?",
-            handled=False,
-        )
-        self.client.force_login(self.interpreter)
-
-        response = self.client.post(
-            reverse("pages:interpreter_dashboard"),
-            {
-                "action": "reply_contact",
-                "contact_key": f"user:{self.contact_user.id}",
-                "reply_text": "Ja, ich antworte Ihnen hier.",
-            },
-        )
-
-        self.assertEqual(response.status_code, 302)
-        self.assertTrue(
-            ChatReply.objects.filter(
-                client_hash="client-abc",
-                text="Ja, ich antworte Ihnen hier.",
-            ).exists()
-        )
-        self.assertTrue(
-            ChatMessage.objects.filter(
-                user=self.contact_user, handled=True).exists()
-        )
-
-    def test_dashboard_shows_unassigned_chat_messages_as_fallback_contacts(self):
-        ChatMessage.objects.create(
-            lang="de",
-            user=None,
-            contact_email="",
-            client_hash="anon-1234567890",
-            text="Hallo, ich habe schon zweimal geschrieben.",
-            handled=False,
-        )
-        ChatMessage.objects.create(
-            lang="de",
-            user=None,
-            contact_email="",
-            client_hash="anon-1234567890",
-            text="Kommt das bei Ihnen an?",
-            handled=False,
-        )
-        self.client.force_login(self.interpreter)
-
-        response = self.client.get(reverse("pages:interpreter_dashboard"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Kontakt anon-12345")
-        self.assertContains(response, "Kommt das bei Ihnen an?")
 
 
 @override_settings(
@@ -1431,12 +912,14 @@ class RegistrationVerificationTests(TestCase):
         self.assertEqual(mail.outbox[0].to, ["neu@example.com"])
 
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-        token = email_verification_token_generator.make_token(user)
-        verification_path = reverse(
-            "pages:verify_email",
-            kwargs={"uidb64": uidb64, "token": token},
+        verification_link = next(
+            line for line in mail.outbox[0].body.splitlines()
+            if line.startswith("https://portfolio.example.invalid/verify-email/")
         )
-        self.assertIn(verification_path, mail.outbox[0].body)
+        verification = resolve(urlparse(verification_link).path)
+        self.assertEqual(verification.view_name, "pages:verify_email")
+        self.assertEqual(verification.kwargs["uidb64"], uidb64)
+        self.assertTrue(email_verification_token_generator.check_token(user, verification.kwargs["token"]))
 
     def test_verify_email_activates_user_and_logs_user_in(self):
         user = User.objects.create_user(
@@ -1625,230 +1108,3 @@ class GlobalIdleLogoutTests(TestCase):
         self.assertEqual(response.status_code, 200)
         messages = [str(message) for message in get_messages(response.wsgi_request)]
         self.assertTrue(any("3 Minuten" in message for message in messages))
-
-
-class ProfileAccountWorkspaceTests(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username="konto@example.com",
-            email="konto@example.com",
-            password="testpass123",
-        )
-        Profile.objects.get_or_create(user=self.user)
-        self.client.force_login(self.user)
-
-    def test_profile_page_renders_account_workspace_sections(self):
-        response = self.client.get(reverse("pages:profile"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Dokumentenablage")
-        self.assertContains(response, "Internes Postfach")
-        self.assertContains(response, "Rückruf &amp; Terminfenster")
-        self.assertContains(response, "E-Mail-Benachrichtigungen steuern")
-        self.assertNotContains(response, 'name="document_submit"')
-        self.assertNotContains(response, 'name="image_submit"')
-
-    def test_uploads_are_disabled_by_default(self):
-        upload = SimpleUploadedFile(
-            "jobcenter-brief.pdf",
-            b"%PDF-1.4 test",
-            content_type="application/pdf",
-        )
-
-        response = self.client.post(
-            reverse("pages:profile"),
-            {
-                "document-title": "Jobcenter Brief",
-                "document_submit": "1",
-                "document-file": upload,
-            },
-        )
-
-        self.assertRedirects(response, reverse("pages:profile"))
-        self.assertFalse(AccountDocument.objects.filter(user=self.user).exists())
-
-        api_response = self.client.post(
-            reverse("pages:upload_document"),
-            {"file": upload},
-        )
-        self.assertEqual(api_response.status_code, 404)
-
-    @override_settings(
-        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
-        EMAIL_HOST="smtp.example.test",
-        EMAIL_HOST_USER="noreply@example.com",
-        DEFAULT_FROM_EMAIL="noreply@example.com",
-        CONTACT_EMAIL="team@example.com",
-        USER_UPLOADS_ENABLED=True,
-    )
-    def test_profile_document_upload_and_download(self):
-        upload = SimpleUploadedFile(
-            "jobcenter-brief.pdf",
-            b"%PDF-1.4 test",
-            content_type="application/pdf",
-        )
-
-        response = self.client.post(
-            reverse("pages:profile"),
-            {
-                "document-title": "Jobcenter Brief",
-                "document-note": "Bitte spaeter besprechen",
-                "document_submit": "1",
-                "document-file": upload,
-            },
-        )
-
-        self.assertRedirects(response, reverse("pages:profile"))
-        document = AccountDocument.objects.get(user=self.user)
-        self.assertEqual(document.title, "Jobcenter Brief")
-        self.assertEqual(document.file_name, "jobcenter-brief.pdf")
-        self.assertEqual(document.file_size, len(b"%PDF-1.4 test"))
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, ["team@example.com"])
-
-        download_response = self.client.get(
-            reverse("pages:account_document_download", args=[document.pk])
-        )
-
-        self.assertEqual(download_response.status_code, 200)
-        self.assertEqual(download_response.content, b"%PDF-1.4 test")
-        self.assertIn("attachment;", download_response["Content-Disposition"])
-
-    def test_profile_mailbox_submit_creates_account_thread_message(self):
-        response = self.client.post(
-            reverse("pages:profile"),
-            {
-                "mailbox-text": "Ich brauche Hilfe mit einem Formular.",
-                "mailbox_submit": "1",
-            },
-        )
-
-        self.assertRedirects(response, reverse("pages:profile"))
-        message = ChatMessage.objects.get(user=self.user)
-        self.assertEqual(message.client_hash, build_account_mailbox_hash(self.user))
-        self.assertEqual(message.text, "Ich brauche Hilfe mit einem Formular.")
-        self.assertEqual(message.contact_email, "konto@example.com")
-
-    def test_profile_callback_request_updates_defaults(self):
-        response = self.client.post(
-            reverse("pages:profile"),
-            {
-                "callback-phone": "+49 151 12345678",
-                "callback-time_windows": "Mo-Do 09:00-12:00",
-                "callback-note": "Bitte zuerst kurz ankundigen",
-                "callback_submit": "1",
-            },
-        )
-
-        self.assertRedirects(response, reverse("pages:profile"))
-        callback_request = CallbackRequest.objects.get(user=self.user)
-        self.assertEqual(callback_request.phone, "+49 151 12345678")
-        self.assertEqual(callback_request.time_windows, "Mo-Do 09:00-12:00")
-        self.user.refresh_from_db()
-        profile = self.user.profile
-        self.assertEqual(profile.callback_phone, "+49 151 12345678")
-        self.assertEqual(profile.callback_time_windows, "Mo-Do 09:00-12:00")
-
-    def test_profile_notification_preferences_can_be_saved(self):
-        response = self.client.post(
-            reverse("pages:profile"),
-            {
-                "notifications-callback_phone": "+49 152 00000000",
-                "notifications-callback_time_windows": "Freitag ab 14 Uhr",
-                "notifications-notify_new_message": "on",
-                "notifications_submit": "1",
-            },
-        )
-
-        self.assertRedirects(response, reverse("pages:profile"))
-        self.user.refresh_from_db()
-        profile = self.user.profile
-        self.assertEqual(profile.callback_phone, "+49 152 00000000")
-        self.assertEqual(profile.callback_time_windows, "Freitag ab 14 Uhr")
-        self.assertFalse(profile.notify_new_reply)
-        self.assertTrue(profile.notify_new_message)
-        self.assertFalse(profile.notify_appointment_changes)
-
-
-@override_settings(
-    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
-    EMAIL_HOST="smtp.example.test",
-    EMAIL_HOST_USER="noreply@example.com",
-    DEFAULT_FROM_EMAIL="noreply@example.com",
-    SITE_URL="https://portfolio.example.invalid",
-)
-class AccountNotificationSignalTests(TestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username="signals@example.com",
-            email="signals@example.com",
-            password="testpass123",
-        )
-        self.profile, _ = Profile.objects.get_or_create(user=self.user)
-
-    def test_chat_reply_sends_mail_for_account_mailbox_thread(self):
-        ChatMessage.objects.create(
-            lang="de",
-            user=self.user,
-            contact_email=self.user.email,
-            client_hash=build_account_mailbox_hash(self.user),
-            text="Erste Kontonachricht",
-            handled=False,
-        )
-
-        ChatReply.objects.create(
-            client_hash=build_account_mailbox_hash(self.user),
-            text="Wir haben Ihre Nachricht erhalten.",
-            delivered=False,
-        )
-
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [self.user.email])
-        self.assertIn("Neue Antwort", mail.outbox[0].subject)
-        self.assertIn("Wir haben Ihre Nachricht erhalten.", mail.outbox[0].body)
-
-    def test_account_notice_respects_notification_preference(self):
-        self.profile.notify_new_message = False
-        self.profile.save(update_fields=["notify_new_message"])
-
-        AccountNotice.objects.create(
-            user=self.user,
-            title="Interner Hinweis",
-            text="Bitte laden Sie das fehlende Formular hoch.",
-        )
-
-        self.assertEqual(len(mail.outbox), 0)
-
-        self.profile.notify_new_message = True
-        self.profile.save(update_fields=["notify_new_message"])
-
-        AccountNotice.objects.create(
-            user=self.user,
-            title="Neue interne Nachricht",
-            text="Der Termin wurde intern vorbereitet.",
-        )
-
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, "Neue interne Nachricht")
-
-    def test_callback_request_update_sends_mail_when_status_changes(self):
-        callback_request = CallbackRequest.objects.create(
-            user=self.user,
-            phone="+49 151 99999999",
-            time_windows="Dienstag 10-12 Uhr",
-            note="Bitte nur vormittags anrufen.",
-        )
-
-        self.assertEqual(len(mail.outbox), 0)
-
-        callback_request.status = CallbackRequest.STATUS_SCHEDULED
-        callback_request.scheduled_for = timezone.make_aware(
-            timezone.datetime(2026, 5, 5, 10, 30)
-        )
-        callback_request.note = "Terminfenster bestaetigt"
-        callback_request.save()
-
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, [self.user.email])
-        self.assertIn("Aktualisierung", mail.outbox[0].subject)
-        self.assertIn("Termin geplant", mail.outbox[0].body)

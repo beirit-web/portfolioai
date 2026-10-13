@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.db.models import Sum
+from django.db import DatabaseError
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import redirect
@@ -22,6 +23,7 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 
 from .ai_service import get_gpt_service
 from .data import PAGE_CONTENT, TOPICS
+from .quiz_service import QuizContractError, evaluate_quiz, public_topic
 from .learning_content import (
     category_detail_from_db,
     category_summaries_from_db,
@@ -81,17 +83,47 @@ def topics(request):
     return JsonResponse({"topics": payload})
 
 
+def _quiz_access_error(request):
+    # Public guest quizzes remain available, but an expired account never becomes a guest attempt.
+    if request.user.is_authenticated or request.COOKIES.get("learning_auth_token"):
+        return api_login_required(lambda current_request: None)(request)
+    return None
+
+
+def _quiz_error(error):
+    return JsonResponse({"error": str(error), "code": error.code}, status=error.status)
+
+
 @require_GET
 def topic_detail(request, topic_id):
-    db_topic = category_detail_from_db(topic_id)
-    if db_topic:
-        return JsonResponse(db_topic)
-
-    topic = TOPICS.get(topic_id)
-    if topic is None:
-        return JsonResponse({"error": "Тема не найдена."}, status=404)
-
-    return JsonResponse({"id": topic_id, **topic})
+    read_mode = request.GET.get("view")
+    include_quiz = read_mode != "learn"
+    include_learning = read_mode != "quiz"
+    try:
+        payload = category_detail_from_db(topic_id, include_quiz=include_quiz, include_learning=include_learning)
+        if payload is None:
+            topic = TOPICS.get(topic_id)
+            if topic is None:
+                return JsonResponse({"error": "Тема не найдена."}, status=404)
+            payload = {"id": topic_id, **topic}
+            if not include_learning:
+                payload = {key: payload.get(key) for key in ("id", "label", "icon", "ru", "quiz", "free_answer")}
+            if not include_quiz:
+                payload["quiz"] = []
+                payload.pop("free_answer", None)
+        if include_quiz:
+            auth_error = _quiz_access_error(request)
+            if auth_error is not None:
+                return auth_error
+            payload = public_topic(request, payload)
+        response = JsonResponse(payload)
+        if include_quiz:
+            response["Cache-Control"] = "no-store"
+        return response
+    except QuizContractError as error:
+        return _quiz_error(error)
+    except DatabaseError:
+        return _quiz_error(QuizContractError("Quiz is temporarily unavailable.", status=503, code="quiz_unavailable"))
 
 
 @require_GET
@@ -130,8 +162,12 @@ def csrf(request):
 @require_GET
 def me(request):
     if not request.user.is_authenticated or not _has_valid_auth_token(request):
-        logout(request)
-        return JsonResponse({"user": None})
+        response = JsonResponse({"user": None})
+        if request.user.is_authenticated or request.COOKIES.get("learning_auth_token") or request.session.get("_auth_user_id"):
+            logout(request)
+            response.delete_cookie("learning_auth_token", samesite="Lax")
+        # A regular guest account refresh must retain the issued quiz's anonymous owner.
+        return response
     if not _can_use_learning_account(request.user):
         logout(request)
         return JsonResponse({"user": None})
@@ -462,43 +498,22 @@ def dashboard(request):
     )
 
 
-@api_login_required
 @require_POST
 def save_quiz_attempt(request):
-    data = _json_body(request)
-    topic_id = data.get("topicId")
-    topic_label = _topic_label_for_quiz(topic_id)
-    score = int(data.get("score", 0))
-    total = int(data.get("total", 0))
-    duration_seconds = max(0, int(data.get("durationSeconds", 0)))
-    difficulty = data.get("difficulty", "easy")
-
-    if topic_label is None or total <= 0 or score < 0 or score > total or difficulty not in ["easy", "medium", "hard"]:
-        return JsonResponse({"error": "Некорректный результат викторины."}, status=400)
-
-    attempt = QuizResult.objects.create(
-        user=request.user,
-        topic_id=topic_id,
-        topic_label=topic_label,
-        score=score,
-        total=total,
-        duration_seconds=duration_seconds,
-        difficulty=difficulty,
-    )
-    return JsonResponse(
-        {
-            "attempt": {
-                "id": attempt.id,
-                "topicLabel": attempt.topic_label,
-                "score": attempt.score,
-                "total": attempt.total,
-                "percentage": attempt.percentage,
-                "durationSeconds": attempt.duration_seconds,
-                "difficulty": attempt.difficulty,
-            }
-        },
-        status=201,
-    )
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except (ValueError, UnicodeDecodeError):
+        return _quiz_error(QuizContractError())
+    try:
+        auth_error = _quiz_access_error(request)
+        if auth_error is not None:
+            return auth_error
+        result, newly_saved = evaluate_quiz(request, data, _get_profile)
+    except QuizContractError as error:
+        return _quiz_error(error)
+    except DatabaseError:
+        return _quiz_error(QuizContractError("Quiz result could not be saved. Please retry.", status=503, code="quiz_save_failed"))
+    return JsonResponse(result, status=201 if result["saved"] else 200)
 
 
 @api_login_required

@@ -290,6 +290,9 @@ class QuizAttempt(models.Model):
     total = models.PositiveSmallIntegerField()
     duration_seconds = models.PositiveIntegerField(default=0)
     difficulty = models.CharField(max_length=16, choices=DIFFICULTY_CHOICES, default="easy")
+    # Older results remain valid; new issued quizzes use one durable submission key.
+    quiz_token_hash = models.CharField(max_length=64, null=True, blank=True, unique=True, editable=False)
+    submission_hash = models.CharField(max_length=64, blank=True, default="", editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

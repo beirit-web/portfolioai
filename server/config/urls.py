@@ -5,6 +5,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+from .asset_redirects import urlpatterns as legacy_asset_patterns
 from .deutschlive_views import deutschlive_api_not_found, deutschlive_redirect, deutschlive_spa, deutschlive_recordings_archive
 
 handler400 = "config.error_views.bad_request"
@@ -29,6 +30,7 @@ password_reset_patterns = [
 ]
 
 urlpatterns = [
+    *legacy_asset_patterns,
     path(settings.ADMIN_URL, admin.site.urls),
     path("deutschLive/", deutschlive_redirect, name="deutschlive_legacy_case"),
     path("deutschLive/<path:_path>", deutschlive_redirect, name="deutschlive_legacy_case_spa"),

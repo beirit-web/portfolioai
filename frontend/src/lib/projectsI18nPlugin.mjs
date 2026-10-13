@@ -14,7 +14,7 @@ const virtualPrefix = "virtual:projects-i18n/";
 const internalPrefix = `\0${virtualPrefix}`;
 const languages = new Set(["de", "ru", "uk"]);
 const overviewFields = [
-  "slug", "title", "text", "type", "status", "category", "href", "liveUrl",
+  "slug", "title", "text", "overviewText", "type", "status", "category", "href", "liveUrl",
   "localHref", "images", "technologies", "tags", "published", "sortOrder", "orderIndex",
 ];
 

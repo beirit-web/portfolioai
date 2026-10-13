@@ -15,7 +15,7 @@ test("Ukrainian visitors can reach projects, read a report and contact the owner
   await expect(page.getByRole("heading", { name: "Проєкти", exact: true })).toBeVisible();
   const contract = page.locator(".project-overview-card--vertragsgenerator");
   await expect(contract).toContainText("Django");
-  await contract.getByRole("link", { name: "Детальніше", exact: true }).click();
+  await contract.getByRole("link", { name: "Звіт про проєкт", exact: true }).click();
   await expect(page.locator(".portfolio-project-decision")).toContainText("Технічне рішення");
   await expect(page.locator(".portfolio-card__implementation")).toContainText("Django");
   await page.goto("/kontakt?project=Demo");

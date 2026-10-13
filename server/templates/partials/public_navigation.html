@@ -1,0 +1,28 @@
+{% load static %}
+  <header class="imprint-site-header" id="mainTopnav">
+    <nav class="imprint-nav" aria-label="{{ nav_meta.navigation }}">
+      <a class="imprint-nav__brand" href="{% url 'pages:home' %}" aria-label="{{ nav_meta.home_label }}">
+        <img src="{% static 'images/beirit-digital-logo-160.webp' %}" alt="Beirit Web"
+          width="48" height="48" decoding="async" />
+      </a>
+      <button class="imprint-nav__toggle" type="button" hidden
+        aria-controls="imprint-navigation-links" aria-expanded="false"
+        aria-label="{{ nav_meta.menu_open }}"
+        data-open-label="{{ nav_meta.menu_open }}" data-close-label="{{ nav_meta.menu_close }}">
+        <svg class="imprint-nav__menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <svg class="imprint-nav__close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+        <span>{{ nav_meta.menu }}</span>
+      </button>
+      <ul class="imprint-nav__links" id="imprint-navigation-links">
+        {% for item in nav_meta.links %}
+          <li><a href="{% url item.route %}">{{ item.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </header>

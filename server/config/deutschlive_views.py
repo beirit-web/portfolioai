@@ -23,13 +23,13 @@ def deutschlive_recordings_archive(_request):
 @never_cache
 def deutschlive_spa(request, _path=""):
     if _path.strip("/") == "grades":
-        return redirect("/static/portfolio/test-main/index.html")
+        return redirect("/static/portfolio/notenrechner/index.html")
     return deutschlive_recordings_archive(request)
 
 
 def deutschlive_redirect(request, _path=""):
     if _path.strip("/") == "grades":
-        return redirect("/static/portfolio/test-main/index.html")
+        return redirect("/static/portfolio/notenrechner/index.html")
     target = "/deutschlive/"
     if _path:
         target = f"{target}{_path}"

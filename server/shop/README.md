@@ -29,6 +29,19 @@ dem eingebauten Bildgenerator erstellt. Promptset und Bildzuordnung sind dort
 in `README.md` dokumentiert. Bilder, Preise, Zutaten und Allergene sind
 Beispieldaten, keine verifizierten Angaben eines Lebensmittelbetriebs.
 
+Die Auslieferung nutzt kleinere WebP-Kandidaten für Katalog, Produktdetails
+und Warenkorb. Originaldateien und gespeicherte Bild-URLs bleiben erhalten;
+eigene Bild-URLs ohne Kandidaten werden unverändert ausgegeben. Kandidaten
+und das zugehörige Manifest lassen sich reproduzierbar neu erstellen:
+
+```bash
+# vom Repository-Verzeichnis, mit Pillow in der vorhandenen Umgebung
+server/.venv/bin/python server/shop/scripts/build_responsive_images.py
+```
+
+Der dekorative Tischhintergrund wird erst für Karten nahe dem sichtbaren Bereich
+berechnet und nur bei geänderten Abmessungen oder einer neuen Bildquelle erneuert.
+
 ## Funktionen und Daten
 
 - Sortiment: Suche, Kategorien, Sortierung, Produktdetails und lokale Fotos.

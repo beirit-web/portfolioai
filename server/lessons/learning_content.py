@@ -1,12 +1,23 @@
+from django.db.models import Count
+
 from .data import TOPICS
 from .models import Category, QuizQuestion, Scene
 
 
 def category_summaries_from_db():
-    categories = (
-        Category.objects.filter(is_published=True, scenes__is_published=True)
-        .distinct()
-        .prefetch_related("scenes__lines", "vocabulary")
+    categories = list(
+        Category.objects.filter(
+            is_published=True,
+            pk__in=Scene.objects.filter(is_published=True).values("category_id"),
+        ).annotate(phrase_count=Count("scenes__lines"))
+    )
+    if not categories:
+        return []
+
+    quiz_counts = dict(
+        QuizQuestion.objects.filter(
+            topic_id__in=[category.slug for category in categories], is_active=True,
+        ).values("topic_id").annotate(total=Count("id")).values_list("topic_id", "total")
     )
     return [
         {
@@ -14,45 +25,59 @@ def category_summaries_from_db():
             "label": category.title_de,
             "icon": category.icon,
             "ru": category.title_ru,
-            "phraseCount": sum(scene.lines.count() for scene in category.scenes.all()),
-            "quizCount": QuizQuestion.objects.filter(topic_id=category.slug, is_active=True).count(),
+            "phraseCount": category.phrase_count,
+            "quizCount": quiz_counts.get(category.slug, 0),
         }
         for category in categories
     ]
 
 
-def category_detail_from_db(topic_id):
+def category_detail_from_db(topic_id, *, include_quiz=True, include_learning=True):
     category = Category.objects.filter(slug=topic_id, is_published=True).first()
-    if not category or not category.scenes.filter(is_published=True).exists():
+    if not category:
         return None
 
-    scenes = list(category.scenes.filter(is_published=True).prefetch_related("lines", "vocabulary"))
+    published_scenes = category.scenes.filter(is_published=True)
+    scenes = list(published_scenes.prefetch_related("lines")) if include_learning else []
+    if not (scenes if include_learning else published_scenes.exists()):
+        return None
+
     static_topic = TOPICS.get(category.slug, {})
-    return {
+    payload = {
         "id": category.slug,
         "label": category.title_de,
         "icon": category.icon,
         "ru": category.title_ru,
-        "description": category.description_ru or category.description_de,
-        "phrases": [phrase for scene in scenes for phrase in phrases_from_scene(scene)],
-        "scenes": [learning_scene_from_db(scene) for scene in scenes],
-        "vocabulary": [
-            vocabulary_from_db(item)
-            for item in category.vocabulary.filter(is_published=True)
-        ],
-        "exercises": static_topic.get("exercises", scene_exercises(category.slug)),
-        "free_answer": static_topic.get("free_answer"),
-        "quiz": [quiz_question_from_db(item) for item in QuizQuestion.objects.filter(topic_id=category.slug, is_active=True).prefetch_related("answers")],
+        "quiz": [],
     }
+    if include_learning:
+        payload.update({
+            "description": category.description_ru or category.description_de,
+            "phrases": [phrase for scene in scenes for phrase in phrases_from_scene(scene)],
+            "scenes": [learning_scene_from_db(scene) for scene in scenes],
+            "vocabulary": [
+                vocabulary_from_db(item)
+                for item in category.vocabulary.filter(is_published=True)
+            ],
+            "exercises": static_topic.get("exercises", scene_exercises(category.slug)),
+        })
+    if include_quiz:
+        payload["free_answer"] = static_topic.get("free_answer")
+        payload["quiz"] = [quiz_question_from_db(item) for item in QuizQuestion.objects.filter(topic_id=category.slug, is_active=True).prefetch_related("answers")]
+    return payload
 
 
 def quiz_question_from_db(item):
     answers = list(item.answers.all())
     options = [answer.text for answer in answers] or item.options
-    correct_index = next((index for index, answer in enumerate(answers) if answer.is_correct), 0)
+    correct_index = next((index for index, answer in enumerate(answers) if answer.is_correct), None)
+    if not answers:
+        correct_index = next((index for index, option in enumerate(options) if option == item.correct_answer), None)
     return {
+        "id": f"db:{item.pk}",
         "question": item.prompt_ru,
         "options": options,
+        "optionIds": [f"db-option:{answer.pk}" for answer in answers] if answers else [f"db:{item.pk}:option:{index}" for index in range(len(options))],
         "answer": correct_index,
         "explain": item.explanation_ru,
     }

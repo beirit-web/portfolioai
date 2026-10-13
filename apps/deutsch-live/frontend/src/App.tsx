@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
   ClipboardCheck,
@@ -14,7 +14,7 @@ import {
   X
 } from "lucide-react";
 import { fetchMe, updateSettings, type CurrentUser } from "./api";
-import LandingPage from "./components/LandingPage";
+import QuizMode from "./components/QuizMode";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import { PageSkeleton } from "./components/UiPrimitives";
 import { getLocale, setLocale as persistLocale, subscribeLocale, type Locale, ui } from "./i18n";
@@ -23,13 +23,13 @@ import { usePlatformSession } from "./lib/usePlatformSession";
 const AuthPanel = lazy(() => import.meta.env.VITE_PLATFORM_INTEGRATION === "true"
   ? import("./components/PlatformAccount")
   : import("./components/AuthPanel"));
+const LandingPage = lazy(() => import("./components/LandingPage"));
 const BotTutor = lazy(() => import("./components/BotTutor"));
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const GradeCalculator = lazy(() => import("./components/GradeCalculator"));
 const RecordingPlayer = lazy(() => import("./components/RecordingPlayer"));
 const ImpressumPage = lazy(() => import("./components/ImpressumPage"));
 const ManualPage = lazy(() => import("./components/ManualPage"));
-const QuizMode = lazy(() => import("./components/QuizMode"));
 const SceneLearning = lazy(() => import("./components/SceneLearning"));
 const DatenschutzPage = lazy(() => import("./components/LegalPages").then((module) => ({ default: module.DatenschutzPage })));
 const KontaktPage = lazy(() => import("./components/LegalPages").then((module) => ({ default: module.KontaktPage })));
@@ -61,6 +61,7 @@ export default function App() {
   const [accountLoaded, setAccountLoaded] = useState(false);
   const [dashboardRefresh, setDashboardRefresh] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuToggleRef = useRef<HTMLButtonElement>(null);
   const [locale, setLocaleState] = useState<Locale>(getLocale());
   usePlatformSession(user, setUser);
 
@@ -78,6 +79,15 @@ export default function App() {
   useEffect(() => subscribeLocale(setLocaleState), []);
 
   useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
+  useEffect(() => {
+    document.body.classList.toggle("scene-learning-page", path === "/learn");
+    return () => document.body.classList.remove("scene-learning-page");
+  }, [path]);
+
+  useEffect(() => {
     const onPopState = () => setPath(stripBase(window.location.pathname));
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -85,7 +95,10 @@ export default function App() {
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setIsMenuOpen(false);
+      if (event.key === "Escape" && isMenuOpen) {
+        setIsMenuOpen(false);
+        menuToggleRef.current?.focus();
+      }
     }
     document.body.classList.toggle("menu-open", isMenuOpen);
     window.addEventListener("keydown", onKeyDown);
@@ -132,7 +145,7 @@ export default function App() {
 
   const page = useMemo(() => {
     if (path === "/learn") return <SceneLearning onProgressSaved={refreshDashboard} user={user} />;
-    if (path === "/quiz") return <QuizMode onAttemptSaved={refreshDashboard} user={user} />;
+    if (path === "/quiz") return <QuizMode key={user?.id ?? "guest"} accountLoaded={accountLoaded} onAttemptSaved={refreshDashboard} user={user} />;
     if (path === "/grades") return <GradeCalculator />;
     if (["/recordings", "/recordings/", "/recordings-archiv"].includes(path)) return accountLoaded ? <>
       {path === "/recordings-archiv" && <section className="glass mb-6 rounded-2xl p-6">
@@ -220,10 +233,12 @@ export default function App() {
                 <span>{user ? user.username : ui.common.login}</span>
               </button>
               <button
+                aria-controls="deutschlive-mobile-menu"
                 aria-expanded={isMenuOpen}
                 aria-label={isMenuOpen ? ui.common.closeMenu : ui.common.openMenu}
                 className="app-nav__menu-button"
                 onClick={() => setIsMenuOpen((value) => !value)}
+                ref={menuToggleRef}
                 type="button"
               >
                 {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -236,26 +251,35 @@ export default function App() {
         <div
           aria-hidden={!isMenuOpen}
           className={`mobile-menu-backdrop ${isMenuOpen ? "is-visible" : ""}`}
+          hidden={!isMenuOpen}
           onClick={() => setIsMenuOpen(false)}
         />
 
         <div
+          aria-hidden={!isMenuOpen}
           className={`mobile-menu ${isMenuOpen ? "is-visible" : "is-hidden"}`}
+          hidden={!isMenuOpen}
+          id="deutschlive-mobile-menu"
+          inert={!isMenuOpen}
         >
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = path === item.path || (item.path === "/manual" && path === "/handbuch");
             return (
-              <button
+              <a
                 aria-current={isActive ? "page" : undefined}
                 className={`nav-tab ${isActive ? "is-active" : ""}`}
+                href={withBase(item.path)}
                 key={item.path}
-                onClick={() => navigate(item.path)}
-                type="button"
+                onClick={(event) => {
+                  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault();
+                  navigate(item.path);
+                }}
               >
                 <Icon aria-hidden="true" />
                 <span>{item.label}</span>
-              </button>
+              </a>
             );
           })}
           <button

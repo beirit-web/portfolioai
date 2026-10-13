@@ -19,37 +19,44 @@ class HomeViteAssetsTests(TestCase):
         self.assertContains(response, "data-vite-inline='src/homepage-layout.css'")
         self.assertContains(response, "data-vite-inline='src/components/home/hero/Hero.css'")
         self.assertContains(response, "data-vite-inline='src/components/home/homepage/HomePage.css'")
-        self.assertNotIn("/static/react-home-dist/assets/styles-", content)
-        self.assertNotIn("/static/react-home-dist/assets/homepage-custom-", content)
-        self.assertNotIn("/static/react-home-dist/assets/responsive-overrides-", content)
-        self.assertNotIn('rel="stylesheet" href="/static/react-home-dist/assets/styles-', content)
-        self.assertNotIn('rel="stylesheet" href="/static/react-home-dist/assets/homepage-custom-', content)
-        self.assertNotIn('rel="stylesheet" href="/static/react-home-dist/assets/responsive-overrides-', content)
-        self.assertContains(response, "/static/react-home-dist/assets/main-")
-        self.assertNotIn('rel="modulepreload" href="/static/react-home-dist/assets/ContactForm-', content)
+        self.assertNotIn("/static/portfolio-dist/assets/styles-", content)
+        self.assertNotIn("/static/portfolio-dist/assets/homepage-custom-", content)
+        self.assertNotIn("/static/portfolio-dist/assets/responsive-overrides-", content)
+        self.assertNotIn('rel="stylesheet" href="/static/portfolio-dist/assets/styles-', content)
+        self.assertNotIn('rel="stylesheet" href="/static/portfolio-dist/assets/homepage-custom-', content)
+        self.assertNotIn('rel="stylesheet" href="/static/portfolio-dist/assets/responsive-overrides-', content)
+        self.assertContains(response, "/static/portfolio-dist/assets/main-")
+        self.assertNotIn('rel="modulepreload" href="/static/portfolio-dist/assets/ContactForm-', content)
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_contact_loads_viewport_css_and_preloads_its_form(self):
         response = self.client.get("/kontakt/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "window.BEIRIT_CRITICAL_CSS_READY = loadPageCss(desktop.matches)")
-        self.assertContains(response, "/static/react-home-dist/assets/mobile-pages-")
+        self.assertContains(response, "/static/portfolio-dist/assets/mobile-pages-")
         self.assertContains(response, "data-vite-inline='src/components/contact/ContactForm.jsx'")
-        self.assertContains(response, 'rel="modulepreload" href="/static/react-home-dist/assets/ContactForm-')
+        self.assertContains(response, 'rel="modulepreload" href="/static/portfolio-dist/assets/ContactForm-')
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_skills_use_viewport_css_without_loading_the_contact_form(self):
         response = self.client.get("/kompetenzen/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "window.BEIRIT_CRITICAL_CSS_READY = loadPageCss(desktop.matches)")
-        self.assertContains(response, "/static/react-home-dist/assets/mobile-pages-")
-        self.assertNotContains(response, 'rel="modulepreload" href="/static/react-home-dist/assets/ContactForm-')
+        self.assertContains(response, "/static/portfolio-dist/assets/mobile-pages-")
+        self.assertNotContains(response, 'rel="modulepreload" href="/static/portfolio-dist/assets/ContactForm-')
 
     @override_settings(LOGIN_REQUIRED=False)
-    def test_about_preloads_its_visible_background_image(self):
+    def test_about_inlines_styles_and_preloads_images_with_its_own_entry(self):
         response = self.client.get("/ueber-mich/")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'rel="preload" as="image" href="/static/images/about-forest-background.webp" fetchpriority="high"')
+        self.assertContains(response, 'imagesrcset="/static/images/eugenbeirit-360.webp 360w, /static/images/eugenbeirit-540.webp 540w"')
+        self.assertContains(response, "data-vite-inline='src/about-shell.css'")
+        self.assertContains(response, "data-vite-inline='src/about-page.css'")
+        self.assertContains(response, "/static/portfolio-dist/assets/about-")
+        self.assertNotContains(response, 'rel="stylesheet"')
+        self.assertNotContains(response, "/static/portfolio-dist/assets/main-")
+        self.assertNotContains(response, "/static/portfolio-dist/assets/useI18n-")
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_projects_inline_only_their_route_styles(self):
@@ -59,12 +66,12 @@ class HomeViteAssetsTests(TestCase):
         self.assertContains(response, "data-vite-inline='src/projects-page.css'")
         self.assertContains(response, "data-vite-inline='src/header-nav.css'")
         for name in ("styles", "homepage-custom", "responsive-overrides"):
-            self.assertNotIn(f"/static/react-home-dist/assets/{name}-", content)
+            self.assertNotIn(f"/static/portfolio-dist/assets/{name}-", content)
         self.assertNotIn('rel="stylesheet"', content)
-        self.assertContains(response, '/static/react-home-dist/assets/projects-')
+        self.assertContains(response, '/static/portfolio-dist/assets/projects-')
         self.assertContains(response, 'fetchpriority="low"></script>')
-        self.assertNotIn('/static/react-home-dist/assets/main-', content)
-        self.assertNotIn('/static/react-home-dist/assets/three-vendor-', content)
+        self.assertNotIn('/static/portfolio-dist/assets/main-', content)
+        self.assertNotIn('/static/portfolio-dist/assets/three-vendor-', content)
 
 
 class ViteModulePreloadTests(SimpleTestCase):
@@ -77,13 +84,13 @@ class ViteModulePreloadTests(SimpleTestCase):
             "contact": {"file": "assets/contact.js"},
         }
         with TemporaryDirectory(prefix="beirit-vite-") as directory:
-            folder = Path(directory) / "assets" / "react-home-dist" / ".vite"
+            folder = Path(directory) / "assets" / "portfolio-dist" / ".vite"
             folder.mkdir(parents=True)
             (folder / "manifest.json").write_text(json.dumps(manifest))
             with override_settings(SERVER_DIR=Path(directory)):
                 assets = str(vite_react_assets("src/projects.jsx"))
-        self.assertEqual(assets.count('href="/static/react-home-dist/assets/shell.js"'), 1)
-        self.assertEqual(assets.count('href="/static/react-home-dist/assets/vendor.js"'), 1)
-        self.assertIn('<script type="module" crossorigin src="/static/react-home-dist/assets/projects.js">', assets)
+        self.assertEqual(assets.count('href="/static/portfolio-dist/assets/shell.js"'), 1)
+        self.assertEqual(assets.count('href="/static/portfolio-dist/assets/vendor.js"'), 1)
+        self.assertIn('<script type="module" crossorigin src="/static/portfolio-dist/assets/projects.js">', assets)
         self.assertNotIn("three-vendor.js", assets)
         self.assertNotIn("contact.js", assets)

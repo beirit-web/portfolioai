@@ -15,11 +15,12 @@ def main():
         steps = [
             (workspace / "frontend", ["npm", "test"]),
             (workspace / "frontend", ["npm", "run", "build"]),
-            (workspace / "server", [sys.executable, "bin/check_deploy_isolation.py"]),
+            (workspace / "frontend", ["npm", "run", "build:housing"]),
             (workspace / "server", [sys.executable, "manage.py", "check"]),
             (workspace / "server", [sys.executable, "manage.py", "makemigrations", "--check", "--dry-run"]),
             (workspace / "server", [sys.executable, "manage.py", "test"]),
             (workspace / "frontend", ["npm", "run", "test:browser"]),
+            (workspace / "frontend", ["npm", "run", "test:housing"]),
         ]
         for cwd, command in steps:
             print(f"\n{cwd.name}: {' '.join(command)}", flush=True)

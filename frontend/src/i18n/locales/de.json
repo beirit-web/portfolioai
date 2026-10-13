@@ -446,6 +446,7 @@
           "type": "Webplattform",
           "status": "Portfolio-Fallstudie",
           "text": "Mehrsprachige Django-Plattform mit Nutzerkonten, DeutschLive und Vokabelbox: Dialoge, Übungen, Quiz und lokale Audioaufnahmen.",
+          "overviewText": "Mehrsprachige Lernplattform mit Nutzerkonten, DeutschLive, Vokabelbox und lokalen Audioaufnahmen.",
           "images": [
             {
               "src": "/static/images/portfolio-sprachdienstleistungen-desktop.webp",
@@ -537,9 +538,10 @@
           "type": "Notenberechnung",
           "status": "Browser-Demo",
           "text": "Browser-Anwendung für Durchschnittsnoten mit schrittweiser Eingabe, Prüfung von Komma- und Punktwerten und direktem Ergebnis.",
+          "overviewText": "Durchschnittsnoten berechnen: mit geprüften Eingaben und verständlicher Auswertung.",
           "images": [
             {
-              "src": "/static/images/portfolio-test-main-desktop.webp",
+              "src": "/static/images/portfolio-notenrechner-desktop.webp",
               "label": "Desktop"
             }
           ],
@@ -593,7 +595,7 @@
           ],
           "note": "Eigenständige Browser-Demo ohne Anmeldung und Backend. Sie zeigt eine vereinfachte Notenberechnung.",
           "cta": "Projekt starten",
-          "href": "/static/portfolio/test-main/index.html",
+          "href": "/static/portfolio/notenrechner/index.html",
           "technologies": [
             "HTML",
             "CSS",
@@ -602,7 +604,7 @@
           "slug": "notenrechner",
           "published": true,
           "sortOrder": 110,
-          "localHref": "/static/portfolio/test-main/index.html",
+          "localHref": "/static/portfolio/notenrechner/index.html",
           "technicalDecision": "Die Berechnung läuft vollständig im Browser. Für die kleine, abgeschlossene Aufgabe sind weder Konto noch Backend erforderlich; Noten mit Komma oder Punkt werden vor der Berechnung geprüft."
         },
         {
@@ -615,6 +617,7 @@
           "type": "Online-Shop",
           "status": "Django-Demo",
           "text": "Django-Shop für Torten und Kuchen mit gespeichertem Warenkorb, Wunschdatum und Bestellanfragen.",
+          "overviewText": "Torten und Kuchen entdecken, im Warenkorb sammeln und mit Wunschdatum anfragen.",
           "images": [
             {
               "src": "/static/images/portfolio-online-shop-desktop-v2.webp",
@@ -697,6 +700,7 @@
           "type": "Wohnungssuche",
           "status": "Dashboard-Demo",
           "text": "React-Dashboard für Wohnungssuche mit Suchprofilen, Filtern, Angebotsstatus und Matching-Score. Die Portfolio-Ansicht enthält fiktive Angebote.",
+          "overviewText": "Wohnungssuche mit Filtern, Suchprofilen und Matching-Score anhand fiktiver Angebote.",
           "images": [
             {
               "src": "/static/images/portfolio-wohnungssuche-desktop.webp",
@@ -782,6 +786,7 @@
           "type": "Pflanzenverwaltung",
           "status": "Django-Demo",
           "text": "Pflanzensuche mit persönlicher Sammlung, individuellem Gießplan und integriertem Wettermodul mit Ortssuche und Vorhersage.",
+          "overviewText": "Pflanzen suchen, die eigene Sammlung pflegen und Gießplan sowie Wetter im Blick behalten.",
           "images": [
             {
               "src": "/static/images/portfolio-enbt-botanic-desktop.webp",
@@ -876,9 +881,10 @@
           "type": "Dokumentenerstellung",
           "status": "Django-Demo",
           "text": "Django-Vertragsgenerator mit Vorlagenwahl, Abschnittsformularen, serverseitiger Prüfung, Live-Vorschau und Text-Export.",
+          "overviewText": "Vertragsentwürfe aus Vorlagen erstellen, prüfen und mit Live-Vorschau als Text exportieren.",
           "images": [
             {
-              "src": "/static/images/portfolio-vertragsgenerator-main-desktop.webp",
+              "src": "/static/images/portfolio-vertragsgenerator-desktop.webp",
               "label": "Desktop"
             }
           ],
@@ -1404,7 +1410,8 @@
       "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
       "subjectRequired": "Bitte geben Sie einen Betreff ein.",
       "topicRequired": "Bitte wählen Sie die Art der Anfrage aus.",
-      "messageRequired": "Bitte beschreiben Sie kurz Ihr Anliegen."
+      "messageRequired": "Bitte beschreiben Sie kurz Ihr Anliegen.",
+      "privacyRequired": "Bitte bestätigen Sie den Datenschutzhinweis."
     },
     "submit": "Nachricht senden",
     "submitting": "Wird gesendet...",
@@ -1415,6 +1422,8 @@
     "spamHint": "Bitte prüfen Sie auch Spam/Unbekannt, falls keine Antwort ankommt.",
     "validationSummary": "Bitte prüfen Sie die markierten Felder. Das Formular wurde noch nicht gesendet.",
     "genericError": "Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie die Seite neu und versuchen Sie es erneut.",
-    "networkError": "Die Anfrage konnte gerade nicht gesendet werden. Bitte später erneut versuchen."
+    "networkError": "Die Anfrage konnte gerade nicht gesendet werden. Bitte später erneut versuchen.",
+    "title": "Kontaktformular",
+    "requiredHint": "Alle Felder und die Zustimmung zum Datenschutzhinweis sind erforderlich."
   }
 }

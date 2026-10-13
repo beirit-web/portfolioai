@@ -15,16 +15,6 @@ class PagesConfig(AppConfig):
 
   def ready(self):
     self._ensure_admin_user()
-    self._register_signal_handlers()
-
-  def _register_signal_handlers(self) -> None:
-    """
-    Import signal handlers so they get registered once the app is ready.
-    """
-    try:
-      from . import signals  # noqa: F401
-    except Exception:
-      logger.exception("Could not register page signals")
 
   def _ensure_admin_user(self) -> None:
     """

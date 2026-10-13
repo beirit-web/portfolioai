@@ -360,7 +360,7 @@ class AuthSessionIdleTimeoutMiddleware:
     accept_header = (request.headers.get("Accept") or "").lower()
     requested_with = (request.headers.get("X-Requested-With") or "").lower()
     return (
-      request.path.startswith("/api/")
+      request.path.startswith(("/api/", "/deutschlive/api/"))
       or "application/json" in accept_header
       or requested_with == "xmlhttprequest"
     )

@@ -28,7 +28,7 @@ def _read_catalog(path, modified_ns, size):
 
 
 def projects_presentation_catalog():
-    path = Path(settings.SERVER_DIR) / "assets/react-home-dist/.vite/projects-presentation.json"
+    path = Path(settings.SERVER_DIR) / "assets/portfolio-dist/.vite/projects-presentation.json"
     try:
         metadata = path.stat()
         return _read_catalog(str(path), metadata.st_mtime_ns, metadata.st_size)
@@ -141,6 +141,7 @@ def build_projects_overview(projects, language="de", config=None, catalog=None):
             "slug": slug,
             "title": localized["title"] if use_localized else title,
             "text": localized.get("text", "") if use_localized else source.get("text") or source.get("shortDescription") or source.get("description") or "",
+            "overviewText": localized.get("overviewText", "") if use_localized else source.get("overviewText") or localized.get("overviewText") or "",
             "type": localized.get("type") or source.get("type") or source.get("category") or "Portfolio-Projekt",
             "category": source.get("category") or "Weitere",
             "status": localized.get("status", "") if use_localized else source.get("status") or source.get("statusLabel") or "",
@@ -173,7 +174,7 @@ def build_projects_overview(projects, language="de", config=None, catalog=None):
     first_image = next((project["image"] for project in cards if project["image"] and project["image"].get("src")), None)
     if first_image:
         first_image["eager"] = True
-    logo = config.get("logoUrl") or "/static/images/aktueles-logo-160.webp"
+    logo = config.get("logoUrl") or "/static/images/beirit-digital-logo-160.webp"
     small_logo = config.get("logoSmallUrl") or logo
     large_logo = config.get("logoLargeUrl") or small_logo
     public_base = config.get("publicPageBaseUrl") or ""

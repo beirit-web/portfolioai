@@ -52,6 +52,78 @@ def portfolio_page_metadata(path, absolute_url, project=None, project_slug=None)
     }
 
 
+def login_page_metadata(request, absolute_url):
+    public_form = request.method == "GET" and not request.GET.get("email", "").strip()
+    return {
+        "title": "Anmelden | Beirit Digital",
+        "description": (
+            "Melde dich bei Beirit Digital an, um deine persönlichen Projekte wie "
+            "ENBT Botanic zu nutzen. Mit E-Mail und Passwort einloggen oder den Zugang wiederherstellen."
+        ),
+        "canonical": absolute_url("/login/"),
+        "robots": "index, follow" if public_form else "noindex, follow",
+    }
+
+
+def imprint_page_metadata(language, absolute_url):
+    copy = {
+        "de": {
+            "heading": "Impressum",
+            "title": "Muster-Impressum | Beirit Web Portfolio",
+            "description": "Muster-Impressum mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.",
+            "locale": "de_DE", "navigation": "Hauptnavigation", "home_label": "Beirit Web Startseite",
+            "menu": "Menü", "menu_open": "Menü öffnen", "menu_close": "Menü schließen",
+            "links": ("Startseite", "Projekte", "Kompetenzen", "Über mich", "Kontakt"),
+        },
+        "ru": {
+            "heading": "Импрессум",
+            "title": "Пример импрессума | Портфолио Beirit Web",
+            "description": "Пример импрессума с вымышленными данными для демонстрации портфолио Beirit Web.",
+            "locale": "ru_RU", "navigation": "Основная навигация", "home_label": "Beirit Web Главная",
+            "menu": "Меню", "menu_open": "Открыть меню", "menu_close": "Закрыть меню",
+            "links": ("Главная", "Проекты", "Компетенции", "Обо мне", "Контакт"),
+        },
+        "uk": {
+            "heading": "Імпресум",
+            "title": "Зразок імпресуму | Портфоліо Beirit Web",
+            "description": "Зразок імпресуму з вигаданими даними для демонстрації портфоліо Beirit Web.",
+            "locale": "uk_UA", "navigation": "Основна навігація", "home_label": "Beirit Web Головна",
+            "menu": "Меню", "menu_open": "Відкрити меню", "menu_close": "Закрити меню",
+            "links": ("Головна", "Проєкти", "Компетенції", "Про мене", "Контакт"),
+        },
+    }.get(language)
+    if copy is None:
+        return imprint_page_metadata("de", absolute_url)
+    routes = ("home", "projects_page_no_slash", "skills_page_no_slash", "about_page_no_slash", "contact_no_slash")
+    return {
+        **copy,
+        "robots": "noindex, follow",
+        "canonical": absolute_url("/impressum"),
+        "links": [{"label": label, "route": f"pages:{route}"} for label, route in zip(copy["links"], routes)],
+    }
+
+
+def privacy_page_metadata(language, absolute_url):
+    # Only German and Russian legal texts are available; use German otherwise.
+    language = "ru" if language == "ru" else "de"
+    copy = {
+        "de": {
+            "title": "Muster-Datenschutz | Beirit Web Portfolio",
+            "description": "Muster-Datenschutzerklärung mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.",
+        },
+        "ru": {
+            "title": "Пример политики конфиденциальности | Beirit Web Portfolio",
+            "description": "Пример политики конфиденциальности с вымышленными данными для демонстрации портфолио Beirit Web.",
+        },
+    }[language]
+    return {
+        **imprint_page_metadata(language, absolute_url),
+        **copy,
+        "language": language,
+        "canonical": absolute_url("/datenschutz/"),
+    }
+
+
 def portfolio_structured_data(page_meta, absolute_url, project=None, projects=()):
     site_url = absolute_url("/")
     canonical = page_meta["canonical"]

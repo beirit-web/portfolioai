@@ -90,11 +90,18 @@ class DashboardEpicTests(TestCase):
             data={"username": user.username, "password": "strong-pass-123"},
             content_type="application/json",
         )
-        self.client.post(
+        quiz = self.client.get("/deutschlive/api/topics/baeckerei/", {"view": "quiz"}).json()
+        quiz_response = self.client.post(
             "/deutschlive/api/quiz-attempts/",
-            data={"topicId": "baeckerei", "score": 2, "total": 6, "durationSeconds": 90, "difficulty": "easy"},
+            data={
+                "topicId": "baeckerei", "quizToken": quiz["quizToken"],
+                "answers": [{"questionId": item["id"], "optionId": None} for item in quiz["quiz"]],
+                "freeAnswer": "", "freeAnswerExpired": False,
+                "durationSeconds": 90, "difficulty": "easy", "save": True,
+            },
             content_type="application/json",
         )
+        self.assertEqual(quiz_response.status_code, 201)
 
         response = self.client.get("/deutschlive/api/dashboard/")
 

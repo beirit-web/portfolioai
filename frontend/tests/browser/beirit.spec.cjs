@@ -109,9 +109,9 @@ test("navigation supports menu, keyboard, browser history and reload", async ({ 
 async function fillContact(page, desktop) {
   await page.locator("#name").fill("Browserprüfung");
   await page.locator("#email").fill("browser@example.test");
-  if (desktop) await page.locator(".contact-switch-form").first().getByRole("button", { name: "Weiter", exact: true }).click();
   await page.locator("#subject").fill("Prüfung der Kontaktfunktion");
   await page.locator("#message").fill("Lokaler Test mit simulierter Antwort.");
+  await page.getByRole("checkbox").check();
 }
 
 test("contact validates input, sends CSRF and shows success", async ({ page, context }, testInfo) => {
@@ -127,7 +127,6 @@ test("contact validates input, sends CSRF and shows success", async ({ page, con
     await route.fulfill({ json: { ok: true, message: "Testanfrage erhalten." } });
   });
   await open(page, "/kontakt/");
-  if (desktop) await page.locator(".contact-switch-form").first().getByRole("button", { name: "Weiter", exact: true }).click();
   await page.locator('form button[type="submit"]').click();
   await expect(page.locator("#name")).toHaveAttribute("aria-invalid", "true");
   expect(submitted).toBe(0);
@@ -167,7 +166,7 @@ test("projects stay available when the portfolio API fails", async ({ page }) =>
   await expect(page.locator(".project-overview-card").first()).toBeVisible();
   const platform = page.locator(".project-overview-card--sprachdienstleistungen");
   await expect(platform.getByRole("heading", { name: "Sprachplattform mit Lernmodulen", exact: true })).toBeVisible();
-  await expect(platform.getByRole("link", { name: "Details ansehen", exact: true })).toHaveAttribute("href", "/projekte/sprachdienstleistungen");
+  await expect(platform.getByRole("link", { name: "Projektbericht", exact: true })).toHaveAttribute("href", "/projekte/sprachdienstleistungen");
   await layout(page);
 });
 
@@ -186,7 +185,6 @@ test("contact retains input on server errors and supports a retry after network 
   await expect(page.locator("#email")).toHaveAttribute("aria-invalid", "true");
   await expect(page.locator("#email")).toHaveValue("browser@example.test");
   await page.locator("#email").fill("retry@example.test");
-  if (desktop) await page.locator(".contact-switch-form").first().getByRole("button", { name: "Weiter", exact: true }).click();
   await page.locator('form button[type="submit"]').click();
   await expect(page.locator("#contact-form-status")).toHaveAttribute("role", "alert");
   await expect(page.locator("#message")).toHaveValue("Lokaler Test mit simulierter Antwort.");

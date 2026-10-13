@@ -75,6 +75,16 @@ function addHomeLink(container, className) {
 function synchronize() {
   opener = document.querySelector(".mobile-menu-button");
   panel = document.querySelector(".sidebar");
+  if (opener) {
+    const name = opener.getAttribute("aria-expanded") === "true"
+      ? "Navigation-Menü schließen" : "Navigation-Menü öffnen";
+    if (opener.getAttribute("aria-label") !== name) opener.setAttribute("aria-label", name);
+  }
+  for (const select of document.querySelectorAll(".controls select")) {
+    const firstOption = select.options[0]?.textContent.trim();
+    const name = firstOption === "Alle Orte" ? "Ort" : firstOption === "Match-Score" ? "Sortierung" : null;
+    if (name && select.getAttribute("aria-label") !== name) select.setAttribute("aria-label", name);
+  }
   addHomeLink(document.querySelector(".login-panel"), "text-button");
   addHomeLink(document.querySelector(".workspace .page-header .header-actions"), "secondary");
   if (opener && panel) {

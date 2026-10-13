@@ -7,10 +7,14 @@ test.beforeEach(async ({ context, baseURL }) => {
   ));
 });
 
-test("personal details are retained on contact and sample data is shown in the imprint", async ({ page }) => {
+test("contact keeps the form, public owner details and attribution, and the imprint shows sample data", async ({ page }) => {
   await page.goto("/kontakt");
+  await expect(page.locator("main form")).toBeVisible();
+  await expect(page.locator("main address")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Direkter Kontakt", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "kontakt@beirit.digital", exact: true })).toBeVisible();
   await expect(page.locator('a[href="tel:+4953515989191"]')).toBeVisible();
+  await expect(page.locator(".site-footer__brand-main")).toContainText("© 2026 Beirit Web - Eugen Beirit");
   await page.goto("/impressum/");
   await expect(page.locator("main")).toContainText("Musterstraße 1");
   await expect(page.locator("main")).toContainText("Fiktive Musterangaben");
@@ -45,5 +49,8 @@ test("portfolio navigation has no donation links and contact stays neutral", asy
   await page.goto("/kontakt?intent=donation&project=ENBT%20Botanic");
   await expect(page.locator("#subject")).toHaveValue("Frage zu ENBT Botanic");
   await expect(page.locator("#message")).toHaveValue("");
+  await expect(page.locator("main form")).toBeVisible();
+  await expect(page.locator("main address")).toBeVisible();
   await expect(page.getByRole("link", { name: "kontakt@beirit.digital", exact: true })).toBeVisible();
+  await expect(page.locator(".site-footer__brand-main")).toContainText("Eugen Beirit");
 });

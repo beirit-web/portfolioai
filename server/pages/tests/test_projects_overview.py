@@ -96,7 +96,7 @@ class ProjectsOverviewPresentationTests(SimpleTestCase):
 
     def test_catalog_reloads_after_a_build_and_missing_build_uses_client_fallback(self):
         with TemporaryDirectory(prefix="beirit-projects-catalog-") as directory:
-            path = Path(directory) / "assets/react-home-dist/.vite/projects-presentation.json"
+            path = Path(directory) / "assets/portfolio-dist/.vite/projects-presentation.json"
             path.parent.mkdir(parents=True)
             with override_settings(SERVER_DIR=Path(directory)):
                 self.assertIsNone(projects_presentation_catalog())

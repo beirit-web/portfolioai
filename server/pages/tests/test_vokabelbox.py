@@ -20,12 +20,12 @@ class VokabelboxPortfolioTests(TestCase):
         self.assertContains(response, 'name="robots" content="noindex, follow"')
         self.assertContains(response, f'href="{settings.SITE_URL}/vokabelbox/"')
         self.assertIn("no-store", response["Cache-Control"])
-        self.assertNotContains(response, "react-home-dist")
+        self.assertNotContains(response, "portfolio-dist")
         self.assertNotContains(response, 'js/main.js')
         for name in ("app.js", "style.css", "translations.js"):
             asset = f"vokabelbox/{name}"
             self.assertContains(response, f"/static/{asset}")
-            self.assertEqual(Path(finders.find(asset)), settings.PORTFOLIO_LANGUAGE_DIR / "assets" / asset)
+            self.assertEqual(Path(finders.find(asset)), settings.SERVER_DIR / "assets" / asset)
 
     @override_settings(LOGIN_REQUIRED=True)
     def test_guests_can_use_learning_module_when_account_routes_require_login(self):

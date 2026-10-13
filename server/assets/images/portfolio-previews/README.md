@@ -12,7 +12,7 @@ pixels wide. Gallery links still open the original image.
 | `vertragsgenerator` | `/vertragsgenerator/` | Initial rental-contract editor with fictional sample parties and addresses. |
 | `enbt-botanic` | `/botanic/` | Public search interface with its real offline message; no plant results were fabricated. |
 | `wohnungssuche-bodensee` | `/static/portfolio/wohnungssuche/index.html` | Desktop dashboard; mobile offers and filters. The application's own local demo listings are used. |
-| `notenrechner` | `/static/portfolio/test-main/index.html` | Real anonymous calculation: desktop grades 1, 2, 3; mobile grade 2. |
+| `notenrechner` | `/static/portfolio/notenrechner/index.html` | Real anonymous calculation: desktop grades 1, 2, 3; mobile grade 2. |
 | `sprachdienstleistungen` | `/deutschlive/learn` | Public bakery lesson opened from `/deutschlive/`, with German interface and the existing bilingual learning content. |
 
 Browser requests to external HTTP(S) origins were blocked. The server's external

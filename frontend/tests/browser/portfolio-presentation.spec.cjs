@@ -19,9 +19,9 @@ test("project overview shows technology logos and the independent grade calculat
   await gradeCard.locator(".project-overview-card__button").click();
   const start = page.locator(".portfolio-project-hero .portfolio-contact-button");
   await expect(start).toHaveText("Projekt starten");
-  await expect(start).toHaveAttribute("href", "/static/portfolio/test-main/index.html");
+  await expect(start).toHaveAttribute("href", "/static/portfolio/notenrechner/index.html");
   await start.click();
-  await expect(page).toHaveURL(/\/static\/portfolio\/test-main\/index\.html$/);
+  await expect(page).toHaveURL(/\/static\/portfolio\/notenrechner\/index\.html$/);
   await page.locator("#name").fill("Test");
   await page.locator('[data-action="start"]').click();
   await page.locator("#subjects").fill("2");

@@ -55,7 +55,7 @@ export function ProjectsOverviewPage({ items, language, onNavigate }) {
                     <h2>
                       <TechnicalLabel language={language}>{item.title}</TechnicalLabel>
                     </h2>
-                    <p>{item.text}</p>
+                    <p>{item.overviewText || item.text}</p>
                     <TechnologyTags technologies={technologies} className="project-overview-card__tags" label={copy.technologies} />
                     <div className="project-overview-card__actions">
                       <a

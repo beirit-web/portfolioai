@@ -9,6 +9,21 @@ async function expectNoOverflow(page) {
     .toBeLessThanOrEqual(page.viewportSize().width);
 }
 
+test("housing controls can be found by their accessible names", async ({ page }) => {
+  await page.goto("/static/portfolio/wohnungssuche/index.html");
+  const city = page.getByRole("combobox", { name: "Ort", exact: true });
+  const sort = page.getByRole("combobox", { name: "Sortierung", exact: true });
+  await city.selectOption({ label: "Konstanz" });
+  await sort.selectOption({ label: "Niedrigste Warmmiete" });
+  await page.getByRole("button", { name: "Suchen", exact: true }).click();
+  await expect(page.locator(".listing-card")).toHaveCount(1);
+  await expect(page.locator(".listing-card")).toContainText("Konstanz");
+  await page.getByRole("button", { name: "Zurücksetzen", exact: true }).click();
+  await expect(page.locator(".listing-card")).toHaveCount(3);
+  await expect(city).toBeVisible();
+  await expect(sort).toBeVisible();
+});
+
 test("housing search fits phones, tablets and desktop screens", async ({ page }, testInfo) => {
   await page.goto("/static/portfolio/wohnungssuche/index.html");
   await expect(page.locator(".controls")).toBeVisible();
@@ -47,7 +62,7 @@ test("filters and mobile navigation remain usable, including landscape", async (
     }
   }
   await page.setViewportSize({ width: 812, height: 375 });
-  await page.getByRole("button", { name: "Navigation öffnen" }).click();
+  await page.getByRole("button", { name: "Navigation-Menü öffnen" }).click();
   const menu = await page.locator(".sidebar.open").evaluate(element => ({
     height: element.getBoundingClientRect().height, scroll: element.scrollHeight,
   }));
@@ -57,27 +72,33 @@ test("filters and mobile navigation remain usable, including landscape", async (
   await expect(page.getByRole("heading", { name: "Über diese Anwendung" })).toBeVisible();
   await expect(page.locator(".sidebar")).toBeHidden();
   await expectNoOverflow(page);
-  await page.getByRole("button", { name: "Navigation öffnen" }).click();
+  await page.getByRole("button", { name: "Navigation-Menü öffnen" }).click();
   await page.getByRole("button", { name: "Registrieren", exact: true }).click();
   await expect(page.locator(".login-panel")).toBeVisible();
   await expectNoOverflow(page);
 });
 
-test("profiles, long source names and account forms fit small screens", async ({ page, context }, testInfo) => {
-  await context.addInitScript(() => {
-    localStorage.setItem("token", "browser-layout-fixture");
-    localStorage.setItem("username", "wohnungsinteressent.mit.langem.namen@example.test");
-  });
-  const location = { id: 7, name: "Bodman-Ludwigshafen", radius_km: 15 };
-  const profile = { id: 1, name: "Wohnungssuche für eine Familie rund um den Bodensee", locations: [location], max_warm_rent: 1200, min_rooms: 2, max_rooms: 4 };
-  await page.route(/\/(?:api|wohnungssuche-api)\/[^/?]+\/(?:\?.*)?$/, async route => {
-    const endpoint = new URL(route.request().url()).pathname.split("/").filter(Boolean).at(-1);
-    const entries = {
-      "listings": [], "search-profiles": [profile], "search-locations": [location],
-      "sources": [{ id: 1, name: "Kommunale Wohnungsangebote Bodman-Ludwigshafen", source_type: "rss", is_active: true, url: `https://example.test/${"wohnungssuche".repeat(18)}` }],
-    };
-    await route.fulfill({ json: { results: entries[endpoint] || [] }, headers: { "Access-Control-Allow-Origin": "*" } });
-  });
+test("persisted profiles, long names and account forms fit small screens", async ({ page, context }, testInfo) => {
+  const username = `housing-layout-${testInfo.project.name}-${Date.now()}`;
+  const password = "Fictional-Layout-42!";
+  const registered = await context.request.post("/wohnungssuche-api/register/", { data: {
+    username, email: `${username}@example.invalid`, password, password_confirm: password,
+  } });
+  expect(registered.status()).toBe(201);
+  const signedIn = await context.request.post("/wohnungssuche-api/token-auth/", { data: { username, password } });
+  expect(signedIn.status()).toBe(200);
+  const { token } = await signedIn.json();
+  const headers = { Authorization: `Token ${token}` };
+  const savedLocation = await context.request.post("/wohnungssuche-api/search-locations/", { headers, data: { name: "Bodman-Ludwigshafen", radius_km: 15 } });
+  expect(savedLocation.status()).toBe(201);
+  const location = await savedLocation.json();
+  const profile = { name: "Wohnungssuche für eine fiktive Familie rund um den Bodensee", location_ids: [location.id], max_warm_rent: 1200, min_rooms: 2, max_rooms: 4 };
+  const savedProfile = await context.request.post("/wohnungssuche-api/search-profiles/", { headers, data: profile });
+  expect(savedProfile.status()).toBe(201);
+  await context.addInitScript(({ token, username }) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("username", username);
+  }, { token, username });
   await page.goto("/search-profiles");
   await expect(page.locator(".profile-card")).toContainText(profile.name);
   for (const width of [320, 390, 768, 1024, 1440]) {
@@ -100,11 +121,11 @@ test("profiles, long source names and account forms fit small screens", async ({
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({ path: `../runtime/browser-checks/previews/${testInfo.project.name}-housing-profile.png`, fullPage: true });
   await page.getByRole("button", { name: "Abbrechen", exact: true }).click();
-  await page.getByRole("button", { name: "Navigation öffnen" }).click();
+  await page.getByRole("button", { name: "Navigation-Menü öffnen" }).click();
   await page.locator('nav[aria-label="Hauptnavigation"]').getByRole("button", { name: "Quellen", exact: true }).click();
-  await expect(page.locator(".profile-card")).toContainText("Kommunale Wohnungsangebote");
+  await expect(page.getByRole("heading", { name: "Quellen", exact: true })).toBeVisible();
   await expectNoOverflow(page);
-  await page.getByRole("button", { name: "Navigation öffnen" }).click();
+  await page.getByRole("button", { name: "Navigation-Menü öffnen" }).click();
   await page.getByRole("button", { name: "Abmelden", exact: true }).click();
   await expect(page.locator(".login-panel")).toBeVisible();
   await expectNoOverflow(page);

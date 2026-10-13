@@ -1,8 +1,6 @@
 """Custom template context processors for shared data."""
 
-from django.contrib.auth.models import User
 from django.conf import settings
-from django.core.cache import cache
 from django.urls import reverse
 
 from pages.auth_session import (
@@ -10,7 +8,6 @@ from pages.auth_session import (
     get_session_idle_timeout_seconds,
     get_session_status_poll_seconds,
 )
-from pages.models import InterpreterApplication
 
 SEO_KEYWORDS = (
     "Beirit Web, Portfolio, Webentwicklung, Softwareentwicklung, "
@@ -44,30 +41,3 @@ def auth_session_config(_request):
             "activityThrottleMs": session_idle_activity_throttle_ms,
         },
     }
-
-
-def user_stats(_request):
-    """
-    Expose platform-wide user counters for the footer.
-
-    Values are cached briefly to avoid repeated COUNT queries on every request.
-    """
-
-    cache_key = "footer_user_stats_v2"
-    cached = cache.get(cache_key)
-    if cached:
-        return cached
-
-    total_users = User.objects.filter(
-        is_active=True, is_staff=False, is_superuser=False
-    ).count()
-    interpreter_count = InterpreterApplication.objects.filter(
-        status=InterpreterApplication.STATUS_APPROVED
-    ).count()
-
-    stats = {
-        "registered_user_count": total_users,
-        "interpreter_count": interpreter_count,
-    }
-    cache.set(cache_key, stats, 300)
-    return stats

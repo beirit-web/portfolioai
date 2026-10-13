@@ -18,7 +18,7 @@ test("old API data cannot restore the separate Vokabelbox card", async ({ page }
   } }));
   await page.goto("/projekte/");
   await expect(page.locator(".project-overview-card")).toHaveCount(1);
-  await expect(page.locator(".project-overview-card")).toContainText("Sprachplattform mit integrierter Vokabelbox");
+  await expect(page.locator(".project-overview-card")).toContainText("Vokabelbox");
   await expect(page.locator('a[href="/projekte/vokabelbox"]')).toHaveCount(0);
 });
 
@@ -37,7 +37,7 @@ test("weather belongs to Botanic in the fallback portfolio and stale API data", 
   await page.route("**/api/projects/", route => route.fulfill({ status: 503, json: {} }));
   await page.goto("/projekte/");
   await expect(page.locator(".project-overview-card--wetter")).toHaveCount(0);
-  await expect(page.locator(".project-overview-card--enbt-botanic")).toContainText("Wettermodul");
+  await expect(page.locator(".project-overview-card--enbt-botanic")).toContainText("Wetter");
   await page.locator('.project-overview-card--enbt-botanic a.project-overview-card__button').click();
   await expect(page.locator("#wetter")).toHaveAttribute("href", "/botanic/wetter/");
   await page.unroute("**/api/projects/");

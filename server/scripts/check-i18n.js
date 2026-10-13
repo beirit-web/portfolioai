@@ -9,7 +9,7 @@
 const fs = require("fs");
 const path = require("path");
 const TRANSLATIONS = require("../assets/js/i18n-data.js");
-const languageModuleDir = path.resolve(__dirname, "../../apps/portfolio-demos/sprachdienstleistungen");
+const languageModuleDir = path.resolve(__dirname, "..");
 const VOCAB_TRANSLATIONS = require(path.join(languageModuleDir, "assets/vokabelbox/translations.js"));
 
 const templateDir = path.join(__dirname, "..", "templates");
@@ -61,7 +61,6 @@ const collectHtmlFiles = (dir) => {
 
 const htmlFiles = [
   ...collectHtmlFiles(templateDir),
-  ...collectHtmlFiles(path.join(languageModuleDir, "templates/modules")),
 ];
 
 const htmlKeys = new Set();

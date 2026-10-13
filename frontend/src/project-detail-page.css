@@ -1,7 +1,5 @@
 /* Keep the shared cascade; filter to the project report and page shell. */
-@import "./styles.css";
-@import "./homepage-custom.css";
-@import "./responsive-overrides.css";
+@import "./site.css";
 
 [data-project-detail-rendered] [hidden] {
   display: none !important;

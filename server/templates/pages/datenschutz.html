@@ -1,46 +1,35 @@
 {% extends "base_public.html" %}
 {% load static %}
 
-{% block title %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности{% else %}Muster-Datenschutz{% endif %} | Beirit Web Portfolio{% endblock %}
-{% block meta_robots %}noindex, follow{% endblock %}
-{% block meta_description %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Datenschutzerklärung mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
-{% block og_title %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности{% else %}Muster-Datenschutz{% endif %} | Beirit Web Portfolio{% endblock %}
-{% block og_description %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Datenschutzerklärung mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
-{% block twitter_title %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности{% else %}Muster-Datenschutz{% endif %} | Beirit Web Portfolio{% endblock %}
-{% block twitter_description %}{% if initial_lang|slice:":2" == "ru" %}Пример политики конфиденциальности с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Datenschutzerklärung mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
+{% block title %}{{ privacy_meta.title }}{% endblock %}
+{% block meta_robots %}{{ privacy_meta.robots }}{% endblock %}
+{% block meta_description %}{{ privacy_meta.description }}{% endblock %}
+{% block canonical_url %}{{ privacy_meta.canonical }}{% endblock %}
+{% block og_locale %}{{ privacy_meta.locale }}{% endblock %}
+{% block og_title %}{{ privacy_meta.title }}{% endblock %}
+{% block og_description %}{{ privacy_meta.description }}{% endblock %}
+{% block og_url %}{{ privacy_meta.canonical }}{% endblock %}
+{% block twitter_title %}{{ privacy_meta.title }}{% endblock %}
+{% block twitter_description %}{{ privacy_meta.description }}{% endblock %}
 
-{% block body_attrs %} class="has-topnav legal-body legal-body--privacy template-body"{% endblock %}
-
+{% block base_styles %}
+  <style>{% inline_asset 'css/privacy.css' %}</style>
+  <style>{% inline_asset 'css/impressum-nav.css' %}</style>
+{% endblock %}
+{% block body_attrs %} class="privacy-body"{% endblock %}
 {% block topnav %}
-  <div class="topnav" id="mainTopnav">
-    <a
-      class="nav-cube-link"
-      href="{% url 'pages:home' %}#top"
-      aria-label="{% if initial_lang|slice:':2' == 'ru' %}Beirit Digital Главная{% else %}Beirit Digital Startseite{% endif %}"
-    >
-      <img
-        src="{% static 'images/aktueles-logo-160.webp' %}"
-        sizes="56px"
-        alt="Beirit Digital"
-        class="legal-topnav-logo"
-        width="80"
-        height="80"
-        decoding="async"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </a>
-    <a href="{% url 'pages:home' %}#top" class="nav-link nav-link--home" data-i18n="nav.home">{% if initial_lang|slice:':2' == 'ru' %}Главная{% else %}Start{% endif %}</a>
-    <a href="{% url 'pages:projects_page' %}" class="nav-link">{% if initial_lang|slice:':2' == 'ru' %}Проекты{% else %}Projekte{% endif %}</a>
-    <a href="{% url 'pages:skills_page' %}" class="nav-link">{% if initial_lang|slice:':2' == 'ru' %}Компетенции{% else %}Kompetenzen{% endif %}</a>
-    <a href="{% url 'pages:home' %}#profil" class="nav-link" data-i18n="nav.about">{% if initial_lang|slice:':2' == 'ru' %}Обо мне{% else %}Über{% endif %}</a>
-    <a href="{% url 'pages:home' %}#kontakt" class="nav-link nav-link--contact" data-i18n="nav.contact">{% if initial_lang|slice:':2' == 'ru' %}Контакты{% else %}Kontakt{% endif %}</a>
-  </div>
+  {% include "partials/public_navigation.html" with nav_meta=privacy_meta %}
+{% endblock %}
+{% block footer %}
+  {% include "partials/legal_footer.html" with current_legal_page="privacy" %}
+{% endblock %}
+{% block base_scripts %}
+  <script>{% inline_asset 'js/impressum-nav.js' %}</script>
 {% endblock %}
 
 {% block content %}
   {% if initial_lang|slice:":2" == "ru" %}
-  <main class="page-shell has-topnav template-page template-page--wide legal-page-shell legal-page-shell--terms">
+  <main class="legal-page-shell">
     <header class="terms-hero" aria-labelledby="privacy-title">
       <div class="terms-hero__copy">
         <h1 id="privacy-title">Политика конфиденциальности</h1>
@@ -52,7 +41,7 @@
           использовании этого сайта, для каких целей это происходит и какие права
           у вас есть.
         </p>
-        <p class="legal-authoritative-note" data-i18n="legal.authoritative_note">
+        <p class="legal-authoritative-note">
           Немецкая версия является юридически определяющей.
         </p>
       </div>
@@ -65,8 +54,8 @@
     </header>
 
     <div class="legal-page">
-      <section class="template-panel legal-section" id="verantwortlich">
-        <h2>Ответственное лицо</h2>
+      <section class="template-panel legal-section" id="verantwortlich" aria-labelledby="verantwortlich-title">
+        <h2 id="verantwortlich-title">Ответственное лицо</h2>
         <p>Ответственный за обработку данных:</p>
         <address>
           {{ imprint.owner_name }}<br />
@@ -75,31 +64,37 @@
           {{ imprint.postal_code }} {{ imprint.city }}<br />
           {{ imprint.country }}
         </address>
-        <p>
-          E-Mail: <a href="mailto:{{ imprint.email }}">{{ imprint.email }}</a><br />
-          Дополнительная информация указана в <a href="{% url 'pages:imprint' %}">импрессуме</a>.
+        <p class="privacy-contact-links">
+          <a href="mailto:{{ imprint.email }}">E-Mail: {{ imprint.email }}</a>
+          <a href="{% url 'pages:imprint' %}">Импрессум</a>
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="kontaktformular">
-        <h2>Контактная форма и запросы</h2>
-        <h3>Собираемые данные</h3>
-        <ul>
-          <li>Имя</li>
-          <li>Адрес электронной почты</li>
-          <li>Номер телефона, если указан</li>
-          <li>Сайт/ссылка, если указаны</li>
-          <li>Файл-вложение, если загружен</li>
-          <li>Сообщение/содержание запроса</li>
-        </ul>
-        <h3>Цель</h3>
-        <ul>
-          <li>Обработка запроса</li>
-          <li>Коммуникация</li>
-          <li>Уточнения по проекту</li>
-          <li>Подготовка предложения</li>
-          <li>Техническая прослеживаемость</li>
-        </ul>
+      <section class="template-panel legal-section" id="kontaktformular" aria-labelledby="kontaktformular-title">
+        <h2 id="kontaktformular-title">Контактная форма и запросы</h2>
+        <div class="privacy-contact-columns">
+          <div>
+            <h3>Собираемые данные</h3>
+            <ul>
+              <li>Имя</li>
+              <li>Адрес электронной почты</li>
+              <li>Номер телефона, если указан</li>
+              <li>Сайт/ссылка, если указаны</li>
+              <li>Файл-вложение, если загружен</li>
+              <li>Сообщение/содержание запроса</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Цель</h3>
+            <ul>
+              <li>Обработка запроса</li>
+              <li>Коммуникация</li>
+              <li>Уточнения по проекту</li>
+              <li>Подготовка предложения</li>
+              <li>Техническая прослеживаемость</li>
+            </ul>
+          </div>
+        </div>
         <p>
           Передача персональных данных осуществляется только в той мере, в которой это
           технически, договорно или законом необходимо.
@@ -110,8 +105,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="dateiupload">
-        <h2>Загрузка файлов</h2>
+      <section class="template-panel legal-section" id="dateiupload" aria-labelledby="dateiupload-title">
+        <h2 id="dateiupload-title">Загрузка файлов</h2>
         <p>
           Если вы добровольно загружаете файл, сам файл и содержащаяся в нем информация
           обрабатываются для рассмотрения вашего запроса. Пожалуйста, не загружайте
@@ -123,8 +118,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="email-kommunikation">
-        <h2>Коммуникация по электронной почте</h2>
+      <section class="template-panel legal-section" id="email-kommunikation" aria-labelledby="email-kommunikation-title">
+        <h2 id="email-kommunikation-title">Коммуникация по электронной почте</h2>
         <p>
           При обращении по электронной почте адрес отправителя, содержание сообщения и
           другие переданные данные обрабатываются для обработки и ответа на сообщение.
@@ -133,8 +128,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="zwecke">
-        <h2>Цели обработки</h2>
+      <section class="template-panel legal-section" id="zwecke" aria-labelledby="zwecke-title">
+        <h2 id="zwecke-title">Цели обработки</h2>
         <ul>
           <li>Обработка контактных и проектных запросов</li>
           <li>Подготовка предложений и проектных соглашений</li>
@@ -144,8 +139,8 @@
         </ul>
       </section>
 
-      <section class="template-panel legal-section" id="rechtsgrundlagen">
-        <h2>Правовые основания</h2>
+      <section class="template-panel legal-section" id="rechtsgrundlagen" aria-labelledby="rechtsgrundlagen-title">
+        <h2 id="rechtsgrundlagen-title">Правовые основания</h2>
         <dl class="imprint-detail-list">
           <div>
             <dt>Ст. 6 абз. 1 лит. b GDPR/DSGVO</dt>
@@ -166,15 +161,15 @@
         </dl>
       </section>
 
-      <section class="template-panel legal-section" id="deutschlive-aufnahmen">
-        <h2>DeutschLive: локальные аудиозаписи</h2>
+      <section class="template-panel legal-section" id="deutschlive-aufnahmen" aria-labelledby="deutschlive-aufnahmen-title">
+        <h2 id="deutschlive-aufnahmen-title">DeutschLive: локальные аудиозаписи</h2>
         <p>Функция «Мои записи» сохраняет выбранные вами аудиофайлы и метаданные, например имя файла и время добавления, только в хранилище браузера на вашем устройстве (IndexedDB). Плеер не передаёт эти записи на сервер и не синхронизирует их между устройствами. Посещение сайта и вход в аккаунт регулируются остальными положениями о технических данных и аккаунтах.</p>
         <p>Списки разделены по аккаунтам и гостевому режиму. Записи хранятся до удаления из коллекции или очистки данных сайта; браузер также может удалить их. Выход из аккаунта или удаление аккаунта не очищает локальную коллекцию автоматически. Исходные и скачанные файлы сохраняются независимо от неё. Используйте «Скачать» для сохранения важных файлов.</p>
         <p>Это разделение не заменяет защиту устройства и профиля браузера. Подробные сведения о данных, хранении, доступе и удалении приведены в <a href="/deutschlive/datenschutz">политике конфиденциальности DeutschLive</a>.</p>
       </section>
 
-      <section class="template-panel legal-section" id="serverdaten">
-        <h2>Серверные и технические данные</h2>
+      <section class="template-panel legal-section" id="serverdaten" aria-labelledby="serverdaten-title">
+        <h2 id="serverdaten-title">Серверные и технические данные</h2>
         <p>
           При открытии сайта могут обрабатываться технически необходимые данные, например
           IP-адрес, время доступа, тип браузера и запрошенные страницы. Эти данные служат
@@ -182,8 +177,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="verschluesselung">
-        <h2>SSL-/TLS-шифрование</h2>
+      <section class="template-panel legal-section" id="verschluesselung" aria-labelledby="verschluesselung-title">
+        <h2 id="verschluesselung-title">SSL-/TLS-шифрование</h2>
         <p>
           Этот сайт использует зашифрованное соединение. Благодаря этому данные,
           передаваемые между вашим браузером и сервером, защищены от несанкционированного
@@ -191,8 +186,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="empfaenger">
-        <h2>Получатели и технические поставщики услуг</h2>
+      <section class="template-panel legal-section" id="empfaenger" aria-labelledby="empfaenger-title">
+        <h2 id="empfaenger-title">Получатели и технические поставщики услуг</h2>
         <p>
           Для хостинга, электронной коммуникации, обслуживания и безопасности могут
           использоваться технические поставщики услуг.
@@ -204,24 +199,24 @@
         </ul>
       </section>
 
-      <section class="template-panel legal-section" id="cookies">
-        <h2>Cookies и локальное хранение</h2>
+      <section class="template-panel legal-section" id="cookies" aria-labelledby="cookies-title">
+        <h2 id="cookies-title">Cookies и локальное хранение</h2>
         <ul>
           <li>Для функций входа и безопасности могут использоваться технически необходимые cookies.</li>
           <li>Рекламные tracking-cookies не используются.</li>
         </ul>
       </section>
 
-      <section class="template-panel legal-section" id="speicherdauer">
-        <h2>Срок хранения</h2>
+      <section class="template-panel legal-section" id="speicherdauer" aria-labelledby="speicherdauer-title">
+        <h2 id="speicherdauer-title">Срок хранения</h2>
         <p>
           Данные хранятся только столько, сколько это необходимо для обработки,
           коммуникации или выполнения законных обязанностей.
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="bereitstellung">
-        <h2>Предоставление данных</h2>
+      <section class="template-panel legal-section" id="bereitstellung" aria-labelledby="bereitstellung-title">
+        <h2 id="bereitstellung-title">Предоставление данных</h2>
         <p>
           Предоставление персональных данных в принципе добровольно. Однако обязательные
           поля в контактной форме необходимы, чтобы запрос мог быть обработан и на него
@@ -229,16 +224,16 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="automatisierung">
-        <h2>Автоматизированные решения</h2>
+      <section class="template-panel legal-section" id="automatisierung" aria-labelledby="automatisierung-title">
+        <h2 id="automatisierung-title">Автоматизированные решения</h2>
         <p>
           Исключительно автоматизированное принятие решений и профилирование в смысле
           ст. 22 GDPR/DSGVO не осуществляются.
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="rechte">
-        <h2>Ваши права</h2>
+      <section class="template-panel legal-section" id="rechte" aria-labelledby="rechte-title">
+        <h2 id="rechte-title">Ваши права</h2>
         <ul>
           <li>Право на получение информации</li>
           <li>Право на исправление</li>
@@ -257,7 +252,7 @@
     </div>
   </main>
   {% else %}
-  <main class="page-shell has-topnav template-page template-page--wide legal-page-shell legal-page-shell--terms">
+  <main class="legal-page-shell">
     <header class="terms-hero" aria-labelledby="privacy-title">
       <div class="terms-hero__copy">
         <h1 id="privacy-title">Datenschutz</h1>
@@ -269,7 +264,7 @@
           bei Nutzung dieser Website verarbeitet werden, zu welchen Zwecken dies geschieht
           und welche Rechte Ihnen zustehen.
         </p>
-        <p class="legal-authoritative-note" data-i18n="legal.authoritative_note">
+        <p class="legal-authoritative-note">
           Die deutsche Fassung ist maßgeblich.
         </p>
       </div>
@@ -282,8 +277,8 @@
     </header>
 
     <div class="legal-page">
-      <section class="template-panel legal-section" id="verantwortlich">
-        <h2>Verantwortliche Stelle</h2>
+      <section class="template-panel legal-section" id="verantwortlich" aria-labelledby="verantwortlich-title">
+        <h2 id="verantwortlich-title">Verantwortliche Stelle</h2>
         <p>Verantwortlich für die Datenverarbeitung:</p>
         <address>
           {{ imprint.owner_name }}<br />
@@ -292,31 +287,37 @@
           {{ imprint.postal_code }} {{ imprint.city }}<br />
           {{ imprint.country }}
         </address>
-        <p>
-          E-Mail: <a href="mailto:{{ imprint.email }}">{{ imprint.email }}</a><br />
-          Weitere Angaben finden Sie im <a href="{% url 'pages:imprint' %}">Impressum</a>.
+        <p class="privacy-contact-links">
+          <a href="mailto:{{ imprint.email }}">E-Mail: {{ imprint.email }}</a>
+          <a href="{% url 'pages:imprint' %}">Impressum</a>
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="kontaktformular">
-        <h2>Kontaktformular und Anfragen</h2>
-        <h3>Erhobene Daten</h3>
-        <ul>
-          <li>Name</li>
-          <li>E-Mail-Adresse</li>
-          <li>Telefonnummer optional</li>
-          <li>Website/Link optional</li>
-          <li>Dateianhang optional</li>
-          <li>Nachricht/Inhalt der Anfrage</li>
-        </ul>
-        <h3>Zweck</h3>
-        <ul>
-          <li>Bearbeitung der Anfrage</li>
-          <li>Kommunikation</li>
-          <li>Projektbezogene Rückfragen</li>
-          <li>Angebotserstellung</li>
-          <li>Technische Nachvollziehbarkeit</li>
-        </ul>
+      <section class="template-panel legal-section" id="kontaktformular" aria-labelledby="kontaktformular-title">
+        <h2 id="kontaktformular-title">Kontaktformular und Anfragen</h2>
+        <div class="privacy-contact-columns">
+          <div>
+            <h3>Erhobene Daten</h3>
+            <ul>
+              <li>Name</li>
+              <li>E-Mail-Adresse</li>
+              <li>Telefonnummer optional</li>
+              <li>Website/Link optional</li>
+              <li>Dateianhang optional</li>
+              <li>Nachricht/Inhalt der Anfrage</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Zweck</h3>
+            <ul>
+              <li>Bearbeitung der Anfrage</li>
+              <li>Kommunikation</li>
+              <li>Projektbezogene Rückfragen</li>
+              <li>Angebotserstellung</li>
+              <li>Technische Nachvollziehbarkeit</li>
+            </ul>
+          </div>
+        </div>
         <p>
           Eine Weitergabe personenbezogener Daten erfolgt nur, soweit dies technisch,
           vertraglich oder gesetzlich erforderlich ist.
@@ -327,8 +328,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="dateiupload">
-        <h2>Datei-Upload</h2>
+      <section class="template-panel legal-section" id="dateiupload" aria-labelledby="dateiupload-title">
+        <h2 id="dateiupload-title">Datei-Upload</h2>
         <p>
           Wenn Sie freiwillig eine Datei hochladen, werden die Datei sowie die darin
           enthaltenen Informationen zur Bearbeitung Ihrer Anfrage verarbeitet. Laden Sie
@@ -340,8 +341,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="email-kommunikation">
-        <h2>E-Mail-Kommunikation</h2>
+      <section class="template-panel legal-section" id="email-kommunikation" aria-labelledby="email-kommunikation-title">
+        <h2 id="email-kommunikation-title">E-Mail-Kommunikation</h2>
         <p>
           Bei einer Kontaktaufnahme per E-Mail werden Absenderadresse, Inhalt und weitere
           übermittelte Angaben zur Bearbeitung und Beantwortung der Nachricht verarbeitet.
@@ -350,8 +351,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="zwecke">
-        <h2>Zwecke der Verarbeitung</h2>
+      <section class="template-panel legal-section" id="zwecke" aria-labelledby="zwecke-title">
+        <h2 id="zwecke-title">Zwecke der Verarbeitung</h2>
         <ul>
           <li>Bearbeitung von Kontakt- und Projektanfragen</li>
           <li>Vorbereitung von Angeboten und Projektvereinbarungen</li>
@@ -361,8 +362,8 @@
         </ul>
       </section>
 
-      <section class="template-panel legal-section" id="rechtsgrundlagen">
-        <h2>Rechtsgrundlagen</h2>
+      <section class="template-panel legal-section" id="rechtsgrundlagen" aria-labelledby="rechtsgrundlagen-title">
+        <h2 id="rechtsgrundlagen-title">Rechtsgrundlagen</h2>
         <dl class="imprint-detail-list">
           <div>
             <dt>Art. 6 Abs. 1 lit. b DSGVO</dt>
@@ -383,15 +384,15 @@
         </dl>
       </section>
 
-      <section class="template-panel legal-section" id="deutschlive-aufnahmen">
-        <h2>DeutschLive: lokal gespeicherte Audioaufnahmen</h2>
+      <section class="template-panel legal-section" id="deutschlive-aufnahmen" aria-labelledby="deutschlive-aufnahmen-title">
+        <h2 id="deutschlive-aufnahmen-title">DeutschLive: lokal gespeicherte Audioaufnahmen</h2>
         <p>Die Funktion „Meine Aufnahmen“ speichert selbst ausgewählte Audiodateien und Aufnahmemetadaten, etwa Dateiname und Zeitpunkt des Hinzufügens, ausschließlich im Browser auf Ihrem Gerät (IndexedDB). Der Player übermittelt diese Aufnahmen nicht an den Server und synchronisiert sie nicht zwischen Geräten. Für den Seitenaufruf und die Anmeldung gelten weiterhin die übrigen Hinweise zu technischen Daten und Konten.</p>
         <p>Die Listen sind nach Nutzerkonto beziehungsweise Gastmodus getrennt. Aufnahmen bleiben bis zum Entfernen aus der Sammlung oder Löschen der Website-Daten gespeichert; auch der Browser kann sie entfernen. Abmelden oder Kontolöschung entfernt die lokale Sammlung nicht automatisch. Originaldateien und heruntergeladene Dateien bleiben unabhängig davon erhalten. Nutzen Sie „Herunterladen“ zur Sicherung wichtiger Dateien.</p>
         <p>Diese Trennung ersetzt keinen Schutz Ihres Geräts oder Browserprofils. Einzelheiten zu Daten, Speicherdauer, Zugriff und Löschung stehen in der <a href="/deutschlive/datenschutz">Datenschutzerklärung von DeutschLive</a>.</p>
       </section>
 
-      <section class="template-panel legal-section" id="serverdaten">
-        <h2>Serverdaten und technische Daten</h2>
+      <section class="template-panel legal-section" id="serverdaten" aria-labelledby="serverdaten-title">
+        <h2 id="serverdaten-title">Serverdaten und technische Daten</h2>
         <p>
           Beim Aufruf der Website können technisch notwendige Daten wie IP-Adresse,
           Zeitpunkt des Zugriffs, Browsertyp und angeforderte Seiten verarbeitet werden.
@@ -399,8 +400,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="verschluesselung">
-        <h2>SSL-/TLS-Verschlüsselung</h2>
+      <section class="template-panel legal-section" id="verschluesselung" aria-labelledby="verschluesselung-title">
+        <h2 id="verschluesselung-title">SSL-/TLS-Verschlüsselung</h2>
         <p>
           Diese Website nutzt eine verschlüsselte Verbindung. Dadurch werden Daten,
           die zwischen Ihrem Browser und dem Server übertragen werden, vor dem
@@ -408,8 +409,8 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="empfaenger">
-        <h2>Empfänger und technische Dienstleister</h2>
+      <section class="template-panel legal-section" id="empfaenger" aria-labelledby="empfaenger-title">
+        <h2 id="empfaenger-title">Empfänger und technische Dienstleister</h2>
         <p>
           Für Hosting, E-Mail-Kommunikation, Wartung und Sicherheit können technische
           Dienstleister eingesetzt werden.
@@ -421,24 +422,24 @@
         </ul>
       </section>
 
-      <section class="template-panel legal-section" id="cookies">
-        <h2>Cookies und lokale Speicherung</h2>
+      <section class="template-panel legal-section" id="cookies" aria-labelledby="cookies-title">
+        <h2 id="cookies-title">Cookies und lokale Speicherung</h2>
         <ul>
           <li>Für Login- und Sicherheitsfunktionen können technisch notwendige Cookies verwendet werden.</li>
           <li>Es werden keine Werbe-Tracking-Cookies eingesetzt.</li>
         </ul>
       </section>
 
-      <section class="template-panel legal-section" id="speicherdauer">
-        <h2>Speicherdauer</h2>
+      <section class="template-panel legal-section" id="speicherdauer" aria-labelledby="speicherdauer-title">
+        <h2 id="speicherdauer-title">Speicherdauer</h2>
         <p>
           Daten werden nur so lange gespeichert, wie dies für Bearbeitung, Kommunikation
           oder gesetzliche Pflichten erforderlich ist.
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="bereitstellung">
-        <h2>Bereitstellung von Daten</h2>
+      <section class="template-panel legal-section" id="bereitstellung" aria-labelledby="bereitstellung-title">
+        <h2 id="bereitstellung-title">Bereitstellung von Daten</h2>
         <p>
           Die Bereitstellung personenbezogener Daten ist grundsätzlich freiwillig.
           Pflichtfelder im Kontaktformular sind jedoch erforderlich, damit eine Anfrage
@@ -446,16 +447,16 @@
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="automatisierung">
-        <h2>Automatisierte Entscheidungen</h2>
+      <section class="template-panel legal-section" id="automatisierung" aria-labelledby="automatisierung-title">
+        <h2 id="automatisierung-title">Automatisierte Entscheidungen</h2>
         <p>
           Es findet keine ausschließlich automatisierte Entscheidungsfindung und kein
           Profiling im Sinne von Art. 22 DSGVO statt.
         </p>
       </section>
 
-      <section class="template-panel legal-section" id="rechte">
-        <h2>Ihre Rechte</h2>
+      <section class="template-panel legal-section" id="rechte" aria-labelledby="rechte-title">
+        <h2 id="rechte-title">Ihre Rechte</h2>
         <ul>
           <li>Auskunft</li>
           <li>Berichtigung</li>

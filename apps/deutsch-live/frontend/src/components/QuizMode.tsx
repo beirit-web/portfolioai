@@ -1,438 +1,355 @@
-import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Circle, PencilLine, Timer, Trophy, XCircle } from "lucide-react";
-import { fetchTopic, fetchTopics, saveQuizAttempt, type CurrentUser, type Topic, type TopicSummary } from "../api";
-import { ui } from "../i18n";
-import { SkeletonPanel, SkeletonStatGrid } from "./UiPrimitives";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CheckCircle2, Circle, PencilLine, Trophy, XCircle } from "lucide-react";
+import { ApiError, fetchQuizTopic, fetchTopics, saveQuizAttempt, type CurrentUser, type QuizEvaluation, type QuizTopic, type TopicSummary } from "../api";
+import { getLocale, ui } from "../i18n";
+import QuizCountdown from "./QuizCountdown";
 
-type QuizModeProps = {
-  user: CurrentUser | null;
-  onAttemptSaved: () => void;
-};
-
+type QuizModeProps = { user: CurrentUser | null; accountLoaded?: boolean; onAttemptSaved: () => void };
 type Difficulty = "easy" | "medium" | "hard";
-
+type Selection = { topic: string; difficulty: Difficulty };
+type Attempt = Parameters<typeof saveQuizAttempt>[0];
+type Run = {
+  started: boolean; finished: boolean; index: number; selected: number | null;
+  freeAnswer: string; answers: Array<string | null>; durations: number[]; expired: boolean;
+  startedAt: number; pausedAt: number | null;
+};
 const difficultyConfig: Record<Difficulty, { choiceSeconds: number; writingSeconds: number }> = {
   easy: { choiceSeconds: 60, writingSeconds: 180 },
   medium: { choiceSeconds: 45, writingSeconds: 150 },
-  hard: { choiceSeconds: 30, writingSeconds: 120 }
+  hard: { choiceSeconds: 30, writingSeconds: 120 },
 };
-
-function getDifficultyLabel(level: Difficulty) {
-  return ui.quiz[level];
+const emptyRun = (): Run => ({ started: false, finished: false, index: 0, selected: null, freeAnswer: "", answers: [], durations: [], expired: false, startedAt: 0, pausedAt: null });
+function readSelection(): Selection {
+  const params = new URLSearchParams(window.location.search);
+  const difficulty = params.get("difficulty");
+  return { topic: params.get("topic") || "baeckerei", difficulty: difficulty && Object.prototype.hasOwnProperty.call(difficultyConfig, difficulty) ? difficulty as Difficulty : "easy" };
 }
+function duration(run: Run, limit: number, now = Date.now()) {
+  return Math.max(0, Math.min(limit, Math.round(((run.pausedAt ?? now) - run.startedAt) / 1000)));
+}
+function title(topic: Pick<QuizTopic, "label" | "ru">) { return getLocale() === "de" ? topic.label : topic.ru; }
 
-export default function QuizMode({ user, onAttemptSaved }: QuizModeProps) {
+export default function QuizMode({ user, accountLoaded = true, onAttemptSaved }: QuizModeProps) {
+  const [selection, setSelection] = useState(readSelection);
   const [topics, setTopics] = useState<TopicSummary[]>([]);
-  const [activeTopicId, setActiveTopicId] = useState("baeckerei");
-  const [topic, setTopic] = useState<Topic | null>(null);
-  const [difficulty, setDifficulty] = useState<Difficulty>("easy");
-  const [secondsLeft, setSecondsLeft] = useState(difficultyConfig.easy.choiceSeconds);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [freeAnswer, setFreeAnswer] = useState("");
-  const [score, setScore] = useState(0);
-  const [questionDurations, setQuestionDurations] = useState<number[]>([]);
+  const [loadedTopic, setLoadedTopic] = useState<QuizTopic | null>(null);
+  const [topicsLoading, setTopicsLoading] = useState(true);
+  const [topicLoading, setTopicLoading] = useState(true);
+  const [topicsError, setTopicsError] = useState(false);
+  const [topicError, setTopicError] = useState<"auth" | "load" | null>(null);
+  const [listReload, setListReload] = useState(0);
+  const [topicReload, setTopicReload] = useState(0);
+  const [run, setRun] = useState(emptyRun);
+  const [evaluation, setEvaluation] = useState<QuizEvaluation | null>(null);
   const [temporaryTotal, setTemporaryTotal] = useState(0);
-  const [message, setMessage] = useState("");
-  const [timeExpired, setTimeExpired] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
-  const [isLoadingTopics, setIsLoadingTopics] = useState(true);
-  const [isLoadingTopic, setIsLoadingTopic] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<"auth" | "validation" | "network" | "storage" | "settings" | null>(null);
+  const [message, setMessage] = useState<"saved" | "savingDisabled" | "guestPoints" | null>(null);
+  const revision = useRef(0);
+  const answerChosen = useRef(false);
+  const submitting = useRef(false);
+  const completed = useRef(false);
+  const pendingAttempt = useRef<Attempt | null>(null);
+  const pendingFocus = useRef(false);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const topic = loadedTopic?.id === selection.topic ? loadedTopic : null;
+  const choiceCount = topic?.quiz.length ?? 0;
+  const total = topic ? choiceCount + 1 : 0;
+  const limit = run.index === choiceCount ? difficultyConfig[selection.difficulty].writingSeconds : difficultyConfig[selection.difficulty].choiceSeconds;
 
-  useEffect(() => {
-    fetchTopics()
-      .then(setTopics)
-      .finally(() => setIsLoadingTopics(false));
+  const reset = useCallback(() => {
+    revision.current += 1;
+    answerChosen.current = false;
+    submitting.current = false;
+    completed.current = false;
+    pendingAttempt.current = null;
+    pendingFocus.current = false;
+    setRun(emptyRun()); setEvaluation(null); setSaving(false); setSaveError(null); setMessage(null);
   }, []);
 
   useEffect(() => {
-    setIsLoadingTopic(true);
-    fetchTopic(activeTopicId).then((data) => {
-      setTopic(data);
-      setCurrentQuestion(0);
-      setSelectedAnswer(null);
-      setFreeAnswer("");
-      setScore(0);
-      setQuestionDurations([]);
-      setMessage("");
-      setTimeExpired(false);
-      setHasStarted(false);
-      setSecondsLeft(getTimeLimit(0, data.quiz.length, difficulty));
-    }).finally(() => setIsLoadingTopic(false));
-  }, [activeTopicId]);
+    let current = true;
+    setTopicsLoading(true); setTopicsError(false);
+    fetchTopics().then(data => {
+      if (!Array.isArray(data)) throw new Error("Invalid topic list");
+      if (current) setTopics(data);
+    }).catch(() => { if (current) { setTopics([]); setTopicsError(true); } })
+      .finally(() => { if (current) setTopicsLoading(false); });
+    return () => { current = false; };
+  }, [listReload]);
 
   useEffect(() => {
-    setSecondsLeft(getTimeLimit(currentQuestion, topic?.quiz.length ?? 0, difficulty));
-    setTimeExpired(false);
-  }, [currentQuestion, difficulty]);
-
-  useEffect(() => {
-    if (!hasStarted || !topic || currentQuestion > topic.quiz.length || selectedAnswer !== null || timeExpired) return;
-    const timer = window.setInterval(() => {
-      setSecondsLeft((value) => {
-        if (value <= 1) {
-          window.clearInterval(timer);
-          setTimeExpired(true);
-          if (currentQuestion < topic.quiz.length) {
-            recordQuestionTime(currentQuestion, getTimeLimit(currentQuestion, topic.quiz.length, difficulty));
-            setSelectedAnswer(-1);
-          }
-          return 0;
-        }
-        return value - 1;
-      });
-    }, 1000);
-    return () => window.clearInterval(timer);
-  }, [currentQuestion, difficulty, hasStarted, questionDurations, selectedAnswer, timeExpired, topic]);
-
-  const question = useMemo(() => {
-    if (!hasStarted || !topic || currentQuestion >= topic.quiz.length + 1) return null;
-    if (currentQuestion === topic.quiz.length) {
-      return {
-        question: topic.free_answer?.prompt ?? ui.quiz.freeAnswerPrompt,
-        options: [],
-        answer: -1,
-        explain: ui.quiz.freeAnswerHint
-      };
-    }
-    return topic.quiz[currentQuestion];
-  }, [currentQuestion, hasStarted, topic]);
-
-  function chooseAnswer(index: number) {
-    if (!question || selectedAnswer !== null || timeExpired) return;
-    recordQuestionTime(currentQuestion, getTimeLimit(currentQuestion, topic?.quiz.length ?? 0, difficulty) - secondsLeft);
-    setSelectedAnswer(index);
-    if (index === question.answer) setScore((value) => value + 1);
-  }
-
-  async function nextQuestion() {
-    if (!topic) return;
-    const total = topic.quiz.length + 1;
-
-    if (currentQuestion === topic.quiz.length) {
-      const timeLimit = getTimeLimit(currentQuestion, topic.quiz.length, difficulty);
-      const currentDuration = timeExpired ? timeLimit : timeLimit - secondsLeft;
-      const durations = recordQuestionTime(currentQuestion, currentDuration);
-      const durationSeconds = durations.reduce((sum, value) => sum + value, 0);
-      const freePoint = !timeExpired && freeAnswer.trim().length >= 8 ? 1 : 0;
-      const finalScore = score + freePoint;
-      setScore(finalScore);
-      setTemporaryTotal((value) => value + finalScore);
-      if (user?.settings.saveProgress) {
-        await saveQuizAttempt({ topicId: topic.id, score: finalScore, total, durationSeconds, difficulty });
-        onAttemptSaved();
-        setMessage(ui.quiz.saved);
-      } else {
-        setMessage(user ? ui.quiz.savingDisabled : ui.quiz.guestPoints);
+    let current = true;
+    setTopicLoading(true); setTopicError(null); setLoadedTopic(null);
+    if (!accountLoaded) return () => { current = false; };
+    fetchQuizTopic(selection.topic).then(data => {
+      if (data.id !== selection.topic || typeof data.quizToken !== "string" || !data.quizToken || !Array.isArray(data.quiz)
+        || new Set(data.quiz.map(item => item.id)).size !== data.quiz.length
+        || !data.quiz.every(item => typeof item.id === "string" && item.id && typeof item.question === "string"
+          && Array.isArray(item.options) && item.options.length > 0 && item.options.every(option => typeof option === "string")
+          && Array.isArray(item.optionIds) && item.optionIds.length === item.options.length
+          && item.optionIds.every(id => typeof id === "string" && id) && new Set(item.optionIds).size === item.optionIds.length)) {
+        throw new Error("Invalid quiz topic");
       }
-      setCurrentQuestion((value) => value + 1);
-      return;
-    }
+      if (current) setLoadedTopic(data);
+    }).catch(error => { if (current) setTopicError(error instanceof ApiError && (error.status === 401 || error.status === 403) ? "auth" : "load"); })
+      .finally(() => { if (current) setTopicLoading(false); });
+    return () => { current = false; };
+  }, [selection.topic, topicReload, user?.id, accountLoaded]);
 
-    if (currentQuestion >= total) {
-      setCurrentQuestion(0);
-      setSelectedAnswer(null);
-      setFreeAnswer("");
-      setScore(0);
-      setQuestionDurations([]);
-      setMessage("");
-      setTimeExpired(false);
-      setSecondsLeft(getTimeLimit(0, topic.quiz.length, difficulty));
-      setHasStarted(false);
-      return;
+  useEffect(() => {
+    reset();
+    const changed = () => { reset(); setSelection(readSelection()); setTopicReload(value => value + 1); };
+    window.addEventListener("popstate", changed);
+    return () => window.removeEventListener("popstate", changed);
+  }, [reset]);
+  useEffect(() => { reset(); setTemporaryTotal(0); }, [user?.id, reset]);
+  useEffect(() => () => { revision.current += 1; }, []);
+  useEffect(() => {
+    if (pendingFocus.current) {
+      pendingFocus.current = false;
+      heading.current?.focus();
     }
+  }, [run.started, run.index, run.finished]);
 
-    setCurrentQuestion((value) => value + 1);
-    setSelectedAnswer(null);
-    setTimeExpired(false);
+  function configure(next: Selection) {
+    if (submitting.current) return;
+    reset(); setSelection(next); setTopicReload(value => value + 1);
+    const url = new URL(window.location.href);
+    url.searchParams.set("topic", next.topic); url.searchParams.set("difficulty", next.difficulty);
+    window.history.pushState({}, "", url);
   }
 
-  function recordQuestionTime(index: number, seconds: number) {
-    const nextDurations = [...questionDurations];
-    if (nextDurations[index] === undefined) {
-      nextDurations[index] = Math.max(0, Math.round(seconds));
-      setQuestionDurations(nextDurations);
-    }
-    return nextDurations;
-  }
-
-  function getTimeLimit(questionIndex: number, quizLength: number, level: Difficulty) {
-    return questionIndex === quizLength ? difficultyConfig[level].writingSeconds : difficultyConfig[level].choiceSeconds;
-  }
+  const expire = useCallback(() => {
+    answerChosen.current = true;
+    setRun(current => {
+      if (!current.started || current.finished || current.expired || current.selected !== null || current.pausedAt !== null) return current;
+      const time = current.index === choiceCount ? difficultyConfig[selection.difficulty].writingSeconds : difficultyConfig[selection.difficulty].choiceSeconds;
+      const durations = [...current.durations]; durations[current.index] = time;
+      return { ...current, expired: true, selected: current.index < choiceCount ? -1 : null, durations, pausedAt: current.startedAt + time * 1000 };
+    });
+  }, [choiceCount, selection.difficulty]);
 
   function startQuiz() {
-    if (!topic) return;
-    setCurrentQuestion(0);
-    setSelectedAnswer(null);
-    setFreeAnswer("");
-    setScore(0);
-    setQuestionDurations([]);
-    setMessage("");
-    setTimeExpired(false);
-    setSecondsLeft(getTimeLimit(0, topic.quiz.length, difficulty));
-    setHasStarted(true);
+    if (!topic || topicLoading || !accountLoaded) return;
+    reset(); pendingFocus.current = true;
+    setRun({ ...emptyRun(), started: true, startedAt: Date.now() });
+  }
+  function chooseAnswer(index: number) {
+    if (!topic || !run.started || run.finished || run.index >= choiceCount || answerChosen.current || run.selected !== null) return;
+    if (Date.now() >= run.startedAt + limit * 1000) { expire(); return; }
+    answerChosen.current = true;
+    const now = Date.now(), durations = [...run.durations]; durations[run.index] = duration(run, limit, now);
+    const answers = [...run.answers]; answers[run.index] = topic.quiz[run.index].optionIds[index];
+    setRun({ ...run, selected: index, answers, durations, pausedAt: now });
   }
 
-  const totalQuestions = topic ? topic.quiz.length + 1 : 0;
-  const currentStep = hasStarted && topic ? Math.min(currentQuestion + 1, totalQuestions) : 0;
-  const progressValue = totalQuestions ? percentage(currentStep, totalQuestions) : 0;
+  async function advance() {
+    if (!topic || submitting.current || !accountLoaded) return;
+    if (run.finished) { reset(); setTopicReload(value => value + 1); return; }
+    if (completed.current) return;
+    if (run.index < choiceCount) {
+      if (run.selected === null) return;
+      answerChosen.current = false; pendingFocus.current = true;
+      setRun({ ...run, index: run.index + 1, selected: null, expired: false, pausedAt: null, startedAt: Date.now() });
+      return;
+    }
+    submitting.current = true;
+    const currentRevision = revision.current;
+    const now = Date.now();
+    const expired = run.expired || now >= run.startedAt + limit * 1000;
+    if (!pendingAttempt.current) {
+      const durations = [...run.durations]; durations[run.index] = duration(run, limit, now);
+      pendingAttempt.current = {
+        topicId: topic.id, quizToken: topic.quizToken,
+        answers: topic.quiz.map((item, index) => ({ questionId: item.id, optionId: run.answers[index] ?? null })),
+        freeAnswer: run.freeAnswer, freeAnswerExpired: expired,
+        durationSeconds: durations.reduce((sum, value) => sum + value, 0), difficulty: selection.difficulty,
+        save: Boolean(user?.settings.saveProgress),
+      };
+      setRun(current => ({ ...current, durations, pausedAt: expired ? current.startedAt + limit * 1000 : now, expired }));
+    }
+    const attempt = pendingAttempt.current;
+    if (saveError === "settings") attempt.save = false;
+    setSaving(true); setSaveError(null);
+    try {
+      const result = await saveQuizAttempt(attempt);
+      if (revision.current !== currentRevision) return;
+      if (!result?.attempt || !Number.isInteger(result.attempt.score) || result.attempt.score < 0 || result.attempt.score > total
+        || result.attempt.total !== total || typeof result.saved !== "boolean"
+        || (result.saved ? !user || !attempt.save || !Number.isInteger(result.attempt.id) || (result.attempt.id ?? 0) <= 0 : result.attempt.id !== null)
+        || !Array.isArray(result.feedback) || result.feedback.length !== choiceCount
+        || new Set(result.feedback.map(item => item.questionId)).size !== choiceCount
+        || !result.feedback.every(item => {
+          const question = topic.quiz.find(question => question.id === item.questionId);
+          const answer = attempt.answers.find(answer => answer.questionId === item.questionId);
+          return question && answer && item.selectedOptionId === answer.optionId
+            && question.optionIds.includes(item.correctOptionId) && typeof item.correct === "boolean" && typeof item.explain === "string";
+        }) || typeof result.writing?.accepted !== "boolean" || typeof result.writing.explain !== "string") {
+        throw new ApiError("Invalid evaluation response", 502);
+      }
+      completed.current = true;
+      pendingFocus.current = true;
+      setEvaluation(result);
+      setRun(current => ({ ...current, finished: true }));
+      if (result.saved) {
+        setMessage("saved"); onAttemptSaved();
+      } else {
+        setMessage(user ? "savingDisabled" : "guestPoints");
+        if (!user) setTemporaryTotal(value => value + result.attempt.score);
+      }
+    } catch (error) {
+      if (revision.current === currentRevision) {
+        setSaveError(error instanceof ApiError && error.code === "save_progress_disabled" ? "settings"
+          : error instanceof ApiError && (error.status === 401 || error.status === 403) ? "auth"
+          : error instanceof ApiError && error.status === 400 ? "validation"
+          : error instanceof ApiError && error.status >= 500 ? "storage" : "network");
+      }
+    } finally {
+      if (revision.current === currentRevision) { submitting.current = false; setSaving(false); }
+    }
+  }
 
-  return (
-    <section className="quiz-shell glass rounded-xl p-3 sm:rounded-[2rem] sm:p-8">
-      <div className="quiz-intro">
-        <p className="mb-3 text-sm font-bold uppercase tracking-[0.24em] text-purple-600 dark:text-purple-300">
-          {ui.quiz.title}
-        </p>
-        <h2 className="view-title--compact">{ui.quiz.subtitle}</h2>
-        <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">
-          {ui.quiz.description}
-        </p>
-      </div>
+  const question = run.started && topic && run.index < choiceCount ? topic.quiz[run.index] : null;
+  const writing = run.started && topic && run.index === choiceCount && !run.finished;
+  const answered = run.finished ? total : run.index + (run.selected !== null ? 1 : 0);
+  const loading = topicsLoading || topicLoading;
+  const state = loading ? "loading" : topicError ? "error" : saving ? "saving" : run.finished ? "result" : run.started ? "question" : "ready";
 
-      <div className="quiz-setup-panel">
-        <p className="text-sm font-bold uppercase tracking-[0.16em] text-purple-700 dark:text-purple-300">
-          {ui.quiz.difficulty}
-        </p>
-        <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">{ui.quiz.choiceWritingTime}</p>
-        <div className="quiz-difficulty-list">
-          {(Object.keys(difficultyConfig) as Difficulty[]).map((level) => (
-            <button
-              aria-pressed={difficulty === level}
-              className={`quiz-difficulty-button ${difficulty === level ? "is-active" : ""}`}
-              key={level}
-              onClick={() => {
-                setDifficulty(level);
-                setCurrentQuestion(0);
-                setSelectedAnswer(null);
-                setFreeAnswer("");
-                setScore(0);
-                setQuestionDurations([]);
-                setMessage("");
-                setTimeExpired(false);
-                setHasStarted(false);
-              }}
-              type="button"
-            >
-              {getDifficultyLabel(level)}
-              <span className="mt-1 block text-sm font-semibold opacity-75">
-                {difficultyConfig[level].choiceSeconds} / {difficultyConfig[level].writingSeconds} {ui.quiz.seconds}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="quiz-topic-list">
-        {isLoadingTopics && (
-          <>
-            <SkeletonPanel rows={2} className="p-3 sm:p-3" />
-            <SkeletonPanel rows={2} className="p-3 sm:p-3" />
-            <SkeletonPanel rows={2} className="p-3 sm:p-3" />
-            <SkeletonPanel rows={2} className="p-3 sm:p-3" />
-          </>
-        )}
-        {topics.map((item) => (
-          <button className={`quiz-topic-button choice-btn ${item.id === activeTopicId ? "is-selected" : ""}`} key={item.id} onClick={() => setActiveTopicId(item.id)} type="button">
-            <span>{item.icon} {item.ru}</span>
-            <small>{item.label}</small>
-          </button>
-        ))}
-      </div>
-
-      {isLoadingTopic && <QuizSkeleton />}
-
-      {!isLoadingTopic && topic && (
-        <div className="quiz-workspace">
-          <div className="quiz-workspace__header">
-            <h3 className="flex items-center gap-2 text-2xl font-black leading-tight">
-              <Trophy className="h-7 w-7" />
-              {topic.icon} {topic.ru}
-            </h3>
-            <p className="rounded-full bg-cyan-400/15 px-4 py-2 text-sm font-bold text-cyan-700 dark:text-cyan-200">
-              {hasStarted && question
-                ? `${ui.common.question} ${Math.min(currentQuestion + 1, topic.quiz.length + 1)} / ${topic.quiz.length + 1}`
-                : hasStarted
-                  ? ui.common.finished
-                  : `${ui.quiz.questionCount}: ${topic.quiz.length + 1}`}
-            </p>
-          </div>
-          {hasStarted && totalQuestions > 0 && (
-            <div className="quiz-progress-panel">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="text-kicker text-indigo-700 dark:text-indigo-200">{ui.quiz.progress}</p>
-                  <p className="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">
-                    {currentStep} / {totalQuestions} · {ui.quiz.score}: {score}
-                  </p>
-                </div>
-                <p className="inline-flex items-center gap-2 rounded-full bg-cyan-400/15 px-3 py-2 text-sm font-bold text-cyan-800 dark:text-cyan-100">
-                  <Timer className="h-4 w-4" />
-                  {secondsLeft} {ui.quiz.seconds}
-                </p>
-              </div>
-              <div className="progress-track" aria-hidden="true">
-                <span style={{ width: `${progressValue}%` }} />
-              </div>
-              <div className="quiz-stepper" aria-label={ui.quiz.progress}>
-                {Array.from({ length: totalQuestions }).map((_, index) => {
-                  const isDone = index < currentQuestion;
-                  const isCurrent = index === currentQuestion;
-                  return (
-                    <span className={`quiz-step ${isDone ? "is-done" : ""} ${isCurrent ? "is-current" : ""}`} key={index}>
-                      {index + 1}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          {!hasStarted && (
-            <div className="quiz-start-card">
-              <p className="text-sm font-bold uppercase tracking-[0.16em] text-purple-700 dark:text-purple-300">
-                {ui.quiz.startTitle}
-              </p>
-              <p className="mt-2 text-slate-700 dark:text-slate-300">{ui.quiz.startDescription}</p>
-              <div className="quiz-start-summary">
-                <div className="rounded-xl bg-cyan-400/10 p-3">
-                  <p className="text-xs font-bold uppercase text-cyan-700 dark:text-cyan-200">{ui.quiz.selectedTopic}</p>
-                  <p className="mt-1 font-black">{topic.icon} {topic.ru}</p>
-                </div>
-                <div className="rounded-xl bg-cyan-400/10 p-3">
-                  <p className="text-xs font-bold uppercase text-cyan-700 dark:text-cyan-200">{ui.quiz.difficulty}</p>
-                  <p className="mt-1 font-black">{getDifficultyLabel(difficulty)}</p>
-                </div>
-                <div className="rounded-xl bg-cyan-400/10 p-3">
-                  <p className="text-xs font-bold uppercase text-cyan-700 dark:text-cyan-200">{ui.quiz.questionCount}</p>
-                  <p className="mt-1 font-black">{topic.quiz.length + 1}</p>
-                </div>
-              </div>
-              <p className="mt-3 text-sm font-semibold text-slate-600 dark:text-slate-300">{ui.quiz.includesWriting}</p>
-              <button className="quiz-primary-action mt-5 inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-6 py-3 font-bold text-slate-950 transition hover:bg-cyan-400" onClick={startQuiz} type="button">
-                <CheckCircle2 className="h-5 w-5" />
-                {ui.quiz.startButton}
-              </button>
-            </div>
-          )}
-
-          {hasStarted && question && currentQuestion <= topic.quiz.length && (
-            <div className="quiz-timer-strip">
-              <div className="flex items-center justify-between gap-3 text-sm font-bold">
-                <span>{ui.quiz.timeLeft}</span>
-                <span className={secondsLeft <= 10 ? "text-red-600 dark:text-red-300" : "text-cyan-700 dark:text-cyan-300"}>
-                  {secondsLeft} {ui.quiz.seconds}
-                </span>
-              </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-                <div
-                  className={`h-full rounded-full ${secondsLeft <= 10 ? "bg-red-500" : "bg-cyan-500"}`}
-                  style={{ width: `${(secondsLeft / getTimeLimit(currentQuestion, topic.quiz.length, difficulty)) * 100}%` }}
-                />
-              </div>
-              {timeExpired && <p className="mt-2 text-sm font-bold text-red-700 dark:text-red-300">{ui.quiz.timeExpired}</p>}
-            </div>
-          )}
-
-          <div className="quiz-question-area">
-            {hasStarted && question && currentQuestion < topic.quiz.length && (
-              <>
-                <p className="quiz-question-title text-learning-sentence">{question.question}</p>
-                <div className="mt-5 grid gap-3">
-                  {question.options.map((option, index) => {
-                    const isCorrect = selectedAnswer !== null && index === question.answer;
-                    const isWrong = selectedAnswer === index && index !== question.answer;
-                    return (
-                      <button className={`quiz-option rounded-2xl border border-slate-200 bg-white/80 px-5 py-4 text-left font-semibold dark:border-slate-700 dark:bg-slate-950/50 ${isCorrect ? "is-correct" : ""} ${isWrong ? "is-wrong" : ""}`} disabled={selectedAnswer !== null} key={option} onClick={() => chooseAnswer(index)} type="button">
-                        <span>{option}</span>
-                        {isCorrect && <CheckCircle2 aria-label={ui.quiz.correctAnswer} className="h-5 w-5 shrink-0" />}
-                        {isWrong && <XCircle aria-label={ui.quiz.wrongAnswer} className="h-5 w-5 shrink-0" />}
-                        {!isCorrect && !isWrong && <Circle aria-hidden="true" className="h-4 w-4 shrink-0 opacity-40" />}
-                      </button>
-                    );
-                  })}
-                </div>
-                {timeExpired && <p className="mt-4 font-semibold text-red-700 dark:text-red-300">{ui.quiz.timeExpiredExplanation}</p>}
-                {selectedAnswer !== null && (
-                  <p className={`quiz-feedback ${selectedAnswer === question.answer ? "is-correct" : "is-wrong"}`}>
-                    {selectedAnswer === question.answer ? ui.quiz.correctAnswer : ui.quiz.wrongAnswer} · {question.explain}
-                  </p>
-                )}
-              </>
-            )}
-
-            {hasStarted && question && currentQuestion === topic.quiz.length && (
-              <>
-                <p className="quiz-question-title flex items-center gap-2 text-xl font-bold">
-                  <PencilLine className="h-6 w-6" />
-                  {question.question}
-                </p>
-                {topic.free_answer?.task && (
-                  <div className="mt-4 rounded-xl bg-cyan-400/10 p-3 sm:rounded-2xl sm:p-4">
-                    <p className="text-sm font-bold uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-200">
-                      {ui.quiz.freeAnswerTask}
-                    </p>
-                    <p className="mt-2 font-semibold text-slate-700 dark:text-slate-300">{topic.free_answer.task}</p>
-                  </div>
-                )}
-                <textarea className="quiz-writing-input mt-5 min-h-32 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950 outline-none focus:border-cyan-400 disabled:opacity-60" disabled={timeExpired} onChange={(event) => setFreeAnswer(event.target.value)} value={freeAnswer} />
-                {topic.free_answer?.building_blocks && (
-                  <div className="quiz-building-blocks mt-3">
-                    <p className="text-sm font-bold text-slate-600 dark:text-slate-300">{ui.quiz.buildingBlocks}:</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {topic.free_answer.building_blocks.map((block) => (
-                        <button
-                          className="rounded-full bg-white/80 px-3 py-2 text-sm font-bold text-slate-700 shadow-sm dark:bg-slate-950/50 dark:text-slate-200"
-                          disabled={timeExpired}
-                          key={block}
-                          onClick={() => setFreeAnswer((value) => `${value}${value.trim() ? " " : ""}${block}`)}
-                          type="button"
-                        >
-                          {block}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <p className="mt-3 text-sm font-semibold text-slate-600 dark:text-slate-300">
-                  {ui.quiz.exampleLabel}: {topic.free_answer?.example ?? "Ich hätte gern zwei Brötchen, bitte."}
-                </p>
-              </>
-            )}
-
-            {hasStarted && currentQuestion > topic.quiz.length && (
-              <div className="quiz-result-card">
-                <p className="text-xl font-bold">{ui.quiz.result}: {score} / {topic.quiz.length + 1}</p>
-                <p className="mt-3 font-semibold text-cyan-700 dark:text-cyan-300">{message}</p>
-                {!user && <p className="mt-3 text-slate-600 dark:text-slate-300">{ui.quiz.temporaryGuestPoints}: {temporaryTotal}</p>}
-              </div>
-            )}
-
-            {hasStarted && ((selectedAnswer !== null && currentQuestion < topic.quiz.length) || currentQuestion >= topic.quiz.length) && (
-              <button className="quiz-primary-action mt-5 inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-6 py-3 font-bold text-slate-950 transition hover:bg-cyan-400" onClick={nextQuestion} type="button">
-                <CheckCircle2 className="h-5 w-5" />
-                {currentQuestion > topic.quiz.length ? ui.common.restartQuiz : ui.common.next}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
-
-function QuizSkeleton() {
-  return (
-    <div className="mt-8 rounded-xl bg-white/70 p-3 sm:rounded-[1.5rem] sm:p-5 dark:bg-slate-900/70">
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <SkeletonPanel rows={2} className="w-full sm:max-w-md" />
-        <SkeletonPanel rows={1} className="w-full sm:max-w-xs" />
-      </div>
-      <SkeletonStatGrid className="mb-5" />
-      <SkeletonPanel rows={6} />
+  return <section className="quiz-shell glass rounded-xl p-3 sm:rounded-[2rem] sm:p-8" aria-labelledby="quiz-title" aria-busy={loading || saving} data-topic-id={selection.topic} data-state={state}>
+    <div className="quiz-intro">
+      <p className="mb-3 text-sm font-bold uppercase tracking-[0.24em] text-purple-600 dark:text-purple-300">{ui.quiz.title}</p>
+      <h2 id="quiz-title" className="view-title--compact">{ui.quiz.subtitle}</h2>
+      <p className="mt-4 max-w-3xl text-slate-700 dark:text-slate-300">{ui.quiz.description}</p>
     </div>
-  );
-}
+    <p className="sr-only" role="status">{loading ? ui.quiz.loading : topicError || topicsError ? ui.quiz.loadFailed : ui.quiz.ready}</p>
 
-function percentage(value: number, total: number) {
-  if (total <= 0) return 0;
-  return Math.max(0, Math.min(100, Math.round((value / total) * 100)));
+    <fieldset className="quiz-setup-panel" disabled={saving}>
+      <legend className="text-sm font-bold uppercase tracking-[0.16em] text-purple-700 dark:text-purple-300">{ui.quiz.difficulty}</legend>
+      <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">{ui.quiz.choiceWritingTime}</p>
+      <div className="quiz-difficulty-list">
+        {(Object.keys(difficultyConfig) as Difficulty[]).map(level => <button
+          aria-pressed={selection.difficulty === level} data-difficulty={level}
+          className={`quiz-difficulty-button ${selection.difficulty === level ? "is-active" : ""}`} key={level}
+          onClick={() => configure({ ...selection, difficulty: level })} type="button">
+          {ui.quiz[level]}<span className="mt-1 block text-sm font-semibold opacity-75">{difficultyConfig[level].choiceSeconds} / {difficultyConfig[level].writingSeconds} {ui.quiz.seconds}</span>
+        </button>)}
+      </div>
+    </fieldset>
+
+    <fieldset className="quiz-topic-picker" disabled={saving}>
+      <legend className="text-sm font-bold text-slate-700 dark:text-slate-200">{ui.quiz.selectedTopic}</legend>
+      <div className="quiz-topic-list" aria-busy={topicsLoading}>
+        {topicsLoading && Array.from({ length: 4 }, (_, index) => <div className="quiz-topic-button quiz-topic-placeholder" key={index} aria-hidden="true"><span className="skeleton-block h-5 w-3/4" /><small className="skeleton-block h-4 w-1/2" /></div>)}
+        {topics.map(item => <button className={`quiz-topic-button choice-btn ${item.id === selection.topic ? "is-selected" : ""}`}
+          aria-pressed={item.id === selection.topic} aria-label={title(item)} data-topic-id={item.id}
+          key={item.id} onClick={() => configure({ ...selection, topic: item.id })} type="button">
+          <span>{item.icon} {item.ru}</span><small>{item.label}</small>
+        </button>)}
+      </div>
+      {topicsError && <div className="quiz-load-error" role="alert"><p>{ui.quiz.topicsLoadError}</p><button type="button" className="quiz-retry" onClick={() => setListReload(value => value + 1)}>{ui.quiz.retry}</button></div>}
+      {!topicsLoading && !topicsError && topics.length === 0 && <p role="status">{ui.quiz.noTopics}</p>}
+    </fieldset>
+
+    <div className="quiz-workspace" aria-busy={topicLoading}>
+      {topicLoading && <div className="quiz-workspace-placeholder" aria-hidden="true"><span className="skeleton-block h-7 w-2/3" /><span className="skeleton-block mt-6 h-20 w-full" /></div>}
+      {topicError && <div className="quiz-load-error" role="alert"><p>{topicError === "auth" ? ui.quiz.loadAuthError : ui.quiz.topicLoadError}</p>
+        {topicError === "auth" && <a className="quiz-retry" href={`${import.meta.env.VITE_APP_BASE ?? ""}/account`} target="_blank" rel="noopener noreferrer">{ui.quiz.loginNewTab}</a>}
+        <button type="button" className="quiz-retry" onClick={() => setTopicReload(value => value + 1)}>{ui.quiz.retry}</button></div>}
+      {!topicLoading && topic && <>
+        <div className="quiz-workspace__header">
+          <h3 className="flex items-center gap-2 text-2xl font-black leading-tight"><Trophy aria-hidden="true" className="h-7 w-7" /><span aria-hidden="true">{topic.icon}</span>{title(topic)}</h3>
+          <p className="rounded-full bg-cyan-400/15 px-4 py-2 text-sm font-bold text-cyan-700 dark:text-cyan-200">{run.finished ? ui.common.finished : run.started ? `${ui.common.question} ${run.index + 1} / ${total}` : `${ui.quiz.questionCount}: ${total}`}</p>
+        </div>
+        {!run.started ? <div className="quiz-start-card">
+          <p className="text-sm font-bold uppercase tracking-[0.16em] text-purple-700 dark:text-purple-300">{ui.quiz.startTitle}</p>
+          <p className="mt-2 text-slate-700 dark:text-slate-300">{ui.quiz.startDescription}</p>
+          <dl className="quiz-start-summary">
+            {[[ui.quiz.selectedTopic, title(topic)], [ui.quiz.difficulty, ui.quiz[selection.difficulty]], [ui.quiz.questionCount, total]].map(([label, value]) => <div className="rounded-xl bg-cyan-400/10 p-3" key={label}>
+              <dt className="text-xs font-bold uppercase text-cyan-700 dark:text-cyan-200">{label}</dt><dd className="mt-1 font-black">{value}</dd>
+            </div>)}
+          </dl>
+          <p className="mt-3 text-sm font-semibold text-slate-600 dark:text-slate-300">{ui.quiz.includesWriting}</p>
+          <button className="quiz-primary-action mt-5 inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-6 py-3 font-bold text-slate-950 transition hover:bg-cyan-400" disabled={!accountLoaded} onClick={startQuiz} type="button"><CheckCircle2 aria-hidden="true" className="h-5 w-5" />{ui.quiz.startButton}</button>
+        </div> : <>
+          <div className="quiz-progress-panel">
+            <label htmlFor="quiz-progress" className="text-kicker text-indigo-700 dark:text-indigo-200">{ui.quiz.progress}</label>
+            <p className="mt-1 text-sm font-semibold text-slate-600 dark:text-slate-300">{answered} / {total}{evaluation ? ` · ${ui.quiz.score}: ${evaluation.attempt.score}` : ""}</p>
+            <progress id="quiz-progress" className="quiz-progress" value={answered} max={total} aria-valuetext={`${answered} / ${total}`} />
+            <ol className="quiz-stepper" aria-label={ui.quiz.progress}>{Array.from({ length: total }, (_, index) => <li
+              className={`quiz-step ${index < answered ? "is-done" : ""} ${!run.finished && index === run.index ? "is-current" : ""}`}
+              aria-current={!run.finished && index === run.index ? "step" : undefined} key={index}>{index + 1}</li>)}</ol>
+          </div>
+          {!run.finished && <QuizCountdown key={`${selection.topic}:${selection.difficulty}:${run.index}:${run.startedAt}`} startedAt={run.startedAt} limit={limit} pausedAt={run.pausedAt}
+            label={ui.quiz.timeLeft} secondsLabel={ui.quiz.seconds} onExpire={expire} />}
+          <form className="quiz-question-area" onSubmit={event => { event.preventDefault(); void advance(); }}>
+            {question && !run.finished && <>
+              <h3 id="quiz-question-title" ref={heading} tabIndex={-1} className="quiz-question-title text-learning-sentence">{question.question}</h3>
+              <div className="mt-5 grid gap-3" role="group" aria-labelledby="quiz-question-title">{question.options.map((option, index) => {
+                const selected = run.selected === index;
+                return <button className={`quiz-option rounded-2xl border border-slate-200 bg-white/80 px-5 py-4 text-left font-semibold dark:border-slate-700 dark:bg-slate-950/50 ${selected ? "is-selected" : ""}`}
+                  aria-pressed={run.selected === index} data-answer-index={index} disabled={run.selected !== null || run.expired}
+                  key={`${index}:${option}`} onClick={() => chooseAnswer(index)} type="button">
+                  <span>{option}</span>{selected ? <CheckCircle2 aria-hidden="true" className="h-5 w-5 shrink-0" /> : <Circle aria-hidden="true" className="h-4 w-4 shrink-0 opacity-40" />}
+                </button>;
+              })}</div>
+              {run.selected !== null && <p className="quiz-feedback" role="status">
+                {run.expired ? ui.quiz.timeExpiredExplanation : ui.quiz.answerSelected}
+              </p>}
+            </>}
+            {writing && <>
+              <h3 id="quiz-question-title" ref={heading} tabIndex={-1} className="quiz-question-title flex items-center gap-2 text-xl font-bold"><PencilLine aria-hidden="true" className="h-6 w-6" />{topic.free_answer?.prompt ?? ui.quiz.freeAnswerPrompt}</h3>
+              {topic.free_answer?.task && <div className="mt-4 rounded-xl bg-cyan-400/10 p-3 sm:rounded-2xl sm:p-4"><p className="text-sm font-bold uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-200">{ui.quiz.freeAnswerTask}</p><p id="quiz-writing-task" className="mt-2 font-semibold text-slate-700 dark:text-slate-300">{topic.free_answer.task}</p></div>}
+              <label htmlFor="quiz-free-answer" className="quiz-writing-label">{ui.quiz.answerLabel}</label>
+              <textarea id="quiz-free-answer" className="quiz-writing-input min-h-32 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950 outline-none focus:border-cyan-400 disabled:opacity-60"
+                aria-describedby={`quiz-writing-hint${topic.free_answer?.task ? " quiz-writing-task" : ""}`} disabled={run.expired} readOnly={saving || pendingAttempt.current !== null} maxLength={10000}
+                onChange={event => setRun(current => ({ ...current, freeAnswer: event.target.value }))} value={run.freeAnswer} />
+              <p id="quiz-writing-hint" className="mt-3 text-sm font-semibold text-slate-600 dark:text-slate-300">{ui.quiz.freeAnswerHint}</p>
+              {topic.free_answer?.building_blocks?.length ? <div className="quiz-building-blocks mt-3"><p className="text-sm font-bold text-slate-600 dark:text-slate-300">{ui.quiz.buildingBlocks}:</p><div className="mt-2 flex flex-wrap gap-2">
+                {topic.free_answer.building_blocks.map((block, index) => <button className="rounded-full bg-white/80 px-3 py-2 text-sm font-bold text-slate-700 shadow-sm dark:bg-slate-950/50 dark:text-slate-200"
+                  disabled={run.expired || saving || pendingAttempt.current !== null} key={`${index}:${block}`} onClick={() => setRun(current => ({ ...current, freeAnswer: `${current.freeAnswer}${current.freeAnswer.trim() ? " " : ""}${block}` }))} type="button">{block}</button>)}
+              </div></div> : null}
+              <p className="mt-3 text-sm font-semibold text-slate-600 dark:text-slate-300">{ui.quiz.exampleLabel}: {topic.free_answer?.example ?? "Ich hätte gern zwei Brötchen, bitte."}</p>
+            </>}
+            {run.expired && !run.finished && <p className="mt-3 font-semibold text-red-700 dark:text-red-300" role="status">{ui.quiz.timeExpired}</p>}
+            {saving && <p role="status">{ui.quiz.saving}</p>}
+            {saveError && <div className="quiz-save-error" role="alert"><p>{saveError === "auth" ? ui.quiz.authError : saveError === "validation" ? ui.quiz.validationError
+              : saveError === "settings" ? ui.quiz.settingsError : saveError === "network" ? ui.quiz.networkError : ui.quiz.saveError}</p>
+              {saveError === "auth" && <a className="quiz-retry" href={`${import.meta.env.VITE_APP_BASE ?? ""}/account`} target="_blank" rel="noopener noreferrer">{ui.quiz.loginNewTab}</a>}
+              {saveError === "validation" && <button className="quiz-retry" onClick={() => { reset(); setTopicReload(value => value + 1); }} type="button">{ui.quiz.reloadQuiz}</button>}
+            </div>}
+            {run.finished && evaluation && <div className="quiz-result-card">
+              <h3 ref={heading} tabIndex={-1} className="quiz-question-title text-xl font-bold">{ui.quiz.result}: {evaluation.attempt.score} / {evaluation.attempt.total}</h3>
+              <p className="mt-3 font-semibold text-cyan-700 dark:text-cyan-300" role="status">{message ? ui.quiz[message] : ""}</p>
+              {!user && <p className="mt-3 text-slate-600 dark:text-slate-300">{ui.quiz.temporaryGuestPoints}: {temporaryTotal}</p>}
+              <ol className="quiz-review mt-5 grid gap-4">{topic.quiz.map(question => {
+                const feedback = evaluation.feedback.find(item => item.questionId === question.id)!;
+                const chosen = feedback.selectedOptionId === null ? ui.quiz.noAnswer : question.options[question.optionIds.indexOf(feedback.selectedOptionId)];
+                const correct = question.options[question.optionIds.indexOf(feedback.correctOptionId)];
+                return <li className="quiz-review-item rounded-xl border border-slate-200 p-3 dark:border-slate-700" data-question-id={question.id} key={question.id}>
+                  <h4 className="font-bold">{question.question}</h4>
+                  <p className="mt-2">{ui.quiz.yourAnswer}: {chosen}</p>
+                  {!feedback.correct && <p className="mt-2 font-semibold">{ui.quiz.solution}: {correct}</p>}
+                  <p className={`quiz-feedback ${feedback.correct ? "is-correct" : "is-wrong"}`}>
+                    {feedback.correct ? <CheckCircle2 aria-hidden="true" className="mr-2 inline h-5 w-5" /> : <XCircle aria-hidden="true" className="mr-2 inline h-5 w-5" />}
+                    {feedback.correct ? ui.quiz.correctAnswer : ui.quiz.wrongAnswer}{feedback.explain ? ` · ${feedback.explain}` : ""}
+                  </p>
+                </li>;
+              })}</ol>
+              <div className="quiz-writing-feedback mt-4 rounded-xl border border-slate-200 p-3 dark:border-slate-700">
+                <h4 className="font-bold">{ui.quiz.writingResult}</h4>
+                <p className="mt-2 whitespace-pre-wrap break-words">{run.freeAnswer || ui.quiz.noAnswer}</p>
+                <p className="mt-2 font-semibold">{evaluation.writing.accepted ? ui.quiz.writingAccepted : ui.quiz.writingNotAccepted}</p>
+                <p className="mt-2 text-sm">{ui.quiz.freeAnswerHint}</p>
+              </div>
+            </div>}
+            <button className="quiz-primary-action quiz-next mt-5 inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-6 py-3 font-bold text-slate-950 transition hover:bg-cyan-400"
+              aria-busy={saving} disabled={saving || !accountLoaded || (!run.finished && run.index < choiceCount && run.selected === null)} type="submit">
+              <CheckCircle2 aria-hidden="true" className="h-5 w-5" />{run.finished ? ui.common.restartQuiz : saving ? ui.quiz.saving : saveError === "settings" ? ui.quiz.evaluateWithoutSave : saveError ? ui.quiz.retrySave : writing ? ui.quiz.finishButton : ui.common.next}
+            </button>
+          </form>
+        </>}
+      </>}
+    </div>
+  </section>;
 }

@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.forms import DateField
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -20,21 +20,28 @@ from . import api
 from .care import care_for, care_search_url
 from .forms import PlantForm, SearchForm
 from .models import Plant, Watering
+from .seo import build_page_metadata
 
 
 def _context(request, tab="search"):
-    plants = Plant.objects.filter(owner=request.user).select_related("species") if request.user.is_authenticated else Plant.objects.none()
     today = timezone.localdate()
+    counts = {"plant_count": 0, "due_count": 0, "paused_count": 0}
+    if request.user.is_authenticated:
+        counts = Plant.objects.filter(owner=request.user).aggregate(
+            plant_count=Count("pk"),
+            due_count=Count("pk", filter=Q(paused=False, next_watering__lte=today)),
+            paused_count=Count("pk", filter=Q(paused=True)),
+        )
     return {
-        "tab": tab, "today": today, "plant_count": plants.count(),
-        "due_count": plants.filter(paused=False, next_watering__lte=today).count(),
-        "paused_count": plants.filter(paused=True).count(),
+        "tab": tab, "today": today, **counts,
         "login_url": f"{settings.LOGIN_URL}?{urlencode({'next': reverse('botanic:index') + '?tab=plants'})}",
     }
 
 
 def _render(request, template, context, status=200):
+    context["seo"] = build_page_metadata(request, context, status)
     response = render(request, template, context, status=status)
+    response["X-Robots-Tag"] = context["seo"]["robots"]
     response.status_page_handled = status >= 400
     # Only Botanic pages can load allowlisted plant photographs from iNaturalist.
     for header in ("Content-Security-Policy", "Content-Security-Policy-Report-Only"):
@@ -87,10 +94,13 @@ def index(request):
     else:
         today = context["today"]
         active = plants.filter(paused=False)
+        week_counts = dict(active.filter(
+            next_watering__gte=today, next_watering__lt=today + timedelta(days=7),
+        ).order_by().values_list("next_watering").annotate(count=Count("pk")))
         days = []
         for offset in range(7):
             day = today + timedelta(days=offset)
-            days.append({"date": day, "count": active.filter(next_watering=day).count(),
+            days.append({"date": day, "count": week_counts.get(day, 0),
                          "url": "?" + urlencode({"tab": "watering", "day": day.isoformat()})})
         filter_key = request.GET.get("filter", "due")
         day_value = request.GET.get("day", "")

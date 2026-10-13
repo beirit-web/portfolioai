@@ -1,7 +1,0 @@
-Portfolio-Referenz: Parallax-Oberfläche
-
-Diese Datei enthält nur ein neutrales Muster. Frühere externe Seitendumps,
-Tracking-Kennungen, Hosting-Metadaten und lokale Dateipfade wurden entfernt.
-
-Beispiel-URL: https://design.example.invalid/
-Beispiel-Projektpfad: /home/example/project

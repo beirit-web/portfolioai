@@ -24,10 +24,13 @@ class ContractForm(forms.Form):
             elif kind == "number":
                 field = forms.DecimalField(
                     **options, min_value=Decimal("0"), max_digits=12, decimal_places=2,
-                    widget=forms.NumberInput(attrs={**attrs, "step": "0.01", "min": "0"}),
+                    widget=forms.NumberInput(attrs={**attrs, "step": "0.01", "min": "0",
+                                                   "aria-label": f"{label} in Euro"}),
                 )
             else:
                 widget = forms.Textarea if kind == "textarea" else forms.TextInput
+                if kind == "textarea":
+                    attrs["rows"] = 2
                 field = forms.CharField(**options, max_length=5000, widget=widget(attrs=attrs))
             self.fields[name] = field
 
@@ -35,7 +38,8 @@ class ContractForm(forms.Form):
         groups = {}
         for key, label, name, _, kind, _ in self.definition["fields"]:
             group = groups.setdefault(key, {"key": key, "label": label, "fields": []})
-            group["fields"].append({"field": self[name], "wide": kind == "textarea"})
+            group["fields"].append({"field": self[name], "wide": kind == "textarea",
+                                    "kind": kind})
         return list(groups.values())
 
     def document(self):

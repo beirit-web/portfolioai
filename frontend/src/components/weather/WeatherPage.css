@@ -816,7 +816,7 @@
 .botanic-weather { background: none; container-type: inline-size; }
 .botanic-weather .hidden { display: none !important; }
 .botanic-weather .weather-page-main { width: 100%; min-width: 0; }
-.botanic-weather .weather-page-widget__intro h2 { font-size: 1.6rem; line-height: 1.3; }
+.botanic-weather .weather-page-widget__intro h1 { font-size: 1.6rem; line-height: 1.3; }
 .botanic-weather .weather-widget--page .weather-widget-grid {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "command" "current" "details";

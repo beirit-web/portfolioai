@@ -1,2 +1,0 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/project-detail-app-QZ9_lwnS.js","assets/preact-vendor-BzB9ud5D.js","assets/useI18n-C-ab_fRf.js","assets/homeConfig-B0tc2qtY.js","assets/mountSiteApp-FB9gTCxg.js","assets/preload-helper-kjavFYca.js"])))=>i.map(i=>d[i]);
-import{_ as e}from"./preload-helper-kjavFYca.js";import{e as r}from"./enhanceProjectPage-CrCpJKns.js";document.querySelector("[data-project-detail-rendered]")?r():e(()=>import("./project-detail-app-QZ9_lwnS.js"),__vite__mapDeps([0,1,2,3,4,5]));

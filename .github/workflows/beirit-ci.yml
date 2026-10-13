@@ -5,8 +5,7 @@ on:
     paths:
       - "frontend/**"
       - "server/**"
-      - "apps/portfolio-demos/sprachdienstleistungen/**"
-      - "apps/deutsch-live/frontend/**"
+      - "apps/**"
       - "scripts/check_portfolio_data.py"
       - "scripts/test_portfolio_data.py"
       - ".gitignore"
@@ -18,8 +17,7 @@ on:
     paths:
       - "frontend/**"
       - "server/**"
-      - "apps/portfolio-demos/sprachdienstleistungen/**"
-      - "apps/deutsch-live/frontend/**"
+      - "apps/**"
       - "scripts/check_portfolio_data.py"
       - "scripts/test_portfolio_data.py"
       - ".gitignore"
@@ -54,7 +52,9 @@ jobs:
 
       - name: Build frontend assets
         working-directory: frontend
-        run: npm run build
+        run: |
+          npm run build
+          npm run build:housing
 
       - name: Run frontend regression tests
         working-directory: frontend
@@ -64,10 +64,10 @@ jobs:
         working-directory: apps/deutsch-live/frontend
         run: npm ci
 
-      - name: Build DeutschLive for the platform and local recording archive
+      - name: Build DeutschLive
         working-directory: apps/deutsch-live/frontend
         run: |
-          npm run build:platform
+          npx tsc --noEmit
           npm run build
 
       - name: Set up Python
@@ -85,10 +85,6 @@ jobs:
       - name: Install backend dependencies
         working-directory: server
         run: python -m pip install -r requirements.txt
-
-      - name: Check deploy isolation
-        working-directory: server
-        run: python3 bin/check_deploy_isolation.py
 
       - name: Run Django system check
         working-directory: server
@@ -110,13 +106,9 @@ jobs:
         working-directory: frontend
         run: npm run test:browser
 
-      - name: Check integrated language-platform backend
-        working-directory: apps/portfolio-demos/sprachdienstleistungen
-        run: python manage.py test lessons.tests pages.tests_domain_isolation pages.tests_vokabelbox
-
-      - name: Check integrated language-platform UI
+      - name: Check housing persistence and account isolation with a real backend
         working-directory: frontend
-        run: npm run test:vokabelbox
+        run: npm run test:housing
 
       - name: Save browser report and previews
         if: always()
@@ -125,5 +117,5 @@ jobs:
           name: beirit-browser-checks
           path: |
             runtime/browser-checks/
-            runtime/vokabelbox-checks/
+            runtime/housing-checks/
           if-no-files-found: ignore

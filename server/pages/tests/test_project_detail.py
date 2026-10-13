@@ -1,8 +1,9 @@
 from unittest.mock import patch
 
+from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
 
-from pages.models import Project
+from pages.models import InterpreterApplication, Profile, Project
 from pages.project_detail import build_project_detail
 from pages.projects_overview import projects_presentation_catalog
 
@@ -40,6 +41,30 @@ class ProjectDetailDocumentTests(TestCase):
         response = self.client.get("/projekte/online-shop")
         self.assertContains(response, "Updated fictional situation")
         self.assertNotContains(response, "Current situation")
+
+    def test_contract_report_skips_home_directory_and_does_not_create_profiles(self):
+        self.project.slug = "vertragsgenerator"
+        self.project.save(update_fields=["slug"])
+        user = User.objects.create_user(
+            username="fictional-report-helper", email="helper@example.invalid",
+        )
+        InterpreterApplication.objects.create(
+            user=user, display_name="Fictional helper", languages="Deutsch",
+            region="Musterstadt", motivation="Fictional sample application",
+            status=InterpreterApplication.STATUS_APPROVED,
+        )
+        self.assertFalse(Profile.objects.filter(user=user).exists())
+
+        response = self.client.get("/projekte/vertragsgenerator")
+        self.assertContains(response, "data-project-detail-rendered")
+        self.assertContains(response, '<h1>Fictional shop report</h1>')
+        self.assertFalse(Profile.objects.filter(user=user).exists())
+
+    def test_home_does_not_load_the_retired_directory(self):
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("home_active_entry", response.context)
+        self.assertNotIn("ticker_interpreters", response.context)
 
     def test_localized_reports_keep_the_frontend_language_behavior(self):
         catalog = projects_presentation_catalog()

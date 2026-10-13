@@ -101,7 +101,9 @@ summary::-webkit-details-marker { display: none; }
 .form-heading .icon-button { color: var(--muted); }
 .field-group { padding: 0; margin: 0 0 28px; border: 0; min-width: 0; }
 .field-group legend { font-weight: 600; margin-bottom: 20px; }
-.is-enhanced .field-group legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+html.contracts-js .field-group legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+html.contracts-js body:not(.is-enhanced) .field-group ~ .field-group { display: none; }
+html.contracts-js .native-download { display: none; }
 .field-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px 16px; }
 .field { display: grid; gap: 8px; min-width: 0; align-content: start; }
 .field label { display: flex; align-items: baseline; gap: 6px; font-size: 13px; font-weight: 550; line-height: 1.5; }
@@ -125,10 +127,15 @@ input[aria-invalid="true"], textarea[aria-invalid="true"] { border-color: var(--
 .data-notice summary .icon { width: 14px; height: 14px; }
 .data-notice summary .icon:last-child { margin-left: auto; }
 .privacy-note { padding: 10px 0; font-size: 11px; line-height: 1.7; color: var(--muted); }
-.is-enhanced[data-view="form"] .preview-pane, .is-enhanced[data-view="document"] .form-pane, .is-enhanced[data-view="document"] .section-nav { display: none; }
-body:not(.is-enhanced) .view-tabs, body:not(.is-enhanced) .section-actions, body:not(.is-enhanced) .section-nav, body:not(.is-enhanced) .header-actions { display: none; }
-body:not(.is-enhanced) .form-heading .toolbar-menu, body:not(.is-enhanced) .zoom-control { display: none; }
-body:not(.is-enhanced) .contract-preview { width: 100%; min-height: 0; padding: 24px; font-size: 14px; }
+html.contracts-js [data-view="form"] .preview-pane, html.contracts-js [data-view="document"] .form-pane, html.contracts-js [data-view="document"] .section-nav { display: none; }
+html:not(.contracts-js) .view-tabs, html:not(.contracts-js) .section-actions, html:not(.contracts-js) .section-nav, html:not(.contracts-js) .header-actions { display: none; }
+html:not(.contracts-js) .form-heading .toolbar-menu, html:not(.contracts-js) .zoom-control { display: none; }
+html:not(.contracts-js) .contract-preview { width: 100%; min-height: 0; padding: 24px; font-size: 14px; }
+html:not(.contracts-js) .section-nav { display: none !important; }
+html:not(.contracts-js) .editor-workspace { grid-template-columns: minmax(0, 1fr); height: auto; }
+@media (min-width: 1024px) {
+  html:not(.contracts-js) .editor-workspace { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+}
 .preview-pane { min-width: 0; background: var(--workspace); display: flex; flex-direction: column; }
 .preview-toolbar { background: #f8f8fa; border-bottom: 1px solid var(--line); padding: 15px 18px 8px; }
 .preview-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 24px; }

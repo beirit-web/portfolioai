@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
+from config.asset_redirects import canonical_portfolio_url
+
 
 class AnonymousClient(models.Model):
   """
@@ -184,7 +186,7 @@ class Project(models.Model):
   def preview_image_url(self) -> str:
     if self.image:
       return self.image.url
-    return self.image_url
+    return canonical_portfolio_url(self.image_url)
 
   @property
   def feature_list(self) -> list[str]:
@@ -437,6 +439,78 @@ class WeatherSearch(models.Model):
 
   def __str__(self):
     return f"{self.user.email or self.user.username}: {self.city_label or self.query}"
+
+
+class HousingSearchLocation(models.Model):
+  """Suchorte der integrierten Wohnungssuche, getrennt nach Konto."""
+
+  user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="housing_search_locations")
+  name = models.CharField(max_length=120)
+  radius_km = models.DecimalField(max_digits=6, decimal_places=2, default=15)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
+  class Meta:
+    ordering = ["name", "id"]
+    constraints = [
+      models.CheckConstraint(
+        check=models.Q(radius_km__gte=0, radius_km__lte=1000),
+        name="housing_location_radius_range",
+      ),
+    ]
+
+  def __str__(self):
+    return self.name
+
+
+class HousingSearchProfile(models.Model):
+  """Persistierte Felder des aktiven React-Suchprofils, kein separates MVP."""
+
+  user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="housing_search_profiles")
+  name = models.CharField(max_length=120)
+  locations = models.ManyToManyField(HousingSearchLocation, blank=True, related_name="search_profiles")
+  min_rooms = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+  max_rooms = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+  max_warm_rent = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
+  balcony = models.BooleanField(default=False)
+  fitted_kitchen = models.BooleanField(default=False)
+  ground_floor_or_elevator = models.BooleanField(default=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
+  class Meta:
+    ordering = ["name", "id"]
+    constraints = [
+      models.CheckConstraint(
+        check=models.Q(min_rooms__isnull=True) | models.Q(min_rooms__gte=0, min_rooms__lte=100),
+        name="housing_profile_min_rooms_range",
+      ),
+      models.CheckConstraint(
+        check=models.Q(max_rooms__isnull=True) | models.Q(max_rooms__gte=0, max_rooms__lte=100),
+        name="housing_profile_max_rooms_range",
+      ),
+      models.CheckConstraint(
+        check=models.Q(min_rooms__isnull=True) | models.Q(max_rooms__isnull=True)
+        | models.Q(min_rooms__lte=models.F("max_rooms")),
+        name="housing_profile_rooms_order",
+      ),
+      models.CheckConstraint(
+        check=models.Q(max_warm_rent__isnull=True)
+        | models.Q(max_warm_rent__gte=0, max_warm_rent__lte=1000000),
+        name="housing_profile_rent_range",
+      ),
+    ]
+
+  def __str__(self):
+    return self.name
+
+
+class HousingTokenRevocation(models.Model):
+  """Nur Token-Fingerabdrücke speichern; Abmelden gilt auch serverseitig."""
+
+  token_hash = models.CharField(max_length=64, unique=True)
+  user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="housing_token_revocations")
+  expires_at = models.DateTimeField()
 
 
 class Appointment(models.Model):

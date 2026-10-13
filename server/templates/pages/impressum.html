@@ -1,13 +1,16 @@
 {% extends "base_public.html" %}
 {% load static i18n %}
 
-{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума | Портфолио Beirit Web{% else %}Muster-Impressum | Beirit Web Portfolio{% endif %}{% endblock %}
-{% block meta_robots %}noindex, follow{% endblock %}
-{% block meta_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Impressum mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
-{% block og_title %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума | Портфолио Beirit Web{% else %}Muster-Impressum | Beirit Web Portfolio{% endif %}{% endblock %}
-{% block og_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Impressum mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
-{% block twitter_title %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума | Портфолио Beirit Web{% else %}Muster-Impressum | Beirit Web Portfolio{% endif %}{% endblock %}
-{% block twitter_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример импрессума с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Muster-Impressum mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
+{% block title %}{{ imprint_meta.title }}{% endblock %}
+{% block meta_robots %}{{ imprint_meta.robots }}{% endblock %}
+{% block meta_description %}{{ imprint_meta.description }}{% endblock %}
+{% block canonical_url %}{{ imprint_meta.canonical }}{% endblock %}
+{% block og_locale %}{{ imprint_meta.locale }}{% endblock %}
+{% block og_title %}{{ imprint_meta.title }}{% endblock %}
+{% block og_description %}{{ imprint_meta.description }}{% endblock %}
+{% block og_url %}{{ imprint_meta.canonical }}{% endblock %}
+{% block twitter_title %}{{ imprint_meta.title }}{% endblock %}
+{% block twitter_description %}{{ imprint_meta.description }}{% endblock %}
 
 {% block base_styles %}
   <style>{% inline_asset 'css/root.css' %}</style>
@@ -18,57 +21,14 @@
   <style>{% inline_asset 'css/impressum-list.css' %}</style>
 {% endblock %}
 
-{% block body_attrs %} class="has-topnav imprint-body template-body"{% endblock %}
+{% block body_attrs %} class="imprint-body template-body"{% endblock %}
 
 {% block topnav %}
-  <div class="topnav topnav--no-link-underline" id="mainTopnav">
-    <a
-      class="nav-cube-link"
-      href="{% url 'pages:home' %}#top"
-      aria-label="{% if initial_lang|slice:':2' == 'ru' %}Beirit Web Главная{% else %}Beirit Web Startseite{% endif %}"
-    >
-      <img
-        src="{% static 'images/aktueles-logo-160.webp' %}"
-        sizes="56px"
-        alt="Beirit Web"
-        class="imprint-topnav-logo"
-        width="80"
-        height="80"
-        decoding="async"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </a>
-    <a href="{% url 'pages:home' %}#top" class="nav-link nav-link--home" data-i18n="nav.home">{% if initial_lang|slice:':2' == 'ru' %}Главная{% else %}Start{% endif %}</a>
-    <a href="{% url 'pages:skills_page' %}" class="nav-link">{% if initial_lang|slice:':2' == 'ru' %}Компетенции{% else %}Kompetenzen{% endif %}</a>
-    <a href="{% url 'pages:home' %}#profil" class="nav-link" data-i18n="nav.about">{% if initial_lang|slice:':2' == 'ru' %}Обо мне{% else %}Über{% endif %}</a>
-    <a href="{% url 'pages:home' %}#kontakt" class="nav-link nav-link--contact" data-i18n="nav.contact">{% if initial_lang|slice:':2' == 'ru' %}Контакты{% else %}Kontakt{% endif %}</a>
-  </div>
+  {% include "partials/public_navigation.html" with nav_meta=imprint_meta %}
 {% endblock %}
 
 {% block footer %}
-  <footer class="site-footer">
-    <span class="brand">
-      © 2026 Beirit Web – Eugen Beirit
-    </span>
-    <div class="footer-meta">
-      <a href="{% url 'pages:home' %}" class="footer-link">
-        {% if initial_lang|slice:':2' == "ru" %}Главная{% else %}Startseite{% endif %}
-      </a>
-      <a href="{% url 'pages:contact' %}" class="footer-link">
-        {% if initial_lang|slice:':2' == "ru" %}Контакт{% else %}Kontakt{% endif %}
-      </a>
-      <a href="{% url 'pages:imprint' %}" class="footer-link" aria-current="page">
-        {% if initial_lang|slice:':2' == "ru" %}Импрессум{% else %}Impressum{% endif %}
-      </a>
-      <a href="{% url 'pages:privacy' %}" class="footer-link">
-        {% if initial_lang|slice:':2' == "ru" %}Конфиденциальность{% else %}Datenschutz{% endif %}
-      </a>
-      <a href="{% url 'pages:legal' %}" class="footer-link">
-        {% if initial_lang|slice:':2' == "ru" %}Условия использования{% else %}Nutzungsbedingungen{% endif %}
-      </a>
-    </div>
-  </footer>
+  {% include "partials/legal_footer.html" with current_legal_page="imprint" %}
 {% endblock %}
 
 {% block base_scripts %}
@@ -80,13 +40,14 @@
   </script>
   <script src="{% asset_url 'js/i18n-data.js' %}" defer></script>
   <script src="{% asset_url 'js/main.js' %}" defer></script>
+  <script src="{% asset_url 'js/impressum-nav.js' %}" defer></script>
 {% endblock %}
 
 {% block content %}
   <main id="top" class="imprint-page">
     <header class="imprint-header">
       <div class="imprint-header__copy">
-        <h1 data-i18n="imprintPage.title">Impressum</h1>
+        <h1>{{ imprint_meta.heading }}</h1>
       </div>
     </header>
 

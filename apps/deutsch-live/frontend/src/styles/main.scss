@@ -66,6 +66,13 @@
     color: #f8fafc;
   }
 
+  body.scene-learning-page {
+    background-color: var(--dl-color-page);
+    background-size: 100% 100dvh;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
   [data-theme="dark"] input,
   [data-theme="dark"] textarea,
   [data-theme="dark"] select {
@@ -200,6 +207,8 @@
     max-width: 100%;
     min-width: 0;
     overflow: visible;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   .app-nav__bar {
@@ -341,6 +350,11 @@
 
   .mobile-menu.is-hidden {
     @apply pointer-events-none max-h-0 translate-y-4 scale-95 opacity-0;
+  }
+
+  .mobile-menu[hidden],
+  .mobile-menu-backdrop[hidden] {
+    display: none;
   }
 
   .language-switcher {
@@ -611,19 +625,32 @@
   }
 
   .grade-calculator {
-    @apply relative overflow-hidden;
+    @apply relative min-w-0 max-w-full overflow-hidden;
+    overflow-wrap: anywhere;
+  }
+
+  .grade-calculator .section-header > *,
+  .grade-calculator__title,
+  .grade-calculator__title span,
+  .grade-calculator__footer-actions span {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .grade-calculator__title svg {
+    flex-shrink: 0;
   }
 
   .grade-calculator__summary {
-    @apply grid max-w-md gap-3 p-5 text-sm font-bold leading-6 text-slate-700 dark:text-slate-200;
+    @apply grid min-w-0 w-full max-w-md gap-3 p-5 text-sm font-bold leading-6 text-slate-700 dark:text-slate-200;
   }
 
   .grade-calculator__layout {
-    @apply grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-start;
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start;
   }
 
   .grade-calculator__intro {
-    @apply grid gap-4 p-5;
+    @apply grid min-w-0 gap-4 p-5;
   }
 
   .grade-calculator__intro ul {
@@ -636,11 +663,12 @@
   }
 
   .grade-calculator__card {
-    @apply relative grid gap-4 overflow-hidden p-4 sm:p-5;
+    @apply relative grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 overflow-hidden p-4 sm:p-5;
+    container: grade-calculator / inline-size;
   }
 
   .grade-calculator__step {
-    @apply inline-flex w-fit rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-black uppercase tracking-wide text-cyan-800 dark:text-cyan-200;
+    @apply inline-flex min-w-0 max-w-full w-fit rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-black uppercase tracking-wide text-cyan-800 dark:text-cyan-200;
   }
 
   .grade-calculator__status {
@@ -661,7 +689,7 @@
 
   .grade-calculator__form,
   .grade-calculator__step-panel {
-    @apply grid gap-4;
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4;
   }
 
   .grade-calculator__step-panel label,
@@ -670,7 +698,7 @@
   }
 
   .grade-calculator__step-panel input {
-    @apply w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 font-semibold text-slate-950 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white;
+    @apply min-w-0 w-full max-w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 font-semibold text-slate-950 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white;
   }
 
   .grade-calculator__step-panel input[aria-invalid="true"] {
@@ -683,34 +711,42 @@
   }
 
   .grade-calculator__actions {
-    @apply grid gap-2 sm:grid-cols-2;
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-2;
   }
 
   .grade-calculator__grade-grid {
-    @apply grid max-h-[min(48dvh,28rem)] gap-3 overflow-auto pr-1 sm:grid-cols-2;
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] max-h-[clamp(9rem,48dvh,28rem)] gap-3 overflow-auto pr-1;
     scrollbar-color: var(--dl-color-accent) transparent;
+    scrollbar-gutter: stable;
+    scroll-padding-block: 0.5rem;
   }
 
   .grade-calculator__grade-field {
-    @apply grid gap-2 rounded-2xl border border-slate-200/80 bg-white/60 p-3 dark:border-slate-700/70 dark:bg-slate-950/35;
+    @apply grid min-w-0 gap-2 rounded-2xl border border-slate-200/80 bg-white/60 p-3 dark:border-slate-700/70 dark:bg-slate-950/35;
   }
 
   .grade-calculator__result {
-    @apply grid gap-4 border-2 p-4 md:grid-cols-[minmax(10rem,15rem)_minmax(0,1fr)] md:items-start;
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] items-start gap-4 border-2 p-4;
   }
 
   .grade-calculator__result-media {
-    @apply m-0 grid w-full place-items-center overflow-hidden rounded-xl border border-white/60 bg-white/55 dark:border-white/10 dark:bg-slate-950/35;
+    @apply m-0 grid min-h-0 min-w-0 max-w-full place-items-center justify-self-center overflow-hidden rounded-xl border border-white/60 bg-white/55 dark:border-white/10 dark:bg-slate-950/35;
+    width: min(100%, 14rem, 28dvh);
     aspect-ratio: 2 / 3;
-    max-height: min(64dvh, 26rem);
   }
 
   .grade-calculator__result-media img {
-    @apply h-full w-full object-contain;
+    @apply block h-full min-h-0 w-full min-w-0 max-w-full object-contain;
   }
 
   .grade-calculator__result-content {
-    @apply grid min-w-0 gap-4;
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4;
+    container: grade-result / inline-size;
+  }
+
+  .grade-calculator__result.is-passed .grade-calculator__result-media {
+    width: min(100%, 14rem, 42dvh);
+    aspect-ratio: 1;
   }
 
   .grade-calculator__result.is-passed {
@@ -722,7 +758,7 @@
   }
 
   .grade-calculator__result-heading {
-    @apply flex items-center gap-2;
+    @apply flex min-w-0 items-center gap-2;
   }
 
   .grade-calculator__result-heading svg {
@@ -730,15 +766,15 @@
   }
 
   .grade-calculator__result-heading h3 {
-    @apply text-xl font-black;
+    @apply min-w-0 text-xl font-black;
   }
 
   .grade-calculator__metrics {
-    @apply grid gap-2 sm:grid-cols-2;
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-2;
   }
 
   .grade-calculator__metric {
-    @apply rounded-2xl border border-slate-200/80 bg-white/80 p-3 dark:border-slate-700/70 dark:bg-slate-950/45;
+    @apply min-w-0 rounded-2xl border border-slate-200/80 bg-white/80 p-3 dark:border-slate-700/70 dark:bg-slate-950/45;
   }
 
   .grade-calculator__metric span {
@@ -754,7 +790,32 @@
   }
 
   .grade-calculator__footer-actions {
-    @apply flex justify-end;
+    @apply flex min-w-0 flex-wrap justify-end;
+  }
+
+  .grade-calculator__actions .app-button,
+  .grade-calculator__footer-actions .app-button {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  @container grade-calculator (min-width: 24rem) {
+    .grade-calculator__actions,
+    .grade-calculator__grade-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @container grade-calculator (min-width: 34rem) {
+    .grade-calculator__result {
+      grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    }
+  }
+
+  @container grade-result (min-width: 18rem) {
+    .grade-calculator__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   .grade-calculator__canvas {
@@ -968,8 +1029,8 @@
     @apply min-w-0 flex-1;
   }
 
-  .scene-topic-button__copy span,
-  .scene-topic-button__copy small {
+  .scene-topic-button__copy > span,
+  .scene-topic-button__copy > small {
     @apply block truncate;
   }
 
@@ -987,6 +1048,7 @@
 
   .scene-picker__topic {
     @apply mt-1 text-sm font-black text-slate-900 dark:text-white;
+    min-height: 1.25rem;
   }
 
   .scene-picker__list {
@@ -995,6 +1057,7 @@
 
   .scene-picker__button {
     @apply flex min-w-0 items-start gap-2 rounded-lg px-3 py-3 text-left text-sm font-semibold transition hover:bg-white/80 dark:hover:bg-slate-800;
+    position: relative;
   }
 
   .scene-picker__button.is-active {
@@ -1023,7 +1086,17 @@
   }
 
   .scene-learning-layout {
-    @apply mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr];
+    @apply mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)];
+  }
+
+  .scene-learning-layout > * {
+    min-width: 0;
+  }
+
+  .learning-phrase-card,
+  .learning-vocab-card {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 12rem;
   }
 
   .scene-complete-button {
@@ -1516,14 +1589,27 @@
 
   .premium-hero {
     @apply relative isolate grid min-h-[calc(100svh-5.5rem)] w-full max-w-full overflow-hidden rounded-[1.75rem] text-white shadow-2xl shadow-indigo-950/25 sm:min-h-[680px] sm:rounded-[2.5rem] lg:items-end;
+    --dl-hero-photo: url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1800&q=82");
     background:
       linear-gradient(110deg, rgba(15, 23, 42, 0.92), rgba(30, 41, 59, 0.7) 48%, rgba(49, 46, 129, 0.42)),
-      url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1800&q=82");
+      var(--dl-hero-photo);
     background-color: #0f172a;
     background-position: center, center;
     background-repeat: no-repeat;
     background-size: cover, cover;
     margin-inline: auto;
+  }
+
+  @media (max-width: 480px) {
+    .premium-hero {
+      --dl-hero-photo: url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=960&q=80");
+    }
+  }
+
+  @media (min-width: 481px) and (max-width: 1023px) {
+    .premium-hero {
+      --dl-hero-photo: url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80");
+    }
   }
 
   .premium-hero > * {
@@ -2264,6 +2350,10 @@
     scroll-snap-align: start;
   }
 
+  .scene-topic-list > .app-panel {
+    flex: 0 0 min(16rem, 78vw);
+  }
+
   .scene-picker {
     margin-top: 0.8rem;
     padding: 0.8rem;
@@ -2276,6 +2366,10 @@
   .scene-picker__button {
     min-width: min(15rem, 74vw);
     scroll-snap-align: start;
+  }
+
+  .scene-picker__list > .app-panel {
+    flex: 0 0 min(15rem, 74vw);
   }
 
   .scene-learning-path {
@@ -3015,5 +3109,93 @@
   .cinematic-parallax-layer {
     transform: none;
     will-change: auto;
+  }
+}
+
+// Keep the quiz setup in place while topic requests settle. Only the countdown
+// updates each second, with tabular digits and a stable width.
+.quiz-shell {
+  .quiz-setup-panel,
+  .quiz-topic-picker {
+    min-inline-size: 0;
+    border: 0;
+  }
+
+  .quiz-setup-panel > legend {
+    float: left;
+    width: 100%;
+    padding: 0;
+  }
+
+  .quiz-setup-panel > p {
+    clear: both;
+  }
+
+  .quiz-topic-picker {
+    margin-top: 1.5rem;
+    padding: 0;
+  }
+
+  .quiz-topic-list {
+    min-block-size: 5.25rem;
+    max-block-size: 5.25rem;
+    grid-auto-rows: 5rem;
+    align-content: start;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .quiz-topic-button {
+    min-inline-size: 0;
+    min-block-size: 5rem;
+  }
+
+  .quiz-workspace {
+    min-block-size: 24rem;
+  }
+
+  .quiz-workspace-placeholder {
+    min-block-size: 22rem;
+  }
+
+  .quiz-progress {
+    display: block;
+    width: 100%;
+    height: 0.5rem;
+    margin-top: 0.85rem;
+    overflow: hidden;
+    border: 0;
+    border-radius: 999px;
+    appearance: none;
+    background: #e2e8f0;
+    accent-color: #4f46e5;
+  }
+
+  .quiz-progress::-webkit-progress-bar { background: #e2e8f0; }
+  .quiz-progress::-webkit-progress-value { background: #4f46e5; }
+  .quiz-progress::-moz-progress-bar { background: #4f46e5; }
+  .quiz-countdown__value { min-inline-size: 4.5rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .quiz-writing-label { display: block; margin-block: 1.25rem 0.5rem; font-weight: 700; }
+  .quiz-save-error,
+  .quiz-load-error { margin-top: 1rem; padding: 1rem; border: 1px solid #ef4444; border-radius: 0.75rem; }
+  .quiz-retry { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0.5rem; padding: 0.5rem 1rem; text-decoration: underline; font-weight: 700; }
+  button:disabled { cursor: default; }
+  .quiz-primary-action:disabled { opacity: 0.65; }
+  .quiz-option.is-selected { border-color: #4f46e5; outline: 2px solid #4f46e5; outline-offset: 2px; }
+  .quiz-review { list-style: decimal; padding-inline-start: 1.5rem; }
+  .quiz-review-item { overflow-wrap: anywhere; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .quiz-shell .quiz-topic-list { min-block-size: 10.75rem; max-block-size: 10.75rem; }
+}
+
+@media (max-width: 767px) {
+  .quiz-shell {
+    .quiz-topic-picker { margin-top: 1rem; }
+    .quiz-topic-list { min-block-size: 5.25rem; max-block-size: 5.25rem; overflow-y: hidden; }
+    .quiz-topic-button { flex: 0 0 min(15rem, 76vw); }
+    .quiz-workspace { min-block-size: 32rem; }
+    .quiz-workspace-placeholder { min-block-size: 30rem; }
   }
 }

@@ -43,6 +43,8 @@ const elements = {
   documentStage: document.querySelector("#documentStage"),
   pageFrame: document.querySelector("#pageFrame"),
   zoomSelect: document.querySelector("#zoomSelect"),
+  zoomOutButton: document.querySelector("#zoomOutButton"),
+  zoomInButton: document.querySelector("#zoomInButton"),
   settingsDialog: document.querySelector("#documentSettingsDialog"),
   logoThumbnail: document.querySelector("#logoThumbnail"),
   actionToast: document.querySelector("#actionToast"),
@@ -64,6 +66,7 @@ let documentCache = null;
 let activeTemplateKey = config.selectedTemplate;
 let selectedSection = "parties";
 let documentScale = 1;
+let documentZoomFrame = 0;
 let toastTimer = 0;
 let activeTemplateOption = 0;
 let templateSearch = "";
@@ -101,7 +104,7 @@ function setView(view) {
     tab.tabIndex = active ? 0 : -1;
   });
   if (!window.matchMedia("(min-width: 1024px)").matches) window.scrollTo(0, 0);
-  window.requestAnimationFrame(updateDocumentZoom);
+  scheduleDocumentZoom();
 }
 
 function selectSection(key, scroll = false) {
@@ -134,17 +137,30 @@ function selectSection(key, scroll = false) {
   }
 }
 
+function scheduleDocumentZoom() {
+  if (documentZoomFrame) return;
+  documentZoomFrame = window.requestAnimationFrame(() => {
+    documentZoomFrame = 0;
+    updateDocumentZoom();
+  });
+}
+
 function updateDocumentZoom() {
   const stage = elements.documentStage;
-  if (!stage.clientWidth || !elements.preview.offsetHeight) return;
+  const stageWidth = stage.clientWidth;
+  const paperHeight = elements.preview.offsetHeight;
+  if (!stageWidth || !paperHeight) return;
   const style = getComputedStyle(stage);
-  const availableWidth = stage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+  const availableWidth = stageWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
   documentScale = elements.zoomSelect.value === "fit" ? Math.min(1, availableWidth / 794) : Number(elements.zoomSelect.value);
-  elements.preview.style.transform = `scale(${documentScale})`;
-  elements.pageFrame.style.width = `${Math.ceil(794 * documentScale)}px`;
-  elements.pageFrame.style.height = `${Math.ceil(elements.preview.offsetHeight * documentScale)}px`;
-  document.querySelector("#zoomOutButton").disabled = documentScale <= 0.5;
-  document.querySelector("#zoomInButton").disabled = documentScale >= 1.5;
+  const transform = `scale(${documentScale})`;
+  const width = `${Math.ceil(794 * documentScale)}px`;
+  const height = `${Math.ceil(paperHeight * documentScale)}px`;
+  if (elements.preview.style.transform !== transform) elements.preview.style.transform = transform;
+  if (elements.pageFrame.style.width !== width) elements.pageFrame.style.width = width;
+  if (elements.pageFrame.style.height !== height) elements.pageFrame.style.height = height;
+  elements.zoomOutButton.disabled = documentScale <= 0.5;
+  elements.zoomInButton.disabled = documentScale >= 1.5;
 }
 
 function changeZoom(direction) {
@@ -207,7 +223,8 @@ function setLogoState(data) {
   elements.clearLogoButton.hidden = !logoData;
   elements.logoTools.hidden = !logoData;
   if (logoData) elements.logoSizeInput.value = String(logoData.size);
-  updatePreview();
+  // Branding is local and does not change the server-generated contract text.
+  if (documentCache) renderDocument(documentCache.text);
 }
 
 function readDraft() {
@@ -284,7 +301,7 @@ function applyFontSize(size) {
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", String(active));
   });
-  window.requestAnimationFrame(updateDocumentZoom);
+  scheduleDocumentZoom();
 }
 
 function scheduleSave() {
@@ -423,16 +440,15 @@ function selectTemplate(key, force = false) {
   }
   elements.templateSelect.value = key;
   renderForm();
-  if (!readDraft()) fillSample();
 }
 
-function renderForm() {
+function renderForm({ reuseFields = false } = {}) {
   activeTemplateKey = elements.templateSelect.value;
   syncTemplatePicker();
   const template = getTemplate();
   elements.templateSummary.textContent = template.summary;
   const groups = getGroups(template);
-  const groupNodes = groups.map(([groupKey, groupLabel], index) => {
+  const groupNodes = reuseFields ? null : groups.map(([groupKey, groupLabel], index) => {
     const group = document.createElement("fieldset");
     group.className = "field-group";
     group.dataset.group = groupKey;
@@ -498,13 +514,19 @@ function renderForm() {
     return group;
   });
 
-  elements.form.replaceChildren(...groupNodes);
-  for (const [name, value] of Object.entries({ csrfmiddlewaretoken: csrfToken, template: elements.templateSelect.value })) {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = name;
-    input.value = value;
-    elements.form.prepend(input);
+  if (groupNodes) {
+    elements.form.replaceChildren(...groupNodes);
+    for (const [name, value] of Object.entries({ csrfmiddlewaretoken: csrfToken, template: elements.templateSelect.value })) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = value;
+      elements.form.prepend(input);
+    }
+  } else {
+    elements.form.querySelectorAll('input:not([type="hidden"]), textarea').forEach((field) => {
+      field.defaultValue = "";
+    });
   }
   renderStepList();
   selectSection(getGroups()[0][0]);
@@ -513,6 +535,7 @@ function renderForm() {
     applyData(draft);
     setStorageBadge("Entwurf geladen", "saved");
   } else {
+    applyData(template.sample);
     setStorageBadge("Lokal", "");
   }
   updatePreview();
@@ -789,7 +812,7 @@ function renderDocument(content) {
   const heading = document.createElement("h3");
   heading.textContent = template.label;
   elements.preview.append(heading, renderPreviewText(content), renderSignatureArea(template));
-  window.requestAnimationFrame(updateDocumentZoom);
+  scheduleDocumentZoom();
 }
 
 function setExportPending(pending) {
@@ -1064,15 +1087,15 @@ document.querySelectorAll(".toolbar-menu").forEach((menu) => {
   });
 });
 document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeMenus(); });
-const documentObserver = new ResizeObserver(updateDocumentZoom);
+const documentObserver = new ResizeObserver(scheduleDocumentZoom);
 documentObserver.observe(elements.documentStage);
 documentObserver.observe(elements.preview);
 
+document.documentElement.classList.add("contracts-js");
 document.body.classList.add("is-enhanced");
 renderTemplateOptions();
 elements.templateSelect.value = config.selectedTemplate;
 elements.fontSizeSelect.value = readFontSize();
 applyFontSize(elements.fontSizeSelect.value);
 setLogoState(readLogo());
-renderForm();
-if (!readDraft()) fillSample();
+renderForm({ reuseFields: true });

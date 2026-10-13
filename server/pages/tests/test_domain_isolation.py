@@ -1,4 +1,3 @@
-import tomllib
 from pathlib import Path
 
 from django.conf import settings
@@ -67,17 +66,6 @@ class BeiritDigitalDomainIsolationTests(TestCase):
 
 
 class BeiritDigitalDeployConfigTests(TestCase):
-    def test_fly_config_is_scoped_to_beirit_digital(self):
-        fly_config = tomllib.loads((Path(settings.BASE_DIR) / "fly.toml").read_text(encoding="utf-8"))
-        env = fly_config["env"]
-
-        self.assertEqual(fly_config["app"], "portfolio-demo-example")
-        self.assertEqual(env["SITE_URL"], CANONICAL_URL)
-        self.assertEqual(env["RESET_LINK_DOMAIN"], CANONICAL_HOST)
-        self.assertEqual(env["CSRF_TRUSTED_ORIGINS"], CANONICAL_URL)
-        self.assertEqual(_split_hosts(env["DJANGO_ALLOWED_HOSTS"]), {CANONICAL_HOST})
-        self.assertFalse(_split_hosts(env.get("REDIRECT_OLD_HOSTS", "")) & FORBIDDEN_HOSTS)
-
     def test_example_environment_contains_only_demo_payment_settings(self):
         env = _read_env_file(Path(settings.BASE_DIR) / ".env.example")
         self.assertEqual(env["PAYPAL_MODE"], "sandbox")

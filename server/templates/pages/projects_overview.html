@@ -20,7 +20,7 @@
                   <span>{{ card.type }}</span>{% if card.status %}<span>{{ card.status }}</span>{% endif %}
                 </div>
                 <h2>{{ card.title }}{% if card.tooltip %}<span class="info-tooltip"><button type="button" class="info-tooltip__trigger" aria-label="{{ card.tooltip.label }}" aria-expanded="false" data-project-tooltip="{{ card.tooltip.text }}">i</button></span>{% endif %}</h2>
-                <p>{{ card.text }}</p>
+                <p>{{ card.overviewText|default:card.text }}</p>
                 {% if card.technologyTags %}
                   <div class="technology-tags project-overview-card__tags" aria-label="{{ overview.copy.technologies }}">
                     {% for technology in card.technologyTags %}

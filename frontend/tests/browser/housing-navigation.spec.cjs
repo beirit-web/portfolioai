@@ -13,7 +13,7 @@ test.afterEach(async ({ page }) => {
 });
 
 async function openMenu(page) {
-  const opener = page.getByRole("button", { name: "Navigation öffnen", exact: true });
+  const opener = page.getByRole("button", { name: "Navigation-Menü öffnen", exact: true });
   await opener.click();
   await expect(page.getByRole("dialog", { name: "Hauptnavigation", exact: true })).toBeVisible();
   await expect(page.locator(".mobile-menu-button")).toHaveAttribute("aria-expanded", "true");
@@ -32,7 +32,7 @@ test("opener, close button, backdrop and Escape close the menu without leaving a
   for (const method of ["opener", "close", "backdrop", "escape"]) {
     await openMenu(page);
     expect(await page.locator(".workspace").evaluate(element => element.inert)).toBe(true);
-    if (method === "opener") await page.getByRole("button", { name: "Navigation schließen", exact: true }).click();
+    if (method === "opener") await page.getByRole("button", { name: "Navigation-Menü schließen", exact: true }).click();
     if (method === "close") await page.getByRole("button", { name: "Menü schließen", exact: true }).click();
     if (method === "backdrop") await page.locator(".housing-nav-backdrop").click({ position: { x: 380, y: 100 } });
     if (method === "escape") await page.keyboard.press("Escape");

@@ -173,7 +173,7 @@ test("all supported languages provide card labels and existing cover artwork for
 test("Vokabelbox is part of the language platform and never a standalone published project", async () => {
   const { isProjectPublished, portfolioSlugFor } = await import("./portfolioPresentation.mjs");
   assert.equal(isProjectPublished({ title: "Vokabelbox", slug: "vokabelbox", published: true }), false);
-  assert.equal(isProjectPublished({ title: "Vokabelbox", images: [{ src: "/static/images/portfolio-vokabelbox-main-desktop.webp" }] }), false);
+  assert.equal(isProjectPublished({ title: "Vokabelbox", images: [{ src: "/static/images/portfolio-vokabelbox-desktop.webp" }] }), false);
   for (const language of ["de", "ru", "uk"]) {
     const locale = JSON.parse(readFileSync(new URL(`../../../i18n/locales/${language}.json`, import.meta.url), "utf8"));
     assert.ok(locale.home.portfolio.items.every(item => portfolioSlugFor(item) !== "vokabelbox"));

@@ -4,7 +4,7 @@ import { ArrowUp } from "lucide-react";
 import { homeConfig as config, publicPageUrl } from "../../lib/homeConfig.js";
 import { getScrollBehavior } from "../../lib/appNavigation.js";
 
-const configuredBrandLogoUrl = config.logoUrl || "/static/images/aktueles-logo-160.webp";
+const configuredBrandLogoUrl = config.logoUrl || "/static/images/beirit-digital-logo-160.webp";
 const configuredBrandLogoSmallUrl = config.logoSmallUrl || configuredBrandLogoUrl;
 const configuredBrandLogoLargeUrl = config.logoLargeUrl || configuredBrandLogoSmallUrl;
 const brandLogoUrl = configuredBrandLogoUrl;
@@ -172,6 +172,17 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
     };
   }, [isMobileMenuOpen]);
 
+  React.useEffect(() => {
+    if (!isMobileMenuOpen) return undefined;
+    const desktopNavigation = window.matchMedia("(min-width: 48rem)");
+    const handleNavigationResize = () => {
+      if (desktopNavigation.matches) closeMobileMenu();
+    };
+    handleNavigationResize();
+    desktopNavigation.addEventListener("change", handleNavigationResize);
+    return () => desktopNavigation.removeEventListener("change", handleNavigationResize);
+  }, [closeMobileMenu, isMobileMenuOpen]);
+
   const headerMarkup = (
     <>
       <header className={`site-header site-header--optimized fixed inset-x-0 top-0 z-40 bg-white/90 shadow-line backdrop-blur-xl${isMobileMenuOpen ? " is-mobile-menu-open" : ""}`}>
@@ -191,7 +202,7 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
               onError={(event) => {
                 if (event.currentTarget.dataset.fallbackApplied === "true") return;
                 event.currentTarget.dataset.fallbackApplied = "true";
-                event.currentTarget.src = "/static/images/aktueles-logo-160.webp";
+                event.currentTarget.src = "/static/images/beirit-digital-logo-160.webp";
               }}
             />
           </a>
@@ -223,11 +234,16 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
         </div>
       </header>
       <span className="site-nav-splash" aria-hidden="true" />
-      {isMobileMenuOpen ? (
-        <nav id="site-mobile-navigation" ref={mobileMenuPanelRef} className="site-mobile-menu-panel" aria-label="Hauptnavigation">
-          {renderNavigationLinks("site-mobile-menu-panel__link")}
-        </nav>
-      ) : null}
+      <nav
+        id="site-mobile-navigation"
+        ref={mobileMenuPanelRef}
+        className={`site-mobile-menu-panel${isMobileMenuOpen ? " is-open" : ""}`}
+        aria-label="Hauptnavigation"
+        aria-hidden={!isMobileMenuOpen}
+        inert={!isMobileMenuOpen}
+      >
+        {renderNavigationLinks("site-mobile-menu-panel__link")}
+      </nav>
     </>
   );
 
@@ -250,12 +266,12 @@ export function PageShell({ t, activePath, onNavigate, children }) {
   );
 }
 
-export function PageHero({ eyebrow, title, intro }) {
+export function PageHero({ eyebrow, title, intro, centerTitle = false, centerIntro = false }) {
   return (
     <section className="page-hero mx-auto max-w-7xl px-3 pb-8 pt-28 sm:px-8 sm:pb-12 sm:pt-36 lg:px-10 xl:max-w-[92rem] 2xl:max-w-[104rem]">
       {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-      <h1 className="mt-3 max-w-6xl font-display text-4xl leading-tight sm:text-6xl lg:text-7xl xl:max-w-7xl 2xl:max-w-none 2xl:text-8xl">{title}</h1>
-      <p className="mt-5 max-w-3xl text-base leading-8 text-stone-700 sm:text-lg">{intro}</p>
+      <h1 className={`mt-3 max-w-6xl font-display text-4xl leading-tight sm:text-6xl lg:text-7xl xl:max-w-7xl 2xl:max-w-none 2xl:text-8xl${centerTitle ? " mx-auto text-center" : ""}`}>{title}</h1>
+      <p className={`mt-5 max-w-3xl text-base leading-8 text-stone-700 sm:text-lg${centerIntro ? " mx-auto text-center" : ""}`}>{intro}</p>
     </section>
   );
 }

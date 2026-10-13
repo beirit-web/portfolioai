@@ -112,8 +112,44 @@ API-Quellen: [Dokumentation](https://api.inaturalist.org/v1/docs/),
 Die Spendenoberfläche ist im Portfolio ausgeblendet. Alte Spenden- und
 Zahlungsadressen leiten zur Projektübersicht unter `/projekte` weiter.
 
+## Seitentitel und SEO
+
+`seo.py` liefert für Pflanzensammlung, Gießplan, Katalog, Artseiten und Wetter
+eigene Titel und Beschreibungen. Canonical-, Open-Graph- und Twitter-Angaben
+stehen bereits im Server-HTML. Absolute URLs verwenden `SITE_URL`; das lokale
+oder konfigurierte Beispiel wird nicht durch den Host eines Aufrufs ersetzt.
+Die Hauptüberschrift bezeichnet die aktuelle Ansicht; der Markenname ist
+keine zusätzliche Hauptüberschrift.
+
+Die allgemeine Einstiegsseite „Meine Pflanzen“ ist ohne Anmeldung mit
+`index, follow` erreichbar. Sie erklärt die Sammlung und zeigt Anmelden und
+Konto erstellen, ohne persönliche Pflanzen auszugeben. Die angemeldete
+Sammlung, der Gießplan, eigene Pflanzen und das Wettermodul behalten
+`noindex, nofollow`, zusätzlich im HTTP-Header `X-Robots-Tag`.
+Metadaten eigener Pflanzen enthalten keine Kontonamen, Spitznamen, Standorte,
+Notizen oder persönlichen Filterwerte. Der öffentliche Projektbericht unter
+`/projekte/enbt-botanic` bleibt der Einstieg in der Portfolio-Sitemap.
+
+Canonical-URLs der Sammlung und des Plans behalten `tab=plants` beziehungsweise
+`tab=watering`, lassen aber Filter und Trackingparameter weg. Öffentliche
+Suchergebnisse behalten ihren validierten Suchbegriff und ihre Seitenzahl,
+wenn diese vom Standard `Monstera`, Seite 1 abweichen. Artseiten besitzen
+ihre eigene URL. API-Ausfälle, ungültige Formulare und POST-Antworten sind
+von der Indexierung ausgeschlossen.
+
+Backendregressionen: `botanic.test_seo`; Browserregressionen einschließlich
+Ansichten ohne JavaScript von 280 bis 1440 Pixeln:
+`frontend/tests/browser/botanic-seo.spec.cjs`.
+
+```bash
+# server
+.venv/bin/python manage.py test botanic pages.tests.test_portfolio_seo
+# Repository-Stamm
+npm --prefix frontend run test:browser -- botanic-seo.spec.cjs portfolio-seo.spec.cjs weather.spec.cjs
+```
+
 ## Integriertes Wetter
 
 Unter `/botanic/wetter/` ist das Wettermodul über die Botanic-Navigation erreichbar. Die bestehende Wetteroberfläche und `weather-widget.js` werden gemeinsam weiterverwendet: Ortssuche, aktuelle Werte, Regenfenster, Sonnenzeiten, stündlicher Verlauf, 5-Tage-Vorhersage und Luftqualität. Letzte Orte und Cache bleiben im Browser erhalten. Das Modul ist auch ohne Anmeldung nutzbar. Gießtermine werden weiterhin individuell verwaltet.
 
-Die früheren Routen `/wetter` und `/wetter/` leiten dauerhaft zum Modul weiter. Wetter wird im Portfolio als Funktion von ENBT Botanic geführt; die bisherige Projektkarte bleibt unveröffentlicht im internen Datenbestand erhalten. Der Vite-Einstieg `src/botanic-weather.jsx` wird mit `npm --prefix frontend run build` gebaut.
+Die früheren Routen `/wetter` und `/wetter/` leiten dauerhaft zum Modul weiter. Wetter wird im Portfolio als Funktion von ENBT Botanic geführt; die bisherige Projektkarte bleibt unveröffentlicht im internen Datenbestand erhalten. Die Wetteroberfläche steht bereits im serverseitigen HTML; `weather-widget.js` erweitert sie direkt. Die bestehenden Wetterstyles werden mit `npm --prefix frontend run build` gebaut. Die SVG-Symbole stammen weiterhin aus Lucide; der Lizenzhinweis steht im Wetter-Template.

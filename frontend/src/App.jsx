@@ -1,4 +1,4 @@
-import PortfolioFeatureList, { featureIconFor, ReactBrandIcon, DjangoBrandIcon } from "./components/home/portfolio/PortfolioFeatureList";
+import PortfolioFeatureList, { ReactBrandIcon, DjangoBrandIcon } from "./components/home/portfolio/PortfolioFeatureList";
 import PortfolioProjectPage from "./components/projects/PortfolioProjectPage";
 import { publicPageUrl } from "./lib/homeConfig.js";
 import React from "react";
@@ -33,7 +33,6 @@ import {
   Mail,
   MapPinned,
   MessageSquare,
-  MonitorSmartphone,
   PencilLine,
   Quote,
   ServerCog,
@@ -41,7 +40,6 @@ import {
   Star,
   UserRound,
   Workflow,
-  Wrench,
   X,
 } from "lucide-react";
 import Hero from "./components/home/hero/Hero";
@@ -54,19 +52,13 @@ import {
   portfolioSlugFor,
   projectTechnologyTags,
 } from "./components/home/portfolio/portfolioPresentation.mjs";
-import TechnologyIcon from "./components/shared/TechnologyIcon";
+import AboutPage from "./components/about/AboutPage.jsx";
 import TechnologyTags from "./components/shared/TechnologyTags";
 import CardIllustration from "./components/shared/CardIllustration";
 import { TechnicalLabel } from "./components/shared/TechnicalLabel";
 import { activateCardLink } from "./components/shared/cardActivation";
 import { useMediaQuery } from "./hooks/useMediaQuery";
 
-const aboutPortraitUrl = "/static/images/eugenbeirit-360.webp";
-const aboutPortraitSrcSet = [
-  "/static/images/eugenbeirit-360.webp 360w",
-  "/static/images/eugenbeirit-540.webp 540w",
-].join(", ");
-const aboutPortraitFallbackUrl = "/static/images/eugenbeirit.png";
 const LazyContactForm = React.lazy(() => import("./components/contact/ContactForm.jsx"));
 const LazyContactDetails = React.lazy(() => import("./components/contact/ContactDetails.jsx"));
 function WeatherRedirect() {
@@ -420,103 +412,6 @@ function UnderConstructionNote({ t, onNavigate }) {
 }
 
 
-function AboutTechCarousel({ items }) {
-  const carouselRef = React.useRef(null);
-  const [activeIndex, setActiveIndex] = React.useState(0);
-  const [isPaused, setIsPaused] = React.useState(false);
-  const [isInView, setIsInView] = React.useState(false);
-  const activeItem = items[activeIndex] || items[0];
-  const ActiveIcon = featureIconFor(activeItem);
-  const hasMultipleItems = items.length > 1;
-
-  const goToSlide = React.useCallback((index) => {
-    if (!items.length) return;
-    setActiveIndex((index + items.length) % items.length);
-  }, [items.length]);
-
-  const moveSlide = React.useCallback((direction) => {
-    goToSlide(activeIndex + direction);
-  }, [activeIndex, goToSlide]);
-
-  React.useEffect(() => {
-    if (activeIndex <= items.length - 1) return;
-    setActiveIndex(0);
-  }, [activeIndex, items.length]);
-
-  React.useEffect(() => {
-    if (!window.IntersectionObserver) {
-      setIsInView(true);
-      return undefined;
-    }
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsInView(entry.isIntersecting);
-    });
-    if (carouselRef.current) observer.observe(carouselRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  React.useEffect(() => {
-    if (!hasMultipleItems || isPaused || !isInView) return undefined;
-    const intervalId = setInterval(() => {
-      setActiveIndex((currentIndex) => (currentIndex + 1) % items.length);
-    }, 2600);
-    return () => clearInterval(intervalId);
-  }, [hasMultipleItems, isPaused, isInView, items.length]);
-
-  if (!items.length) return null;
-
-  return (
-    <div
-      ref={carouselRef}
-      className="about-tech-carousel"
-      aria-roledescription="carousel"
-      aria-label="Technologien und Werkzeuge"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onFocus={() => setIsPaused(true)}
-      onBlur={() => setIsPaused(false)}
-    >
-      <div className="about-tech-carousel__stage" aria-live="polite" key={activeItem}>
-        <TechnologyIcon label={activeItem} fallback={ActiveIcon} className="about-tech-carousel__icon" />
-        <strong>{activeItem}</strong>
-        <span>{activeIndex + 1} / {items.length}</span>
-      </div>
-      <div className="about-tech-carousel__rail" aria-hidden="true">
-        {items.map((item, index) => {
-          const Icon = featureIconFor(item);
-          return (
-            <div key={item} className={`about-tech-carousel__item${index === activeIndex ? " is-active" : ""}`}>
-              <TechnologyIcon label={item} fallback={Icon} className="about-tech-carousel__item-icon" />
-              <strong>{item}</strong>
-            </div>
-          );
-        })}
-      </div>
-      {hasMultipleItems ? (
-        <div className="about-tech-carousel__controls">
-          <button type="button" className="about-tech-carousel__button" onClick={() => moveSlide(-1)} aria-label="Vorherige Technologie">
-            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-          </button>
-          <div className="about-tech-carousel__dots" aria-label="Technologie auswählen">
-            {items.map((item, index) => (
-              <button
-                key={item}
-                type="button"
-                className={`about-tech-carousel__dot${index === activeIndex ? " is-active" : ""}`}
-                aria-label={`${item} anzeigen`}
-                aria-current={index === activeIndex ? "true" : undefined}
-                onClick={() => goToSlide(index)}
-              />
-            ))}
-          </div>
-          <button type="button" className="about-tech-carousel__button" onClick={() => moveSlide(1)} aria-label="Nächste Technologie">
-            <ArrowRight className="h-5 w-5" aria-hidden="true" />
-          </button>
-        </div>
-      ) : null}
-    </div>
-  );
-}
 
 
 function FaqPageContent({ t, language, onNavigate }) {
@@ -657,7 +552,7 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
     const techDetails = t("home.tech.pointDetails");
     return (
       <>
-        <PageHero title={t("home.services.title")} intro={t("home.services.intro")} />
+        <PageHero title={t("home.services.title")} intro={t("home.services.intro")} centerTitle centerIntro />
         <section className="service-overview-grid mx-auto grid max-w-7xl gap-4 px-3 pb-12 sm:px-8 lg:grid-cols-2 lg:px-10">
           {services.map((service) => {
             return (
@@ -703,151 +598,7 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
   }
 
   if (routeKey === "about") {
-    const aboutContent = {
-      de: {
-        intro: [
-          "Ich bin Eugen und entwickle Webanwendungen, Softwareprojekte und digitale Werkzeuge.",
-          "Dieses Portfolio dokumentiert ausgewählte Projekte, technische Entscheidungen und die dabei gewonnenen Erfahrungen.",
-        ],
-        backgroundTitle: "Beruflicher und technischer Hintergrund",
-        background: [
-          "Meine Grundlage im IT-Bereich ist eine Weiterbildung zum Full-Stack-Webentwickler. Ich arbeite unter anderem mit React, JavaScript, Python und Django und erweitere meine Kenntnisse kontinuierlich, insbesondere in der Python- und Django-Entwicklung.",
-          "Mein Schwerpunkt liegt auf React, JavaScript, Python und Django sowie auf technisch nachvollziehbaren Fullstack-Lösungen.",
-        ],
-        workflowTitle: "Arbeitsweise",
-        workflow: [
-          "Im Mittelpunkt stehen verständliche Absprachen, direkte Kommunikation und eine zuverlässige Umsetzung.",
-          "Bei technischen Projekten lege ich Wert auf nachvollziehbare, wartbare und bedarfsgerechte Lösungen. Statt unnötig komplizierter Funktionen soll eine Lösung das konkrete Problem zuverlässig lösen.",
-        ],
-        techStack: ["Python", "Django", "React", "JavaScript", "Node.js", "Express.js", "MongoDB", "PostgreSQL", "HTML", "CSS", "Bootstrap", "Tailwind CSS"],
-        valuesTitle: "Werte und Vorteile",
-        values: ["persönliche und direkte Kommunikation", "realistische Einschätzung von Aufwand und Möglichkeiten", "verständliche Absprachen", "wartbare technische Lösungen", "responsive Webentwicklung", "individuelle Web- und Softwarelösungen", "deutschlandweite Zusammenarbeit"],
-        hobbyTitle: "Hobby",
-        hobbyEyebrow: "Privat",
-        hobbyVideoTitle: "Mein alter Freund",
-        hobbyVideoText: "Ein persönlicher Einblick abseits der Projektarbeit.",
-        cta: "Projekt oder Termin besprechen",
-      },
-      ru: {
-        intro: "Я Евген и разрабатываю веб-приложения, программные проекты и цифровые инструменты.",
-        backgroundTitle: "Профессиональный и технический фон",
-        background: "Моя основа - обучение на full-stack web developer. В портфолио представлены проекты на React, JavaScript, Python и Django.",
-        workflowTitle: "Формат работы",
-        workflow: "В центре работы - понятные договоренности, поддерживаемые решения и прямое общение без лишних технических терминов.",
-        techStack: ["Python", "Django", "React", "JavaScript", "Node.js", "Express.js", "MongoDB", "PostgreSQL", "HTML", "CSS", "Bootstrap", "Tailwind CSS"],
-        valuesTitle: "Ценности и преимущества",
-        values: ["прямая коммуникация", "реалистичная оценка", "поддерживаемая реализация", "адаптация под устройства", "онлайн-сотрудничество по Германии", "немецкий/русский/украинский для сайтов и software-текстов"],
-        hobbyTitle: "Хобби",
-        hobbyEyebrow: "Личное",
-        hobbyVideoTitle: "Мой старый друг",
-        hobbyVideoText: "Небольшой личный фрагмент вне проектной работы.",
-        cta: "Обсудить проект",
-      },
-      uk: {
-        intro: "Я Євген. Розробляю вебзастосунки, програмні проєкти та цифрові інструменти.",
-        backgroundTitle: "Професійний і технічний досвід",
-        background: "Моя основа в ІТ — навчання на Full-Stack веброзробника. Працюю з React, JavaScript, Python і Django та постійно розширюю свої знання.",
-        workflowTitle: "Як я працюю",
-        workflow: "Зрозумілі домовленості, пряме спілкування та підтримувані технічні рішення допомагають розв'язувати конкретні завдання.",
-        techStack: ["Python", "Django", "React", "JavaScript", "Node.js", "Express.js", "MongoDB", "PostgreSQL", "HTML", "CSS", "Bootstrap", "Tailwind CSS"],
-        valuesTitle: "Принципи роботи",
-        values: ["пряме спілкування", "реалістична оцінка обсягу роботи", "зрозумілі домовленості", "підтримуваний код", "адаптивна веброзробка", "онлайн-співпраця в Німеччині"],
-        hobbyTitle: "Хобі",
-        hobbyEyebrow: "Особисте",
-        hobbyVideoTitle: "Мій старий друг",
-        hobbyVideoText: "Невеликий особистий погляд поза роботою над проєктами.",
-        cta: "Зв'язатися",
-      },
-    }[language];
-    const renderParagraphs = (content) => (
-      Array.isArray(content)
-        ? content.map((paragraph) => <p key={paragraph} className="mt-3">{paragraph}</p>)
-        : <p className="mt-3">{content}</p>
-    );
-    const techStack = [...new Set([
-      ...(aboutContent.techStack || t("home.tech.stack").map((item) => item.label)),
-    ])];
-    const profilePanel = (
-      <aside className="about-profile-panel" aria-label={t("nav.about")}>
-        <div className="about-photo-card">
-          <div className="about-photo-card__placeholder">
-            <div className="about-hero-copy">
-              <h1>{t("home.about.title")}</h1>
-              {Array.isArray(aboutContent.intro)
-                ? aboutContent.intro.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
-                : <p>{aboutContent.intro}</p>}
-            </div>
-          </div>
-          <picture className="about-photo-card__picture">
-            <source
-              type="image/webp"
-              srcSet={aboutPortraitSrcSet}
-              sizes="(min-width: 48rem) 22rem, min(100vw - 2rem, 22rem)"
-            />
-            <img
-              src={aboutPortraitUrl}
-              alt="Eugen Beirit"
-              width="360"
-              height="480"
-              loading="eager"
-              decoding="async"
-              onError={(event) => {
-                if (event.currentTarget.dataset.fallbackApplied === "true") return;
-                event.currentTarget.dataset.fallbackApplied = "true";
-                event.currentTarget.src = aboutPortraitFallbackUrl;
-              }}
-            />
-          </picture>
-          <div className="about-profile-panel__facts">
-            <span><MonitorSmartphone className="h-5 w-5" aria-hidden="true" />Web & Software</span>
-            <span><Code2 className="h-5 w-5" aria-hidden="true" />Webentwicklung</span>
-            <span><Wrench className="h-5 w-5" aria-hidden="true" />Fehlerbehebung</span>
-            <span><Globe2 className="h-5 w-5" aria-hidden="true" />Deutschlandweit</span>
-          </div>
-        </div>
-      </aside>
-    );
-
-    return (
-      <>
-        <section className="about-hero-grid mx-auto max-w-7xl px-3 text-base leading-8 text-stone-700 sm:px-8 sm:text-lg lg:px-10">
-          {profilePanel}
-        </section>
-
-        <section className="about-page-content mx-auto max-w-7xl px-3 pb-12 text-base leading-8 text-stone-700 sm:px-8 sm:text-lg lg:px-10">
-          <div className="about-content-stack about-content-stack--wide">
-            <article className="about-page-card about-page-card--lead">
-              <h2>{aboutContent.backgroundTitle}</h2>
-              {renderParagraphs(aboutContent.background)}
-            </article>
-            <article className="about-page-card">
-              <h2>{aboutContent.workflowTitle}</h2>
-              {renderParagraphs(aboutContent.workflow)}
-            </article>
-            {aboutContent.languageServicesTitle ? (
-              <article className="about-page-card">
-                <h2>{aboutContent.languageServicesTitle}</h2>
-                {renderParagraphs(aboutContent.languageServices)}
-                {aboutContent.languageServiceItems ? (
-                  <ul className="about-language-service-list">
-                    {aboutContent.languageServiceItems.map((item) => (
-                      <li key={item}><CheckCircle2 className="h-5 w-5" aria-hidden="true" />{item}</li>
-                    ))}
-                  </ul>
-                ) : null}
-                {aboutContent.languageServiceNote ? (
-                  <p className="about-language-service-note"><strong>{aboutContent.languageServiceNote}</strong></p>
-                ) : null}
-              </article>
-            ) : null}
-            <article className="about-page-card about-page-card--tech">
-              <h2>{t("home.tech.stackAria")}</h2>
-              <AboutTechCarousel items={techStack} />
-            </article>
-          </div>
-        </section>
-      </>
-    );
+    return <AboutPage t={t} language={language} />;
   }
 
   if (routeKey === "contact") {
@@ -857,6 +608,10 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
     const selectedSubject = selectedProject ? `${subjectPrefix} ${selectedProject}` : "";
     return (
       <section className="contact-section contact-page-section contact-page-section--compact">
+        <header className="contact-page-section__heading">
+          <h1>{t("nav.contact")}</h1>
+          <p>{t("home.contact.intro")}</p>
+        </header>
         <div className="contact-panel">
           <React.Suspense fallback={<div className="contact-form contact-form--loading contact-mobile-stage" aria-hidden="true" />}>
             <LazyContactForm

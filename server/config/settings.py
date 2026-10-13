@@ -1,8 +1,4 @@
-"""
-Production settings example (env-driven, no secrets hardcoded).
-Copy to config/settings.production.py and set
-DJANGO_SETTINGS_MODULE=config.settings.production.
-"""
+"""Local portfolio settings with fictional public sample configuration."""
 
 import json
 import os
@@ -68,7 +64,6 @@ def env_json_contact_list(key: str) -> list[dict[str, str]]:
 
 SERVER_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = SERVER_DIR
-PORTFOLIO_LANGUAGE_DIR = SERVER_DIR.parent / "apps" / "portfolio-demos" / "sprachdienstleistungen"
 
 
 def _has_platform_env() -> bool:
@@ -179,7 +174,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [SERVER_DIR / "templates", PORTFOLIO_LANGUAGE_DIR / "templates" / "modules"],
+        "DIRS": [SERVER_DIR / "templates", SERVER_DIR / "templates" / "modules"],
         "APP_DIRS": True,
         "OPTIONS": {
             "builtins": [
@@ -192,7 +187,6 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "config.context_processors.seo_defaults",
                 "config.context_processors.auth_session_config",
-                "config.context_processors.user_stats",
             ],
         },
     },
@@ -228,22 +222,6 @@ DB_BACKUP_PATH = _ensure_dir(_raw_backup_dir)
 
 # codeX: gesicherter, tokenbasierter SQLite-Export (standardmäßig aus)
 # Support the legacy DB_EXPORT_* names for older environments that still use
-# the previous variable names.
-CODEX_DB_EXPORT_ENABLED = env_bool_first(
-    ["CODEX_DB_EXPORT_ENABLED", "DB_EXPORT_ENABLED"], False
-)
-CODEX_DB_EXPORT_TOKEN = env_first(
-    ["CODEX_DB_EXPORT_TOKEN", "DB_EXPORT_TOKEN"], "")
-CODEX_DB_EXPORT_URL = env_path_fragment(
-    ["CODEX_DB_EXPORT_URL", "DB_EXPORT_URL"], "codex-db-export/"
-)
-CODEX_DB_EXPORT_ONE_SHOT = env_bool_first(
-    ["CODEX_DB_EXPORT_ONE_SHOT", "DB_EXPORT_ONE_SHOT"], True
-)
-if CODEX_DB_EXPORT_ENABLED and not CODEX_DB_EXPORT_TOKEN:
-    raise RuntimeError(
-        "Set CODEX_DB_EXPORT_TOKEN when CODEX_DB_EXPORT_ENABLED=True")
-
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -262,7 +240,6 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     SERVER_DIR / "assets",
-    ("vokabelbox", PORTFOLIO_LANGUAGE_DIR / "assets" / "vokabelbox"),
 ]
 STATIC_ROOT = _ensure_dir(_server_path(
     env_path("STATIC_ROOT", SERVER_DIR / "staticfiles")))

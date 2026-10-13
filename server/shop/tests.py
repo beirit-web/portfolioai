@@ -17,6 +17,7 @@ from django.utils import timezone
 from .forms import CheckoutForm
 from .models import CakeOrder, CakeOrderItem, CakeProduct
 from .services import CART_KEY, save_order
+from .templatetags.shop_ui import _product_images, product_image
 
 
 @override_settings(LOGIN_REQUIRED=False)
@@ -50,6 +51,32 @@ class ShopStorefrontTests(TestCase):
         self.assertContains(response, self.product.ingredients)
         self.assertContains(response, self.product.image_url)
         self.assertContains(response, "39,90 €")
+
+    def test_responsive_image_candidates_exist_and_original_urls_are_preserved(self):
+        images = _product_images()
+        self.assertEqual(len(images), 22)
+        for product in CakeProduct.objects.all():
+            with self.subTest(sku=product.sku):
+                self.assertIn(product.image_url, images)
+                self.assertIn(f'src="{product.image_url}"', product_image(product))
+                for candidate in images[product.image_url]["candidates"]:
+                    self.assertIsNotNone(finders.find(candidate["path"]))
+                    self.assertLessEqual(candidate["width"], images[product.image_url]["width"])
+
+    def test_custom_image_urls_keep_an_escaped_fallback_without_invented_candidates(self):
+        product = SimpleNamespace(image_url='https://images.example.test/cake.jpg?name="cake"', name='<Sample cake>')
+        markup = product_image(product)
+        self.assertIn('src="https://images.example.test/cake.jpg?name=&quot;cake&quot;"', markup)
+        self.assertIn('alt="&lt;Sample cake&gt;"', markup)
+        self.assertNotIn("srcset=", markup)
+
+    def test_catalog_prioritizes_only_the_first_image_and_names_the_visible_action(self):
+        response = self.client.get(reverse("storefront:catalog"))
+        self.assertContains(response, 'fetchpriority="high"', count=1)
+        self.assertContains(response, 'loading="eager"', count=1)
+        self.assertContains(response, 'loading="lazy"', count=21)
+        self.assertContains(response, 'aria-label="Auswählen:')
+        self.assertContains(response, '<meta name="description"')
 
     def test_expanded_catalog_has_fourteen_complete_distinct_products(self):
         seed = import_module("shop.migrations.0003_expand_cake_catalog")

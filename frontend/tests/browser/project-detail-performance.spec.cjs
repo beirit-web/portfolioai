@@ -123,9 +123,9 @@ for (const slug of ["online-shop", "vertragsgenerator", "enbt-botanic", "sprachd
 
 test("filtered report CSS preserves the full cascade at phone, tablet and desktop widths", async ({ page }) => {
   test.setTimeout(90000);
-  const root = path.resolve(__dirname, "../../../server/assets/react-home-dist");
+  const root = path.resolve(__dirname, "../../../server/assets/portfolio-dist");
   const manifest = JSON.parse(fs.readFileSync(path.join(root, ".vite/manifest.json"), "utf8"));
-  const fullCss = ["src/styles.css", "src/homepage-custom.css", "src/responsive-overrides.css"]
+  const fullCss = ["src/site.css"]
     .map(entry => fs.readFileSync(path.join(root, manifest[entry].file), "utf8")).join("\n");
   await page.goto("/projekte/online-shop");
   const style = page.locator('style[data-vite-inline="src/project-detail-page.css"]');

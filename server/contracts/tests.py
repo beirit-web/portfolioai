@@ -62,6 +62,19 @@ class ContractViewTests(TestCase):
         self.assertContains(response, 'name="fin"')
         self.assertContains(response, '"selectedTemplate": "vehicle"')
 
+    def test_initial_markup_has_complete_navigation_and_matching_field_controls(self):
+        for key in TEMPLATES:
+            with self.subTest(template=key):
+                response = self.client.get(reverse("contracts:generator"), {"template": key})
+                self.assertContains(response, 'class="step-button"', count=5)
+                self.assertContains(response, 'class="required-mark"')
+                self.assertContains(response, 'class="field-optional"')
+                self.assertContains(response, 'class="amount-control"')
+                self.assertContains(response, 'rows="2"')
+                sprite = response.context["config"]["iconsUrl"]
+                self.assertIn("?v=", sprite)
+                self.assertContains(response, f'<use href="{sprite}#')
+
     def test_preview_and_download_use_same_server_document_for_all_templates(self):
         for key, definition in TEMPLATES.items():
             with self.subTest(template=key):
