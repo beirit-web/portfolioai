@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -51,6 +52,7 @@ test("reports are complete without JavaScript and native actions remain availabl
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false,
     viewport: isMobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 } });
   try {
+    await blockExternalRequests(context, baseURL);
     const page = await context.newPage();
     await page.goto("/projekte/online-shop");
     await expect(page.locator("[data-project-detail-rendered]")).toHaveCount(1);

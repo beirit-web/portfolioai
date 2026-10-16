@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#dfe7dc">
   <meta name="color-scheme" content="light">
   <title>{{ seo.title }}</title>
   <meta name="description" content="{{ seo.description }}">
@@ -29,10 +29,11 @@
   <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}">
   <link rel="stylesheet" href="{% asset_url 'botanic/style.css' %}">
   <link rel="stylesheet" href="{% asset_url 'css/project-home.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'css/footer-links.css' %}">
   <script src="{% asset_url 'botanic/app.js' %}" defer></script>
   {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="botanic-app">
   <a class="skip-link" href="#main">Zum Inhalt</a>
   <nav class="project-home-nav" aria-label="Projekt"><a href="/projekte/enbt-botanic" aria-label="Zur Startseite von ENBT Botanic">Zur Startseite</a></nav>
   <header class="app-header">
@@ -53,7 +54,7 @@
         <a href="{% url 'botanic:index' %}?tab=watering" {% if tab == 'watering' %}aria-current="page"{% endif %}>{% botanic_icon 'calendar' %}<span>Gießplan</span>{% if due_count %}<small class="due-count">{{ due_count }}</small>{% endif %}</a>
         <a href="{% url 'botanic:weather' %}" {% if tab == 'weather' %}aria-current="page"{% endif %}>{% botanic_icon 'weather' %}<span>Wetter</span></a>
       </nav>
-      <div class="nav-footer"><a href="/projekte">Beirit Digital{% botanic_icon 'arrow' %}</a><a href="/datenschutz">Datenschutz</a></div>
+      <div class="nav-footer site-footer"><a class="footer-link" href="/projekte">Beirit Web{% botanic_icon 'arrow' %}</a><a class="footer-link" href="/datenschutz">Datenschutz</a></div>
     </aside>
     <main id="main" tabindex="-1">
       {% if messages %}<div class="messages" aria-live="polite">{% for message in messages %}<p class="message message--{{ message.tags }}" {% if message.tags == 'error' %}role="alert"{% endif %}>{% if message.tags == 'error' %}{% botanic_icon 'alert' %}{% else %}{% botanic_icon 'check' %}{% endif %}{{ message }}</p>{% endfor %}</div>{% endif %}

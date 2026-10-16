@@ -1,0 +1,61 @@
+{% load botanic_ui %}
+<form method="get" class="search-form" role="search">
+  <input type="hidden" name="tab" value="search">
+  <label class="search-field"><span class="sr-only">{{ search_form.q.label }}</span>{% botanic_icon 'search' %}{{ search_form.q }}</label>
+  <button class="button button--primary" type="submit">Suchen{% botanic_icon 'next' %}</button>
+</form>
+{% if search_form.errors %}
+  <div class="form-errors" role="alert">
+    {{ search_form.q.errors }}{{ search_form.page.errors }}
+  </div>
+{% endif %}
+<div class="quick-searches" aria-label="Pflanzensuchen">
+  <a href="?tab=search&amp;q=Monstera">Monstera</a>
+  <a href="?tab=search&amp;q=Pilea">Pilea</a>
+  <a href="?tab=search&amp;q=Ficus">Ficus</a>
+  <a href="?tab=search&amp;q=Lavendel">Lavendel</a>
+</div>
+{% if api_error %}
+  <div class="empty-state error-state" role="alert">
+    {% botanic_icon 'alert' %}
+    <h2>Suche gerade nicht verfügbar</h2>
+    <p>{{ api_error }}</p>
+    <a class="button button--secondary" href="?tab=search&amp;q={{ query|urlencode }}">Erneut versuchen</a>
+  </div>
+{% elif results %}
+  <div class="results-heading">
+    <h2>Ergebnisse für „{{ query }}“</h2>
+    <span>{{ total }} Arten</span>
+  </div>
+  <div class="plant-grid">
+    {% for species in results %}
+      <article class="species-card">
+        <a class="species-link" href="{% url 'botanic:species' species.pk %}">{% include 'botanic/photo.html' %}
+          <div class="species-body">
+            <h3>{{ species.name }}</h3>
+            <p class="scientific">{{ species.scientific_name }}</p>
+            <span class="card-action">Ansehen{% botanic_icon 'arrow' %}</span>
+          </div>
+        </a>
+        {% include 'botanic/photo_credit.html' %}
+      </article>
+    {% endfor %}
+  </div>
+  {% if has_previous or has_next %}
+    <nav class="pagination" aria-label="Suchergebnisse">
+      {% if has_previous %}
+        <a class="button button--secondary" href="{{ previous_url }}">{% botanic_icon 'previous' %}Zurück</a>
+      {% endif %}
+      <span>Seite {{ page_number }}</span>
+      {% if has_next %}
+        <a class="button button--secondary" href="{{ next_url }}">Weiter{% botanic_icon 'next' %}</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% elif not search_form.errors %}
+  <div class="empty-state">
+    {% botanic_icon 'search' %}
+    <h2>Keine Pflanzen gefunden</h2>
+    <p>Kein Treffer für „{{ query }}“.</p>
+  </div>
+{% endif %}

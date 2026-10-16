@@ -3,6 +3,7 @@ from datetime import date, time, timedelta
 from urllib.parse import urlparse
 from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib.messages import get_messages
 from django.contrib.auth.models import User
 from django.core.cache import cache
@@ -155,7 +156,10 @@ class ImprintPageTests(TestCase):
 
 
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+@override_settings(STORAGES={
+    **settings.STORAGES,
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+})
 class WeatherPageTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -402,7 +406,10 @@ class ChatContactDisplayTests(TestCase):
 
 
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+@override_settings(STORAGES={
+    **settings.STORAGES,
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+})
 class SeoSignalTests(TestCase):
     @override_settings(SITE_URL="https://portfolio.example.invalid", LOGIN_REQUIRED=False)
     def test_homepage_uses_configured_portfolio_domain_for_canonical_and_open_graph(self):
@@ -506,7 +513,10 @@ class SeoSignalTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
-@override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
+@override_settings(STORAGES={
+    **settings.STORAGES,
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+})
 class LegacyHostRedirectTests(TestCase):
     @override_settings(
         SITE_URL="https://portfolio.example.invalid",
@@ -884,7 +894,10 @@ class ProfilePageTests(TestCase):
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
     DEFAULT_FROM_EMAIL="noreply@example.com",
     SITE_URL="https://portfolio.example.invalid",
-    STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage",
+    STORAGES={
+        **settings.STORAGES,
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    },
 )
 class RegistrationVerificationTests(TestCase):
     def test_register_creates_inactive_user_and_sends_verification_mail(self):

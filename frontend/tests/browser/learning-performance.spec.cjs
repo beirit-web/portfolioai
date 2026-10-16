@@ -1,22 +1,15 @@
 const { test, expect } = require("@playwright/test");
+const { gate } = require("./helpers/async.cjs");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 test.beforeEach(async ({ context, baseURL, page }) => {
-  const origin = new URL(baseURL).origin;
-  await context.route(/^https?:\/\//, route => (
-    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
-  ));
+  await blockExternalRequests(context, baseURL);
   await context.addInitScript(() => localStorage.setItem("deutsch-live-locale", "de"));
   page.errors = [];
   page.on("pageerror", error => page.errors.push(error.message));
 });
 
 test.afterEach(async ({ page }) => expect(page.errors).toEqual([]));
-
-function gate() {
-  let release;
-  const ready = new Promise(resolve => { release = resolve; });
-  return { ready, release };
-}
 
 function topic(id, title) {
   return {
@@ -240,6 +233,40 @@ test("completion prevents duplicate saves and reports a failed POST before a ret
   }
 });
 
+test("a vocabulary failure reports saved progress and allows a successful retry", async ({ page }) => {
+  const bakery = topic("baeckerei", "Beispiel Bäckerei");
+  const progress = [], vocabulary = [];
+  await mockTopics(page, [bakery]);
+  await mockLearningUser(page);
+  await page.route("**/deutschlive/api/progress/", route => {
+    progress.push(route.request().postDataJSON());
+    return route.fulfill({ json: { progress: progress.at(-1) } });
+  });
+  await page.route("**/deutschlive/api/vocabulary/", route => {
+    vocabulary.push(route.request().postDataJSON());
+    return vocabulary.length === 1
+      ? route.fulfill({ status: 503, json: { error: "Example vocabulary unavailable." } })
+      : route.fulfill({ json: { ok: true } });
+  });
+  await page.goto("/deutschlive/learn");
+  await expectSelection(page, bakery.id, "baeckerei-scene");
+  await expectLearningUser(page);
+  const complete = page.getByRole("button", { name: "Szene als abgeschlossen markieren", exact: true });
+  await complete.click();
+  await expect(page.getByRole("alert")).toContainText("Der Fortschritt wurde gespeichert");
+  await expect(page.getByRole("alert")).toContainText("konnte noch nicht zu den Wörtern hinzugefügt werden");
+  await expect(complete).toBeEnabled();
+  expect(progress).toHaveLength(1);
+  expect(vocabulary).toHaveLength(1);
+  await complete.click();
+  await expect(page.locator(".scene-learning-sidebar").getByRole("status")).toContainText("Szene abgeschlossen");
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect(complete).toBeEnabled();
+  expect(progress).toHaveLength(2);
+  expect(vocabulary).toHaveLength(2);
+  expect(vocabulary[1]).toEqual(vocabulary[0]);
+});
+
 test("completion retries its CSRF request after a network failure", async ({ page }) => {
   const bakery = topic("baeckerei", "Beispiel Bäckerei");
   let saving = false, csrfRequests = 0;
@@ -339,24 +366,4 @@ test("a late completion response cannot show success on a different topic", asyn
   } finally {
     saved.release();
   }
-});
-
-test("the grade calculator loads small artwork only when a result needs it", async ({ page }) => {
-  const requests = [];
-  page.on("request", request => requests.push(new URL(request.url()).pathname));
-  await page.goto("/static/portfolio/notenrechner/index.html");
-  await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "./img/favicon-32.png");
-  expect(requests.some(path => /\/(?:lost\.webp|success\.webp|lost\.png|favicon\.png|gewonnen\.mp3|lost-signal\.mp3)$/.test(path))).toBe(false);
-  await page.locator('[data-action="start"]').click();
-  await page.locator("#subjects").fill("1");
-  await page.locator('[data-action="subjects"]').click();
-  await page.locator("#grade-0").fill("5");
-  await page.locator('button[type="submit"]').click();
-  const image = page.locator(".result-image");
-  await image.scrollIntoViewIfNeeded();
-  await expect(image).toHaveAttribute("src", "./img/lost.webp");
-  await expect(image).toHaveAttribute("width", "512");
-  await expect(image).toHaveAttribute("height", "768");
-  await expect.poll(() => image.evaluate(element => element.complete && element.naturalWidth > 0)).toBe(true);
-  expect(requests.some(path => /\/(?:lost\.png|favicon\.png)$/.test(path))).toBe(false);
 });

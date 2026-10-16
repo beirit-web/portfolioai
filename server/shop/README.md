@@ -7,13 +7,8 @@ Storefront verwendet Django-Templates und kein React-Fallback-Sortiment.
 
 ## Lokal starten
 
-Im Verzeichnis `server`:
-
-```bash
-.venv/bin/python manage.py migrate
-.venv/bin/python manage.py check
-.venv/bin/python manage.py runserver 127.0.0.1:8000
-```
+Installation und gemeinsamer Serverstart stehen in der
+[Hauptanleitung](../../README.md#lokal-starten).
 
 Aufruf: <http://localhost:8000/shop/>. Produkte und Anfragen werden ueber den
 bestehenden Django-Admin gepflegt. Die erste Shop-Migration legt acht
@@ -100,17 +95,17 @@ Neue Anfrage: HTTP 201. Autorisierte Wiederholung: HTTP 200 mit gleicher Nummer.
 Validierungsfehler: HTTP 400. Der Schluessel ist nach erfolgreicher Speicherung
 verbraucht; fuer eine neue Anfrage erneut den Produktkatalog abrufen.
 
-## Pruefen und veroeffentlichen
+## Pruefungen und Werkzeuge
+
+Der [gemeinsame Prüflauf](../../docs/checks.md) beschreibt die regulären
+Prüfgruppen. Für die gezielte Backendprüfung und den optionalen Shop-Browsercheck:
 
 ```bash
 # server
 .venv/bin/python manage.py test shop botanic contracts pages.tests.test_projects
-.venv/bin/python manage.py makemigrations --check --dry-run
 
 # frontend, bei laufendem lokalem Django-Server
 node scripts/check-shop.cjs
-npm run check:i18n
-npm run build
 ```
 
 Der Browsercheck prueft Gastanfrage, Login, Historie, Mengen, Lieferadresse,
@@ -121,14 +116,18 @@ geprueft, einschliesslich QHD und 4K.
 Das Sortiment erweitert ab 1600 Pixeln seine
 Arbeitsflaeche; Full HD nutzt fuenf, QHD sechs und 4K acht Kartenspalten.
 Warenkorb und Formulare behalten ihre kompakte Breite.
-Screenshots: `/tmp/shop-check`. Optional: `SHOP_BASE_URL`, `SHOP_SCREENSHOT_DIR`.
+Screenshots: `runtime/shop-checks/screenshots/` ab Repository-Stamm.
+Optional: `SHOP_BASE_URL` für einen lokalen HTTP(S)-Ursprung und
+`SHOP_SCREENSHOT_DIR` für einen anderen Ausgabeordner setzen. Relative
+Ausgabepfade beziehen sich auf den Repository-Stamm.
 Nur gegen eine lokale Entwicklungsdatenbank verwenden. Testkonto und Testanfragen
 werden beim Abschluss entfernt; hartes Prozessabbrechen kann Reste hinterlassen.
 Vorhandene Produkte werden dabei nicht veraendert.
 
-Deployment: Migrationen anwenden, Frontend bauen, `collectstatic` ausfuehren und
-Django neu starten. Kein neuer API-Schluessel und keine neue Python-Abhaengigkeit.
-`build-shop-icons.cjs` erzeugt den eingecheckten Lucide-Sprite bei Icon-Aenderungen.
+`build-shop-icons.cjs` erzeugt aus `frontend/` den eingecheckten Lucide-Sprite
+bei Icon-Aenderungen. Die gemeinsamen
+[Frontend-Builds](../../docs/architecture.md#vom-quellcode-zur-ausgelieferten-seite)
+sind in der Architektur beschrieben.
 
 ## Grenzen
 

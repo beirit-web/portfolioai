@@ -1,10 +1,8 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 test.beforeEach(async ({ context, baseURL }) => {
-  const origin = new URL(baseURL).origin;
-  await context.route(/^https?:\/\//, route => (
-    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
-  ));
+  await blockExternalRequests(context, baseURL);
 });
 
 test("project overview shows technology logos and the independent grade calculator", async ({ page }) => {

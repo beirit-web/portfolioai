@@ -1,23 +1,14 @@
-const { test, expect } = require("@playwright/test");
+const { test: base, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 const fs = require("node:fs");
-const nodePath = require("node:path");
+const { wavFile } = require("./helpers/audio.cjs");
 
-function wavFile(name = "Meine Deutschübung.wav") {
-  const sampleRate = 8000, frames = sampleRate * 2;
-  const buffer = Buffer.alloc(44 + frames * 2);
-  buffer.write("RIFF", 0); buffer.writeUInt32LE(buffer.length - 8, 4); buffer.write("WAVEfmt ", 8);
-  buffer.writeUInt32LE(16, 16); buffer.writeUInt16LE(1, 20); buffer.writeUInt16LE(1, 22);
-  buffer.writeUInt32LE(sampleRate, 24); buffer.writeUInt32LE(sampleRate * 2, 28);
-  buffer.writeUInt16LE(2, 32); buffer.writeUInt16LE(16, 34); buffer.write("data", 36);
-  buffer.writeUInt32LE(frames * 2, 40);
-  for (let frame = 0; frame < frames; frame++) buffer.writeInt16LE(Math.round(1000 * Math.sin(frame * Math.PI * 2 * 440 / sampleRate)), 44 + frame * 2);
-  return { name, mimeType: "audio/wav", buffer };
-}
+const test = base.extend({ recordingLocale: ["de", { option: true }] });
 
-test.beforeEach(async ({ context, page }) => {
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+test.beforeEach(async ({ context, page, baseURL, recordingLocale }) => {
+  await blockExternalRequests(context, baseURL);
   await page.route("**/api/session/activity/", route => route.fulfill({ json: { authenticated: true } }));
-  await context.addInitScript(() => localStorage.setItem("deutsch-live-locale", "de"));
+  await context.addInitScript(locale => localStorage.setItem("deutsch-live-locale", locale), recordingLocale);
   await page.route("**/deutschlive/api/auth/me/", route => route.fulfill({ json: { user: null } }));
   page.errors = [];
   page.on("pageerror", error => page.errors.push(error.message));
@@ -62,10 +53,8 @@ test("local audio persists, plays, changes speed and downloads without any uploa
     expect(control.width).toBeGreaterThanOrEqual(44);
     expect(control.height).toBeGreaterThanOrEqual(44);
   }
-  const previews = nodePath.resolve(__dirname, "../../../runtime/browser-checks/previews");
-  fs.mkdirSync(previews, { recursive: true });
   await testInfo.attach("local-recordings", { body: await page.screenshot({
-    path: nodePath.join(previews, `${testInfo.project.name}-local-recordings.png`), fullPage: true,
+    path: testInfo.outputPath(`${testInfo.project.name}-local-recordings.png`), fullPage: true,
   }), contentType: "image/png" });
   const previousAudio = await page.locator("audio").evaluateHandle(audio => audio);
   await page.locator("audio").evaluate(audio => { audio.muted = true; return audio.play(); });
@@ -130,11 +119,49 @@ test("unavailable local storage shows an actionable error", async ({ context, pa
   await expect(page.locator("#recording-files")).toBeDisabled();
 });
 
-test("Russian interface and old player URL open the integrated module", async ({ context, page }) => {
-  await page.route("**/api/session/activity/", route => route.fulfill({ json: { authenticated: true } }));
-  await context.addInitScript(() => localStorage.setItem("deutsch-live-locale", "ru"));
-  await page.goto("/deutschLive/recordings");
-  await expect(page).toHaveURL(/\/deutschlive\/recordings$/);
-  await expect(page.getByRole("heading", { name: "Мои записи", exact: true })).toBeVisible();
-  await expect(page.getByText("Записи остаются в этом браузере", { exact: false })).toBeVisible();
+for (const operation of ["add", "delete"]) {
+  test(`an aborted recording ${operation} leaves the collection intact and can be retried`, async ({ page }) => {
+    await openPlayer(page);
+    await page.locator("#recording-files").setInputFiles(wavFile("Vorhandene Aufnahme.wav"));
+    await expect(page.locator(".recording-player h3")).toHaveText("Vorhandene Aufnahme");
+    await page.evaluate(operation => {
+      const original = IDBObjectStore.prototype[operation];
+      IDBObjectStore.prototype[operation] = function (...args) {
+        const request = original.apply(this, args);
+        IDBObjectStore.prototype[operation] = original;
+        this.transaction.abort();
+        return request;
+      };
+    }, operation);
+    const remove = page.getByRole("button", { name: "Aus der Sammlung entfernen: Vorhandene Aufnahme", exact: true });
+    if (operation === "add") await page.locator("#recording-files").setInputFiles(wavFile("Neue Aufnahme.wav"));
+    else await remove.click();
+    await expect(page.getByRole("alert")).toBeVisible();
+    await expect(page.locator(".recording-library__list li")).toHaveCount(1);
+    await expect(page.locator(".recording-player h3")).toHaveText("Vorhandene Aufnahme");
+    await expect(page.locator("#recording-files")).toBeEnabled();
+    await expect(remove).toBeEnabled();
+    if (operation === "add") {
+      await page.locator("#recording-files").setInputFiles(wavFile("Neue Aufnahme.wav"));
+      await expect(page.locator(".recording-library__list li")).toHaveCount(2);
+    } else {
+      await remove.click();
+      await expect(page.locator(".recording-library__list li")).toHaveCount(0);
+    }
+    await expect(page.getByRole("alert")).toHaveCount(0);
+    await page.reload();
+    await expect(page.locator("#recording-files")).toBeEnabled();
+    await expect(page.locator(".recording-library__list li")).toHaveCount(operation === "add" ? 2 : 0);
+  });
+}
+
+test.describe("Russian recordings", () => {
+  test.use({ recordingLocale: "ru" });
+
+  test("Russian interface and old player URL open the integrated module", async ({ page }) => {
+    await page.goto("/deutschLive/recordings");
+    await expect(page).toHaveURL(/\/deutschlive\/recordings$/);
+    await expect(page.getByRole("heading", { name: "Мои записи", exact: true })).toBeVisible();
+    await expect(page.getByText("Записи остаются в этом браузере", { exact: false })).toBeVisible();
+  });
 });

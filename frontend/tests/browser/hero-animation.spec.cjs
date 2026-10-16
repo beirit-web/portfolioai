@@ -1,12 +1,10 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 test.use({ reducedMotion: "no-preference" });
 
 test.beforeEach(async ({ context, page, baseURL }) => {
-  const origin = new URL(baseURL).origin;
-  await context.route(/^https?:\/\//, route => (
-    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
-  ));
+  await blockExternalRequests(context, baseURL);
   page.browserErrors = [];
   page.on("pageerror", error => page.browserErrors.push(error.message));
   page.on("console", message => {
@@ -38,6 +36,8 @@ test("initial page load does not request Three.js before interaction", async ({ 
 });
 
 test("hero renders moving cubes on desktop and touch devices", async ({ page }, testInfo) => {
+  // Parallel software WebGL rendering can make each browser round trip take seconds.
+  test.setTimeout(90000);
   await page.addInitScript(() => {
     const draw = WebGL2RenderingContext.prototype.drawElementsInstanced;
     WebGL2RenderingContext.prototype.drawElementsInstanced = function (...args) {
@@ -52,9 +52,9 @@ test("hero renders moving cubes on desktop and touch devices", async ({ page }, 
   await expect(canvas).toBeVisible();
   await expect(canvas).not.toHaveAttribute("data-wave-grid-error", "true");
   const frameCount = () => canvas.evaluate(element => Number(element.dataset.renderedFrames || 0));
-  await expect.poll(frameCount).toBeGreaterThan(0);
+  await expect.poll(frameCount, { timeout: 20000 }).toBeGreaterThan(0);
   const initialFrame = await frameCount();
-  await expect.poll(frameCount).toBeGreaterThan(initialFrame);
+  await expect.poll(frameCount, { timeout: 20000 }).toBeGreaterThan(initialFrame);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
@@ -66,7 +66,7 @@ test("hero renders moving cubes on desktop and touch devices", async ({ page }, 
   await page.waitForTimeout(300);
   expect(await frameCount()).toBe(pausedFrame);
   await page.evaluate(() => window.scrollTo(0, 0));
-  await expect.poll(frameCount).toBeGreaterThan(pausedFrame);
+  await expect.poll(frameCount, { timeout: 20000 }).toBeGreaterThan(pausedFrame);
 });
 
 test("hardware and connection estimates use an animation instead of hiding it", async ({ page }) => {

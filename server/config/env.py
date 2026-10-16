@@ -44,21 +44,23 @@ def env_list(
     """
     raw = env(key, "")
     if raw:
-        return [item.strip() for item in raw.split(separator) if item.strip()]
+        values = [item.strip() for item in raw.split(separator) if item.strip()]
+        if values:
+            return values
     return list(default or [])
 
 
 def env_path(key: str, default: Path) -> Path:
     """Read a filesystem path; falls back to a default Path."""
-    raw = env(key)
+    raw = (env(key) or "").strip()
     return Path(raw).expanduser() if raw else Path(default)
 
 
 def env_first(keys: Iterable[str], default: str | None = None) -> str | None:
-    """Return the first non-empty environment value for the given keys."""
+    """Return the first nonblank value without stripping meaningful whitespace."""
     for key in keys:
         value = env(key)
-        if value not in (None, ""):
+        if value is not None and value.strip():
             return value
     return default
 
@@ -66,7 +68,8 @@ def env_first(keys: Iterable[str], default: str | None = None) -> str | None:
 def env_bool_first(keys: Iterable[str], default: bool = False) -> bool:
     """Read the first defined boolean value from multiple environment keys."""
     for key in keys:
-        if env(key) not in (None, ""):
+        value = env(key)
+        if value is not None and value.strip():
             return env_bool(key, default)
     return default
 
@@ -103,10 +106,12 @@ def require_env_list(keys: Iterable[str]) -> list[str]:
 def clean_path_fragment(raw_value: str, default: str) -> str:
     """
     Normalize URL path fragments coming from env.
-    Strips leading slashes and ensures a single trailing slash.
+    Strips outer whitespace/slashes and ensures a single trailing slash.
     """
-    value = (raw_value or default).lstrip("/")
-    return value if value.endswith("/") else value + "/"
+    value = ((raw_value or "").strip() or default.strip()).strip("/")
+    if not value:
+        raise RuntimeError("URL path fragments must contain a nonempty path")
+    return value + "/"
 
 
 def env_path_fragment(
@@ -114,7 +119,7 @@ def env_path_fragment(
 ) -> str:
     """Load and normalize a path fragment from the first available env key."""
     keys = tuple(keys)
-    value = env_first(keys, default) or default
-    if require_present and value == default:
+    value = env_first(keys)
+    if require_present and value is None:
         raise RuntimeError(f"Set {' or '.join(keys)} in .env for production")
-    return clean_path_fragment(value, default)
+    return clean_path_fragment(value or default, default)

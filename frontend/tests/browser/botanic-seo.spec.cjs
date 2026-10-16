@@ -1,30 +1,10 @@
 const { test, expect } = require("@playwright/test");
+const { readMetadata } = require("./helpers/metadata.cjs");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 test.beforeEach(async ({ context, baseURL }) => {
-  const origin = new URL(baseURL).origin;
-  await context.route(/^https?:\/\//, route => (
-    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
-  ));
+  await blockExternalRequests(context, baseURL);
 });
-
-async function metadata(page, source) {
-  return page.evaluate(html => {
-    const doc = html ? new DOMParser().parseFromString(html, "text/html") : document;
-    const content = selector => doc.querySelector(selector)?.getAttribute("content");
-    return {
-      title: doc.title,
-      description: content('meta[name="description"]'),
-      robots: content('meta[name="robots"]'),
-      canonical: doc.querySelector('link[rel="canonical"]')?.getAttribute("href"),
-      ogTitle: content('meta[property="og:title"]'),
-      ogDescription: content('meta[property="og:description"]'),
-      ogUrl: content('meta[property="og:url"]'),
-      twitterTitle: content('meta[name="twitter:title"]'),
-      twitterDescription: content('meta[name="twitter:description"]'),
-      twitterUrl: content('meta[name="twitter:url"]'),
-    };
-  }, source);
-}
 
 test("guest collection is indexable in server HTML and excludes private filters", async ({ page, baseURL }) => {
   const errors = [];
@@ -34,8 +14,8 @@ test("guest collection is indexable in server HTML and excludes private filters"
   expect(response.headers()["x-robots-tag"]).toBe("index, follow");
   const source = await response.text();
   expect(source).not.toMatch(/PrivaterFilter|PrivaterStandort/);
-  const server = await metadata(page, source);
-  const live = await metadata(page);
+  const server = await readMetadata(page, source);
+  const live = await readMetadata(page);
   expect(live).toEqual(server);
   expect(live.title).toBe("Meine Pflanzen | ENBT Botanic | Beirit Digital");
   expect(live.description).toContain("Pflanzensammlung");
@@ -58,6 +38,7 @@ test("guest collection is indexable in server HTML and excludes private filters"
 test("collection and watering headings and navigation work without JavaScript at narrow widths", async ({ browser, baseURL }, testInfo) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
+    await blockExternalRequests(context, baseURL);
     const page = await context.newPage();
     await page.goto(`${baseURL}/botanic/?tab=plants`);
     for (const width of [280, 390, 768, 1440]) {

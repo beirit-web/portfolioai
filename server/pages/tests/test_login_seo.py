@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -11,7 +12,10 @@ from .test_portfolio_seo import PortfolioDocument
     SITE_URL="https://portfolio.example.invalid/",
     LOGIN_REQUIRED=False,
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
-    STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage",
+    STORAGES={
+        **settings.STORAGES,
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    },
 )
 class LoginSeoTests(TestCase):
     canonical = "https://portfolio.example.invalid/login/"

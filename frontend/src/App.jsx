@@ -1,5 +1,4 @@
 import PortfolioFeatureList, { ReactBrandIcon, DjangoBrandIcon } from "./components/home/portfolio/PortfolioFeatureList";
-import PortfolioProjectPage from "./components/projects/PortfolioProjectPage";
 import { publicPageUrl } from "./lib/homeConfig.js";
 import React from "react";
 import { useI18n } from "./i18n/useI18n.js";
@@ -7,60 +6,22 @@ import { useDocumentMeta, useDocumentStateClasses } from "./hooks/useDocumentSta
 import { usePortfolioProjects } from "./hooks/usePortfolioProjects.js";
 import { appRoutes, navigateToAppPath, projectLiveHref, scrollToHashTarget, useBrowserPath } from "./lib/appNavigation.js";
 import { PageFooter, PageHero, PageShell, SiteHeader } from "./components/shared/PageShell.jsx";
-import { ProjectsOverviewPage } from "./components/projects/ProjectsOverviewPage.jsx";
 import { languageServicesCaseStudy } from "./components/home/portfolio/languageServicesCaseStudy.mjs";
-import {
-  ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  Braces,
-  Bug,
-  Cable,
-  CheckCircle2,
-  Code2,
-  Component,
-  Container,
-  Cpu,
-  Database,
-  FileText,
-  GitBranch,
-  Globe2,
-  Handshake,
-  HelpCircle,
-  Image,
-  Layers3,
-  LayoutTemplate,
-  Mail,
-  MapPinned,
-  MessageSquare,
-  PencilLine,
-  Quote,
-  ServerCog,
-  ShieldCheck,
-  Star,
-  UserRound,
-  Workflow,
-  X,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Braces, Bug, Cable, Code2, Component, Container, Cpu, Database, FileText, GitBranch, Globe2, Handshake, Image, Layers3, LayoutTemplate, Mail, MapPinned, MessageSquare, PencilLine, Quote, ServerCog, ShieldCheck, Star, UserRound, Workflow } from "lucide-react";
 import Hero from "./components/home/hero/Hero";
 import PortfolioProjectCard from "./components/home/portfolio/PortfolioProjectCard";
 import { usePortfolioStageHeight } from "./components/home/portfolio/usePortfolioStageHeight";
-import {
-  featureLabel,
-  isProjectPublished,
-  portfolioProjectPath,
-  portfolioSlugFor,
-  projectTechnologyTags,
-} from "./components/home/portfolio/portfolioPresentation.mjs";
-import AboutPage from "./components/about/AboutPage.jsx";
-import TechnologyTags from "./components/shared/TechnologyTags";
+import { isProjectPublished, portfolioSlugFor } from "./components/home/portfolio/portfolioPresentation.mjs";
+
 import CardIllustration from "./components/shared/CardIllustration";
-import { TechnicalLabel } from "./components/shared/TechnicalLabel";
-import { activateCardLink } from "./components/shared/cardActivation";
-import { useMediaQuery } from "./hooks/useMediaQuery";
+
 
 const LazyContactForm = React.lazy(() => import("./components/contact/ContactForm.jsx"));
 const LazyContactDetails = React.lazy(() => import("./components/contact/ContactDetails.jsx"));
+const PortfolioProjectPage = React.lazy(() => import("./components/projects/PortfolioProjectPage.jsx"));
+const ProjectsOverviewPage = React.lazy(() => import("./components/projects/ProjectsOverviewPage.jsx")
+  .then(module => ({ default: module.ProjectsOverviewPage })));
+const AboutPage = React.lazy(() => import("./components/about/AboutPage.jsx"));
 function WeatherRedirect() {
   React.useEffect(() => {
     window.location.replace(publicPageUrl("/botanic/wetter/"));
@@ -100,45 +61,6 @@ const iconMap = {
 
 function iconFor(name, fallback = LayoutTemplate) {
   return iconMap[name] || fallback;
-}
-
-
-function useDeferredPortfolioFetch(isHomeRoute = false) {
-  const [shouldFetchPortfolio, setShouldFetchPortfolio] = React.useState(!isHomeRoute);
-
-  React.useEffect(() => {
-    if (!isHomeRoute || shouldFetchPortfolio || typeof window === "undefined") return undefined;
-
-    const revealPortfolioData = () => {
-      setShouldFetchPortfolio(true);
-    };
-
-    if (window.location.hash === "#referenzen") {
-      revealPortfolioData();
-      return undefined;
-    }
-
-    const timeoutId = setTimeout(revealPortfolioData, 6500);
-    const onScrollNearPortfolio = () => {
-      const target = document.getElementById("referenzen");
-      if (!target) return;
-      const preloadDistance = window.innerHeight * 1.8;
-      if (target.getBoundingClientRect().top <= preloadDistance) {
-        revealPortfolioData();
-      }
-    };
-
-    window.addEventListener("hashchange", revealPortfolioData, { once: true });
-    window.addEventListener("scroll", onScrollNearPortfolio, { passive: true });
-
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener("hashchange", revealPortfolioData);
-      window.removeEventListener("scroll", onScrollNearPortfolio);
-    };
-  }, [isHomeRoute, shouldFetchPortfolio]);
-
-  return shouldFetchPortfolio;
 }
 
 
@@ -228,83 +150,6 @@ function useDeferredHomeSections() {
 }
 
 
-function HeroTrustStrip({ t, language }) {
-  const trustBadges = t("home.hero.trustBadges");
-
-  return (
-    <section className="hero-trust-strip" aria-label={t("home.hero.trustAria")}>
-      <ul className="hero-trust-strip__inner">
-        {trustBadges.map((badge) => (
-          <li key={badge} className="hero-trust-strip__badge">
-            <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-            <TechnicalLabel language={language}>{badge}</TechnicalLabel>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-function BeforeAfterSection({ t }) {
-  const beforeItems = t("home.beforeAfter.before.items");
-  const afterItems = t("home.beforeAfter.after.items");
-
-  return (
-    <section className="before-after-section" {...revealProps("up", 0, 620, "0.8rem")}>
-      <div className="before-after-section__inner">
-        <header className="before-after-section__heading">
-          <h2>{t("home.beforeAfter.title")}</h2>
-          <p>{t("home.beforeAfter.intro")}</p>
-        </header>
-        <div className="before-after-grid" aria-label={t("home.beforeAfter.aria")}>
-          <article className="before-after-card before-after-card--before" {...revealProps("left", 80, 560, "0.7rem")}>
-            <h3>{t("home.beforeAfter.before.title")}</h3>
-            <ul>
-              {beforeItems.map((item) => (
-                <li key={item}><X className="h-5 w-5" aria-hidden="true" />{item}</li>
-              ))}
-            </ul>
-          </article>
-          <article className="before-after-card before-after-card--after" {...revealProps("right", 120, 560, "0.7rem")}>
-            <h3>{t("home.beforeAfter.after.title")}</h3>
-            <ul>
-              {afterItems.map((item) => (
-                <li key={item}><CheckCircle2 className="h-5 w-5" aria-hidden="true" />{item}</li>
-              ))}
-            </ul>
-          </article>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function SolutionsSection({ t }) {
-  const items = t("home.solutions.items");
-
-  return (
-    <section className="solutions-section" {...revealProps("up", 0, 620, "0.8rem")}>
-      <div className="solutions-section__inner">
-        <header className="solutions-section__heading">
-          <h2>{t("home.solutions.title")}</h2>
-          <p>{t("home.solutions.intro")}</p>
-        </header>
-        <ul className="solutions-grid">
-          {items.map(({ icon, title }, index) => {
-            const Icon = iconFor(icon, CheckCircle2);
-            return (
-              <li key={title} className="solution-card" {...revealProps("up", 70 + index * 45, 520, "0.65rem")}>
-                <span className="solution-card__icon"><Icon className="h-5 w-5" aria-hidden="true" /></span>
-                <h3>{title}</h3>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
 function ProblemsSection({ t, preview = false }) {
   const problems = t("home.problems.items");
 
@@ -342,61 +187,6 @@ function ProblemsSection({ t, preview = false }) {
   );
 }
 
-function BenefitsSection({ t, language }) {
-  const benefits = t("home.benefits.items");
-
-  return (
-    <section className="benefits-section benefits-bento-section border-y border-stone-200 bg-white py-11 sm:py-20" {...revealProps("left", 0, 760, "1.25rem")}>
-      <div className="benefits-section__inner mx-auto max-w-7xl px-3 sm:px-8 lg:px-10">
-        <header className="benefits-section__header max-w-3xl" {...revealProps("up", 90, 760, "0.95rem")}>
-          <h2 className="home-section-title mt-3 font-display text-3xl leading-tight sm:text-4xl">{t("home.benefits.title")}</h2>
-          <p className="mt-5 text-base leading-8 text-stone-700 sm:text-lg">{t("home.benefits.intro")}</p>
-        </header>
-        <div className="benefits-grid benefits-bento-grid mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {benefits.map(({ icon, title, text }, index) => {
-            const Icon = iconFor(icon);
-            return (
-              <article key={title} className="benefit-card reveal-card" {...revealProps("up", 150 + index * 70, 720, "0.9rem")}>
-                <div className="benefit-card__heading">
-                  <h3 className="text-xl font-bold leading-7"><TechnicalLabel language={language}>{title}</TechnicalLabel></h3>
-                  <span className="benefit-card__icon">
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                  </span>
-                </div>
-                <p className="mt-3 leading-7 text-stone-700">{text}</p>
-              </article>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TestimonialsSection({ t }) {
-  const items = t("home.testimonials.items");
-
-  return (
-    <section className="testimonials-section mx-auto max-w-7xl px-3 py-11 sm:px-8 sm:py-20 lg:px-10" {...revealProps("right", 0, 760, "1.25rem")}>
-      <header className="max-w-3xl" {...revealProps("up", 90, 760, "0.95rem")}>
-        <h2 className="home-section-title mt-3 font-display text-3xl leading-tight sm:text-4xl">{t("home.testimonials.title")}</h2>
-        <p className="mt-5 text-base leading-8 text-stone-700 sm:text-lg">{t("home.testimonials.intro")}</p>
-      </header>
-      <ul className="testimonial-slider mt-10" aria-label={t("home.testimonials.sliderAria")}>
-        {items.map(({ title, text }, index) => (
-          <li key={title} className="testimonial-card reveal-card" {...revealProps("up", 150 + index * 80, 720, "0.9rem")}>
-            <header className="testimonial-card__heading">
-              <h3 className="text-xl font-bold leading-7">{title}</h3>
-              <Quote className="testimonial-card__quote h-6 w-6 text-emerald-700" aria-hidden="true" />
-            </header>
-            <p className="mt-3 leading-7 text-stone-700">{text}</p>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
 
 function UnderConstructionNote({ t, onNavigate }) {
   return (
@@ -412,91 +202,12 @@ function UnderConstructionNote({ t, onNavigate }) {
 }
 
 
-
-
-function FaqPageContent({ t, language, onNavigate }) {
-  const faqs = t("home.faq.items");
-  const [openIndex, setOpenIndex] = React.useState(0);
-  const ctaLabel = language === "ru" ? "Задать вопрос" : "Eigene Frage stellen";
-  const faqHighlights = language === "ru"
-    ? [
-        { icon: HelpCircle, label: `${faqs.length} Fragen`, text: "kompakt beantwortet" },
-        { icon: ShieldCheck, label: "Unverbindlich", text: "Anfrage ohne Auftragspflicht" },
-        { icon: MessageSquare, label: "Direkt fragen", text: "wenn etwas offen bleibt" },
-      ]
-    : [
-        { icon: HelpCircle, label: `${faqs.length} Fragen`, text: "kompakt beantwortet" },
-        { icon: ShieldCheck, label: "Unverbindlich", text: "Anfrage ohne Auftragspflicht" },
-        { icon: MessageSquare, label: "Direkt fragen", text: "wenn etwas offen bleibt" },
-      ];
-
-  return (
-    <>
-      <section className="faq-hero-grid mx-auto max-w-7xl px-3 text-base leading-8 text-stone-700 sm:px-8 sm:text-lg lg:px-10">
-        <div className="faq-hero-copy">
-          <p className="faq-hero__eyebrow">FAQ</p>
-          <h1>{t("home.faq.title")}</h1>
-          <p>{t("home.faq.intro")}</p>
-        </div>
-        <aside className="faq-page-aside faq-page-aside--hero" aria-label={language === "ru" ? "Краткая информация" : "Kurzinfo"}>
-          <div className="faq-page-aside__facts">
-            {faqHighlights.map(({ icon: Icon, label, text }) => (
-              <span key={label}>
-                <Icon className="h-5 w-5" aria-hidden="true" />
-                <span>
-                  <strong>{label}</strong>
-                  <small>{text}</small>
-                </span>
-              </span>
-            ))}
-          </div>
-          <a href="/kontakt" className="portfolio-contact-button faq-page-aside__button" onClick={(event) => {
-            event.preventDefault();
-            onNavigate("/kontakt");
-          }}>
-            {ctaLabel}
-          </a>
-        </aside>
-      </section>
-
-      <section className="faq-section faq-page-section border-y border-stone-200 bg-white py-10 sm:py-16">
-        <div className="faq-page-grid mx-auto grid max-w-7xl gap-6 px-3 sm:gap-8 sm:px-8 lg:px-10">
-          <div className="faq-list">
-            {faqs.map((item, index) => {
-              const isOpen = openIndex === index;
-              const buttonId = `faq-button-${index}`;
-              const panelId = `faq-panel-${index}`;
-              return (
-                <article key={item.question} className="faq-item">
-                  <button
-                    id={buttonId}
-                    type="button"
-                    aria-expanded={isOpen}
-                    aria-controls={panelId}
-                    onClick={() => setOpenIndex(isOpen ? -1 : index)}
-                  >
-                    <HelpCircle className="h-5 w-5" aria-hidden="true" />
-                    <span>{item.question}</span>
-                  </button>
-                  <div id={panelId} className="faq-answer" aria-labelledby={buttonId} hidden={!isOpen}>
-                    {item.answer}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}
-
 function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
   useScrollReveal();
   const services = t("home.services.items");
   const shouldFetchPortfolio = routeKey === "projects" || routeKey === "portfolioProject";
   const { items: portfolioItems } = usePortfolioProjects(t, { fetchRemote: shouldFetchPortfolio, language });
-  const aboutParagraphs = t("home.about.paragraphs");
+
 
   if (routeKey === "portfolioProject") {
     const item = portfolioItems.find((portfolioItem) => portfolioSlugFor(portfolioItem) === projectSlug);
@@ -1227,7 +938,9 @@ export default function App() {
 
   return (
     <PageShell t={t} activePath={activePath} onNavigate={handleNavigate}>
-      <StandalonePage routeKey={route?.key || "notFound"} projectSlug={projectSlug} t={t} language={language} onNavigate={handleNavigate} />
+      <React.Suspense fallback={null}>
+        <StandalonePage routeKey={route?.key || "notFound"} projectSlug={projectSlug} t={t} language={language} onNavigate={handleNavigate} />
+      </React.Suspense>
     </PageShell>
   );
 }

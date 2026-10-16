@@ -1,45 +1,55 @@
 {
-  "_AboutPage-B0bFuh1e.js": {
-    "file": "assets/AboutPage-B0bFuh1e.js",
-    "name": "AboutPage",
-    "imports": [
-      "_preact-vendor-BzB9ud5D.js",
-      "_PortfolioFeatureList-DJhXbpbD.js",
-      "_mountSiteApp-Cdhy64ng.js",
-      "_arrow-right-GTHOOo-3.js"
-    ]
-  },
-  "_PortfolioFeatureList-DJhXbpbD.js": {
-    "file": "assets/PortfolioFeatureList-DJhXbpbD.js",
+  "_PortfolioFeatureList-ZPhvBciG.js": {
+    "file": "assets/PortfolioFeatureList-ZPhvBciG.js",
     "name": "PortfolioFeatureList",
     "imports": [
-      "_mountSiteApp-Cdhy64ng.js",
+      "_preact-vendor-BzB9ud5D.js",
+      "_mountSiteApp-DmYN78o7.js"
+    ]
+  },
+  "_TechnicalLabel-DO2uOVgN.js": {
+    "file": "assets/TechnicalLabel-DO2uOVgN.js",
+    "name": "TechnicalLabel",
+    "imports": [
+      "_mountSiteApp-DmYN78o7.js",
       "_preact-vendor-BzB9ud5D.js"
     ]
   },
-  "_ProjectsOverviewPage-BbQVqEke.js": {
-    "file": "assets/ProjectsOverviewPage-BbQVqEke.js",
-    "name": "ProjectsOverviewPage",
+  "_TechnologyTags-DaPWrtlb.js": {
+    "file": "assets/TechnologyTags-DaPWrtlb.js",
+    "name": "TechnologyTags",
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
-      "_usePortfolioProjects-BGogaZq_.js",
-      "_mountSiteApp-Cdhy64ng.js",
-      "_arrow-right-GTHOOo-3.js"
+      "_mountSiteApp-DmYN78o7.js"
     ]
   },
-  "_arrow-right-GTHOOo-3.js": {
-    "file": "assets/arrow-right-GTHOOo-3.js",
+  "_arrow-left-Dp0ZGHz7.js": {
+    "file": "assets/arrow-left-Dp0ZGHz7.js",
+    "name": "arrow-left",
+    "imports": [
+      "_mountSiteApp-DmYN78o7.js"
+    ]
+  },
+  "_arrow-right-DgwRouVc.js": {
+    "file": "assets/arrow-right-DgwRouVc.js",
     "name": "arrow-right",
     "imports": [
-      "_mountSiteApp-Cdhy64ng.js"
+      "_mountSiteApp-DmYN78o7.js"
+    ]
+  },
+  "_circle-check-CzD5G7QW.js": {
+    "file": "assets/circle-check-CzD5G7QW.js",
+    "name": "circle-check",
+    "imports": [
+      "_mountSiteApp-DmYN78o7.js"
     ]
   },
   "_enhanceProjectPage-uiCm2qW5.js": {
     "file": "assets/enhanceProjectPage-uiCm2qW5.js",
     "name": "enhanceProjectPage"
   },
-  "_mountSiteApp-Cdhy64ng.js": {
-    "file": "assets/mountSiteApp-Cdhy64ng.js",
+  "_mountSiteApp-DmYN78o7.js": {
+    "file": "assets/mountSiteApp-DmYN78o7.js",
     "name": "mountSiteApp",
     "imports": [
       "_preact-vendor-BzB9ud5D.js"
@@ -57,55 +67,60 @@
     "file": "assets/three-vendor-BMZE3j17.js",
     "name": "three-vendor"
   },
-  "_useI18n-f4mtDyCj.js": {
-    "file": "assets/useI18n-f4mtDyCj.js",
+  "_useI18n-DS0v9HlK.js": {
+    "file": "assets/useI18n-DS0v9HlK.js",
     "name": "useI18n",
     "imports": [
-      "_preact-vendor-BzB9ud5D.js",
-      "_mountSiteApp-Cdhy64ng.js",
-      "_usePortfolioProjects-BGogaZq_.js",
-      "_PortfolioFeatureList-DJhXbpbD.js",
-      "_preload-helper-CGjHJtUW.js"
+      "_preload-helper-CGjHJtUW.js",
+      "_mountSiteApp-DmYN78o7.js"
     ],
     "dynamicImports": [
       "src/i18n/locales/ru.json",
       "src/i18n/locales/uk.json"
     ]
   },
-  "_usePortfolioProjects-BGogaZq_.js": {
-    "file": "assets/usePortfolioProjects-BGogaZq_.js",
-    "name": "usePortfolioProjects",
-    "imports": [
-      "_mountSiteApp-Cdhy64ng.js",
-      "_preact-vendor-BzB9ud5D.js"
-    ]
-  },
   "src/about-page.css": {
-    "file": "assets/about-page-CltnJ0q5.css",
+    "file": "assets/about-page-D8Sj9wMh.css",
     "src": "src/about-page.css",
     "isEntry": true
   },
   "src/about-shell.css": {
-    "file": "assets/about-shell-h5YqyhL2.css",
+    "file": "assets/about-shell-C9dXQ5IT.css",
     "src": "src/about-shell.css",
     "isEntry": true
   },
   "src/about.jsx": {
-    "file": "assets/about-CzbOpQab.js",
+    "file": "assets/about-BPlAlx-b.js",
     "name": "about",
     "src": "src/about.jsx",
     "isEntry": true,
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
-      "_AboutPage-B0bFuh1e.js",
-      "_mountSiteApp-Cdhy64ng.js",
+      "src/components/about/AboutPage.jsx",
+      "_mountSiteApp-DmYN78o7.js",
       "_preload-helper-CGjHJtUW.js",
-      "_PortfolioFeatureList-DJhXbpbD.js",
-      "_arrow-right-GTHOOo-3.js"
+      "_PortfolioFeatureList-ZPhvBciG.js",
+      "_circle-check-CzD5G7QW.js",
+      "_arrow-left-Dp0ZGHz7.js",
+      "_arrow-right-DgwRouVc.js"
     ],
     "dynamicImports": [
       "virtual:about-i18n/ru",
       "virtual:about-i18n/uk"
+    ]
+  },
+  "src/components/about/AboutPage.jsx": {
+    "file": "assets/AboutPage-DWQ3_VZ7.js",
+    "name": "AboutPage",
+    "src": "src/components/about/AboutPage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_PortfolioFeatureList-ZPhvBciG.js",
+      "_mountSiteApp-DmYN78o7.js",
+      "_circle-check-CzD5G7QW.js",
+      "_arrow-left-Dp0ZGHz7.js",
+      "_arrow-right-DgwRouVc.js"
     ]
   },
   "src/components/contact/ContactDetails.jsx": {
@@ -118,21 +133,31 @@
     ]
   },
   "src/components/contact/ContactForm.jsx": {
-    "file": "assets/ContactForm-DHNZdSQt.js",
+    "file": "assets/ContactForm-nN5-hMKf.js",
     "name": "ContactForm",
     "src": "src/components/contact/ContactForm.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
-      "_mountSiteApp-Cdhy64ng.js"
+      "_mountSiteApp-DmYN78o7.js"
     ],
     "css": [
       "assets/ContactForm-CkVmk3PB.css"
     ]
   },
-  "src/components/home/faqsection/FaqSection.css": {
+  "src/components/home/FaqSection.css": {
     "file": "assets/faq-section-CHMXlAnq.css",
-    "src": "src/components/home/faqsection/FaqSection.css",
+    "src": "src/components/home/FaqSection.css",
+    "isEntry": true
+  },
+  "src/components/home/HomePage.css": {
+    "file": "assets/homepage-yHyg51_p.css",
+    "src": "src/components/home/HomePage.css",
+    "isEntry": true
+  },
+  "src/components/home/TechnologyProofSection.css": {
+    "file": "assets/technology-proof-section-DidIyPQ9.css",
+    "src": "src/components/home/TechnologyProofSection.css",
     "isEntry": true
   },
   "src/components/home/hero/Hero.css": {
@@ -150,15 +175,31 @@
       "_three-vendor-BMZE3j17.js"
     ]
   },
-  "src/components/home/homepage/HomePage.css": {
-    "file": "assets/homepage-D1ty2BfT.css",
-    "src": "src/components/home/homepage/HomePage.css",
-    "isEntry": true
+  "src/components/projects/PortfolioProjectPage.jsx": {
+    "file": "assets/PortfolioProjectPage-CuyFrQ5s.js",
+    "name": "PortfolioProjectPage",
+    "src": "src/components/projects/PortfolioProjectPage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_mountSiteApp-DmYN78o7.js",
+      "_TechnologyTags-DaPWrtlb.js",
+      "_PortfolioFeatureList-ZPhvBciG.js",
+      "_circle-check-CzD5G7QW.js"
+    ]
   },
-  "src/components/home/technologyproofsection/TechnologyProofSection.css": {
-    "file": "assets/technology-proof-section-DidIyPQ9.css",
-    "src": "src/components/home/technologyproofsection/TechnologyProofSection.css",
-    "isEntry": true
+  "src/components/projects/ProjectsOverviewPage.jsx": {
+    "file": "assets/ProjectsOverviewPage-CSL-kjLr.js",
+    "name": "ProjectsOverviewPage",
+    "src": "src/components/projects/ProjectsOverviewPage.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_preact-vendor-BzB9ud5D.js",
+      "_TechnologyTags-DaPWrtlb.js",
+      "_mountSiteApp-DmYN78o7.js",
+      "_TechnicalLabel-DO2uOVgN.js",
+      "_arrow-right-DgwRouVc.js"
+    ]
   },
   "src/components/shared/TechnicalLabel.css": {
     "file": "assets/technical-label-6AOknLyw.css",
@@ -193,34 +234,37 @@
     "isDynamicEntry": true
   },
   "src/main.jsx": {
-    "file": "assets/main-CUZ-oe9F.js",
+    "file": "assets/main-DkL1CcsS.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
     "imports": [
       "_preload-helper-CGjHJtUW.js",
       "_preact-vendor-BzB9ud5D.js",
-      "_PortfolioFeatureList-DJhXbpbD.js",
-      "_useI18n-f4mtDyCj.js",
-      "_mountSiteApp-Cdhy64ng.js",
-      "_usePortfolioProjects-BGogaZq_.js",
-      "_ProjectsOverviewPage-BbQVqEke.js",
-      "_arrow-right-GTHOOo-3.js",
-      "_AboutPage-B0bFuh1e.js"
+      "_PortfolioFeatureList-ZPhvBciG.js",
+      "_mountSiteApp-DmYN78o7.js",
+      "_useI18n-DS0v9HlK.js",
+      "_TechnologyTags-DaPWrtlb.js",
+      "_TechnicalLabel-DO2uOVgN.js",
+      "_arrow-right-DgwRouVc.js",
+      "_arrow-left-Dp0ZGHz7.js"
     ],
     "dynamicImports": [
       "src/components/home/hero/WaveGridHero.jsx",
       "src/components/contact/ContactForm.jsx",
-      "src/components/contact/ContactDetails.jsx"
+      "src/components/contact/ContactDetails.jsx",
+      "src/components/projects/PortfolioProjectPage.jsx",
+      "src/components/projects/ProjectsOverviewPage.jsx",
+      "src/components/about/AboutPage.jsx"
     ]
   },
   "src/mobile-pages.css": {
-    "file": "assets/mobile-pages-Cq3Slo7o.css",
+    "file": "assets/mobile-pages-BB2xTJIB.css",
     "src": "src/mobile-pages.css",
     "isEntry": true
   },
   "src/project-detail-page.css": {
-    "file": "assets/project-detail-page-7LuZS6f7.css",
+    "file": "assets/project-detail-page-DEKzTKvX.css",
     "src": "src/project-detail-page.css",
     "isEntry": true
   },
@@ -230,7 +274,7 @@
     "isEntry": true
   },
   "src/project-detail.js": {
-    "file": "assets/project-detail-Co3DYcbA.js",
+    "file": "assets/project-detail-CGlhaWWO.js",
     "name": "project-detail",
     "src": "src/project-detail.js",
     "isEntry": true,
@@ -243,27 +287,29 @@
     ]
   },
   "src/project-detail.jsx": {
-    "file": "assets/project-detail-app-CrB7oktO.js",
+    "file": "assets/project-detail-app-D6gfw3j_.js",
     "name": "project-detail-app",
     "src": "src/project-detail.jsx",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
-      "_useI18n-f4mtDyCj.js",
-      "_mountSiteApp-Cdhy64ng.js",
-      "_usePortfolioProjects-BGogaZq_.js",
-      "_PortfolioFeatureList-DJhXbpbD.js",
-      "_preload-helper-CGjHJtUW.js"
+      "_useI18n-DS0v9HlK.js",
+      "_mountSiteApp-DmYN78o7.js",
+      "_TechnologyTags-DaPWrtlb.js",
+      "src/components/projects/PortfolioProjectPage.jsx",
+      "_preload-helper-CGjHJtUW.js",
+      "_PortfolioFeatureList-ZPhvBciG.js",
+      "_circle-check-CzD5G7QW.js"
     ]
   },
   "src/projects-page.css": {
-    "file": "assets/projects-page-EAP0CBTQ.css",
+    "file": "assets/projects-page-CgMTzNUo.css",
     "src": "src/projects-page.css",
     "isEntry": true
   },
   "src/projects.js": {
-    "file": "assets/projects-BdMn5MEE.js",
+    "file": "assets/projects-D1M90gRX.js",
     "name": "projects",
     "src": "src/projects.js",
     "isEntry": true,
@@ -276,7 +322,7 @@
     ]
   },
   "src/projects.jsx": {
-    "file": "assets/projects-app-CKPfnx9q.js",
+    "file": "assets/projects-app-DzA0OeoV.js",
     "name": "projects-app",
     "src": "src/projects.jsx",
     "isEntry": true,
@@ -284,10 +330,11 @@
     "imports": [
       "_preact-vendor-BzB9ud5D.js",
       "_preload-helper-CGjHJtUW.js",
-      "_mountSiteApp-Cdhy64ng.js",
-      "_usePortfolioProjects-BGogaZq_.js",
-      "_ProjectsOverviewPage-BbQVqEke.js",
-      "_arrow-right-GTHOOo-3.js"
+      "_mountSiteApp-DmYN78o7.js",
+      "_TechnologyTags-DaPWrtlb.js",
+      "src/components/projects/ProjectsOverviewPage.jsx",
+      "_TechnicalLabel-DO2uOVgN.js",
+      "_arrow-right-DgwRouVc.js"
     ],
     "dynamicImports": [
       "virtual:projects-i18n/ru",
@@ -295,7 +342,7 @@
     ]
   },
   "src/site.css": {
-    "file": "assets/site-BKi-mm-a.css",
+    "file": "assets/site-BvadTDd6.css",
     "src": "src/site.css",
     "isEntry": true
   },

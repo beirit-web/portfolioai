@@ -1,3 +1,5 @@
+@import "../../server/assets/css/footer-links.css";
+
 /* Source: styles.css */@tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -190,46 +192,6 @@
 }
 
 @layer components {
-  /* Final benefits layout override: keep the bento section spacious across breakpoints. */
-}
-
-@layer components {
-
-  .benefits-section .benefits-grid.benefits-bento-grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(0.9rem, 2.5vw, 1.35rem);
-    margin-top: 0;
-    align-items: stretch;
-  }
-
-  .benefits-section .benefit-card {
-    min-width: 0;
-    min-height: auto;
-    height: auto;
-    display: grid;
-    align-content: start;
-    gap: clamp(0.75rem, 1.8vw, 1rem);
-    padding: clamp(1.15rem, 4.6vw, 1.7rem);
-    border-radius: clamp(1rem, 2.8vw, 1.35rem);
-  }
-
-  @media (min-width: 900px) {
-
-    .benefits-section .benefits-grid.benefits-bento-grid {
-      grid-auto-flow: row;
-      grid-auto-rows: auto;
-    }
-
-    .benefits-section .benefits-grid.benefits-bento-grid .benefit-card {
-      grid-column: auto;
-      grid-row: auto;
-    }
-  }
-}
-
-@layer components {
   .portfolio-section__intro {
     max-width: min(48rem, 100%);
   }
@@ -296,59 +258,6 @@
 
 @layer components {
 
-  .benefit-card__heading,
-  .testimonial-card__heading {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.85rem;
-    align-items: start;
-    width: 100%;
-  }
-
-
-  .benefit-card__heading h3,
-  .testimonial-card__heading h3 {
-    min-width: 0;
-    margin-top: 0;
-  }
-
-
-  .benefit-card__heading .benefit-card__icon,
-  .testimonial-card__heading .testimonial-card__quote {
-    justify-self: end;
-    flex: 0 0 auto;
-  }
-
-  .testimonial-card__quote {
-    opacity: 0.78;
-    filter: drop-shadow(0 8px 18px rgba(13, 148, 136, 0.16));
-  }
-
-  @media (max-width: 420px) {
-
-    .benefit-card__heading,
-    .testimonial-card__heading {
-      gap: 0.65rem;
-    }
-
-
-    .benefit-card__heading .benefit-card__icon {
-      width: 2.5rem;
-      height: 2.5rem;
-      flex-basis: 2.5rem;
-    }
-
-
-    .benefit-card__heading .benefit-card__icon svg,
-    .testimonial-card__heading .testimonial-card__quote {
-      width: 1.15rem;
-      height: 1.15rem;
-    }
-  }
-}
-
-@layer components {
-
   input[type="checkbox"]:not(.privacy-check__input),
   input[type="radio"] {
     width: 1.15rem;
@@ -366,9 +275,6 @@
     outline: 3px solid rgba(45, 212, 191, 0.24);
     outline-offset: 3px;
   }
-}
-
-@layer components {
 }
 
 @layer components {
@@ -414,31 +320,17 @@
     --icon-tone-border: rgba(15, 118, 110, 0.22);
   }
 
-  .service-card__icon,
-.benefit-card__icon {
+  .service-card__icon {
     color: var(--icon-tone);
     stroke: currentColor;
   }
 
-  .service-card__icon,
-  .benefit-card__icon {
+  .service-card__icon {
     border-color: var(--icon-tone-border);
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.72), var(--icon-tone-soft));
     box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
   }
-}
-
-@layer components {
-}
-
-@layer components {
-}
-
-@layer components {
-}
-
-@layer components {
 }
 
 @layer components {
@@ -619,9 +511,6 @@
 }
 
 @layer components {
-}
-
-@layer components {
   .site-shell--home .home-main#top > #kompetenzen {
     display: grid;
     grid-template-columns: minmax(18rem, 0.34fr) minmax(0, 0.66fr);
@@ -747,9 +636,6 @@
       padding-bottom: max(2rem, calc(env(safe-area-inset-bottom, 0px) + 5.6rem));
     }
   }
-}
-
-@layer components {
 }
 
 @layer components {
@@ -1044,146 +930,6 @@
 }
 
 @layer components {
-  /* Final benefits layout override: keep the bento section spacious across breakpoints. */
-  .benefits-section.benefits-bento-section {
-    width: 100%;
-    padding: clamp(2.75rem, 7vw, 5.75rem) clamp(1rem, 3vw, 2.25rem);
-  }
-
-  .benefits-section.benefits-bento-section > div {
-    width: min(100%, 94rem);
-    max-width: min(100%, 94rem);
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(1.6rem, 4vw, 3.5rem);
-    padding-right: 0;
-    padding-left: 0;
-  }
-
-  .benefits-section.benefits-bento-section > div > div:first-child {
-    width: min(100%, 48rem);
-    max-width: 48rem;
-  }
-
-  .benefits-section.benefits-bento-section > div > div:first-child h2 {
-    max-width: 13ch;
-  }
-
-  .benefits-section.benefits-bento-section > div > div:first-child p:last-child {
-    max-width: 42rem;
-  }
-
-  .benefits-section .benefits-grid.benefits-bento-grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-auto-flow: row;
-    grid-auto-rows: auto;
-    gap: clamp(0.9rem, 2.5vw, 1.35rem);
-    margin-top: 0;
-    align-items: stretch;
-  }
-
-  .benefits-section .benefits-grid.benefits-bento-grid .benefit-card,
-  .benefits-section .benefit-card {
-    grid-column: auto;
-    grid-row: auto;
-    min-width: 0;
-    min-height: auto;
-    height: auto;
-    display: grid;
-    align-content: start;
-    gap: clamp(0.75rem, 1.8vw, 1rem);
-    padding: clamp(1.15rem, 4.6vw, 1.7rem);
-    border-radius: clamp(1rem, 2.8vw, 1.35rem);
-  }
-
-  .benefits-section .benefit-card__heading {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 0.85rem;
-    align-items: start;
-  }
-
-  .benefits-section .benefit-card__heading h3 {
-    min-width: 0;
-    margin: 0;
-    overflow-wrap: anywhere;
-    font-size: clamp(1.08rem, 2.4vw, 1.32rem);
-    line-height: 1.22;
-  }
-
-  .benefits-section .benefit-card p {
-    margin: 0;
-    max-width: 62ch;
-    font-size: clamp(0.95rem, 1.8vw, 1.02rem);
-    line-height: 1.65;
-  }
-
-  .benefits-section .benefit-card__icon {
-    width: clamp(2.55rem, 7vw, 3rem);
-    height: clamp(2.55rem, 7vw, 3rem);
-    flex: 0 0 auto;
-  }
-
-  .benefits-section .benefit-card__icon svg {
-    width: clamp(1.15rem, 3vw, 1.45rem);
-    height: clamp(1.15rem, 3vw, 1.45rem);
-  }
-
-  @media (min-width: 640px) {
-    .benefits-section .benefits-grid.benefits-bento-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (min-width: 900px) {
-    .benefits-section.benefits-bento-section {
-      padding-right: clamp(1.5rem, 3vw, 2.5rem);
-      padding-left: clamp(1.5rem, 3vw, 2.5rem);
-    }
-
-    .benefits-section .benefit-card {
-      padding: clamp(1.25rem, 2.2vw, 1.85rem);
-    }
-  }
-
-  @media (min-width: 1180px) {
-    .benefits-section.benefits-bento-section > div {
-      grid-template-columns: minmax(18rem, 0.45fr) minmax(0, 1fr);
-      gap: clamp(2rem, 4vw, 4rem);
-      align-items: start;
-    }
-
-    .benefits-section .benefits-grid.benefits-bento-grid {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: clamp(1rem, 1.4vw, 1.3rem);
-    }
-
-    .benefits-section .benefits-grid.benefits-bento-grid .benefit-card:nth-child(1),
-    .benefits-section .benefits-grid.benefits-bento-grid .benefit-card:nth-child(2) {
-      grid-column: span 3;
-    }
-
-    .benefits-section .benefits-grid.benefits-bento-grid .benefit-card:nth-child(n + 3) {
-      grid-column: span 2;
-    }
-  }
-
-  @media (min-width: 1500px) {
-    .benefits-section.benefits-bento-section > div {
-      width: min(100%, 100rem);
-      max-width: min(100%, 100rem);
-      grid-template-columns: minmax(21rem, 0.42fr) minmax(0, 1fr);
-    }
-
-    .benefits-section .benefit-card {
-      padding: clamp(1.45rem, 1.45vw, 2rem);
-    }
-  }
-}
-
-@layer components {
   .site-footer {
     background:
       linear-gradient(180deg, color-mix(in srgb, var(--surface-solid) 94%, transparent), var(--surface-solid));
@@ -1381,9 +1127,6 @@
 }
 
 @layer components {
-}
-
-@layer components {
 
   .portfolio-card__result {
     display: grid;
@@ -1416,9 +1159,6 @@
     font-weight: 820;
     line-height: 1.15;
   }
-}
-
-@layer components {
 }
 
 @layer components {
@@ -1568,9 +1308,7 @@
 
   main > section:not(.hero-stage),
 #kompetenzen,
-.benefits-section,
 .portfolio-section,
-.testimonials-section,
 #preise,
 #profil,
 #kontakt {
@@ -1613,21 +1351,6 @@
 
   .service-card-grid .service-card:nth-child(4n) {
     min-height: 15rem;
-  }
-
-  .benefits-section {
-    background:
-      linear-gradient(135deg, color-mix(in srgb, var(--accent-soft) 34%, var(--surface-solid)), color-mix(in srgb, var(--blue) 8%, var(--surface-solid))),
-      radial-gradient(circle at 10% 12%, rgba(15, 118, 110, 0.12), transparent 20rem);
-  }
-
-  .benefits-grid {
-    align-items: stretch;
-  }
-
-  .benefit-card {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(16px);
   }
 
   #kompetenzen .section-cta-strip {
@@ -1968,9 +1691,7 @@
 
   main > section:not(.hero-stage),
 #kompetenzen,
-.benefits-section,
 .portfolio-section,
-.testimonials-section,
 #preise,
 #profil,
 #kontakt {
@@ -1989,14 +1710,12 @@
   #kompetenzen,
   .portfolio-section,
   #preise,
-  .testimonials-section,
   #kontakt {
     width: min(100%, calc(var(--max) + var(--page-x) * 2));
     margin-inline: auto;
   }
 
 
-.benefits-section,
 #profil {
     border-color: var(--border);
     background: color-mix(in srgb, var(--surface-solid) 78%, transparent);
@@ -2013,7 +1732,6 @@
 
 #kompetenzen > div:first-child,
 .portfolio-section > div:first-child,
-.testimonials-section > div:first-child,
 #preise > div:first-child,
 #profil > div > div:first-child,
 #kontakt > div:first-child {
@@ -2025,7 +1743,6 @@
 
 #kompetenzen h2,
 .portfolio-section h2,
-.testimonials-section h2,
 #preise h2,
 #profil h2,
 #kontakt h2 {
@@ -2037,7 +1754,6 @@
 
 #kompetenzen > div:first-child p,
 .portfolio-section > div:first-child p,
-.testimonials-section > div:first-child p,
 #preise > div:first-child p,
 #profil > div > div:first-child p,
 #kontakt > div:first-child p {
@@ -2058,12 +1774,9 @@
   }
 
 
-
 .contact-panel,
 .service-card,
 .portfolio-card,
-.benefit-card,
-.testimonial-card,
 .about-photo-card,
 .service-note {
     position: relative;
@@ -2078,15 +1791,12 @@
   }
 
 
-
   .contact-panel {
     padding: clamp(1.25rem, 4.5vw, 2.35rem);
   }
 
   .service-card,
 .portfolio-card,
-.benefit-card,
-.testimonial-card,
 .about-photo-card {
     width: 100%;
     min-width: 0;
@@ -2100,43 +1810,27 @@
   }
 
   .service-card:hover,
-  .portfolio-card:hover,
-  .benefit-card:hover,
-  .testimonial-card:hover {
+  .portfolio-card:hover {
     border-color: var(--border-strong);
     box-shadow: var(--shadow-soft);
     transform: translateY(-2px);
   }
 
-
-
-  .benefits-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.95rem;
-  }
-
   .service-card,
-  .portfolio-card,
-  .benefit-card,
-  .testimonial-card {
+  .portfolio-card {
     display: grid;
     gap: 0.7rem;
   }
 
   .service-card h3,
-  .portfolio-card h3,
-  .benefit-card h3,
-  .testimonial-card h3 {
+  .portfolio-card h3 {
     margin-top: 0.35rem;
     color: var(--text);
     font-weight: 850;
   }
 
   .service-card p,
-  .portfolio-card p,
-  .benefit-card p,
-  .testimonial-card p {
+  .portfolio-card p {
     margin: 0;
     color: var(--muted);
     font-size: 0.98rem;
@@ -2144,7 +1838,6 @@
   }
 
   .service-card__icon,
-  .benefit-card__icon,
   .about-photo-card__placeholder {
     display: inline-flex;
     width: 2.75rem;
@@ -2159,8 +1852,7 @@
     box-shadow: 0 10px 22px rgba(13, 148, 136, 0.12);
   }
 
-  .service-card__icon svg,
-.benefit-card__icon svg {
+  .service-card__icon svg {
     width: 1.28rem;
     height: 1.28rem;
     flex: 0 0 auto;
@@ -2204,21 +1896,6 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.55rem;
-  }
-
-  .testimonial-slider {
-    display: grid;
-    grid-auto-flow: row;
-    grid-auto-columns: auto;
-    grid-template-columns: 1fr;
-    gap: 0.95rem;
-    overflow: visible;
-    padding: 0;
-  }
-
-  .faq-list {
-    display: grid;
-    gap: 0.8rem;
   }
 
   #profil > div,
@@ -2487,232 +2164,6 @@
     }
   }
 
-  .faq-hero-grid {
-    display: grid;
-    gap: clamp(1.2rem, 3vw, 2.5rem);
-    align-items: center;
-    padding-top: clamp(2.5rem, 7vw, 5rem);
-    padding-bottom: clamp(1.25rem, 3.5vw, 2.5rem);
-  }
-
-  .faq-hero-copy {
-    display: grid;
-    gap: clamp(0.85rem, 2vw, 1.2rem);
-    min-width: 0;
-  }
-
-  .faq-hero__eyebrow {
-    margin: 0;
-    color: var(--muted);
-    font-size: clamp(1rem, 1.4vw, 1.2rem);
-    font-weight: 650;
-    line-height: 1.3;
-  }
-
-  .faq-hero-copy h1 {
-    max-width: 14ch;
-    margin: 0;
-    color: var(--text);
-    font-family: var(--font-display);
-    font-size: clamp(3rem, 7vw, 5.2rem);
-    font-weight: 900;
-    line-height: 0.98;
-  }
-
-  .faq-hero-copy p:not(.faq-hero__eyebrow) {
-    max-width: min(100%, 52rem);
-    margin: 0;
-    color: var(--muted);
-    font-size: clamp(1.05rem, 1.55vw, 1.22rem);
-    line-height: 1.65;
-  }
-
-  .faq-page-section {
-    border-color: var(--border);
-    background:
-      radial-gradient(circle at 12% 12%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 22rem),
-      linear-gradient(180deg, var(--surface-solid), var(--surface-muted));
-  }
-
-  .faq-page-grid {
-    align-items: start;
-  }
-
-  .faq-page-aside {
-    display: grid;
-    gap: 0.85rem;
-    min-width: 0;
-    border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--border));
-    border-radius: var(--radius);
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--surface-solid) 96%, transparent), color-mix(in srgb, var(--surface-muted) 84%, transparent)),
-      radial-gradient(circle at 14% 10%, color-mix(in srgb, var(--accent) 11%, transparent), transparent 13rem);
-    padding: clamp(1rem, 1.8vw, 1.35rem);
-    box-shadow: var(--shadow-card);
-  }
-
-  .faq-page-aside h2 {
-    margin: 0;
-    color: var(--text);
-    font-size: clamp(1.4rem, 2vw, 2rem);
-    font-weight: 950;
-    line-height: 1.12;
-  }
-
-  .faq-page-aside p:not(.faq-page-aside__eyebrow) {
-    margin: 0;
-    color: var(--muted);
-    font-size: 1rem;
-    line-height: 1.65;
-  }
-
-  .faq-page-aside__facts {
-    display: grid;
-    gap: 0.65rem;
-  }
-
-  .faq-page-aside__facts > span {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.7rem;
-    align-items: center;
-    border: 1px solid color-mix(in srgb, var(--accent) 12%, var(--border));
-    border-radius: var(--radius);
-    background: color-mix(in srgb, var(--surface-solid) 82%, transparent);
-    padding: 0.8rem;
-  }
-
-  .faq-page-aside__facts svg {
-    color: var(--accent);
-  }
-
-  .faq-page-aside__facts span span {
-    display: grid;
-    gap: 0.08rem;
-    min-width: 0;
-  }
-
-  .faq-page-aside__facts strong {
-    color: var(--text);
-    font-size: 0.92rem;
-    font-weight: 900;
-    line-height: 1.22;
-  }
-
-  .faq-page-aside__facts small {
-    color: var(--muted);
-    font-size: 0.82rem;
-    font-weight: 650;
-    line-height: 1.35;
-  }
-
-  .faq-page-aside__button {
-    display: inline-flex;
-    min-height: 3rem;
-    width: fit-content;
-    max-width: 100%;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--accent);
-    border-radius: var(--radius);
-    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-    padding: 0.75rem 1rem;
-    color: #ffffff;
-    font-size: 0.94rem;
-    font-weight: 900;
-    line-height: 1.15;
-    text-decoration: none;
-    justify-self: start;
-    margin-top: 0.2rem;
-  }
-
-  .faq-page-aside__button:hover,
-  .faq-page-aside__button:focus-visible {
-    transform: translateY(-1px);
-    box-shadow: 0 0.9rem 1.8rem color-mix(in srgb, var(--accent) 20%, transparent);
-    outline: none;
-  }
-
-  .faq-list {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
-    gap: clamp(0.85rem, 1.4vw, 1.15rem);
-  }
-
-  .faq-item {
-    display: grid;
-    min-width: 0;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface-solid);
-    box-shadow: var(--shadow-card);
-  }
-
-  .faq-item:has([aria-expanded="true"]) {
-    border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
-    box-shadow: 0 1.05rem 2.2rem color-mix(in srgb, var(--accent) 9%, transparent);
-  }
-
-  .faq-item button {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.75rem;
-    width: 100%;
-    min-height: 4rem;
-    align-items: center;
-    border: 0;
-    background: transparent;
-    padding: 0.95rem 1rem;
-    color: var(--text);
-    font-weight: 850;
-    line-height: 1.3;
-    text-align: left;
-  }
-
-  .faq-item button svg {
-    color: var(--accent);
-  }
-
-  .faq-item button:hover,
-  .faq-item button:focus-visible {
-    background: color-mix(in srgb, var(--accent-soft) 44%, transparent);
-    outline: none;
-  }
-
-  .faq-item p,
-  .faq-item .faq-answer {
-    margin: 0;
-    border-top: 1px solid var(--border);
-    background: color-mix(in srgb, var(--surface-muted) 88%, transparent);
-    padding: 0 1rem 1rem 3.25rem;
-    color: var(--muted);
-    line-height: 1.65;
-  }
-
-  @media (min-width: 48rem) {
-    .faq-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .faq-hero-grid {
-      grid-template-columns: minmax(0, 0.58fr) minmax(20rem, 0.42fr);
-      padding-top: clamp(3rem, 7vw, 5.75rem);
-      padding-bottom: clamp(1.5rem, 3vw, 2.25rem);
-    }
-
-    .faq-page-grid {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    .faq-item:has([aria-expanded="true"]) {
-      grid-row: span 2;
-    }
-  }
-
   .site-footer {
     border-color: var(--border);
     background: var(--surface-solid);
@@ -2748,11 +2199,6 @@
     .section-cta-strip {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
-
-    .benefits-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 
   @media (min-width: 768px) {
@@ -2786,22 +2232,15 @@
     #kontakt {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
-    .testimonial-slider {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
   }
 
   @media (min-width: 1024px) {
     .service-card,
-    .portfolio-card,
-    .benefit-card,
-    .testimonial-card {
+    .portfolio-card {
       padding: 1.25rem;
     }
 
-    #kompetenzen > div:nth-of-type(2),
-    .benefits-grid {
+    #kompetenzen > div:nth-of-type(2) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
@@ -2848,16 +2287,6 @@
       linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 42%);
   }
 
-  .benefits-section {
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--surface-solid) 88%, transparent), color-mix(in srgb, var(--surface-muted) 76%, transparent));
-  }
-
-  .benefit-card:nth-child(odd) {
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--surface-solid) 96%, transparent), color-mix(in srgb, var(--accent-soft) 24%, var(--surface-solid)));
-  }
-
   .portfolio-section {
     background:
       radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--blue) 12%, transparent), transparent 18rem);
@@ -2898,19 +2327,6 @@
     .service-card--featured:nth-of-type(4) {
       grid-column: span 2;
     }
-
-    .benefits-grid {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-
-    .benefit-card:first-child,
-    .benefit-card:nth-child(2) {
-      grid-column: span 2;
-    }
-
-    .benefit-card:nth-child(3) {
-      grid-column: span 1;
-    }
   }
 
   @media (min-width: 1600px) {
@@ -2919,9 +2335,6 @@
       --page-x: clamp(2rem, 3vw, 3.5rem);
     }
   }
-}
-
-@layer components {
 }
 
 @layer components {
@@ -3076,9 +2489,6 @@
 }
 
 @layer components {
-}
-
-@layer components {
   @media (min-width: 1200px) {
     html {
       font-size: 18px;
@@ -3166,9 +2576,7 @@
 
   main > section:not(.hero-stage),
 #kompetenzen,
-.benefits-section,
 .portfolio-section,
-.testimonials-section,
 #preise,
 #profil,
 #kontakt {
@@ -3178,9 +2586,7 @@
 
   main > section:not(.hero-stage) > :where(div),
 #profil > div,
-.benefits-section > div,
 .portfolio-section > div,
-.testimonials-section > div,
 #preise > div,
 #kontakt > div {
     width: min(100%, var(--max));
@@ -3189,19 +2595,14 @@
   }
 
 
-
 .contact-panel,
 .service-card,
-.benefit-card,
-.portfolio-card,
-.testimonial-card {
+.portfolio-card {
     border-radius: 8px;
   }
 
   .service-card,
-  .benefit-card,
-  .portfolio-card,
-  .testimonial-card {
+  .portfolio-card {
     padding: var(--card-pad);
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 20px 60px rgba(15, 23, 42, 0.08);
   }
@@ -3219,17 +2620,9 @@
     margin-bottom: var(--card-pad);
   }
 
-
-  .benefits-grid,
-  .testimonial-slider {
-    gap: var(--grid-gap);
-  }
-
   #kompetenzen > div:first-child,
-.benefits-section > div > div:first-child,
 .portfolio-section > div:first-child,
 #preise > div:first-child,
-.testimonials-section > div:first-child,
 #kontakt > div:first-child {
     margin-bottom: clamp(2rem, 4vw, 4rem);
   }
@@ -3253,18 +2646,6 @@
 
     #kompetenzen > div:nth-of-type(2) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .benefits-section > div {
-      display: grid;
-      grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
-      gap: clamp(3.5rem, 6vw, 7rem);
-      align-items: start;
-    }
-
-    .benefits-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      margin-top: 0;
     }
 
     .portfolio-card:first-child {
@@ -3317,184 +2698,6 @@
 
     .portfolio-card__preview {
       min-height: 22rem;
-    }
-  }
-
-  .benefits-section {
-    position: relative;
-    overflow: hidden;
-    border-color: color-mix(in srgb, var(--accent) 18%, var(--border));
-    background:
-      radial-gradient(circle at 8% 15%, rgba(20, 184, 166, 0.18), transparent 26rem),
-      radial-gradient(circle at 88% 20%, rgba(14, 165, 233, 0.14), transparent 30rem),
-      linear-gradient(135deg, #f7fffc 0%, #ffffff 46%, #eef8ff 100%);
-  }
-
-  .benefits-section > div {
-    align-items: stretch;
-  }
-
-  .benefits-section > div > div:first-child {
-    display: grid;
-    align-content: start;
-    max-width: 42rem;
-  }
-
-  .benefits-section > div > div:first-child p:first-child {
-    width: fit-content;
-    border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--border));
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--accent-soft) 62%, #ffffff);
-    padding: 0.5rem 0.8rem;
-    letter-spacing: 0.16em;
-  }
-
-  .benefits-section > div > div:first-child h2 {
-    max-width: 9.5ch;
-  }
-
-  .benefits-section > div > div:first-child p:last-child {
-    max-width: 34ch;
-    font-size: clamp(1.12rem, 1.2vw, 1.35rem);
-  }
-
-  .benefits-grid {
-    align-items: stretch;
-    grid-auto-rows: minmax(6.5rem, auto);
-  }
-
-  .benefit-card {
-    display: flex;
-    flex-direction: column;
-    min-height: 14rem;
-    align-content: start;
-    gap: clamp(0.9rem, 1.2vw, 1.35rem);
-    overflow: visible;
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.78)),
-      radial-gradient(circle at 85% 10%, rgba(20, 184, 166, 0.16), transparent 12rem);
-  }
-
-  .benefit-card:first-child {
-    min-height: 16rem;
-    background:
-      linear-gradient(145deg, rgba(240, 253, 250, 0.98), rgba(255, 255, 255, 0.86)),
-      radial-gradient(circle at 88% 0%, rgba(45, 212, 191, 0.22), transparent 15rem);
-    box-shadow: 0 30px 90px rgba(13, 148, 136, 0.14);
-  }
-
-  .benefit-card:nth-child(even) {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.78)),
-      radial-gradient(circle at 12% 12%, rgba(14, 165, 233, 0.13), transparent 13rem);
-  }
-
-  .benefit-card:nth-child(3n) {
-    min-height: 15.5rem;
-  }
-
-  .benefit-card__icon {
-    width: clamp(3.3rem, 4vw, 4.4rem);
-    height: clamp(3.3rem, 4vw, 4.4rem);
-    flex-basis: clamp(3.3rem, 4vw, 4.4rem);
-  }
-
-  .benefit-card__icon svg {
-    width: 1.35rem;
-    height: 1.35rem;
-  }
-
-  .benefit-card h3 {
-    max-width: 100%;
-    overflow-wrap: normal;
-    font-size: clamp(1.25rem, 1.25vw, 1.55rem);
-    line-height: 1.18;
-  }
-
-  .benefit-card p {
-    max-width: 100%;
-    font-size: clamp(1rem, 0.95vw, 1.12rem);
-    line-height: 1.62;
-  }
-
-  @media (min-width: 1024px) {
-    .benefits-section > div {
-      display: grid;
-      grid-template-columns: minmax(22rem, 0.68fr) minmax(0, 1.42fr);
-      gap: clamp(2.5rem, 5vw, 6.5rem);
-      align-items: start;
-    }
-
-    .benefits-grid {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      grid-auto-flow: dense;
-      grid-auto-rows: minmax(6.25rem, auto);
-      align-items: stretch;
-    }
-
-    .benefit-card:first-child {
-      grid-column: span 4;
-      grid-row: span 2;
-      min-height: 22rem;
-    }
-
-    .benefit-card:nth-child(2),
-    .benefit-card:nth-child(5n) {
-      grid-column: span 2;
-      grid-row: span 1;
-      min-height: 12rem;
-    }
-
-    .benefit-card:nth-child(3),
-    .benefit-card:nth-child(4) {
-      grid-column: span 3;
-      grid-row: span 2;
-      min-height: 17.5rem;
-    }
-
-    .benefit-card:nth-child(n + 5) {
-      grid-column: span 2;
-      grid-row: span 1;
-    }
-  }
-
-  @media (min-width: 1600px) {
-    .benefits-section > div {
-      grid-template-columns: minmax(26rem, 0.62fr) minmax(0, 1.5fr);
-    }
-
-    .benefits-grid {
-      gap: clamp(2.25rem, 2.7vw, 3.75rem);
-    }
-  }
-
-  @media (min-width: 1920px) {
-    .benefits-section > div {
-      grid-template-columns: minmax(30rem, 0.58fr) minmax(0, 1.65fr);
-    }
-
-    .benefits-grid {
-      grid-template-columns: repeat(8, minmax(0, 1fr));
-    }
-
-    .benefit-card:first-child {
-      grid-column: span 5;
-      min-height: 24rem;
-    }
-
-    .benefit-card:nth-child(2),
-    .benefit-card:nth-child(5n) {
-      grid-column: span 3;
-      min-height: 13rem;
-    }
-
-    .benefit-card:nth-child(3),
-    .benefit-card:nth-child(4) {
-      grid-column: span 4;
-    }
-
-    .benefit-card:nth-child(n + 5) {
-      grid-column: span 2;
     }
   }
 
@@ -3735,114 +2938,6 @@
       max-width: 100%;
     }
   }
-
-  .benefits-bento-section > div,
-  .benefits-section.is-revealed > div {
-    display: grid;
-    align-items: start;
-  }
-
-  .benefits-bento-grid,
-  .benefits-section.is-revealed .benefits-grid {
-    display: grid;
-    grid-auto-flow: dense;
-    align-items: stretch;
-  }
-
-  .benefits-bento-grid .benefit-card,
-  .benefits-section.is-revealed .benefit-card {
-    height: 100%;
-  }
-
-  @media (min-width: 768px) {
-    .benefits-bento-grid,
-    .benefits-section.is-revealed .benefits-grid {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-      grid-auto-rows: minmax(7rem, auto);
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(1),
-    .benefits-section.is-revealed .benefit-card:nth-child(1) {
-      grid-column: span 4;
-      grid-row: span 2;
-      min-height: clamp(20rem, 25vw, 25rem);
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(2),
-    .benefits-section.is-revealed .benefit-card:nth-child(2) {
-      grid-column: span 2;
-      grid-row: span 1;
-      min-height: clamp(10.5rem, 13vw, 13.5rem);
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(3),
-    .benefits-bento-grid .benefit-card:nth-child(4),
-    .benefits-section.is-revealed .benefit-card:nth-child(3),
-    .benefits-section.is-revealed .benefit-card:nth-child(4) {
-      grid-column: span 3;
-      grid-row: span 2;
-      min-height: clamp(16rem, 18vw, 20rem);
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(5),
-    .benefits-bento-grid .benefit-card:nth-child(6),
-    .benefits-section.is-revealed .benefit-card:nth-child(5),
-    .benefits-section.is-revealed .benefit-card:nth-child(6) {
-      grid-column: span 3;
-      grid-row: span 1;
-      min-height: clamp(12rem, 14vw, 15rem);
-    }
-  }
-
-  @media (min-width: 1280px) {
-    .benefits-bento-section > div,
-    .benefits-section.is-revealed > div {
-      grid-template-columns: minmax(21rem, 0.58fr) minmax(0, 1.42fr);
-      gap: clamp(3rem, 5vw, 7rem);
-    }
-
-    .benefits-bento-grid,
-    .benefits-section.is-revealed .benefits-grid {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      grid-auto-rows: minmax(5.5rem, auto);
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(1),
-    .benefits-section.is-revealed .benefit-card:nth-child(1) {
-      grid-column: span 7;
-      grid-row: span 3;
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(2),
-    .benefits-section.is-revealed .benefit-card:nth-child(2) {
-      grid-column: span 5;
-      grid-row: span 2;
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(3),
-    .benefits-section.is-revealed .benefit-card:nth-child(3) {
-      grid-column: span 5;
-      grid-row: span 2;
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(4),
-    .benefits-section.is-revealed .benefit-card:nth-child(4) {
-      grid-column: span 4;
-      grid-row: span 2;
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(5),
-    .benefits-section.is-revealed .benefit-card:nth-child(5) {
-      grid-column: span 4;
-      grid-row: span 2;
-    }
-
-    .benefits-bento-grid .benefit-card:nth-child(6),
-    .benefits-section.is-revealed .benefit-card:nth-child(6) {
-      grid-column: span 4;
-      grid-row: span 2;
-    }
-  }
 }
 
 @layer components {
@@ -3920,9 +3015,7 @@
 
     main > section:not(.hero-stage),
 #kompetenzen,
-.benefits-section,
 .portfolio-section,
-.testimonials-section,
 #preise,
 #profil,
 #kontakt {
@@ -3930,7 +3023,6 @@
       max-width: 100%;
       padding: var(--section-y) var(--page-x);
     }
-
 
 
     .contact-panel {
@@ -3942,9 +3034,6 @@
 
 .service-card-grid,
 #kompetenzen > div:nth-of-type(2),
-.benefits-grid,
-.benefits-bento-grid,
-.testimonial-slider,
 #profil > div,
 #kontakt {
       display: grid;
@@ -3952,20 +3041,10 @@
       gap: var(--grid-gap);
     }
 
-    .benefits-bento-section > div,
-    .benefits-section.is-revealed > div {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-    }
-
     .service-card,
     .service-card--featured,
     .service-card--essential,
-    .benefit-card,
-    .benefit-card:first-child,
-    .benefit-card:nth-child(3n),
-    .portfolio-card,
-    .testimonial-card {
+    .portfolio-card {
       grid-column: auto;
       grid-row: auto;
       min-height: 0;
@@ -4454,8 +3533,7 @@
 }
 
 @media (max-width: 47.99rem) {
-  .home-main .service-card,
-  .home-main .benefit-card {
+  .home-main .service-card {
     padding: 1.15rem;
   }
 
@@ -4730,69 +3808,6 @@
     margin-top: clamp(1.5rem, 7vw, 2rem);
   }
 
-  .home-main .hero-trust-strip__inner {
-    position: relative;
-    gap: 0.65rem 0.8rem;
-    border: 1px solid rgba(15, 118, 110, 0.16);
-    border-left: 3px solid #0d9488;
-    border-radius: 0.9rem;
-    background:
-      radial-gradient(circle at 0 0, rgba(45, 212, 191, 0.14), transparent 42%),
-      radial-gradient(
-        circle at 100% 100%,
-        rgba(124, 58, 237, 0.08),
-        transparent 44%
-      ),
-      rgba(255, 255, 255, 0.72);
-    padding: 0.8rem;
-    box-shadow: 0 0.75rem 2rem rgba(15, 23, 42, 0.08);
-    backdrop-filter: blur(8px);
-  }
-
-  .home-main .hero-trust-strip__inner::before {
-    position: absolute;
-    top: -1px;
-    left: 0;
-    width: 42%;
-    height: 2px;
-    background: linear-gradient(90deg, #14b8a6, #38bdf8, transparent);
-    content: "";
-    pointer-events: none;
-  }
-
-  .home-main .hero-trust-strip__badge,
-  .home-main .hero-trust-strip__badge:hover {
-    min-height: 2.5rem;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    overflow: visible;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    padding: 0.35rem 0.2rem;
-    box-shadow: none;
-    text-align: left;
-    cursor: default;
-    transform: none;
-  }
-
-  .home-main .hero-trust-strip__badge::after {
-    right: 0.2rem;
-    left: 0.2rem;
-    height: 1px;
-    opacity: 0.22;
-  }
-
-  .home-main .hero-trust-strip__badge > svg {
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 50%;
-    padding: 0.35rem;
-    box-shadow:
-      inset 0 0 0 1px color-mix(in srgb, var(--trust-accent) 24%, transparent),
-      0 0 1rem color-mix(in srgb, var(--trust-accent) 12%, transparent);
-  }
-
   .site-shell .home-main h2 {
     width: 100%;
     max-width: none;
@@ -4837,26 +3852,6 @@
   }
 }
 
-@media (min-width: 40rem) {
-  .home-main#top .benefits-section .benefits-grid.benefits-bento-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .home-main#top
-    .benefits-section
-    .benefits-grid.benefits-bento-grid
-    > .benefit-card:nth-child(n) {
-    grid-column: auto;
-    grid-row: auto;
-  }
-}
-
-@media (min-width: 62.5rem) {
-  .home-main#top .benefits-section .benefits-grid.benefits-bento-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
 /* Tablet: one portfolio project per row keeps text and screenshots readable. */
 
 /* Desktop: full-width project rows with a readable internal split. */
@@ -4876,12 +3871,6 @@
     grid-row: 1;
     min-width: 0;
     margin-inline: 0;
-  }
-}
-
-@media (min-width: 62.5rem) {
-  .home-main#top .benefits-section .benefits-grid.benefits-bento-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -5554,12 +4543,8 @@
   color: #0f172a;
 }
 
-.site-footer .footer-link.is-active {
-  color: var(--accent-strong);
-}
-
 .home-main.site-page-main
-  > :where(section, .faq-section, .contact-section, .portfolio-section) {
+  > :where(section, .contact-section, .portfolio-section) {
   content-visibility: visible;
   contain-intrinsic-size: none;
 }
@@ -5632,40 +4617,8 @@
   position: relative;
   min-height: 2rem;
   padding: 0.34rem 0 0.42rem;
-  color: #334155;
   font-weight: 780;
   line-height: 1.2;
-  text-decoration: none;
-}
-
-.site-footer .footer-link::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0.12rem;
-  left: 0;
-  height: 1px;
-  background: currentColor;
-  opacity: 0;
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition:
-    opacity 160ms ease,
-    transform 180ms ease;
-}
-
-.site-footer .footer-link:hover,
-.site-footer .footer-link:focus-visible,
-.site-footer .footer-link.is-active {
-  color: #0f4f46;
-  outline: none;
-}
-
-.site-footer .footer-link:hover::after,
-.site-footer .footer-link:focus-visible::after,
-.site-footer .footer-link.is-active::after {
-  opacity: 0.72;
-  transform: scaleX(1);
 }
 
 @media (min-width: 64rem) {
@@ -6710,40 +5663,6 @@ body:has(.about-hero-grid),
   p {
   max-width: 44rem;
   margin-top: 0;
-}
-
-.home-main#top .hero-trust-strip__inner {
-  width: min(100%, 78rem);
-  max-width: 78rem;
-  border-radius: 0.8rem;
-  background: transparent;
-  box-shadow: none;
-}
-
-.home-main#top .hero-trust-strip__badge,
-.home-main#top .hero-trust-strip__badge:hover {
-  min-height: 3rem;
-  justify-content: flex-start;
-  border-color: rgba(148, 163, 184, 0.34);
-  border-radius: 0.55rem;
-  background: transparent;
-  color: #334155;
-  text-align: left;
-  box-shadow: none;
-  transform: none;
-  cursor: default;
-}
-
-.home-main#top .hero-trust-strip__badge::after {
-  display: none;
-}
-
-.home-main#top .hero-trust-strip__badge > svg {
-  width: 1.65rem;
-  height: 1.65rem;
-  border-radius: 0.5rem;
-  background: rgba(15, 118, 110, 0.1);
-  box-shadow: none;
 }
 
 .home-main#top .service-card {
@@ -7912,154 +6831,6 @@ body:has(.about-hero-grid),
 
 /* FAQ page grid: use desktop width without leaving an empty right column. */
 
-.site-shell .faq-section {
-  border-color: rgba(203, 213, 225, 0.72);
-  background:
-    radial-gradient(
-      circle at 12% 12%,
-      rgba(15, 118, 110, 0.08),
-      transparent 22rem
-    ),
-    linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-}
-
-.site-shell .faq-hero-grid {
-  padding-top: clamp(1.75rem, 3.8vw, 3.4rem);
-  padding-bottom: clamp(1.15rem, 2.4vw, 1.8rem);
-}
-
-.site-shell .faq-page-section {
-  padding-top: clamp(1.7rem, 3vw, 2.6rem);
-  padding-bottom: clamp(2.2rem, 4vw, 3.5rem);
-}
-
-.site-shell .faq-page-grid {
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
-  gap: clamp(1rem, 2.4vw, 2rem);
-}
-
-.site-shell .faq-page-aside {
-  position: sticky;
-  top: calc(var(--site-header-height, 4.5rem) + 1rem);
-  display: grid;
-  gap: 0.85rem;
-  min-width: 0;
-  border: 1px solid rgba(15, 118, 110, 0.16);
-  border-radius: 8px;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.96),
-      rgba(248, 250, 252, 0.9)
-    ),
-    #ffffff;
-  padding: clamp(1rem, 1.8vw, 1.35rem);
-  box-shadow: 0 1rem 2rem rgba(15, 23, 42, 0.06);
-}
-
-.site-shell .faq-page-aside h2 {
-  margin: 0;
-  color: #0f172a;
-  font-size: clamp(1.4rem, 2vw, 2rem);
-  line-height: 1.12;
-}
-
-.site-shell .faq-page-aside p:not(.faq-page-aside__eyebrow) {
-  margin: 0;
-  color: #475569;
-  font-size: 1rem;
-  line-height: 1.65;
-}
-
-.site-shell .faq-page-aside__button {
-  margin-top: 0.25rem;
-  justify-self: start;
-}
-
-.site-shell .faq-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-flow: dense;
-  align-items: start;
-  gap: clamp(0.85rem, 1.4vw, 1.15rem);
-}
-
-.site-shell .faq-item {
-  display: grid;
-  min-width: 0;
-  overflow: hidden;
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 0.85rem 1.8rem rgba(15, 23, 42, 0.055);
-}
-
-.site-shell .faq-item:has([aria-expanded="true"]) {
-  grid-column: 1 / -1;
-  grid-row: auto;
-  border-color: rgba(15, 118, 110, 0.28);
-  box-shadow: 0 1.05rem 2.2rem rgba(15, 118, 110, 0.09);
-}
-
-.site-shell .faq-item button {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.75rem;
-  width: 100%;
-  min-height: 4rem;
-  align-items: center;
-  border: 0;
-  background: transparent;
-  padding: 0.95rem 1rem;
-  color: #0f172a;
-  font-weight: 850;
-  line-height: 1.3;
-  text-align: left;
-  cursor: pointer;
-}
-
-.site-shell .faq-item button svg {
-  color: #0f766e;
-}
-
-.site-shell .faq-item button:hover,
-.site-shell .faq-item button:focus-visible {
-  background: rgba(240, 253, 250, 0.76);
-  outline: none;
-}
-
-.site-shell .faq-item p,
-.site-shell .faq-item .faq-answer {
-  margin: 0;
-  border-top: 1px solid rgba(203, 213, 225, 0.72);
-  background: rgba(248, 250, 252, 0.92);
-  padding: 0 1rem 1rem 3.25rem;
-  color: #475569;
-  line-height: 1.65;
-}
-
-@media (min-width: 80rem) {
-  .site-shell .faq-page-section .faq-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 64rem) {
-  .site-shell .faq-page-grid,
-  .site-shell .faq-list {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .site-shell .faq-page-aside {
-    position: static;
-  }
-
-  .site-shell .faq-item:has([aria-expanded="true"]) {
-    grid-row: auto;
-  }
-}
-
 /* Home spacing pass: keep the start page dense and remove oversized media gaps. */
 
 .site-shell--home .home-main#top {
@@ -8437,9 +7208,7 @@ body:has(.about-hero-grid),
 
 main > section:not(.hero-stage),
 #kompetenzen,
-.benefits-section,
 .portfolio-section,
-.testimonials-section,
 #preise,
 #profil,
 #kontakt {
@@ -8450,7 +7219,6 @@ main > section:not(.hero-stage),
 .problems-section,
 #kompetenzen,
 .portfolio-section,
-.testimonials-section,
 #preise {
   width: var(--pro-max);
   max-width: var(--pro-max);
@@ -8459,7 +7227,6 @@ main > section:not(.hero-stage),
 }
 
 
-.benefits-section > .benefits-section__inner,
 #profil > div,
 .site-footer__inner {
   max-width: var(--pro-max);
@@ -8474,27 +7241,21 @@ section h2 {
 
 section p,
 .service-card p,
-.benefit-card p,
-.portfolio-card__text,
-.testimonial-card p {
+.portfolio-card__text {
   max-width: 65ch;
   font-size: clamp(0.98rem, 0.9vw, 1.06rem);
   line-height: 1.65;
 }
 
 .service-card h3,
-.benefit-card h3,
-.portfolio-card h3,
-.testimonial-card h3 {
+.portfolio-card h3 {
   font-size: clamp(1.16rem, 1.2vw, 1.38rem);
   line-height: 1.24;
 }
 
 .reveal-card,
 .service-card,
-.benefit-card,
 .portfolio-card,
-.testimonial-card,
 .problem-card,
 .problems-panel,
 .contact-panel {
@@ -8504,9 +7265,7 @@ section p,
 
 .reveal-card,
 .service-card,
-.benefit-card,
 .portfolio-card,
-.testimonial-card,
 .problem-card {
   transition:
     transform 180ms ease,
@@ -8530,9 +7289,7 @@ section p,
 
 .reveal-card:hover,
 .service-card:hover,
-.benefit-card:hover,
 .portfolio-card:hover,
-.testimonial-card:hover,
 .problem-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--pro-shadow-hover);
@@ -8550,30 +7307,26 @@ section p,
   gap: clamp(0.9rem, 1.5vw, 1.25rem);
 }
 
-.service-card,
-.testimonial-card {
+.service-card {
   min-height: auto;
   height: max-content;
   padding: clamp(1.15rem, 1.8vw, 1.55rem);
 }
 
-.service-card__heading,
-.benefit-card__heading {
+.service-card__heading {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.8rem;
   align-items: start;
 }
 
-.service-card__icon,
-.benefit-card__icon {
+.service-card__icon {
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 0.95rem;
 }
 
-.service-card__icon svg,
-.benefit-card__icon svg {
+.service-card__icon svg {
   width: 1.35rem;
   height: 1.35rem;
   stroke-width: 2.15;
@@ -8606,66 +7359,6 @@ section p,
   font-weight: 750;
 }
 
-.benefits-section.benefits-bento-section {
-  width: 100%;
-  padding: clamp(3rem, 6vw, 5.25rem) var(--pro-section-x);
-}
-
-.benefits-section.benefits-bento-section > .benefits-section__inner {
-  width: var(--pro-max);
-  max-width: var(--pro-max);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(1.5rem, 3vw, 3rem);
-  padding-right: 0;
-  padding-left: 0;
-}
-
-.benefits-section.benefits-bento-section > .benefits-section__inner > .benefits-section__header {
-  width: min(100%, 48rem);
-  max-width: 48rem;
-}
-
-.benefits-section .benefits-grid.benefits-bento-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-auto-flow: row;
-  grid-auto-rows: auto;
-  gap: clamp(0.9rem, 2vw, 1.25rem);
-  margin-top: 0;
-  align-items: start;
-}
-
-.benefits-section .benefits-grid.benefits-bento-grid .benefit-card,
-.benefits-section .benefit-card {
-  grid-column: auto;
-  grid-row: auto;
-  min-width: 0;
-  min-height: auto;
-  height: max-content;
-  display: grid;
-  align-content: start;
-  gap: 0.8rem;
-  padding: clamp(1.05rem, 1.8vw, 1.45rem);
-}
-
-.benefits-section .benefit-card__heading h3 {
-  min-width: 0;
-  margin: 0;
-  overflow-wrap: normal;
-  word-break: normal;
-  hyphens: auto;
-  text-wrap: balance;
-}
-
-.benefits-section .benefit-card p {
-  margin: 0;
-  overflow-wrap: normal;
-  word-break: normal;
-  hyphens: auto;
-}
-
 .contact-section {
   width: 100%;
   max-width: 100%;
@@ -8689,225 +7382,15 @@ section p,
   border-radius: var(--pro-radius-control);
 }
 
-@media (min-width: 640px) {
-  .benefits-section .benefits-grid.benefits-bento-grid {
-    grid-template-columns: repeat(2, minmax(min(100%, 17rem), 1fr));
-  }
-}
-
-@media (min-width: 1180px) {
-  .benefits-section.benefits-bento-section > .benefits-section__inner {
-    grid-template-columns: minmax(17rem, 0.36fr) minmax(0, 1fr);
-    align-items: start;
-  }
-
-  .benefits-section .benefits-grid.benefits-bento-grid {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  }
-}
-
-@media (min-width: 1500px) {
-  .benefits-section .benefits-grid.benefits-bento-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* Project finder cleanup. */
-
-/* Highest-priority tablet hero positioning. */
 
 /* Trust and outcome sections. */
 
-.hero-trust-strip {
-  width: 100%;
-  max-width: none;
-  min-height: 0;
-  padding: 0.9rem clamp(1rem, 3vw, 2rem);
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-solid);
-}
-
-.hero-trust-strip__inner {
-  width: min(100%, 1440px);
-  max-width: 1440px;
-  margin-inline: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.55rem;
-}
-
-.hero-trust-strip__badge {
-  display: inline-flex;
-  min-height: 2.25rem;
-  align-items: center;
-  gap: 0.45rem;
-  border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--border));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface-solid));
-  padding: 0.48rem 0.72rem;
-  color: var(--accent-strong);
-  font-size: 0.82rem;
-  font-weight: 800;
-  line-height: 1.2;
-}
-
-.hero-trust-strip__badge svg {
-  flex: 0 0 auto;
-}
-
-.before-after-section {
-  width: 100%;
-  max-width: none;
-  min-height: 0;
-  padding: clamp(2.75rem, 6vw, 5rem) clamp(1rem, 3vw, 2.5rem);
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--accent) 10%, transparent),
-      transparent 24rem
-    ),
-    var(--surface-muted);
-}
-
-.before-after-section__inner {
-  width: min(100%, 1440px);
-  max-width: 1440px;
-  margin-inline: auto;
-}
-
-.before-after-section__heading {
-  max-width: 46rem;
-  margin-bottom: clamp(1.4rem, 3vw, 2.25rem);
-}
-
-.before-after-section__heading h2 {
-  margin-top: 0.7rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.85rem, 4vw, 3rem);
-  line-height: 1.08;
-}
-
-.before-after-section__heading > p:last-child {
-  margin-top: 1rem;
-  color: var(--muted);
-  line-height: 1.7;
-}
-
-.before-after-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1rem, 2.5vw, 1.5rem);
-}
-
-.before-after-card {
-  min-height: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--pro-radius-card);
-  background: var(--surface-solid);
-  padding: clamp(1.15rem, 3vw, 1.75rem);
-  box-shadow: var(--pro-shadow-card);
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    border-color 180ms ease;
-}
-
-.before-after-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--pro-shadow-hover);
-}
-
-.before-after-card--before {
-  border-color: color-mix(in srgb, var(--danger) 25%, var(--border));
-}
-
-.before-after-card--after {
-  border-color: color-mix(in srgb, var(--success) 34%, var(--border));
-}
-
-.before-after-card h3 {
-  margin: 0 0 1rem;
-  font-size: clamp(1.25rem, 2vw, 1.55rem);
-}
-
-.before-after-card ul {
-  display: grid;
-  gap: 0.75rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.before-after-card li {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  color: var(--text);
-  font-weight: 750;
-  line-height: 1.4;
-}
-
-.before-after-card--before li svg {
-  flex: 0 0 auto;
-  color: var(--danger);
-}
-
-.before-after-card--after li svg {
-  flex: 0 0 auto;
-  color: var(--success);
-}
-
-@media (max-width: 767px) {
-  .hero-trust-strip {
-    padding: 0.8rem var(--page-x, 1rem);
-  }
-
-  .hero-trust-strip__inner {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem;
-  }
-
-  .hero-trust-strip__badge {
-    min-width: 0;
-    padding: 0.48rem 0.55rem;
-    font-size: 0.74rem;
-  }
-
-  .before-after-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .before-after-card,
-  .before-after-section,
-  .before-after-section__inner {
-    min-height: 0;
-    height: auto;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .before-after-card,
-  .hero-trust-strip__badge {
-    animation: none;
-    scroll-behavior: auto;
-    transition: none;
-  }
-
-  .before-after-card:hover {
-    transform: none;
-  }
-}
-
-/* Absolute final tablet hero positioning override. */
 
 /* Use empty right-hand space on desktop by pairing intros with their grids. */
 
 @media (min-width: 1180px) {
   #kompetenzen,
   .portfolio-section,
-  .testimonials-section,
   #preise {
     display: grid;
     grid-template-columns: minmax(18rem, 0.34fr) minmax(0, 1fr);
@@ -8917,7 +7400,6 @@ section p,
 
   #kompetenzen > .max-w-3xl,
   .portfolio-section__intro,
-  .testimonials-section > .max-w-3xl,
   #preise > .max-w-3xl {
     grid-column: 1;
     width: 100%;
@@ -8925,8 +7407,7 @@ section p,
     align-self: start;
   }
 
-  #kompetenzen > .service-card-grid,
-  .testimonials-section > .testimonial-slider {
+  #kompetenzen > .service-card-grid {
     grid-column: 2;
     width: 100%;
     margin-top: 0;
@@ -8944,23 +7425,13 @@ section p,
   #kompetenzen > .service-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
-  .testimonials-section > .testimonial-slider {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (min-width: 1500px) {
   #kompetenzen,
   .portfolio-section,
-  .testimonials-section,
   #preise {
     grid-template-columns: minmax(20rem, 0.3fr) minmax(0, 1fr);
-  }
-
-
-  .testimonials-section > .testimonial-slider {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   #kompetenzen > .service-card-grid {
@@ -8968,7 +7439,6 @@ section p,
   }
 }
 
-/* Final tablet hero positioning. */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -8996,21 +7466,16 @@ section p,
 
 
   .problems-grid,
-  .service-card-grid,
-  .testimonial-slider {
+  .service-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(1rem, 2.4vw, 1.4rem);
   }
 
-  .benefits-section.benefits-bento-section > .benefits-section__inner,
+
   #profil > div,
   .contact-section {
     grid-template-columns: minmax(0, 1fr);
     gap: clamp(1.5rem, 3vw, 2.25rem);
-  }
-
-  .benefits-section .benefits-grid.benefits-bento-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .portfolio-card__preview {
@@ -9040,19 +7505,6 @@ section p,
 
   .service-card-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .testimonial-slider {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .benefits-section.benefits-bento-section > .benefits-section__inner {
-    grid-template-columns: minmax(19rem, 0.34fr) minmax(0, 1fr);
-    gap: clamp(2rem, 3vw, 3.25rem);
-  }
-
-  .benefits-section .benefits-grid.benefits-bento-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   #profil > div,
@@ -9169,21 +7621,11 @@ section p,
   box-shadow: var(--pro-shadow-card);
 }
 
-/* Final project finder precedence. */
-
-/* Highest-priority tablet hero positioning after all layout overrides. */
-
-/* Final feature priorities after every legacy hero composition. */
 
 @media (max-width: 767px) {
   main > section,
-  .benefits-section__inner,
   .problems-panel,
-  .problems-grid,
-  .solutions-section__inner,
-  .solutions-grid,
-  .before-after-section__inner,
-  .before-after-grid {
+  .problems-grid {
     min-height: 0;
     height: auto;
     max-height: none;
@@ -9204,82 +7646,6 @@ section p,
 
   .problems-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.solutions-section {
-  width: 100%;
-  max-width: none;
-  min-height: 0;
-  height: auto;
-  padding: clamp(2.75rem, 6vw, 5rem) clamp(1rem, 3vw, 2.5rem);
-  background: var(--surface-solid);
-}
-
-.solutions-section__inner {
-  width: min(100%, 1440px);
-  max-width: 1440px;
-  margin-inline: auto;
-}
-
-.solutions-section__heading {
-  max-width: 46rem;
-  margin-bottom: clamp(1.4rem, 3vw, 2.25rem);
-}
-
-.solutions-section__heading h2 {
-  margin-top: 0.7rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.85rem, 4vw, 3rem);
-  line-height: 1.08;
-}
-
-.solutions-section__heading > p:last-child {
-  margin-top: 1rem;
-  color: var(--muted);
-  line-height: 1.7;
-}
-
-.solutions-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(0.75rem, 1.5vw, 1rem);
-}
-
-.solution-card {
-  min-height: 0;
-  height: auto;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  background: color-mix(in srgb, var(--accent) 6%, var(--surface-solid));
-  padding: 1rem;
-  box-shadow: var(--pro-shadow-card);
-}
-
-.solution-card__icon {
-  display: inline-flex;
-  width: 2.5rem;
-  height: 2.5rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--accent) 13%, var(--surface-solid));
-  color: var(--accent-strong);
-}
-
-.solution-card h3 {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.3;
-}
-
-@media (max-width: 767px) {
-  .solutions-grid {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -9353,7 +7719,6 @@ html
   color: #ffffff;
 }
 
-/* Final home info list: keep only the left accent line. */
 
 /* Final problems grid: remove visible framing in this grid area. */
 
@@ -9402,7 +7767,6 @@ html
   transform: none;
 }
 
-/* Final project finder card spacing: keep icons away from the text. */
 
 @media (max-width: 767px) {
   .site-shell .home-main :where(.mt-3.font-display.text-3xl.leading-tight) {
@@ -9802,11 +8166,6 @@ html
   hyphens: none;
 }
 
-/* Final references details sizing: keep detail panels only as tall as their content. */
-
-/* Final references hero eyebrow: text label, not a button-like pill. */
-
-/* Final references meta: plain metadata, not button-like pills. */
 
 /* Final references features: plain list text, not tag buttons. */
 
@@ -9891,7 +8250,6 @@ html
   }
 }
 
-/* Final service card CTA alignment: keep "Mehr" on the right side. */
 
 /* Final footer separation: use shadow instead of a hard top border. */
 
@@ -9973,62 +8331,10 @@ html
   }
 }
 
-/* Final project finder panel: unframed layout. */
 
 /* Final hero trust strip: remove frame and filled panel. */
 
-.site-shell--home .home-main#top .hero-trust-strip__inner,
-.site-shell .home-main#top .hero-trust-strip__inner,
-.home-main#top .hero-trust-strip__inner {
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  transition: background 180ms ease;
-}
-
-.site-shell--home .home-main#top .hero-trust-strip__inner::before,
-.site-shell .home-main#top .hero-trust-strip__inner::before,
-.home-main#top .hero-trust-strip__inner::before {
-  background: transparent;
-}
-
 /* Final hero trust badges: plain inline facts, not buttons. */
-
-.site-shell--home .home-main#top .hero-trust-strip__badge,
-.site-shell .home-main#top .hero-trust-strip__badge,
-.home-main#top .hero-trust-strip__badge,
-.site-shell--home .home-main#top .hero-trust-strip__badge:hover,
-.site-shell .home-main#top .hero-trust-strip__badge:hover,
-.home-main#top .hero-trust-strip__badge:hover {
-  min-height: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  padding: 0;
-  color: var(--muted);
-  box-shadow: none;
-  transform: none;
-  cursor: default;
-}
-
-.site-shell--home .home-main#top .hero-trust-strip__badge::after,
-.site-shell .home-main#top .hero-trust-strip__badge::after,
-.home-main#top .hero-trust-strip__badge::after {
-  display: none;
-}
-
-.site-shell--home .home-main#top .hero-trust-strip__badge > svg,
-.site-shell .home-main#top .hero-trust-strip__badge > svg,
-.home-main#top .hero-trust-strip__badge > svg {
-  width: 1.05rem;
-  height: 1.05rem;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  padding: 0;
-  color: var(--accent);
-  box-shadow: none;
-}
 
 /* Final section headings: text only, never badge/button-like. */
 
@@ -10312,7 +8618,6 @@ html
     > :where(
       section,
       #kompetenzen,
-      .benefits-section,
       .portfolio-section,
       .contact-section,
       .prefooter-cta
@@ -10326,7 +8631,6 @@ html
     > :where(
       section,
       #kompetenzen,
-      .benefits-section,
       .portfolio-section,
       .contact-section,
       .prefooter-cta
@@ -10359,8 +8663,6 @@ html
     :where(
       section h2,
       .problems-panel__copy h2,
-      .benefits-section h2,
-      .benefits-section.benefits-bento-section > .benefits-section__inner > .benefits-section__header h2,
       .portfolio-section__intro h2,
       .contact-panel h2,
       .prefooter-cta h2
@@ -10377,7 +8679,6 @@ html
     :where(
       section p,
       .service-card p,
-      .benefit-card p,
       .portfolio-section__intro p,
       .portfolio-card__text,
       .contact-panel p,
@@ -10413,13 +8714,10 @@ html
     :where(
       .service-card-grid,
       .services-grid,
-      .benefits-grid,
-      .benefits-bento-grid,
       .portfolio-grid,
       .price-grid,
       .tech-focus-grid,
-      .agreement-grid,
-      .testimonials-grid) {
+      .agreement-grid) {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-auto-flow: row;
@@ -10431,12 +8729,10 @@ html
     .home-main
     :where(
       .service-card,
-      .benefit-card,
       .portfolio-card,
       .price-card,
       .tech-focus-card,
-      .agreement-card,
-      .testimonial-card) {
+      .agreement-card) {
     grid-column: 1 / -1;
     grid-row: auto;
     width: 100%;
@@ -10447,7 +8743,6 @@ html
     .home-main
     :where(
       .service-card__heading,
-      .benefit-card__heading,
       .portfolio-card__heading,
       .price-card__heading,
       .tech-focus-card__heading,
@@ -10461,7 +8756,6 @@ html
     .home-main
     :where(
       .service-card__icon,
-      .benefit-card__icon,
       .portfolio-card__heading-icon,
       .tech-focus-card__icon
     ) {
@@ -10473,7 +8767,6 @@ html
     .home-main
     :where(
       .service-card,
-      .benefit-card,
       .portfolio-card,
       .contact-panel,
       .prefooter-cta > div
@@ -10490,13 +8783,10 @@ html
     :where(
       .service-card-grid,
       .services-grid,
-      .benefits-grid,
-      .benefits-bento-grid,
       .portfolio-grid,
       .price-grid,
       .tech-focus-grid,
-      .agreement-grid,
-      .testimonials-grid) {
+      .agreement-grid) {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-auto-flow: row;
@@ -10508,12 +8798,10 @@ html
     .home-main
     :where(
       .service-card,
-      .benefit-card,
       .portfolio-card,
       .price-card,
       .tech-focus-card,
-      .agreement-card,
-      .testimonial-card) {
+      .agreement-card) {
     grid-column: 1 / -1;
     grid-row: auto;
     width: 100%;
@@ -10523,7 +8811,6 @@ html
 
 /* Final references page polish: clearer hierarchy and denser project cards. */
 
-/* Final references screenshot readability: show previews without heavy cropping. */
 
 /* Portfolio overview now links to project detail pages. Keep cards compact. */
 
@@ -11389,10 +9676,7 @@ html
     :where(
       .problems-panel__copy h2,
       .home-services-heading__title,
-      .benefits-section__header h2,
       .portfolio-section__intro h2,
-      .testimonials-section > h2,
-      .faq-section__title,
       .technology-proof-section h2
     ) {
     font-size: clamp(2.65rem, 3.2vw, 3.35rem);
@@ -11444,7 +9728,6 @@ html
     .home-main#top
     :where(
       .problems-panel__copy,
-      .benefits-section__header,
       .portfolio-section__intro
     ) {
     width: 100%;

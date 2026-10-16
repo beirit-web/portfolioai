@@ -1,7 +1,9 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template.loader import render_to_string
+from django.utils.cache import patch_vary_headers
 
 
+API_PREFIXES = ("/api/", "/deutschlive/api/", "/wohnungssuche-api/", "/botanic/api/")
 ERROR_COPY = {
     400: {
         "title": "Anfrage konnte nicht verarbeitet werden",
@@ -38,17 +40,39 @@ ERROR_COPY = {
 }
 
 
-def error_response(_request, status_code: int):
-    copy = ERROR_COPY.get(status_code, ERROR_COPY[500])
-    content = render_to_string(
-        "error.html",
-        {
-            "status_code": status_code,
-            "error_title": copy["title"],
-            "error_message": copy["message"],
-        },
+def wants_json_error_response(request) -> bool:
+    if any(request.path == prefix.rstrip("/") or request.path.startswith(prefix) for prefix in API_PREFIXES):
+        return True
+    if (request.headers.get("X-Requested-With") or "").lower() == "xmlhttprequest":
+        return True
+
+    json_types = ["application/json"]
+    json_types.extend(
+        str(media_type).split(";", 1)[0]
+        for media_type in request.accepted_types
+        if media_type.sub_type.endswith("+json")
     )
-    return HttpResponse(content, status=status_code)
+    preferred_type = request.get_preferred_type(["text/html", *json_types])
+    return preferred_type is not None and preferred_type != "text/html"
+
+
+def error_response(request, status_code: int):
+    copy = ERROR_COPY.get(status_code, ERROR_COPY[500])
+    if wants_json_error_response(request):
+        response = JsonResponse({"status": status_code, **copy}, status=status_code)
+    else:
+        content = render_to_string(
+            "error.html",
+            {
+                "status_code": status_code,
+                "error_title": copy["title"],
+                "error_message": copy["message"],
+            },
+        )
+        response = HttpResponse(content, status=status_code)
+    patch_vary_headers(response, ("Accept", "X-Requested-With"))
+    response.status_page_handled = True
+    return response
 
 
 def bad_request(request, exception=None):

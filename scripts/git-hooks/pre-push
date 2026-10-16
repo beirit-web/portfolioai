@@ -11,4 +11,3 @@ case "${2:-}" in
 esac
 
 python3 "$(git rev-parse --show-toplevel)/scripts/check_portfolio_data.py"
-git lfs pre-push "$@"

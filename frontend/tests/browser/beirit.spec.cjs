@@ -1,13 +1,10 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 const { withoutEmbeddedProjects } = require("./helpers/portfolioConfig.cjs");
-const fs = require("node:fs");
-const nodePath = require("node:path");
-const previews = nodePath.resolve(__dirname, "../../../runtime/browser-checks/previews");
-fs.mkdirSync(previews, { recursive: true });
 
-test.beforeEach(async ({ context, page }) => {
+test.beforeEach(async ({ context, page, baseURL }) => {
   // All browser checks stay local; no external APIs or form deliveries.
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+  await blockExternalRequests(context, baseURL);
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   page.browserErrors = errors;
@@ -72,7 +69,7 @@ for (const [name, path] of [["home", "/"], ["skills", "/kompetenzen/"], ["about"
       .filter(img => new URL(img.currentSrc || img.src, location.href).origin === location.origin)
       .map(img => img.decode())));
     await page.addStyleTag({ content: ".home-main > section { content-visibility: visible !important; }" });
-    await testInfo.attach(`${name}-preview`, { body: await page.screenshot({ path: nodePath.join(previews, `${testInfo.project.name}-${name}.png`), fullPage: true, animations: "disabled" }), contentType: "image/png" });
+    await testInfo.attach(`${name}-preview`, { body: await page.screenshot({ path: testInfo.outputPath(`${testInfo.project.name}-${name}.png`), fullPage: true, animations: "disabled" }), contentType: "image/png" });
   });
 }
 
@@ -106,7 +103,7 @@ test("navigation supports menu, keyboard, browser history and reload", async ({ 
   await expect(page.locator("#name")).toBeVisible();
 });
 
-async function fillContact(page, desktop) {
+async function fillContact(page) {
   await page.locator("#name").fill("Browserprüfung");
   await page.locator("#email").fill("browser@example.test");
   await page.locator("#subject").fill("Prüfung der Kontaktfunktion");
@@ -114,11 +111,10 @@ async function fillContact(page, desktop) {
   await page.getByRole("checkbox").check();
 }
 
-test("contact validates input, sends CSRF and shows success", async ({ page, context }, testInfo) => {
-  const desktop = testInfo.project.name === "desktop";
+test("contact validates input, sends CSRF and shows success", async ({ page, context, baseURL }) => {
   let submitted = 0;
   const csrfToken = "a".repeat(32);
-  await context.addCookies([{ name: "csrftoken", value: csrfToken, url: "http://127.0.0.1:8765" }]);
+  await context.addCookies([{ name: "csrftoken", value: csrfToken, url: baseURL }]);
   await page.route("**/api/contact/", async route => {
     submitted++;
     expect(route.request().method()).toBe("POST");
@@ -130,7 +126,7 @@ test("contact validates input, sends CSRF and shows success", async ({ page, con
   await page.locator('form button[type="submit"]').click();
   await expect(page.locator("#name")).toHaveAttribute("aria-invalid", "true");
   expect(submitted).toBe(0);
-  await fillContact(page, desktop);
+  await fillContact(page);
   await page.locator('form button[type="submit"]').click();
   await expect(page.locator("#contact-form-status")).toContainText("Testanfrage erhalten.");
   await expect(page.locator("#contact-form-status")).toHaveAttribute("role", "status");
@@ -170,8 +166,7 @@ test("projects stay available when the portfolio API fails", async ({ page }) =>
   await layout(page);
 });
 
-test("contact retains input on server errors and supports a retry after network failure", async ({ page }, testInfo) => {
-  const desktop = testInfo.project.name === "desktop";
+test("contact retains input on server errors and supports a retry after network failure", async ({ page }) => {
   let attempt = 0;
   await page.route("**/api/contact/", async route => {
     attempt++;
@@ -180,7 +175,7 @@ test("contact retains input on server errors and supports a retry after network 
     return route.fulfill({ json: { ok: true, message: "Erneuter Versuch erfolgreich." } });
   });
   await open(page, "/kontakt/");
-  await fillContact(page, desktop);
+  await fillContact(page);
   await page.locator('form button[type="submit"]').click();
   await expect(page.locator("#email")).toHaveAttribute("aria-invalid", "true");
   await expect(page.locator("#email")).toHaveValue("browser@example.test");
@@ -195,7 +190,7 @@ test("contact retains input on server errors and supports a retry after network 
 });
 
 for (const endpoint of [undefined, "/api/custom-contact/"]) {
-  test(`contact uses ${endpoint ? "the configured endpoint" : "the fallback endpoint"}`, async ({ page }, testInfo) => {
+  test(`contact uses ${endpoint ? "the configured endpoint" : "the fallback endpoint"}`, async ({ page }) => {
     await page.route("**/kontakt/", async route => {
       const response = await route.fetch();
       const html = (await response.text()).replace(
@@ -218,7 +213,7 @@ for (const endpoint of [undefined, "/api/custom-contact/"]) {
       await route.fulfill({ json: { ok: true, message: "Konfigurierter Versand geprüft." } });
     });
     await open(page, "/kontakt/");
-    await fillContact(page, testInfo.project.name === "desktop");
+    await fillContact(page);
     await page.locator('form button[type="submit"]').click();
     await expect(page.locator("#contact-form-status")).toContainText("Konfigurierter Versand geprüft.");
     expect(submitted).toBe(true);

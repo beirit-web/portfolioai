@@ -97,5 +97,4 @@ body, .site-shell {
 .site-footer__meta-separator { display: none; }
 .site-shell .site-footer__links { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; padding: 0; }
 .site-shell > header .site-menuicon__circle { opacity: 0; }
-.site-shell .footer-link { display: block; padding: .34rem 0 .42rem; color: #334155; font-weight: 780; line-height: 1.2; }
-.site-shell .footer-link:is(:hover, :focus-visible) { color: #0f766e; }
+.site-shell .footer-link { display: block; padding: .34rem 0 .42rem; font-weight: 780; line-height: 1.2; }

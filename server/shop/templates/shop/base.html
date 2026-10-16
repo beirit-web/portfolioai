@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="{% asset_url 'shop/style.css' %}">
   <link rel="stylesheet" href="{% asset_url 'shop/brand.css' %}">
   <link rel="stylesheet" href="{% asset_url 'css/project-home.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'css/footer-links.css' %}">
   <script src="{% asset_url 'shop/app.js' %}" defer></script>
 </head>
 <body class="{% if tab == 'catalog' %}shop-catalog{% endif %}{% if cart_count and tab == 'catalog' %} has-cart-bar{% endif %}">
@@ -66,7 +67,7 @@
     {% if messages %}<div class="messages" aria-live="polite">{% for message in messages %}<p class="message message--{{ message.tags }}" {% if message.tags == 'error' %}role="alert"{% endif %}>{% if message.tags == 'error' %}{% shop_icon 'alert' %}{% else %}{% shop_icon 'check' %}{% endif %}{{ message }}</p>{% endfor %}</div>{% endif %}
     {% block content %}{% endblock %}
   </main>
-  <footer class="shop-footer"><a href="/projekte">Beirit Web{% shop_icon 'arrow' %}</a><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a></footer>
+  <footer class="shop-footer site-footer"><a class="footer-link" href="/projekte">Beirit Web{% shop_icon 'arrow' %}</a><a class="footer-link" href="/impressum">Impressum</a><a class="footer-link" href="/datenschutz">Datenschutz</a></footer>
   {% if cart_count and tab == 'catalog' %}<a class="mobile-cart-bar" href="{% url 'storefront:cart' %}"><span>{% shop_icon 'bag' %}{{ cart_count }} Artikel</span><strong>{{ subtotal|euros }}</strong>{% shop_icon 'next' %}</a>{% endif %}
 </body>
 </html>

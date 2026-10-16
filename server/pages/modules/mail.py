@@ -7,16 +7,6 @@ from django.template.loader import render_to_string
 logger = logging.getLogger(__name__)
 
 
-def is_smtp_available():
-  """
-  Schneller Verfuegbarkeits-Check: konfiguriert = True.
-  Kein Verbindungsaufbau, damit im UI keine false negatives durch Firewalls entstehen.
-  """
-  host = getattr(settings, "EMAIL_HOST", "") or ""
-  user = getattr(settings, "EMAIL_HOST_USER", "") or ""
-  return bool(host.strip() and user.strip())
-
-
 def send_notification_email(
   subject: str,
   body: str,

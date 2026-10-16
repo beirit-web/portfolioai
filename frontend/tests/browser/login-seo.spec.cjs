@@ -1,31 +1,11 @@
 const { test, expect } = require("@playwright/test");
+const { readMetadata } = require("./helpers/metadata.cjs");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 const loginPath = "/login/?next=%2Fbotanic%2F%3Ftab%3Dplants";
 
 test.beforeEach(async ({ context, baseURL }) => {
-  const origin = new URL(baseURL).origin;
-  await context.route(/^https?:\/\//, route => (
-    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
-  ));
+  await blockExternalRequests(context, baseURL);
 });
-
-async function metadata(page, html) {
-  return page.evaluate(source => {
-    const doc = source ? new DOMParser().parseFromString(source, "text/html") : document;
-    const content = selector => doc.querySelector(selector)?.getAttribute("content");
-    return {
-      title: doc.title,
-      description: content('meta[name="description"]'),
-      robots: content('meta[name="robots"]'),
-      canonical: doc.querySelector('link[rel="canonical"]')?.getAttribute("href"),
-      ogTitle: content('meta[property="og:title"]'),
-      ogDescription: content('meta[property="og:description"]'),
-      ogUrl: content('meta[property="og:url"]'),
-      twitterTitle: content('meta[name="twitter:title"]'),
-      twitterDescription: content('meta[name="twitter:description"]'),
-      twitterUrl: content('meta[name="twitter:url"]'),
-    };
-  }, html);
-}
 
 test("public login metadata remains consistent and keeps the Botanic return link", async ({ page, baseURL }, testInfo) => {
   const errors = [];
@@ -33,11 +13,13 @@ test("public login metadata remains consistent and keeps the Botanic return link
   const response = await page.goto(loginPath);
   expect(response.status()).toBe(200);
   expect(response.headers()["x-robots-tag"]).toBe("index, follow");
-  const server = await metadata(page, await response.text());
+  const server = await readMetadata(page, await response.text());
   await expect(page.locator("#login-form-title")).toBeVisible();
-  const live = await metadata(page);
+  const live = await readMetadata(page);
   expect(live).toEqual(server);
   expect(live.title).toBe("Anmelden | Beirit Digital");
+  expect(live.description).toEqual(expect.any(String));
+  expect(live.description.trim().length).toBeGreaterThan(35);
   expect(live.canonical).toBe(`${baseURL}/login/`);
   expect(live.robots).toBe("index, follow");
   for (const prefix of ["og", "twitter"]) {

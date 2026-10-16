@@ -6,22 +6,22 @@ from django.conf import settings
 from django.contrib.auth import logout
 from django.core.exceptions import DisallowedHost
 from django.http import (
-  Http404,
   HttpResponse,
   HttpResponseNotFound,
   HttpResponsePermanentRedirect,
   JsonResponse,
 )
+from django.http.request import split_domain_port
 from django.urls import reverse
 from django.shortcuts import redirect, render
-from django.utils.cache import patch_response_headers
+from django.utils.cache import patch_response_headers, patch_vary_headers
 
 from pages.auth_session import (
   SESSION_IDLE_TIMEOUT_REASON,
   check_authenticated_session,
   get_session_idle_timeout_seconds,
 )
-from .error_views import error_response
+from .error_views import error_response, wants_json_error_response
 
 logger = logging.getLogger(__name__)
 IMMUTABLE_STATIC_RE = re.compile(r"\.[0-9a-f]{8,}\.")
@@ -62,6 +62,32 @@ def _ensure_leading_slash(value: str) -> str:
   return f"/{value.lstrip('/')}"
 
 
+def _is_json_response(response) -> bool:
+  content_type = (response.get("Content-Type") or "").lower()
+  return "application/json" in content_type or "+json" in content_type
+
+
+def _replace_error_response(request, response):
+  replacement = error_response(request, response.status_code)
+  # These describe the old body. Preserve protocol headers and cookies instead.
+  body_headers = {
+    "content-type", "content-length", "content-encoding", "content-range",
+    "etag", "last-modified", "content-md5", "digest", "content-digest", "repr-digest",
+  }
+  for header, value in response.items():
+    if header.lower() == "vary":
+      for vary_header in value.split(","):
+        patch_vary_headers(replacement, (vary_header.strip(),))
+    elif header.lower() not in body_headers:
+      replacement[header] = value
+  replacement.cookies.update(response.cookies)
+  return replacement
+
+
+def _hostname(value: str) -> str:
+  return split_domain_port((value or "").strip().lower())[0]
+
+
 class AdminIPRestrictionMiddleware:
   """
   Blocks access to admin paths if the remote IP is not whitelisted.
@@ -76,7 +102,7 @@ class AdminIPRestrictionMiddleware:
   def __call__(self, request):
     if self.whitelist and request.path.startswith(self.admin_prefix):
       remote_ip = (request.META.get("REMOTE_ADDR") or "").strip()
-      if remote_ip and remote_ip not in self.whitelist:
+      if remote_ip not in self.whitelist:
         logger.warning("Blocked admin access from non-whitelisted IP %s", remote_ip)
         # Tarnish the admin endpoint by returning 404 instead of 403.
         return HttpResponseNotFound()
@@ -138,7 +164,7 @@ class SecurityHeadersMiddleware:
 class SafeStatusPageMiddleware:
   """
   Replaces browser-facing error responses with neutral branded pages.
-  JSON/API responses are left intact.
+  Existing JSON and streaming responses are left intact.
   """
 
   STATUS_CODES = {400, 403, 405, 429, 502, 503}
@@ -152,20 +178,9 @@ class SafeStatusPageMiddleware:
       return response
     if getattr(response, "status_page_handled", False):
       return response
-    if self._wants_json(request, response):
+    if response.streaming or _is_json_response(response):
       return response
-    return error_response(request, response.status_code)
-
-  def _wants_json(self, request, response) -> bool:
-    content_type = (response.get("Content-Type") or "").lower()
-    accept = (request.headers.get("Accept") or "").lower()
-    requested_with = (request.headers.get("X-Requested-With") or "").lower()
-    return (
-      request.path.startswith("/api/")
-      or "application/json" in content_type
-      or "application/json" in accept
-      or requested_with == "xmlhttprequest"
-    )
+    return _replace_error_response(request, response)
 
 
 class MaintenanceMiddleware:
@@ -194,39 +209,30 @@ class SafeHostAndErrorMiddleware:
   """
   Versteckt Django-Debug-Seiten und erzwingt ALLOWED_HOSTS auch bei DEBUG=True.
   - Blockiert Host-Header, die nicht in settings.ALLOWED_HOSTS stehen.
-  - Gibt freundliche 404/500-Templates zurück statt technischer Debug-Ausgaben.
+  - Gibt neutrale 404/500-Antworten statt technischer Debug-Ausgaben.
   """
 
   def __init__(self, get_response):
     self.get_response = get_response
-    self.allowed_hosts = {h.strip().lower() for h in getattr(settings, "ALLOWED_HOSTS", []) if h.strip()}
-    self.allow_any_host = "*" in self.allowed_hosts
-    self.render_404 = lambda req: error_response(req, 404)
-    self.render_500 = lambda req: error_response(req, 500)
 
   def __call__(self, request):
     try:
-      host = (request.get_host() or "").split(":")[0].strip().lower()
+      request.get_host()
     except DisallowedHost:
       logger.warning("Blocked request with invalid host header")
-      return self.render_404(request)
+      return error_response(request, 404)
 
-    if self.allowed_hosts and not self.allow_any_host:
-      if not host or host not in self.allowed_hosts:
-        logger.warning("Blocked host %s not in ALLOWED_HOSTS", host)
-        return self.render_404(request)
+    response = self.get_response(request)
 
-    try:
-      response = self.get_response(request)
-    except Http404:
-      return self.render_404(request)
-    except Exception:  # pragma: no cover - defensive path
-      logger.exception("Unhandled server error")
-      return self.render_500(request)
-
-    if response.status_code == 404 and settings.DEBUG:
-      # Überschreibe Django-Debug-404 mit unserer Seite.
-      return self.render_404(request)
+    if (
+      settings.DEBUG
+      and response.status_code in {404, 500}
+      and not getattr(response, "status_page_handled", False)
+      and not response.streaming
+      and not _is_json_response(response)
+    ):
+      # Django converts view exceptions to responses before middleware sees them.
+      return _replace_error_response(request, response)
     return response
 
 
@@ -239,19 +245,19 @@ class HostRedirectMiddleware:
   def __init__(self, get_response):
     self.get_response = get_response
     self.redirect_hosts = {
-      host.strip().lower()
+      _hostname(host)
       for host in getattr(settings, "REDIRECT_OLD_HOSTS", [])
       if host and host.strip()
     }
     self.site_url = (getattr(settings, "SITE_URL", "") or "").rstrip("/")
     parsed = urlsplit(self.site_url) if self.site_url else None
-    self.site_host = ((parsed.netloc if parsed else "") or getattr(settings, "SITE_HOST", "") or "").lower()
+    self.site_host = _hostname((parsed.netloc if parsed else "") or getattr(settings, "SITE_HOST", ""))
 
   def __call__(self, request):
     if not self.redirect_hosts or not self.site_url:
       return self.get_response(request)
 
-    host = (request.get_host() or "").split(":")[0].strip().lower()
+    host = _hostname(request.get_host())
     if host and host in self.redirect_hosts and host != self.site_host:
       target = f"{self.site_url}{request.get_full_path()}"
       return HttpResponsePermanentRedirect(target)
@@ -269,13 +275,13 @@ class LoginRequiredMiddleware:
     admin_prefix = _normalize_prefix(settings.ADMIN_URL)
     static_prefix = _normalize_prefix(getattr(settings, "STATIC_URL", ""))
     media_prefix = _normalize_prefix(getattr(settings, "MEDIA_URL", ""))
-    codex_prefix = _normalize_prefix(getattr(settings, "CODEX_DB_EXPORT_URL", ""))
 
     self.exempt_prefixes = {
       p
       for p in (
         admin_prefix,
-        "/auth/",
+        _normalize_prefix(getattr(settings, "AUTH_URL_PREFIX", "auth/")),
+        _normalize_prefix(getattr(settings, "PASSWORD_RESET_CONFIRM_PREFIX", "reset/")),
         "/verify-email/",
         "/api/session/",
         "/botanic/",
@@ -283,13 +289,20 @@ class LoginRequiredMiddleware:
         "/api/shop/",
         static_prefix,
         media_prefix,
-        codex_prefix,
       )
       if p
     }
     login_url = _ensure_leading_slash(settings.LOGIN_URL)
     self.login_url = login_url
     self.exempt_paths = {login_url, "/login/", "/logout/", "/register/", "/favicon.ico", "/wetter", "/wetter/", "/vokabelbox", "/vokabelbox/"}
+    self.exempt_paths.update(
+      _ensure_leading_slash(value)
+      for key in (
+        "PASSWORD_RESET_URL", "PASSWORD_RESET_DONE_URL",
+        "PASSWORD_RESET_COMPLETE_URL", "PASSWORD_RESET_INVALID_URL",
+      )
+      if (value := getattr(settings, key, ""))
+    )
 
   def __call__(self, request):
     if not getattr(settings, "LOGIN_REQUIRED", True):
@@ -299,8 +312,8 @@ class LoginRequiredMiddleware:
     if request.user.is_authenticated or self._is_exempt(path):
       return self.get_response(request)
 
-    if request.method == "GET":
-      return redirect(f"{self.login_url}?next={request.get_full_path()}")
+    if request.method in {"GET", "HEAD"}:
+      return redirect(f"{self.login_url}?{urlencode({'next': request.get_full_path()})}")
     return HttpResponse("Authentication required", status=401)
 
   def _is_exempt(self, path: str) -> bool:
@@ -325,7 +338,7 @@ class AuthSessionIdleTimeoutMiddleware:
     logout(request)
     payload = self._build_payload(request, session_state.reason)
 
-    if self._wants_json(request):
+    if wants_json_error_response(request):
       return JsonResponse(payload, status=401)
 
     if request.path == self.login_url:
@@ -356,14 +369,6 @@ class AuthSessionIdleTimeoutMiddleware:
 
     return f"{self.login_url}?{urlencode(params)}"
 
-  def _wants_json(self, request) -> bool:
-    accept_header = (request.headers.get("Accept") or "").lower()
-    requested_with = (request.headers.get("X-Requested-With") or "").lower()
-    return (
-      request.path.startswith(("/api/", "/deutschlive/api/"))
-      or "application/json" in accept_header
-      or requested_with == "xmlhttprequest"
-    )
 
 
 class VersionedStaticCacheMiddleware:

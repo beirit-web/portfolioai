@@ -1,8 +1,9 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
-test.beforeEach(async ({ context, isMobile }) => {
+test.beforeEach(async ({ context, isMobile, baseURL }) => {
   test.skip(!isMobile, "The sliding panel is used below the mobile navigation breakpoint.");
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1:(?:8765|8000)(?:\/|$))/, route => route.abort());
+  await blockExternalRequests(context, baseURL);
 });
 
 async function openPage(page, path) {

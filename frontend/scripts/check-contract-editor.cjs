@@ -1,9 +1,10 @@
 const { chromium, expect } = require("@playwright/test");
 const fs = require("node:fs");
 const path = require("node:path");
+const { localBaseUrl, screenshotDirectory } = require("./lib/browser-checks.cjs");
 
-const baseUrl = process.env.CONTRACTS_BASE_URL || "http://localhost:8000";
-const screenshotDir = process.env.CONTRACTS_SCREENSHOT_DIR || "/tmp/contract-editor-check";
+const baseUrl = localBaseUrl(process.env.CONTRACTS_BASE_URL || "http://localhost:8000");
+const screenshotDir = screenshotDirectory("contracts", process.env.CONTRACTS_SCREENSHOT_DIR);
 const logoPath = path.resolve(__dirname, "../../server/assets/images/beirit-digital-logo-160.webp");
 
 async function ready(page) {
@@ -42,7 +43,10 @@ async function pickTemplate(page, key, screenshot = false) {
     expect(option.scrollWidth).toBeLessThanOrEqual(option.width);
     expect(option.whiteSpace).toBe("normal");
   }
-  if (screenshot) await page.screenshot({ path: path.join(screenshotDir, `template-picker-${page.viewportSize().width}.png`) });
+  if (screenshot) {
+    const { width, height } = page.viewportSize();
+    await page.screenshot({ path: path.join(screenshotDir, `template-picker-${width}x${height}.png`) });
+  }
   const option = page.locator(`#templateListbox [data-template="${key}"]`);
   const label = await option.innerText();
   await option.click();
@@ -295,7 +299,7 @@ async function responsiveLayouts(browser) {
     await ready(page);
     await assertTheme(page);
     await assertLayout(page, width);
-    await page.screenshot({ path: path.join(screenshotDir, `form-${width}.png`) });
+    await page.screenshot({ path: path.join(screenshotDir, `form-${width}x${height}.png`) });
     for (const key of ["object", "payment", "terms", "closing"]) {
       await group(page, key);
       await assertLayout(page, width);
@@ -303,7 +307,7 @@ async function responsiveLayouts(browser) {
     await page.locator("#nextSectionButton").click();
     await expect(page.locator("#previewPane")).toBeVisible();
     await assertLayout(page, width);
-    await page.screenshot({ path: path.join(screenshotDir, `document-${width}.png`) });
+    await page.screenshot({ path: path.join(screenshotDir, `document-${width}x${height}.png`) });
     await page.locator("#openSettingsButton").click();
     const dialog = await page.locator("#documentSettingsDialog").boundingBox();
     expect(dialog.x).toBeGreaterThanOrEqual(0);

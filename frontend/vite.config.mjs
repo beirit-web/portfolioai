@@ -7,10 +7,10 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), projectsI18nPlugin(), aboutI18nPlugin()],
   root: path.resolve(__dirname),
-  base: "/static/portfolio-dist/",
+  base: command === "serve" ? "/" : "/static/portfolio-dist/",
   resolve: {
     alias: {
       react: "preact/compat",
@@ -41,12 +41,12 @@ export default defineConfig({
         "header-nav": path.resolve(__dirname, "src/header-nav.css"),
         "homepage-layout": path.resolve(__dirname, "src/homepage-layout.css"),
         "about-page": path.resolve(__dirname, "src/about-page.css"),
-        "homepage": path.resolve(__dirname, "src/components/home/homepage/HomePage.css"),
+        "homepage": path.resolve(__dirname, "src/components/home/HomePage.css"),
         "hero": path.resolve(__dirname, "src/components/home/hero/Hero.css"),
         "weather-page": path.resolve(__dirname, "src/components/weather/WeatherPage.css"),
         "technical-label": path.resolve(__dirname, "src/components/shared/TechnicalLabel.css"),
-        "faq-section": path.resolve(__dirname, "src/components/home/faqsection/FaqSection.css"),
-        "technology-proof-section": path.resolve(__dirname, "src/components/home/technologyproofsection/TechnologyProofSection.css"),
+        "faq-section": path.resolve(__dirname, "src/components/home/FaqSection.css"),
+        "technology-proof-section": path.resolve(__dirname, "src/components/home/TechnologyProofSection.css"),
       },
       output: {
         manualChunks(id) {
@@ -88,4 +88,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

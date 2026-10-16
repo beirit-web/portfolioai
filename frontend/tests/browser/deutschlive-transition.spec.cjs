@@ -1,7 +1,10 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
+const { wavFile } = require("./helpers/audio.cjs");
+const fs = require("node:fs");
 
-test("learning links stay local while earlier recordings remain downloadable", async ({ page, context }) => {
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+test("learning links stay local while earlier recordings remain downloadable", async ({ page, context, baseURL }) => {
+  await blockExternalRequests(context, baseURL);
   await context.addInitScript(() => localStorage.setItem("deutsch-live-locale", "de"));
   const redirect = await page.request.get("/deutschlive/recordings?lang=de", { maxRedirects: 0 });
   expect(redirect.status()).toBe(200);
@@ -28,5 +31,20 @@ test("learning links stay local while earlier recordings remain downloadable", a
   await expect(page.locator(".recording-player h3")).toHaveText("Bisherige Aufnahme");
   const download = page.waitForEvent("download");
   await page.getByRole("link", { name: "Herunterladen", exact: true }).click();
-  expect((await download).suggestedFilename()).toBe("alte-aufnahme.wav");
+  const archiveDownload = await download;
+  expect(archiveDownload.suggestedFilename()).toBe("alte-aufnahme.wav");
+  expect(fs.readFileSync(await archiveDownload.path(), "utf8")).toBe("local archive");
+  await page.goto("/deutschlive/recordings");
+  await expect(page.locator("#recording-files")).toBeEnabled();
+  // Both current routes use the same app and preserve the earlier collection.
+  await expect(page.locator(".recording-library__list li")).toHaveCount(1);
+  await expect(page.locator(".recording-player h3")).toHaveText("Bisherige Aufnahme");
+  await page.locator("#recording-files").setInputFiles(wavFile("Neue Aufnahme.wav"));
+  await expect(page.locator(".recording-player h3")).toHaveText("Neue Aufnahme");
+  await page.reload();
+  await expect(page.locator(".recording-library__list li")).toHaveCount(2);
+  await expect(page.locator(".recording-player h3")).toHaveText("Neue Aufnahme");
+  await page.goto("/deutschlive/recordings-archiv");
+  await expect(page.locator(".recording-library__list li")).toHaveCount(2);
+  await expect(page.locator(".recording-library__list li")).toContainText(["Neue Aufnahme", "Bisherige Aufnahme"]);
 });

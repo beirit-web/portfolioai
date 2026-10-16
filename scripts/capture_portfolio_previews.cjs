@@ -1,7 +1,7 @@
 /**
  * Capture the public demos against the disposable browser-check server.
  *
- * Start server/bin/run_browser_checks.py first, with HTTP_PROXY and HTTPS_PROXY
+ * Start scripts/run_browser_checks.py first, with HTTP_PROXY and HTTPS_PROXY
  * pointed at http://127.0.0.1:9 and NO_PROXY=127.0.0.1,localhost to keep remote
  * APIs offline. Then run: node scripts/capture_portfolio_previews.cjs
  * Optional project slugs capture only those projects; --device=mobile or

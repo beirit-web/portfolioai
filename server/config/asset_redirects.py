@@ -1,6 +1,6 @@
 """Canonical portfolio asset names and compatibility for existing local links."""
 
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import quote
 
 from django.urls import path
 from django.views.generic import RedirectView
@@ -23,19 +23,28 @@ def canonical_portfolio_url(value):
     """Normalize known local URLs while preserving custom URLs and their suffixes."""
     if not value or not value.startswith("/static/"):
         return value
-    parts = urlsplit(value)
-    if parts.path.startswith(OLD_GRADE_PREFIX):
-        pathname = GRADE_PREFIX + parts.path[len(OLD_GRADE_PREFIX):]
+    pathname = value.split("?", 1)[0].split("#", 1)[0]
+    if pathname.startswith(OLD_GRADE_PREFIX):
+        canonical_path = GRADE_PREFIX + pathname[len(OLD_GRADE_PREFIX):]
     else:
-        relative = parts.path[len("/static/"):]
-        pathname = "/static/" + ASSET_RENAMES.get(relative, relative)
-    return urlunsplit(parts._replace(path=pathname))
+        renamed = ASSET_RENAMES.get(pathname[len("/static/"):])
+        if renamed is None:
+            return value
+        canonical_path = "/static/" + renamed
+    return canonical_path + value[len(pathname):]
+
+
+class _GradeAssetRedirectView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        # Django decodes the matched path before passing it to the view.
+        kwargs["asset_path"] = quote(kwargs["asset_path"], safe="/")
+        return super().get_redirect_url(*args, **kwargs)
 
 
 urlpatterns = [
     path(
         "static/portfolio/test-main/<path:asset_path>",
-        RedirectView.as_view(
+        _GradeAssetRedirectView.as_view(
             url=GRADE_PREFIX + "%(asset_path)s", permanent=True, query_string=True,
         ),
         name="legacy_grade_calculator_asset",

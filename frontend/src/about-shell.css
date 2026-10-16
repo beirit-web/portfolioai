@@ -1,3 +1,5 @@
+@import "../../server/assets/css/footer-links.css";
+
 *,
 *::before,
 *::after {
@@ -280,14 +282,7 @@ video {
 }
 
 .footer-link {
-  color: #334155;
   font-weight: 750;
-}
-
-.footer-link:hover,
-.footer-link:focus-visible {
-  color: #0f766e;
-  outline: none;
 }
 
 .footer-link--scroll-top {

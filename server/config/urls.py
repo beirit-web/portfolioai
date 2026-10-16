@@ -6,7 +6,12 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 
 from .asset_redirects import urlpatterns as legacy_asset_patterns
-from .deutschlive_views import deutschlive_api_not_found, deutschlive_redirect, deutschlive_spa, deutschlive_recordings_archive
+from .deutschlive_views import (
+    deutschlive_api_not_found,
+    deutschlive_recordings_archive,
+    deutschlive_redirect,
+    deutschlive_spa,
+)
 
 handler400 = "config.error_views.bad_request"
 handler403 = "config.error_views.permission_denied"
@@ -35,6 +40,7 @@ urlpatterns = [
     path("deutschLive/", deutschlive_redirect, name="deutschlive_legacy_case"),
     path("deutschLive/<path:_path>", deutschlive_redirect, name="deutschlive_legacy_case_spa"),
     path("deutschlive/api/", include("lessons.urls")),
+    # Keep root and nested API misses out of the HTML SPA fallback below.
     path("deutschlive/api", deutschlive_api_not_found),
     path("deutschlive/api/", deutschlive_api_not_found),
     path("deutschlive/api/<path:_path>", deutschlive_api_not_found),

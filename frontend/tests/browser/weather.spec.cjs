@@ -1,8 +1,6 @@
 const { test, expect } = require("@playwright/test");
-const fs = require("node:fs");
-const nodePath = require("node:path");
-const previews = nodePath.resolve(__dirname, "../../../runtime/browser-checks/previews");
-fs.mkdirSync(previews, { recursive: true });
+const { blockExternalRequests } = require("./helpers/network.cjs");
+const { gate } = require("./helpers/async.cjs");
 
 // Fixed API dates keep forecasts independent of the machine's clock and timezone.
 const hours = Array.from({ length: 24 }, (_, index) =>
@@ -67,12 +65,13 @@ const airQuality = {
   },
 };
 
-async function mockWeather(context, { failForecastOnce = false } = {}) {
+async function mockWeather(context, baseURL, { failForecastOnce = false } = {}) {
+  const origin = new URL(baseURL).origin;
   const requests = { cities: [], forecasts: 0, airQuality: 0 };
   await context.route("**/*", async route => {
     const url = new URL(route.request().url());
-    if (url.origin === "http://127.0.0.1:8765") return route.continue();
-    const headers = { "Access-Control-Allow-Origin": "http://127.0.0.1:8765" };
+    if (url.origin === origin) return route.continue();
+    const headers = { "Access-Control-Allow-Origin": origin };
     if (url.hostname === "geocoding-api.open-meteo.com" && url.pathname === "/v1/search") {
       const city = url.searchParams.get("name");
       requests.cities.push(city);
@@ -119,12 +118,12 @@ async function openWeather(page) {
   await expect(page.locator(".weather-widget")).toHaveAttribute("data-weather-widget-initialized", "true");
 }
 
-test("weather starts from server HTML without a React module waterfall", async ({ page, context }) => {
+test("weather starts from server HTML without a React module waterfall", async ({ page, context, baseURL }) => {
   const scripts = [];
   page.on("request", request => {
     if (request.resourceType() === "script") scripts.push(request.url());
   });
-  await mockWeather(context);
+  await mockWeather(context, baseURL);
   const response = await page.goto("/botanic/wetter/");
   const html = await response.text();
   expect(html).toContain('id="weatherPageTitle"');
@@ -135,11 +134,12 @@ test("weather starts from server HTML without a React module waterfall", async (
   await expect(page.locator('script[src*="weather-widget.js"]')).toHaveAttribute("defer", "");
 });
 
-test("weather shell and source attribution are visible without JavaScript", async ({ browser }) => {
+test("weather shell and source attribution are visible without JavaScript", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
+    await blockExternalRequests(context, baseURL);
     const page = await context.newPage();
-    await page.goto("http://127.0.0.1:8765/botanic/wetter/");
+    await page.goto(`${baseURL}/botanic/wetter/`);
     await expect(page.getByRole("heading", { name: "Wetter für Garten & Pflanzen", exact: true })).toBeVisible();
     await expect(page.getByRole("searchbox", { name: "Ort suchen", exact: true })).toHaveValue("Helmstedt");
     await expect(page.getByRole("navigation", { name: "Gesundheitsquellen", exact: true })).toContainText("DWD Pollen");
@@ -151,8 +151,8 @@ test("weather shell and source attribution are visible without JavaScript", asyn
   }
 });
 
-test("weather flow loads a searched city with current, hourly and five-day forecasts", async ({ page, context }, testInfo) => {
-  const requests = await mockWeather(context);
+test("weather flow loads a searched city with current, hourly and five-day forecasts", async ({ page, context, baseURL }, testInfo) => {
+  const requests = await mockWeather(context, baseURL);
   await openWeather(page);
   await expect(page.locator(".weather-widget")).toHaveAttribute("data-status", "updated_live");
   const search = page.getByRole("searchbox", { name: "Ort suchen", exact: true });
@@ -191,7 +191,7 @@ test("weather flow loads a searched city with current, hourly and five-day forec
   await page.evaluate(() => document.fonts.ready);
   await testInfo.attach("weather-success-preview", {
     body: await page.screenshot({
-      path: nodePath.join(previews, `${testInfo.project.name}-weather-success.png`),
+      path: testInfo.outputPath(`${testInfo.project.name}-weather-success.png`),
       fullPage: true,
       animations: "disabled",
     }),
@@ -199,8 +199,8 @@ test("weather flow loads a searched city with current, hourly and five-day forec
   });
 });
 
-test("weather flow recovers from an API error using the refresh button", async ({ page, context }) => {
-  const requests = await mockWeather(context, { failForecastOnce: true });
+test("weather flow recovers from an API error using the refresh button", async ({ page, context, baseURL }) => {
+  const requests = await mockWeather(context, baseURL, { failForecastOnce: true });
   await openWeather(page);
   await expect(page.locator(".weather-widget")).toHaveAttribute("data-status", "error");
   await expect(page.locator("#statusMsg")).toContainText("Wetter konnte nicht geladen werden.");
@@ -216,8 +216,53 @@ test("weather flow recovers from an API error using the refresh button", async (
 });
 
 
-test("former weather route opens Botanic and the last city survives reload", async ({ page, context }) => {
-  await mockWeather(context);
+test("a newer city search stays busy when the previous request is aborted", async ({ page, context, baseURL }) => {
+  const coordinates = [];
+  page.on("request", request => {
+    const url = new URL(request.url());
+    if (url.hostname === "api.open-meteo.com") coordinates.push([url.searchParams.get("latitude"), url.searchParams.get("longitude")]);
+  });
+  await mockWeather(context, baseURL);
+  await openWeather(page);
+  await expect(page.locator(".weather-widget")).toHaveAttribute("data-status", "updated_live");
+  const older = gate(), newer = gate(), olderStarted = gate(), newerStarted = gate();
+  await page.route("https://geocoding-api.open-meteo.com/v1/search?*", async route => {
+    const city = new URL(route.request().url()).searchParams.get("name");
+    if (city !== "Berlin" && city !== "Hamburg") return route.fallback();
+    (city === "Berlin" ? olderStarted : newerStarted).release();
+    await (city === "Berlin" ? older : newer).ready;
+    return route.fulfill({ headers: { "Access-Control-Allow-Origin": new URL(baseURL).origin }, json: { results: [{
+      name: city, admin1: city, country: "Deutschland", latitude: city === "Berlin" ? 52.52 : 53.55, longitude: city === "Berlin" ? 13.405 : 9.99,
+    }] } });
+  });
+  try {
+    const search = page.getByRole("searchbox", { name: "Ort suchen", exact: true });
+    await search.fill("Berlin");
+    await search.press("Enter");
+    await olderStarted.ready;
+    const cancelled = page.waitForEvent("requestfailed", request => new URL(request.url()).searchParams.get("name") === "Berlin");
+    await search.fill("Hamburg");
+    await search.press("Enter");
+    await newerStarted.ready;
+    await cancelled;
+    // Allow the aborted request's catch/finally to run before checking the UI.
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    await expect(page.locator(".weather-widget-grid")).toHaveAttribute("aria-busy", "true");
+    await expect(page.locator("#loadBtn")).toBeDisabled();
+    older.release();
+    newer.release();
+    await expect(page.locator("#cityName")).toHaveText("Hamburg");
+    await expect(page.locator(".weather-widget-grid")).toHaveAttribute("aria-busy", "false");
+    await expect(page.locator("#loadBtn")).toBeEnabled();
+    expect(coordinates).toEqual([["52.52", "13.405"], ["53.55", "9.99"]]);
+  } finally {
+    older.release();
+    newer.release();
+  }
+});
+
+test("former weather route opens Botanic and the last city survives reload", async ({ page, context, baseURL }) => {
+  await mockWeather(context, baseURL);
   await page.goto("/wetter/");
   await expect(page).toHaveURL(/\/botanic\/wetter\/$/);
   const search = page.getByRole("searchbox", { name: "Ort suchen", exact: true });
@@ -232,8 +277,8 @@ test("former weather route opens Botanic and the last city survives reload", asy
 });
 
 
-test("Botanic weather fits small phones, tablets and narrow desktops", async ({ page, context }) => {
-  await mockWeather(context);
+test("Botanic weather fits small phones, tablets and narrow desktops", async ({ page, context, baseURL }) => {
+  await mockWeather(context, baseURL);
   for (const width of [320, 900, 1380, 1660]) {
     await page.setViewportSize({ width, height: 900 });
     await openWeather(page);

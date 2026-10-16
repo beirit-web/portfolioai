@@ -1,15 +1,12 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 const guestStorageKey = "sprachservice:vokabelbox:v1:guest";
 const projectUrl = "/projekte/sprachdienstleistungen/#vokabelbox";
 const browserErrors = new WeakMap();
 
 test.beforeEach(async ({ context, page, baseURL }) => {
-  const portfolioOrigin = new URL(baseURL).origin;
-  await context.route(
-    url => ["http:", "https:"].includes(url.protocol) && url.origin !== portfolioOrigin,
-    route => route.abort(),
-  );
+  await blockExternalRequests(context, baseURL);
   const errors = [];
   browserErrors.set(page, errors);
   page.on("pageerror", error => errors.push(error.message));

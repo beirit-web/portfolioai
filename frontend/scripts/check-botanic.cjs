@@ -1,20 +1,12 @@
 const { chromium, expect } = require("@playwright/test");
-const { execFileSync } = require("node:child_process");
-const { randomUUID, randomBytes } = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
+const { localBaseUrl, screenshotDirectory, createTestAccount, createDjangoShell, closeBrowserAndCleanup } = require("./lib/browser-checks.cjs");
 
-const serverDir = path.resolve(__dirname, "../../server");
-const baseUrl = process.env.BOTANIC_BASE_URL || "http://127.0.0.1:8000";
-const screenshots = process.env.BOTANIC_SCREENSHOT_DIR || "/tmp/botanic-check";
-const email = `botanic-check-${randomUUID()}@example.test`;
-const password = randomBytes(24).toString("base64url");
-const env = { ...process.env, BOTANIC_TEST_EMAIL: email, BOTANIC_TEST_PASSWORD: password };
-
-function django(code) {
-  return execFileSync(path.join(serverDir, ".venv/bin/python"), ["manage.py", "shell", "-c", code],
-    { cwd: serverDir, env, encoding: "utf8", timeout: 60000 }).trim();
-}
+const baseUrl = localBaseUrl(process.env.BOTANIC_BASE_URL || "http://127.0.0.1:8000");
+const screenshots = screenshotDirectory("botanic", process.env.BOTANIC_SCREENSHOT_DIR);
+const { email, password, env } = createTestAccount("botanic");
+const django = createDjangoShell(env);
 
 async function assertLayout(page) {
   const width = page.viewportSize().width;
@@ -168,8 +160,9 @@ async function responsive(browser, storage, firstId) {
 (async () => {
   fs.mkdirSync(screenshots, { recursive: true });
   let browser;
-  let created = false;
+  let setupAttempted = false;
   try {
+    setupAttempted = true;
     const dates = JSON.parse(django(`
 import json, os
 from datetime import timedelta
@@ -181,13 +174,13 @@ get_user_model().objects.create_user(username=os.environ['BOTANIC_TEST_EMAIL'], 
 today = timezone.localdate()
 print(json.dumps({key: (today + timedelta(days=offset)).isoformat() for key, offset in [('today', 0), ('yesterday', -1), ('plus2', 2), ('plus5', 5), ('plus10', 10)]}))
 `));
-    created = true;
     browser = await chromium.launch({ headless: true });
     const { storage, firstId } = await workflow(browser, dates);
     await responsive(browser, storage, firstId);
     console.log(`All Botanic checks passed. Screenshots: ${screenshots}`);
   } finally {
-    if (browser) await browser.close();
-    if (created) django("import os; from django.contrib.auth import get_user_model; get_user_model().objects.filter(username=os.environ['BOTANIC_TEST_EMAIL']).delete()");
+    await closeBrowserAndCleanup(browser, () => {
+      if (setupAttempted) django("import os; from django.contrib.auth import get_user_model; get_user_model().objects.filter(username=os.environ['BOTANIC_TEST_EMAIL']).delete()");
+    });
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

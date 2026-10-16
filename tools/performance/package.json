@@ -1,0 +1,9 @@
+{
+  "name": "beirit-performance-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Optional Lighthouse tooling for local portfolio measurements",
+  "devDependencies": {
+    "lighthouse": "12.8.2"
+  }
+}

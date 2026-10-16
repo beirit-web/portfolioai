@@ -1,10 +1,52 @@
 {% load botanic_ui %}
 <article class="owned-plant" data-plant-id="{{ plant.pk }}">
-  <a class="plant-thumb" href="{% url 'botanic:edit' plant.pk %}" aria-label="{{ plant.display_name }} bearbeiten">{% include 'botanic/photo.html' with species=plant.species %}</a>
-  <div class="owned-name"><a href="{% url 'botanic:edit' plant.pk %}"><h2>{{ plant.display_name }}</h2></a><p class="scientific">{{ plant.species.scientific_name }}</p>{% if plant.location %}<p class="plant-location">{% botanic_icon 'pin' %}{{ plant.location }}</p>{% endif %}{% include 'botanic/photo_credit.html' with species=plant.species %}</div>
-  <div class="plant-schedule"><span class="status status--{{ plant.status }}">{% if plant.paused %}{% botanic_icon 'pause' %}{% else %}{% botanic_icon 'clock' %}{% endif %}{{ plant.status_label }}</span><strong>{% if plant.paused %}—{% else %}{{ plant.next_watering|date:'d. M Y' }}{% endif %}</strong><small>Alle {{ plant.watering_interval }} Tage{% if plant.days_overdue and not plant.paused %} · {{ plant.days_overdue }} Tage überfällig{% endif %}</small></div>
+  <a
+    class="plant-thumb"
+    href="{% url 'botanic:edit' plant.pk %}"
+    aria-label="{{ plant.display_name }} bearbeiten"
+  >{% include 'botanic/photo.html' with species=plant.species %}</a>
+  <div class="owned-name">
+    <a href="{% url 'botanic:edit' plant.pk %}"><h2>{{ plant.display_name }}</h2></a>
+    <p class="scientific">{{ plant.species.scientific_name }}</p>
+    {% if plant.location %}
+      <p class="plant-location">{% botanic_icon 'pin' %}{{ plant.location }}</p>
+    {% endif %}
+    {% include 'botanic/photo_credit.html' with species=plant.species %}
+  </div>
+  <div class="plant-schedule">
+    <span class="status status--{{ plant.status }}">{% if plant.paused %}{% botanic_icon 'pause' %}{% else %}{% botanic_icon 'clock' %}{% endif %}{{ plant.status_label }}</span>
+    <strong>{% if plant.paused %}—{% else %}{{ plant.next_watering|date:'d. M Y' }}{% endif %}</strong>
+    <small>Alle {{ plant.watering_interval }} Tage{% if plant.days_overdue and not plant.paused %} · {{ plant.days_overdue }} Tage überfällig{% endif %}</small>
+  </div>
   <div class="plant-actions">
-    {% if tab == 'watering' and not plant.paused %}<form method="post" action="{% url 'botanic:water' plant.pk %}">{% csrf_token %}<button class="button button--primary" type="submit" aria-label="{{ plant.display_name }} als gegossen markieren">{% botanic_icon 'droplet' %}<span>Gegossen</span></button></form><details class="snooze-menu"><summary class="icon-button" aria-label="Gießtermin für {{ plant.display_name }} verschieben" title="Termin verschieben">{% botanic_icon 'clock' %}</summary><form class="snooze-options" method="post" action="{% url 'botanic:snooze' plant.pk %}">{% csrf_token %}<button type="submit" name="days" value="1">+ 1 Tag</button><button type="submit" name="days" value="3">+ 3 Tage</button><button type="submit" name="days" value="7">+ 7 Tage</button></form></details>{% endif %}
-    <a class="icon-button" href="{% url 'botanic:edit' plant.pk %}" aria-label="{{ plant.display_name }} bearbeiten" title="Pflanze bearbeiten">{% botanic_icon 'edit' %}</a>
+    {% if tab == 'watering' and not plant.paused %}
+      <form method="post" action="{% url 'botanic:water' plant.pk %}">
+        {% csrf_token %}
+        <button
+          class="button button--primary"
+          type="submit"
+          aria-label="{{ plant.display_name }} als gegossen markieren"
+        >{% botanic_icon 'droplet' %}<span>Gegossen</span></button>
+      </form>
+      <details class="snooze-menu">
+        <summary
+          class="icon-button"
+          aria-label="Gießtermin für {{ plant.display_name }} verschieben"
+          title="Termin verschieben"
+        >{% botanic_icon 'clock' %}</summary>
+        <form class="snooze-options" method="post" action="{% url 'botanic:snooze' plant.pk %}">
+          {% csrf_token %}
+          <button type="submit" name="days" value="1">+ 1 Tag</button>
+          <button type="submit" name="days" value="3">+ 3 Tage</button>
+          <button type="submit" name="days" value="7">+ 7 Tage</button>
+        </form>
+      </details>
+    {% endif %}
+    <a
+      class="icon-button"
+      href="{% url 'botanic:edit' plant.pk %}"
+      aria-label="{{ plant.display_name }} bearbeiten"
+      title="Pflanze bearbeiten"
+    >{% botanic_icon 'edit' %}</a>
   </div>
 </article>

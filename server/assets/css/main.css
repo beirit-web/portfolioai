@@ -1890,7 +1890,6 @@ html[data-theme="light"] .btn-secondary:focus-visible {
   box-shadow: 0 1rem 2rem rgba(14, 116, 144, 0.12);
 }
 
-/* Layout override: Karten vollbreit untereinander, Kalender neben dem Formular */
 
 /* Contact & Profile */
 
@@ -4630,9 +4629,7 @@ html[data-theme="light"] .nav-cube-link.active::after {
   }
 }
 
-/* Push nav cube faces outward only for header logo */
 
-/* Hide glow for a cleaner logo look */
 
 @media (max-width: 55rem) {
   .nav-cube {
@@ -4797,9 +4794,7 @@ html:not([data-theme="light"]) footer.site-footer .footer-link:focus-visible {
   }
 }
 
-/* Kontaktkarte auf kleineren Screens immer volle Breite zeigen */
 
-/* Services: auf mobilen/tablet Icons ausblenden für bessere Lesbarkeit */
 
 /* 768–1024px gezielt optimieren */
 @media (min-width: 48rem) and (max-width: 64rem) {
@@ -4822,7 +4817,6 @@ html:not([data-theme="light"]) footer.site-footer .footer-link:focus-visible {
   }
 }
 
-/* 500–800px: zwei Spalten wo möglich */
 
 /* Feinschliff unter 800px */
 @media (max-width: 50rem) {
@@ -5373,10 +5367,8 @@ html:not([data-theme="light"]) footer.site-footer .footer-link:focus-visible {
     text-decoration: underline;
   }
 
-  /* Buttons im Print nicht pauschal ausblenden, nur UI-spezifische Elemente */
 }
 
-/* === Override: Interpreter cards one per row (full width) === */
 .notice {
   padding: 0.85rem 1rem;
   border-radius: 0.85rem;
@@ -5386,9 +5378,7 @@ html:not([data-theme="light"]) footer.site-footer .footer-link:focus-visible {
   margin: 0 0 1rem 0;
 }
 
-/* Desktop Contact + Weather balancing */
 
-/* Large desktop breathing room */
 
 @media (min-width: 52rem) and (max-width: 64rem) {
   .topnav {
@@ -5545,7 +5535,6 @@ html:not([data-theme="light"]) footer.site-footer .footer-link:focus-visible {
   }
 }
 
-/* Home page layout refresh */
 
 /* Responsive stability overrides */
 .page-shell,
@@ -7872,7 +7861,6 @@ html[data-theme="light"] .template-body.legal-body .legal-page-shell--terms .leg
   color: #334155;
 }
 
-/* Sprachservice: animated header and footer links. */
 
 /* Checkbox class is supplied by RegistrationForm. */
 .template-consent__checkbox {

@@ -140,50 +140,6 @@ def vite_css_assets(*entries: str) -> str:
 
 
 @register.simple_tag
-def vite_css_assets_async(*entries: str) -> str:
-    manifest_path = (
-        Path(settings.SERVER_DIR)
-        / "assets"
-        / "portfolio-dist"
-        / ".vite"
-        / "manifest.json"
-    )
-    try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return mark_safe("")
-
-    tags = []
-    seen = set()
-    for entry in entries:
-        chunk = manifest.get(entry, {})
-        chunk_file = chunk.get("file", "")
-        css_files = []
-        if chunk_file.endswith(".css"):
-            css_files.append(chunk_file)
-        css_files.extend(chunk.get("css", []))
-        for css_file in css_files:
-            if css_file in seen:
-                continue
-            seen.add(css_file)
-            css_url = _static_url(f"portfolio-dist/{css_file}")
-            tags.append(
-                format_html(
-                    '<link rel="stylesheet" href="{}" media="print" onload="this.onload=null;this.media=\'all\'">',
-                    css_url,
-                )
-            )
-            tags.append(
-                format_html(
-                    '<noscript><link rel="stylesheet" href="{}"></noscript>',
-                    css_url,
-                )
-            )
-
-    return format_html_join("\n", "{}", ((tag,) for tag in tags))
-
-
-@register.simple_tag
 def vite_inline_css_assets(*entries: str) -> str:
     manifest_path = (
         Path(settings.SERVER_DIR)

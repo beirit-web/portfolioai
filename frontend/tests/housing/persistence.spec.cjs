@@ -1,13 +1,13 @@
 const { test: base, expect } = require("@playwright/test");
 const { spawn } = require("node:child_process");
-const { once } = require("node:events");
 const fs = require("node:fs");
 const path = require("node:path");
 const { randomUUID } = require("node:crypto");
+const { blockExternalRequests } = require("../browser/helpers/network.cjs");
 
 const workspace = path.resolve(__dirname, "../../..");
-const python = ["server/.venv/bin/python", ".venv/bin/python"]
-  .map(file => path.join(workspace, file)).find(file => fs.existsSync(file)) || "python3";
+const localPython = path.join(workspace, "server/.venv/bin/python");
+const python = fs.existsSync(localPython) ? localPython : "python3";
 
 // Each browser worker owns a disposable database. Only its Django child is
 // restarted; the same database and signing key survive that real process restart.
@@ -15,30 +15,39 @@ const test = base.extend({
   housingServer: [async ({}, use, workerInfo) => {
     const port = 8870 + workerInfo.workerIndex;
     const origin = `http://127.0.0.1:${port}`;
-    const child = spawn(python, ["server/bin/run_housing_browser_checks.py", "--port", String(port)], {
+    const child = spawn(python, ["scripts/run_housing_browser_checks.py", "--port", String(port)], {
       cwd: workspace, stdio: ["ignore", "pipe", "pipe"],
     });
     let output = "";
     let generation = 1;
+    let spawnError;
+    const exited = new Promise(resolve => {
+      child.once("error", error => { spawnError = error; resolve(); });
+      child.once("exit", resolve);
+    });
+    const isRunning = () => child.pid !== undefined && child.exitCode === null && child.signalCode === null;
     child.stdout.on("data", data => { output = (output + data).slice(-20000); });
     child.stderr.on("data", data => { output = (output + data).slice(-20000); });
     async function ready(generation = 1) {
       await expect.poll(async () => {
-        if (child.exitCode !== null) throw new Error(`Disposable housing server exited: ${output}`);
+        if (spawnError) throw new Error(`Could not start disposable housing server: ${spawnError.message}`);
+        if (!isRunning()) throw new Error(`Disposable housing server exited (${child.signalCode || child.exitCode}): ${output}`);
         if (!output.includes(`HOUSING_BROWSER_STARTED generation=${generation} `)) return false;
-        try { return (await fetch(`${origin}/wohnungssuche/`)).ok; } catch { return false; }
+        try {
+          const response = await fetch(`${origin}/wohnungssuche/`, { signal: AbortSignal.timeout(2000) });
+          await response.body?.cancel();
+          return response.ok;
+        } catch { return false; }
       }, { timeout: 90000, intervals: [100, 250, 500] }).toBe(true);
     }
     try {
       await ready();
       await use({ origin, restart: async () => { generation += 1; child.kill("SIGUSR1"); await ready(generation); } });
     } finally {
-      if (child.exitCode === null) {
-        const exited = once(child, "exit");
+      if (isRunning()) {
         child.kill("SIGTERM");
-        const killTimer = setTimeout(() => child.kill("SIGKILL"), 15000);
-        await exited;
-        clearTimeout(killTimer);
+        const killTimer = setTimeout(() => child.kill("SIGKILL"), 10000);
+        try { await exited; } finally { clearTimeout(killTimer); }
       }
     }
   }, { scope: "worker", timeout: 120000 }],
@@ -76,7 +85,7 @@ function auth(token) { return { Authorization: `Token ${token}` }; }
 
 test("profiles and locations survive reload and server restart and stay private across two accounts", async ({ page, context, housingServer }) => {
   const { origin, restart } = housingServer;
-  await context.route(/^https?:\/\//, route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
+  await blockExternalRequests(context, origin);
   const suffix = randomUUID().slice(0, 8);
   const userA = `housing-a-${suffix}`, userB = `housing-b-${suffix}`;
   await register(page, origin, userA);
@@ -109,6 +118,11 @@ test("profiles and locations survive reload and server restart and stay private 
 
   await card.getByRole("button", { name: "Bearbeiten", exact: true }).click();
   await expect(form.getByLabel("Name", { exact: true })).toHaveValue("Fiktives Familienprofil A");
+  await expect(form.getByLabel("Min. Zimmer", { exact: true })).toHaveValue("2.5");
+  await expect(form.getByLabel("Max. Zimmer", { exact: true })).toHaveValue("4");
+  await expect(form.getByLabel("Max Warmmiete", { exact: true })).toHaveValue("1200");
+  await expect(form.getByLabel("Balkon", { exact: true })).toBeChecked();
+  await expect(form.getByLabel("Musterstadt A (15 km)", { exact: true })).toBeChecked();
   await form.getByLabel("Name", { exact: true }).fill("Fiktives Profil A geändert");
   await form.getByRole("button", { name: "Speichern", exact: true }).click();
   await expect(page.locator(".profile-card").filter({ hasText: "Fiktives Profil A geändert" })).toBeVisible();
@@ -165,6 +179,7 @@ test("profiles and locations survive reload and server restart and stay private 
 
 test("validation, offline saves and an expired login never report a saved profile", async ({ page, context, housingServer }) => {
   const { origin } = housingServer;
+  await blockExternalRequests(context, origin);
   const username = `housing-errors-${randomUUID().slice(0, 8)}`;
   await register(page, origin, username);
   await login(page, origin, username);

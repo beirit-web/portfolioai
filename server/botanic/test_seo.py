@@ -3,6 +3,7 @@
 from html.parser import HTMLParser
 from unittest.mock import patch
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -65,7 +66,10 @@ class BotanicDocument(HTMLParser):
 @override_settings(
     SITE_URL="https://portfolio.example.invalid/",
     LOGIN_REQUIRED=False,
-    STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage",
+    STORAGES={
+        **settings.STORAGES,
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    },
     CACHES={
         "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
         "botanic": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},

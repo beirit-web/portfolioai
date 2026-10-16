@@ -1,11 +1,10 @@
 const { test, expect } = require("@playwright/test");
-const fs = require("node:fs");
-const path = require("node:path");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 test.use({ reducedMotion: "no-preference" });
 
-test.beforeEach(async ({ context, page }) => {
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+test.beforeEach(async ({ context, page, baseURL }) => {
+  await blockExternalRequests(context, baseURL);
   page.errors = [];
   page.on("pageerror", error => page.errors.push(error.message));
 });
@@ -29,8 +28,6 @@ async function controlsFit(page) {
 
 test("tablet contact layout keeps controls usable and retains input when rotating", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile", "Tablet flow runs once with touch enabled.");
-  const previews = path.resolve(__dirname, "../../../runtime/browser-checks/previews");
-  fs.mkdirSync(previews, { recursive: true });
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.goto("/kontakt/");
   await expect(page.locator(".portfolio-contact-form")).toBeVisible();
@@ -56,7 +53,7 @@ test("tablet contact layout keeps controls usable and retains input when rotatin
     await controlsFit(page);
     if (width === 768 || width === 820 || width === 1024) {
       await page.locator("#subject").scrollIntoViewIfNeeded();
-      await page.screenshot({ path: path.join(previews, `tablet-contact-${width}-${height}.png`), fullPage: true, animations: "disabled" });
+      await page.screenshot({ path: testInfo.outputPath(`tablet-contact-${width}-${height}.png`), fullPage: true, animations: "disabled" });
     }
   }
 

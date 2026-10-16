@@ -1,18 +1,12 @@
 const { chromium, expect } = require("@playwright/test");
-const { execFileSync } = require("node:child_process");
-const { randomUUID, randomBytes } = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
+const { localBaseUrl, screenshotDirectory, createTestAccount, createDjangoShell, closeBrowserAndCleanup } = require("./lib/browser-checks.cjs");
 
-const server = path.resolve(__dirname, "../../server");
-const base = process.env.SHOP_BASE_URL || "http://127.0.0.1:8000";
-const screenshots = process.env.SHOP_SCREENSHOT_DIR || "/tmp/shop-check";
-const email = `shop-check-${randomUUID()}@example.test`;
-const password = randomBytes(24).toString("base64url");
-const env = { ...process.env, SHOP_TEST_EMAIL: email, SHOP_TEST_PASSWORD: password };
-function django(code) {
-  return execFileSync(path.join(server, ".venv/bin/python"), ["manage.py", "shell", "-c", code], { cwd: server, env, encoding: "utf8", timeout: 60000 }).trim();
-}
+const base = localBaseUrl(process.env.SHOP_BASE_URL || "http://127.0.0.1:8000");
+const screenshots = screenshotDirectory("shop", process.env.SHOP_SCREENSHOT_DIR);
+const { email, password, env } = createTestAccount("shop");
+const django = createDjangoShell(env);
 async function layout(page) {
   const width = page.viewportSize().width;
   const result = await page.evaluate(() => ({ width: document.documentElement.scrollWidth,
@@ -43,8 +37,9 @@ async function contact(page, date, delivery = false) {
 (async () => {
   fs.mkdirSync(screenshots, { recursive: true });
   let browser;
-  let created = false;
+  let setupAttempted = false;
   try {
+    setupAttempted = true;
     const info = JSON.parse(django(`
 import os, json
 from datetime import timedelta
@@ -55,7 +50,6 @@ p = CakeProduct.objects.get(sku='BK-ERD-001')
 get_user_model().objects.create_user(username=os.environ['SHOP_TEST_EMAIL'], email=os.environ['SHOP_TEST_EMAIL'], password=os.environ['SHOP_TEST_PASSWORD'])
 print(json.dumps({'id': p.pk, 'name': p.name, 'slug': p.slug, 'price': str(p.price), 'date': (timezone.localdate() + timedelta(days=max(3, p.lead_time_days))).isoformat(), 'today': timezone.localdate().isoformat()}))
 `));
-    created = true;
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: "de-DE", isMobile: true, hasTouch: true });
     const page = await context.newPage();
@@ -206,13 +200,14 @@ print(json.dumps({'id': p.pk, 'name': p.name, 'slug': p.slug, 'price': str(p.pri
     await context.close();
     console.log(`All Shop checks passed. Screenshots: ${screenshots}`);
   } finally {
-    if (browser) await browser.close();
-    if (created) django(`
+    await closeBrowserAndCleanup(browser, () => {
+      if (setupAttempted) django(`
 import os
 from django.contrib.auth import get_user_model
 from shop.models import CakeOrder
 CakeOrder.objects.filter(customer_email=os.environ['SHOP_TEST_EMAIL']).delete()
 get_user_model().objects.filter(username=os.environ['SHOP_TEST_EMAIL']).delete()
 `);
+    });
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Pause, Play } from "lucide-react";
 import AboutFactIcon from "./AboutFactIcon.jsx";
 import { featureIconFor } from "../home/portfolio/PortfolioFeatureList";
 import TechnologyIcon from "../shared/TechnologyIcon";
@@ -11,14 +11,25 @@ const aboutPortraitSrcSet = [
 ].join(", ");
 const aboutPortraitFallbackUrl = "/static/images/eugenbeirit.png";
 
-function AboutTechCarousel({ items }) {
+const carouselLabels = {
+  de: { title: "Technologien und Werkzeuge", previous: "Vorherige Technologie", next: "Nächste Technologie", select: "Technologie auswählen", show: item => `${item} anzeigen`, pause: "Automatischen Wechsel pausieren", resume: "Automatischen Wechsel fortsetzen" },
+  ru: { title: "Технологии и инструменты", previous: "Предыдущая технология", next: "Следующая технология", select: "Выбрать технологию", show: item => `Показать ${item}`, pause: "Приостановить автоматическую смену", resume: "Возобновить автоматическую смену" },
+  uk: { title: "Технології та інструменти", previous: "Попередня технологія", next: "Наступна технологія", select: "Вибрати технологію", show: item => `Показати ${item}`, pause: "Призупинити автоматичну зміну", resume: "Продовжити автоматичну зміну" },
+};
+
+function AboutTechCarousel({ items, language }) {
   const carouselRef = React.useRef(null);
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [isPaused, setIsPaused] = React.useState(false);
+  const [isHovered, setIsHovered] = React.useState(false);
+  const [hasFocus, setHasFocus] = React.useState(false);
+  const [reducedMotion, setReducedMotion] = React.useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [isInView, setIsInView] = React.useState(false);
+  const labels = carouselLabels[language] || carouselLabels.de;
   const activeItem = items[activeIndex] || items[0];
   const ActiveIcon = featureIconFor(activeItem);
   const hasMultipleItems = items.length > 1;
+  const isRotating = hasMultipleItems && !isPaused && !reducedMotion && !isHovered && !hasFocus && isInView;
 
   const goToSlide = React.useCallback((index) => {
     if (!items.length) return;
@@ -47,12 +58,20 @@ function AboutTechCarousel({ items }) {
   }, []);
 
   React.useEffect(() => {
-    if (!hasMultipleItems || isPaused || !isInView) return undefined;
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
+
+  React.useEffect(() => {
+    if (!isRotating) return undefined;
     const intervalId = setInterval(() => {
       setActiveIndex((currentIndex) => (currentIndex + 1) % items.length);
     }, 2600);
     return () => clearInterval(intervalId);
-  }, [hasMultipleItems, isPaused, isInView, items.length]);
+  }, [isRotating, items.length]);
 
   if (!items.length) return null;
 
@@ -61,13 +80,16 @@ function AboutTechCarousel({ items }) {
       ref={carouselRef}
       className="about-tech-carousel"
       aria-roledescription="carousel"
-      aria-label="Technologien und Werkzeuge"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onFocus={() => setIsPaused(true)}
-      onBlur={() => setIsPaused(false)}
+      role="region"
+      aria-label={labels.title}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setHasFocus(true)}
+      onBlur={event => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setHasFocus(false);
+      }}
     >
-      <div className="about-tech-carousel__stage" aria-live="polite" key={activeItem}>
+      <div className="about-tech-carousel__stage" aria-live={isRotating ? "off" : "polite"} key={activeItem}>
         <TechnologyIcon label={activeItem} fallback={ActiveIcon} className="about-tech-carousel__icon" />
         <strong>{activeItem}</strong>
         <span>{activeIndex + 1} / {items.length}</span>
@@ -85,24 +107,29 @@ function AboutTechCarousel({ items }) {
       </div>
       {hasMultipleItems ? (
         <div className="about-tech-carousel__controls">
-          <button type="button" className="about-tech-carousel__button" onClick={() => moveSlide(-1)} aria-label="Vorherige Technologie">
+          <button type="button" className="about-tech-carousel__button" onClick={() => moveSlide(-1)} aria-label={labels.previous}>
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
-          <div className="about-tech-carousel__dots" aria-label="Technologie auswählen">
+          <div className="about-tech-carousel__dots" aria-label={labels.select}>
             {items.map((item, index) => (
               <button
                 key={item}
                 type="button"
                 className={`about-tech-carousel__dot${index === activeIndex ? " is-active" : ""}`}
-                aria-label={`${item} anzeigen`}
+                aria-label={labels.show(item)}
                 aria-current={index === activeIndex ? "true" : undefined}
                 onClick={() => goToSlide(index)}
               />
             ))}
           </div>
-          <button type="button" className="about-tech-carousel__button" onClick={() => moveSlide(1)} aria-label="Nächste Technologie">
+          <button type="button" className="about-tech-carousel__button" onClick={() => moveSlide(1)} aria-label={labels.next}>
             <ArrowRight className="h-5 w-5" aria-hidden="true" />
           </button>
+          {!reducedMotion ? (
+            <button type="button" className="about-tech-carousel__button" onClick={() => setIsPaused(value => !value)} aria-label={isPaused ? labels.resume : labels.pause} aria-pressed={isPaused}>
+              {isPaused ? <Play className="h-5 w-5" aria-hidden="true" /> : <Pause className="h-5 w-5" aria-hidden="true" />}
+            </button>
+          ) : null}
         </div>
       ) : null}
     </div>
@@ -250,7 +277,7 @@ export default function AboutPage({ t, language }) {
           ) : null}
           <article className="about-page-card about-page-card--tech">
             <h2>{t("home.tech.stackAria")}</h2>
-            <AboutTechCarousel items={techStack} />
+            <AboutTechCarousel items={techStack} language={language} />
           </article>
         </div>
       </section>

@@ -5,6 +5,7 @@ module.exports = defineConfig({
   outputDir: "../runtime/housing-checks/results",
   timeout: 120000,
   expect: { timeout: 10000 },
+  forbidOnly: !!process.env.CI,
   workers: 2,
   reporter: [["list"], ["html", { outputFolder: "../runtime/housing-checks/report", open: "never" }]],
   use: { locale: "de-DE", reducedMotion: "reduce", trace: "retain-on-failure", screenshot: "only-on-failure" },

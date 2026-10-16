@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 const paths = ["/", "/kompetenzen/", "/ueber-mich/", "/projekte/", "/kontakt/", "/botanic/wetter/", "/impressum/", "/datenschutz/"];
 
@@ -17,8 +18,8 @@ async function colors(page) {
 }
 
 for (const path of paths) {
-  test(`${path}: keeps the light design with a dark system preference`, async ({ context, page }) => {
-    await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+  test(`${path}: keeps the light design with a dark system preference`, async ({ context, page, baseURL }) => {
+    await blockExternalRequests(context, baseURL);
     await page.emulateMedia({ colorScheme: "dark" });
     const response = await page.goto(path);
     expect(response.status()).toBe(200);

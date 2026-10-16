@@ -1432,7 +1432,9 @@
 
       setLoading(true);
       if (controller) controller.abort();
-      controller = new AbortController();
+      const requestController = new AbortController();
+      controller = requestController;
+      const isCurrent = () => controller === requestController && !requestController.signal.aborted;
 
       try {
         const cached = !force ? readCache(query) : null;
@@ -1455,7 +1457,8 @@
         const geoUrl =
           `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}` +
           `&count=1&language=${lang}&format=json`;
-        const geo = await fetchJson(geoUrl, controller.signal);
+        const geo = await fetchJson(geoUrl, requestController.signal);
+        if (!isCurrent()) return;
 
         if (!geo?.results?.length) {
           setStatusState("no_result");
@@ -1477,9 +1480,10 @@
           "&hourly=european_aqi,pm2_5,alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,ragweed_pollen" +
           "&forecast_hours=24&timezone=auto";
         const [data, airQualityData] = await Promise.all([
-          fetchJson(forecastUrl, controller.signal),
-          fetchJson(airQualityUrl, controller.signal).catch(() => null),
+          fetchJson(forecastUrl, requestController.signal),
+          fetchJson(airQualityUrl, requestController.signal).catch(() => null),
         ]);
+        if (!isCurrent()) return;
 
         const payload = {
           city: placeLabel,
@@ -1504,7 +1508,7 @@
         }
         lastLoadedQuery = normalizedQuery;
       } catch (err) {
-        if (err?.name === "AbortError") return;
+        if (!isCurrent() || err?.name === "AbortError") return;
         console.error(err);
         if (typeof navigator !== "undefined" && navigator.onLine === false) {
           setStatusState("offline");
@@ -1512,7 +1516,10 @@
           setStatusState("error");
         }
       } finally {
-        setLoading(false);
+        if (controller === requestController) {
+          controller = null;
+          setLoading(false);
+        }
       }
     };
 
@@ -1571,6 +1578,7 @@
     cityInput.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
+        clearTimeout(typingTimer);
         triggerSearch(true, true);
         return;
       }

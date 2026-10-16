@@ -1,11 +1,9 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 const { withoutEmbeddedProjects } = require("./helpers/portfolioConfig.cjs");
 
 test.beforeEach(async ({ context, baseURL, page }) => {
-  const origin = new URL(baseURL).origin;
-  await context.route(/^https?:\/\//, route => (
-    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
-  ));
+  await blockExternalRequests(context, baseURL);
   await withoutEmbeddedProjects(page);
 });
 

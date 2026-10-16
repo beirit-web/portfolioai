@@ -31,7 +31,7 @@ from .learning_content import (
     scene_cards_from_db,
     scene_exercises,
 )
-from .models import BotExchange, Category, ChatHistory, Feedback, Plan, QuizAttempt, QuizQuestion, QuizResult, Scene, Subscription, UserProfile, UserProgress, UserVocabulary, WritingExercise
+from .models import BotExchange, Category, ChatHistory, Feedback, Plan, QuizAttempt, QuizResult, Scene, Subscription, UserProfile, UserProgress, UserVocabulary, WritingExercise
 from .realtime import realtime_feature_status, send_user_notification
 from .security import log_security_event, rate_limit, staff_required
 
@@ -1029,15 +1029,6 @@ def _login_rate_key(request, username):
     return f"login-attempts:{ip}:{username.lower()}"
 
 
-def _topic_label_for_quiz(topic_id):
-    if topic_id in TOPICS:
-        return TOPICS[topic_id]["ru"]
-    category = Category.objects.filter(slug=topic_id, is_published=True).first()
-    if category and QuizQuestion.objects.filter(topic_id=topic_id, is_active=True).exists():
-        return category.title_ru
-    return None
-
-
 def _dashboard_learning_plan(user, by_topic):
     profile = _get_profile(user)
     completed_topics = set(
@@ -1102,30 +1093,3 @@ def _recommendations_for_user(user, total_score, total_questions):
     if average < 0.7:
         return [f"Повторите тему «{profile.preferred_topic or 'Пекарня'}» в режиме сцен, затем попробуйте викторину ещё раз."]
     return ["Отлично. Теперь попробуйте письменную практику и потренируйте более длинные ответы."]
-
-
-def _build_correction(question):
-    return get_gpt_service().writing_feedback(question, "Свободная письменная практика", _NullProfile()).correction
-
-
-def _build_writing_explanation(question, prompt, profile):
-    return get_gpt_service().writing_feedback(question, prompt, profile).explanation
-
-
-def _build_bot_answer(question, profile, correction=None, explanation=None):
-    feedback = get_gpt_service().writing_feedback(question, "Свободная письменная практика", profile)
-    if correction and explanation:
-        return (
-            f"Я прочитал ваш ответ для уровня {profile.get_level_display()} и темы «{profile.preferred_topic or 'повседневная жизнь'}». "
-            f"Коррекция: {correction} Объяснение: {explanation}"
-        )
-    return feedback.answer
-
-
-class _NullProfile:
-    preferred_topic = "повседневная жизнь"
-    main_goal = ""
-    level = "a1"
-
-    def get_level_display(self):
-        return "A1"

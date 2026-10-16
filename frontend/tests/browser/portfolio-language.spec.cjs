@@ -1,11 +1,12 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 test.use({ locale: "uk-UA" });
 
-test("Ukrainian visitors can reach projects, read a report and contact the owner", async ({ page, context }) => {
+test("Ukrainian visitors can reach projects, read a report and contact the owner", async ({ page, context, baseURL }) => {
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+  await blockExternalRequests(context, baseURL);
   await page.goto("/");
   const projects = page.locator(".hero-stage").getByRole("link", { name: "Переглянути проєкти", exact: true });
   await expect(projects).toBeVisible();

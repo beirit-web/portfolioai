@@ -1,6 +1,5 @@
 """Custom template context processors for shared data."""
 
-from django.conf import settings
 from django.urls import reverse
 
 from pages.auth_session import (
@@ -27,12 +26,8 @@ def auth_session_config(_request):
     )
 
     return {
-        "app_version": settings.APP_VERSION,
-        "session_idle_timeout_ms": session_idle_timeout_ms,
-        "session_idle_status_poll_ms": session_idle_status_poll_ms,
-        "session_idle_activity_throttle_ms": session_idle_activity_throttle_ms,
         "auth_session_js_config": {
-            "isAuthenticated": _request.user.is_authenticated,
+            "isAuthenticated": bool(getattr(getattr(_request, "user", None), "is_authenticated", False)),
             "activityUrl": reverse("pages:session_activity"),
             "statusUrl": reverse("pages:session_status"),
             "loginUrl": reverse("pages:login"),

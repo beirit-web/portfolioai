@@ -5,45 +5,28 @@ Webprojekten. Entstanden aus einer klassischen HTML/CSS/JavaScript-Webseite,
 weiterentwickelt mit Django und einer React/Preact-Oberfläche. Die Projekte
 befinden sich weiterhin in Entwicklung.
 
-## Struktur
-
-| Pfad | Aufgabe |
-| --- | --- |
-| `frontend/` | Gemeinsames Portfolio-Frontend, Vite-Build und Browserprüfungen |
-| `server/` | Ein Django-Server für Portfolio, Konten und alle Demo-APIs |
-| `apps/deutsch-live/frontend/` | Aktive Lernoberfläche und lokaler Audioplayer |
-| `apps/portfolio-demos/wohnungssuche/frontend/` | Aktive Wohnungssuche-Oberfläche |
-| `apps/portfolio-demos/notenrechner/` | Gepflegte statische Rechner-Demo |
-| `apps/portfolio-demos/vokabelbox/` | Kleiner Einstieg zum gemeinsamen Lernmodul |
-| `docs/` | Architektur, Prüfungen und erhaltene Lizenzhinweise |
-| `runtime/` | Ignorierte lokale Daten und Prüfausgaben |
-
-Botanic, Shop und Vertragsgenerator liegen direkt in den gleichnamigen
-Django-Apps unter `server/`. Vokabelbox-Assets und das gemeinsame Template liegen
-in `server/assets/vokabelbox/` und `server/templates/modules/`. Jedes Projekt hat
-einen gepflegten Anwendungsstand; separate Backends und ältere Referenzprojekte
-wurden außerhalb des Repositorys archiviert.
+Die [Projektdokumentation](docs/README.md) führt zu Architektur, Demo-Routen,
+Prüfungen und Lizenzhinweisen.
 
 ## Lokal starten
 
-Python 3.13 und Node.js 22 werden auch in CI verwendet:
+Das Backend verwendet Django 5.2 LTS. Python 3.13 und Node.js 22 werden auch in CI
+verwendet. Alle Befehle werden vom Repository-Stamm aus ausgeführt:
 
 ```bash
 python3 -m venv server/.venv
 server/.venv/bin/python -m pip install -r server/requirements.txt
 npm --prefix frontend ci
-npm --prefix apps/deutsch-live/frontend ci
+npm --prefix apps/deutsch-live ci
 npm --prefix frontend run build
 npm --prefix frontend run build:housing
-npm --prefix apps/deutsch-live/frontend run build
+npm --prefix apps/deutsch-live run build
 server/.venv/bin/python server/manage.py migrate
 server/.venv/bin/python server/manage.py runserver
 ```
 
 Das Portfolio läuft unter `http://127.0.0.1:8000/`. Für die Frontend-Entwicklung:
-`npm --prefix frontend run dev`. Architektur und Demo-Routen stehen in
-[docs/architecture.md](docs/architecture.md), Prüfungen in
-[docs/checks.md](docs/checks.md).
+`npm --prefix frontend run dev`.
 
 ## Musterdaten und Grenzen
 

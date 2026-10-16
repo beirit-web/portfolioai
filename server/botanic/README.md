@@ -6,17 +6,13 @@ bleibt als Archiv erhalten und wird von dieser App nicht mehr verwendet.
 
 ## Lokal starten
 
-Im Verzeichnis `server` mit der vorhandenen virtuellen Umgebung:
-
-```bash
-.venv/bin/python manage.py migrate
-.venv/bin/python manage.py check
-.venv/bin/python manage.py runserver 127.0.0.1:8000
-```
+Installation und gemeinsamer Serverstart stehen in der
+[Hauptanleitung](../../README.md#lokal-starten).
 
 Aufruf: <http://localhost:8000/botanic/>. Anmeldung und Registrierung nutzen die
-vorhandenen Beirit-Konten. Bei neuen Registrierungen gilt weiterhin die bestehende
-E-Mail-Verifizierung; deren Mail-Konfiguration muss funktionieren.
+vorhandenen Beirit-Konten einschließlich der bestehenden E-Mail-Verifizierung.
+Der lokale Mailbetrieb ist unter
+[Musterdaten und Grenzen](../../README.md#musterdaten-und-grenzen) beschrieben.
 
 ## Daten und Funktionen
 
@@ -79,31 +75,34 @@ Beim Erweitern von `CARE` Originalquelle, Namenszuordnung und Aktualitaet pruefe
 Das Pruefdatum in Kommentar und Template gemeinsam aktualisieren. Licht, Erde,
 Topfgroesse und Jahreszeit veraendern den Wasserbedarf; Termine sind Erinnerungen.
 
-## Pruefung und Deployment
+## Pruefungen und Werkzeuge
+
+Der [gemeinsame Prüflauf](../../docs/checks.md) beschreibt die regulären
+Prüfgruppen. Für die gezielte Backendprüfung und den optionalen Botanic-Browsercheck:
 
 ```bash
 # server
 .venv/bin/python manage.py test botanic contracts pages.tests.test_projects
-.venv/bin/python manage.py makemigrations --check --dry-run
 
 # frontend, bei laufendem Django-Server und Netzwerkzugriff
 node scripts/check-botanic.cjs
-npm run check:i18n
-npm run build
 ```
 
 Der Browsercheck legt ein temporaeres Testkonto mit zufaelligen Zugangsdaten an
 und entfernt es samt Pflanzen am Ende, auch bei regulaeren Testfehlern. Er prueft
 echte API-Fotos, Anmeldung, alle Schreibablaeufe, Nutzung ohne JavaScript und
-acht Bildschirmgroessen (280 bis 1920 Pixel). Screenshots: `/tmp/botanic-check`.
-Optional: `BOTANIC_BASE_URL` und `BOTANIC_SCREENSHOT_DIR` setzen. Nur gegen die
+acht Bildschirmgroessen (280 bis 1920 Pixel).
+Screenshots: `runtime/botanic-checks/screenshots/` ab Repository-Stamm.
+Optional: `BOTANIC_BASE_URL` für einen lokalen HTTP(S)-Ursprung und
+`BOTANIC_SCREENSHOT_DIR` für einen anderen Ausgabeordner setzen. Relative
+Ausgabepfade beziehen sich auf den Repository-Stamm. Nur gegen die
 lokale Entwicklungsdatenbank verwenden; ein hart beendeter Prozess kann ein
 `botanic-check-...@example.test`-Konto zuruecklassen.
 
-Nach Deployment Migrationen anwenden, Frontend bauen, `collectstatic` ausfuehren
-und den Django-Prozess neu starten. Es sind keine neuen Python-Abhaengigkeiten
-oder Geheimnisse noetig. `build-botanic-icons.cjs` erzeugt den Lucide-Sprite bei
-Icon-Aenderungen; der fertige Sprite ist eingecheckt.
+`build-botanic-icons.cjs` erzeugt aus `frontend/` den Lucide-Sprite bei
+Icon-Aenderungen; der fertige Sprite ist eingecheckt. Die gemeinsamen
+[Frontend-Builds](../../docs/architecture.md#vom-quellcode-zur-ausgelieferten-seite)
+sind in der Architektur beschrieben.
 
 API-Quellen: [Dokumentation](https://api.inaturalist.org/v1/docs/),
 [empfohlene Nutzung](https://www.inaturalist.org/pages/api+recommended+practices),
@@ -152,4 +151,4 @@ npm --prefix frontend run test:browser -- botanic-seo.spec.cjs portfolio-seo.spe
 
 Unter `/botanic/wetter/` ist das Wettermodul über die Botanic-Navigation erreichbar. Die bestehende Wetteroberfläche und `weather-widget.js` werden gemeinsam weiterverwendet: Ortssuche, aktuelle Werte, Regenfenster, Sonnenzeiten, stündlicher Verlauf, 5-Tage-Vorhersage und Luftqualität. Letzte Orte und Cache bleiben im Browser erhalten. Das Modul ist auch ohne Anmeldung nutzbar. Gießtermine werden weiterhin individuell verwaltet.
 
-Die früheren Routen `/wetter` und `/wetter/` leiten dauerhaft zum Modul weiter. Wetter wird im Portfolio als Funktion von ENBT Botanic geführt; die bisherige Projektkarte bleibt unveröffentlicht im internen Datenbestand erhalten. Die Wetteroberfläche steht bereits im serverseitigen HTML; `weather-widget.js` erweitert sie direkt. Die bestehenden Wetterstyles werden mit `npm --prefix frontend run build` gebaut. Die SVG-Symbole stammen weiterhin aus Lucide; der Lizenzhinweis steht im Wetter-Template.
+Die früheren Routen `/wetter` und `/wetter/` leiten dauerhaft zum Modul weiter. Wetter wird im Portfolio als Funktion von ENBT Botanic geführt; die bisherige Projektkarte bleibt unveröffentlicht im internen Datenbestand erhalten. Die Wetteroberfläche steht bereits im serverseitigen HTML; `weather-widget.js` erweitert sie direkt. Die bestehenden Wetterstyles gehören zum Portfolio-Build. Die SVG-Symbole stammen weiterhin aus Lucide; der Lizenzhinweis steht im Wetter-Template.

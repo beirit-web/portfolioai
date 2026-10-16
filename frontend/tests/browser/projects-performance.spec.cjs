@@ -1,4 +1,18 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
+
+test("home does not download components for separate about and project pages", async ({ page }) => {
+  const unrelatedScripts = [];
+  page.on("request", request => {
+    if (request.resourceType() === "script"
+      && /\/(?:AboutPage|ProjectsOverviewPage|PortfolioProjectPage)-[^/]+\.js(?:\?|$)/.test(request.url())) {
+      unrelatedScripts.push(request.url());
+    }
+  });
+  await page.goto("/");
+  await expect(page.locator(".site-shell--home .hero-stage__headline")).toBeVisible();
+  expect(unrelatedScripts).toEqual([]);
+});
 
 test("direct projects navigation uses embedded records and the HTML image preload", async ({ page }) => {
   const apiRequests = [];
@@ -38,6 +52,7 @@ test("project cards and native links are available without JavaScript", async ({
     isMobile,
   });
   try {
+    await blockExternalRequests(context, baseURL);
     const page = await context.newPage();
     const response = await page.goto("/projekte");
     expect(response.status()).toBe(200);

@@ -18,7 +18,7 @@ class HomeViteAssetsTests(TestCase):
         self.assertContains(response, "window.BEIRIT_DEFERRED_CSS = []")
         self.assertContains(response, "data-vite-inline='src/homepage-layout.css'")
         self.assertContains(response, "data-vite-inline='src/components/home/hero/Hero.css'")
-        self.assertContains(response, "data-vite-inline='src/components/home/homepage/HomePage.css'")
+        self.assertContains(response, "data-vite-inline='src/components/home/HomePage.css'")
         self.assertNotIn("/static/portfolio-dist/assets/styles-", content)
         self.assertNotIn("/static/portfolio-dist/assets/homepage-custom-", content)
         self.assertNotIn("/static/portfolio-dist/assets/responsive-overrides-", content)

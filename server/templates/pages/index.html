@@ -61,7 +61,7 @@
     </script>
     <script type="application/ld+json">{{ portfolio_structured_data_json|safe }}</script>
     {% if react_is_home_route %}
-      {% vite_inline_css_assets 'src/components/home/hero/Hero.css' 'src/header-nav.css' 'src/components/home/homepage/HomePage.css' 'src/homepage-layout.css' %}
+      {% vite_inline_css_assets 'src/components/home/hero/Hero.css' 'src/header-nav.css' 'src/components/home/HomePage.css' 'src/homepage-layout.css' %}
     {% elif react_route_path == '/projekte' %}
       {% vite_inline_css_assets 'src/projects-page.css' 'src/header-nav.css' %}
     {% elif react_is_project_detail %}

@@ -2,6 +2,7 @@ import json
 from html.parser import HTMLParser
 from xml.etree import ElementTree
 
+from django.conf import settings
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -67,7 +68,10 @@ class PortfolioDocument(HTMLParser):
 @override_settings(
     SITE_URL="https://portfolio.example.invalid",
     LOGIN_REQUIRED=False,
-    STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage",
+    STORAGES={
+        **settings.STORAGES,
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    },
 )
 class PortfolioSeoTests(TestCase):
     site_url = "https://portfolio.example.invalid"

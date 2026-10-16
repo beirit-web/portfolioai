@@ -1,7 +1,8 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
-test.beforeEach(async ({ context, page }) => {
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+test.beforeEach(async ({ context, page, baseURL }) => {
+  await blockExternalRequests(context, baseURL);
   page.errors = [];
   page.on("pageerror", error => page.errors.push(error.message));
   await page.setViewportSize({ width: 390, height: 844 });
@@ -118,7 +119,7 @@ test("all menu actions are reachable on short screens", async ({ page }) => {
   }
 });
 
-test("the menu and account pages return to the housing project page on phones and desktop", async ({ page }) => {
+test("the menu and account pages return to the housing project page on phones and desktop", async ({ page, baseURL }) => {
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     for (const route of ["dashboard", "login", "register"]) {
@@ -128,14 +129,14 @@ test("the menu and account pages return to the housing project page on phones an
       const home = container.getByRole("link", { name: "Zur Startseite der Wohnungssuche Bodensee", exact: true });
       await expect(home).toHaveAttribute("href", "/projekte/wohnungssuche-bodensee");
       await home.click();
-      await expect(page).toHaveURL("http://127.0.0.1:8765/projekte/wohnungssuche-bodensee");
+      await expect(page).toHaveURL(new URL("/projekte/wohnungssuche-bodensee", baseURL).href);
       await expect(page.locator(".app-shell .workspace")).toHaveCount(0);
       await expect(page.getByRole("heading", { name: "Wohnungssuche Bodensee", exact: true })).toBeVisible();
     }
   }
 });
 
-test("dashboard links directly to the housing project page and its demo can be reopened", async ({ page }, testInfo) => {
+test("dashboard links directly to the housing project page and its demo can be reopened", async ({ page, baseURL }, testInfo) => {
   for (const width of [320, 390, 812, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/dashboard");
@@ -149,13 +150,13 @@ test("dashboard links directly to the housing project page and its demo can be r
     expect((await home.boundingBox()).height).toBeGreaterThanOrEqual(44);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     if (width === 390 || width === 1440) await page.screenshot({
-      path: `../runtime/browser-checks/previews/${testInfo.project.name}-housing-home-link-${width}.png`,
+      path: testInfo.outputPath(`housing-home-link-${width}.png`),
     });
     await home.click();
-    await expect(page).toHaveURL("http://127.0.0.1:8765/projekte/wohnungssuche-bodensee");
+    await expect(page).toHaveURL(new URL("/projekte/wohnungssuche-bodensee", baseURL).href);
     await expect(page.getByRole("heading", { name: "Wohnungssuche Bodensee", exact: true })).toBeVisible();
     await page.locator('.portfolio-project-hero--wohnungssuche-bodensee a[href="/static/portfolio/wohnungssuche/index.html"]').click();
-    await expect(page).toHaveURL("http://127.0.0.1:8765/static/portfolio/wohnungssuche/index.html");
+    await expect(page).toHaveURL(new URL("/static/portfolio/wohnungssuche/index.html", baseURL).href);
     await expect(page.getByRole("heading", { name: "Dashboard", exact: true })).toBeVisible();
   }
 });

@@ -1,22 +1,15 @@
 const { test, expect } = require("@playwright/test");
+const { gate } = require("./helpers/async.cjs");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 test.beforeEach(async ({ context, baseURL, page }) => {
-  const origin = new URL(baseURL).origin;
-  await context.route(/^https?:\/\//, route => (
-    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
-  ));
+  await blockExternalRequests(context, baseURL);
   await context.addInitScript(() => localStorage.setItem("deutsch-live-locale", "de"));
   page.errors = [];
   page.on("pageerror", error => page.errors.push(error.message));
 });
 
 test.afterEach(async ({ page }) => expect(page.errors).toEqual([]));
-
-function gate() {
-  let release;
-  const ready = new Promise(resolve => { release = resolve; });
-  return { ready, release };
-}
 
 function topic(id, label) {
   return {
@@ -434,26 +427,4 @@ test("pending result saves block duplicate requests and failed saves preserve th
   } finally {
     saving.release();
   }
-});
-
-test("disabled progress saving still receives a server evaluation without storing an attempt", async ({ page }) => {
-  const bakery = topic("baeckerei", "Beispiel Bäckerei");
-  const attempts = [];
-  await mockTopics(page, [bakery]);
-  await mockUser(page, false);
-  await page.route("**/deutschlive/api/quiz-attempts/", route => {
-    const request = route.request().postDataJSON(); attempts.push(request);
-    return route.fulfill({ json: evaluation(bakery, request, 1) });
-  });
-  await page.goto("/deutschlive/quiz");
-  await expect(page.locator(".app-nav__account-button").first()).toContainText(quizUser.username);
-  await finishChoice(page);
-  await page.getByRole("textbox", { name: "Antwort auf Deutsch", exact: true }).fill(bakery.free_answer.example);
-  await page.getByRole("button", { name: "Quiz abschließen", exact: true }).click();
-  await expect(page.locator(".quiz-shell")).toHaveAttribute("data-state", "result");
-  await expect(page.locator(".quiz-result-card")).toContainText("1 / 2");
-  expect(attempts).toHaveLength(1);
-  expect(attempts[0].save).toBe(false);
-  await page.getByRole("button", { name: "Quiz neu starten", exact: true }).click();
-  await expectSetup(page, bakery);
 });

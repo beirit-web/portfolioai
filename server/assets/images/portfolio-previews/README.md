@@ -26,7 +26,7 @@ software content, branding and attribution were preserved.
 Start the disposable server in one terminal:
 
 ```sh
-HTTP_PROXY=http://127.0.0.1:9 HTTPS_PROXY=http://127.0.0.1:9 ALL_PROXY=http://127.0.0.1:9 NO_PROXY=127.0.0.1,localhost server/.venv/bin/python server/bin/run_browser_checks.py
+HTTP_PROXY=http://127.0.0.1:9 HTTPS_PROXY=http://127.0.0.1:9 ALL_PROXY=http://127.0.0.1:9 NO_PROXY=127.0.0.1,localhost server/.venv/bin/python scripts/run_browser_checks.py
 ```
 
 Run the capture from the repository root in another terminal, then stop the

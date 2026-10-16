@@ -591,10 +591,6 @@ def sitemap_xml(_request):
     return HttpResponse("\n".join(xml_lines), content_type="application/xml; charset=utf-8")
 
 
-def build_home_contact_messengers(contact_actions):
-    return []
-
-
 @require_GET
 @never_cache
 def vokabelbox(request):

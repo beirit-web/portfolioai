@@ -49,8 +49,10 @@ Die Browserpruefung aus `frontend` ausfuehren, waehrend Django laeuft:
 node scripts/check-contract-editor.cjs
 ```
 
-Optional: `CONTRACTS_BASE_URL` fuer einen anderen Server und
-`CONTRACTS_SCREENSHOT_DIR` fuer die Ausgabe der Screenshots setzen.
+Screenshots liegen unter `runtime/contracts-checks/screenshots/` ab
+Repository-Stamm. Optional: `CONTRACTS_BASE_URL` für einen lokalen
+HTTP(S)-Ursprung und `CONTRACTS_SCREENSHOT_DIR` für einen anderen Ausgabeordner
+setzen. Relative Ausgabepfade beziehen sich auf den Repository-Stamm.
 
 ## URLs
 
@@ -88,38 +90,24 @@ Die Vertragstexte entsprechen den bisherigen Demo-Vorlagen.
 
 ## Lokal starten und pruefen
 
-Im Verzeichnis `server`:
+Installation und gemeinsamer Serverstart stehen in der
+[Hauptanleitung](../../README.md#lokal-starten), die regulären Prüfgruppen in der
+[Prüfanleitung](../../docs/checks.md). Die gezielte Backendprüfung aus dem
+Repository-Stamm:
 
 ```sh
-.venv/bin/python manage.py migrate
-.venv/bin/python manage.py check
-.venv/bin/python manage.py test contracts pages.tests.test_projects
-.venv/bin/python manage.py runserver
+server/.venv/bin/python server/manage.py test contracts pages.tests.test_projects
 ```
-
-Wenn Port 8000 bereits belegt ist, kann der vorhandene Django-Entwicklungsserver
-weiterverwendet oder ein anderer Port gewaehlt werden.
 
 Die Migration `pages.0040_contract_generator_url` stellt ausschliesslich den
 bisherigen Demo-Link des Portfolio-Projekts `vertragsgenerator` um. Individuell
 geaenderte Links werden nicht ueberschrieben. Sie aendert kein Datenbankschema.
 
-## Auslieferung
+## Build und Weiterleitung
 
-Vor einer produktiven Auslieferung wie im bestehenden Projekt:
-
-```sh
-python manage.py migrate
-python manage.py collectstatic --noinput
-```
-
-Das Portfolio-Frontend mit den aktualisierten Links wird ueber den bestehenden
-Frontend-Build gebaut. Aus dem Repository-Verzeichnis:
-
-```sh
-cd frontend
-npm run build
-```
+Die gemeinsamen [Frontend-Builds](../../docs/architecture.md#vom-quellcode-zur-ausgelieferten-seite)
+sind in der Architektur beschrieben. Die Links zum Vertragsgenerator gehören
+zum Portfolio-Build.
 
 Der bisherige Einstieg
 `/static/portfolio/vertragsgenerator-main/index.html` leitet ueber eine kleine

@@ -1,4 +1,6 @@
 const { test, expect } = require("@playwright/test");
+const { gate } = require("./helpers/async.cjs");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 const attemptsUrl = "**/deutschlive/api/quiz-attempts/";
 const topicUrl = "**/deutschlive/api/topics/baeckerei/?view=quiz";
@@ -25,21 +27,12 @@ const quizUser = {
 };
 
 test.beforeEach(async ({ context, baseURL, page }) => {
-  const origin = new URL(baseURL).origin;
-  await context.route(/^https?:\/\//, route => (
-    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
-  ));
+  await blockExternalRequests(context, baseURL);
   await context.addInitScript(() => localStorage.setItem("deutsch-live-locale", "de"));
   page.errors = [];
   page.on("pageerror", error => page.errors.push(error.message));
 });
 test.afterEach(async ({ page }) => expect(page.errors).toEqual([]));
-
-function gate() {
-  let release;
-  const ready = new Promise(resolve => { release = resolve; });
-  return { ready, release };
-}
 
 async function mockQuiz(page, initialUser = null) {
   let currentUser = initialUser;
@@ -155,6 +148,11 @@ for (const saveDisabled of [false, true]) {
     await expect(page.locator(".quiz-result-card")).toContainText(saveDisabled
       ? "Speichern ist in den Einstellungen deaktiviert" : "Temporäre Gastpunkte in dieser Sitzung: 1");
     await expect(page.locator(".quiz-result-card")).not.toContainText("in Ihrem Account gespeichert");
+    await page.getByRole("button", { name: "Quiz neu starten", exact: true }).click();
+    await expect(page.locator(".quiz-shell")).toHaveAttribute("data-state", "ready");
+    await expect(page.getByRole("button", { name: "Quiz starten", exact: true })).toBeEnabled();
+    await expect(page.locator(".quiz-result-card, .quiz-review")).toHaveCount(0);
+    expect(requests).toHaveLength(1);
   });
 }
 

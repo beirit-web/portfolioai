@@ -1,7 +1,6 @@
 """Local portfolio settings with fictional public sample configuration."""
 
 import json
-import os
 from pathlib import Path
 from urllib.parse import urlparse
 from dotenv import load_dotenv
@@ -66,39 +65,20 @@ SERVER_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = SERVER_DIR
 
 
-def _has_platform_env() -> bool:
-    """
-    Detect when the app is running with hosting/platform-managed settings.
-    In that case `.env` should only fill gaps and must not override them.
-    """
-    platform_keys = (
-        "DJANGO_SECRET_KEY",
-        "DJANGO_DEBUG",
-        "DJANGO_ALLOWED_HOSTS",
-        "CSRF_TRUSTED_ORIGINS",
-        "RENDER",
-        "RENDER_EXTERNAL_HOSTNAME",
-    )
-    return any((os.environ.get(key) or "").strip() for key in platform_keys)
-
-
-# Local development should still be able to override ambient shell vars
-# like `DEBUG=release`, while real platform config must take precedence.
-load_dotenv(SERVER_DIR / ".env", override=not _has_platform_env())
+# Local overrides precede the public sample; explicit process values always win.
+load_dotenv(SERVER_DIR / ".env.local", override=False)
+load_dotenv(SERVER_DIR / ".env", override=False)
 
 # Core security
 SECRET_KEY = require_env(["DJANGO_SECRET_KEY", "SECRET_KEY"])
 DEBUG = env_bool_first(["DJANGO_DEBUG", "DEBUG"], False)
-NODE_ENV = env("NODE_ENV", "production")
 
 ALLOWED_HOSTS = require_env_list(["DJANGO_ALLOWED_HOSTS", "ALLOWED_HOSTS"])
 CSRF_TRUSTED_ORIGINS = require_env_list(["CSRF_TRUSTED_ORIGINS"])
 
-# Local development often runs on changing LAN IPs such as 192.168.x.x.
-# Django validates the Host header before our middleware runs, so allow
-# arbitrary local hosts only in DEBUG mode and keep production strict.
+# Keep the configured host restrictions in DEBUG as well. Additional LAN hosts
+# can be listed explicitly in ALLOWED_HOSTS; Django's test runner adds testserver.
 if DEBUG:
-    ALLOWED_HOSTS = ["*"]
     for origin in (
         "http://localhost:5173",
         "http://127.0.0.1:5173",
@@ -107,8 +87,6 @@ if DEBUG:
     ):
         if origin not in CSRF_TRUSTED_ORIGINS:
             CSRF_TRUSTED_ORIGINS.append(origin)
-elif "testserver" not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append("testserver")
 
 # This public code sample stays a demo even when an old local .env is present.
 # Isolated sandbox tests can override this setting; no environment flag enables it.
@@ -148,15 +126,15 @@ if DEBUG:
     )
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
     "config.middleware.SecurityHeadersMiddleware",
+    "config.middleware.SafeHostAndErrorMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "config.middleware.SuspiciousRequestBlockMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "config.middleware.VersionedStaticCacheMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "config.middleware.SafeHostAndErrorMiddleware",
     "config.middleware.HostRedirectMiddleware",
     "config.middleware.MaintenanceMiddleware",
     "config.middleware.AdminIPRestrictionMiddleware",
@@ -220,8 +198,6 @@ _raw_backup_dir = _server_path(
     env_path("DB_BACKUP_PATH", SERVER_DIR / "data" / "db_backups"))
 DB_BACKUP_PATH = _ensure_dir(_raw_backup_dir)
 
-# codeX: gesicherter, tokenbasierter SQLite-Export (standardmäßig aus)
-# Support the legacy DB_EXPORT_* names for older environments that still use
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -243,15 +219,21 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = _ensure_dir(_server_path(
     env_path("STATIC_ROOT", SERVER_DIR / "staticfiles")))
-STATICFILES_STORAGE = env(
-    "STATICFILES_STORAGE",
-    "django.contrib.staticfiles.storage.StaticFilesStorage"
-    if DEBUG
-    else "whitenoise.storage.CompressedManifestStaticFilesStorage",
-)
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": env(
+            "STATICFILES_STORAGE",
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if DEBUG
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        ),
+    },
+}
 VERSIONED_STATIC_CACHE_SECONDS = env_int(
     "VERSIONED_STATIC_CACHE_SECONDS", 31536000)
-APP_VERSION = env("APP_VERSION", "1.3.5")
 MEDIA_URL = "/media/"
 MEDIA_ROOT = _ensure_dir(_server_path(
     env_path("MEDIA_ROOT", SERVER_DIR / "media")))
@@ -381,11 +363,9 @@ EMAIL_SSL_CA_FILE = env("EMAIL_SSL_CA_FILE")
 EMAIL_SSL_SKIP_VERIFY = env_bool("EMAIL_SSL_SKIP_VERIFY", False)
 DEFAULT_FROM_EMAIL = "noreply@example.com"
 CONTACT_EMAIL = env("CONTACT_EMAIL", DEFAULT_FROM_EMAIL)
-# Separate Mailto-Ziel für Dolmetscher-Kontakt, damit deren E-Mails verborgen bleiben
-INTERPRETER_CONTACT_EMAIL = env("INTERPRETER_CONTACT_EMAIL", CONTACT_EMAIL)
 CONTACT_PHONE_LANDLINE = env("CONTACT_PHONE_LANDLINE", "")
 CONTACT_REGION = env("CONTACT_REGION", "")
-CONTACT_AVAILABILITY = os.environ.get("CONTACT_AVAILABILITY", "")
+CONTACT_AVAILABILITY = env("CONTACT_AVAILABILITY", "")
 
 # Zentrale, bewusst öffentlich freigegebene Website- und Anbieterangaben.
 # Private Daten werden ausschließlich aus der nicht versionierten Umgebung
@@ -446,8 +426,7 @@ SITE_CONFIG = {
 USER_UPLOADS_ENABLED = env_bool("USER_UPLOADS_ENABLED", False)
 UPLOAD_EMAIL_TO = env("UPLOAD_EMAIL_TO", EMAIL_HOST_USER)
 
-# Payment-Vorbereitung: Secrets bleiben serverseitig und werden nicht in Templates
-# oder JavaScript ausgegeben. Endpoints werden erst bei konkreter Integration ergänzt.
+# Zahlungen bleiben in dieser Portfolio-Demo unabhängig von Umgebungswerten deaktiviert.
 PAYMENT_BANK_TRANSFER_ENABLED = False
 PAYPAL_BUSINESS_EMAIL = ""
 PAYPAL_CLIENT_ID = env("PAYPAL_CLIENT_ID", "")

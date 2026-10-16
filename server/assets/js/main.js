@@ -806,7 +806,6 @@ function initPreferredLanguage() {
 }
 
 
-// === Availability helpers ===
 // === Language switching ===
 async function setLanguage(lang) {
   const targetLang = supportedLanguages.includes(lang) ? lang : fallbackLang;

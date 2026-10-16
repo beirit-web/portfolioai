@@ -1,8 +1,9 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 const dictionaries = {
-  de: require("../../../apps/deutsch-live/frontend/src/i18n/de.json"),
-  ru: require("../../../apps/deutsch-live/frontend/src/i18n/ru.json"),
+  de: require("../../../apps/deutsch-live/src/i18n/de.json"),
+  ru: require("../../../apps/deutsch-live/src/i18n/ru.json"),
 };
 const viewports = [
   { width: 280, height: 640 }, { width: 320, height: 568 }, { width: 390, height: 844 },
@@ -22,10 +23,7 @@ const variants = [
 ];
 
 test.beforeEach(async ({ context, baseURL, page }) => {
-  const origin = new URL(baseURL).origin;
-  await context.route(/^https?:\/\//, route => (
-    new URL(route.request().url()).origin === origin ? route.continue() : route.abort()
-  ));
+  await blockExternalRequests(context, baseURL);
   page.errors = [];
   page.on("pageerror", error => page.errors.push(error.message));
 });
@@ -132,9 +130,10 @@ async function expectReachable(control) {
   expect(problem).toBeNull();
 }
 
-async function expectResultImages(form) {
+async function expectResultImages(form, expectedCount) {
   const images = form.result.locator("img");
-  for (let index = 0; index < await images.count(); index += 1) {
+  await expect(images).toHaveCount(expectedCount);
+  for (let index = 0; index < expectedCount; index += 1) {
     const image = images.nth(index);
     await image.scrollIntoViewIfNeeded();
     await expect.poll(() => image.evaluate(element => element.complete && element.naturalWidth > 0)).toBe(true);
@@ -271,13 +270,14 @@ for (const variant of variants) {
     await form.calculate.click();
     await expect(form.result).toHaveClass(/is-passed/);
     await resizeAndCheck(page, variant, viewports, "passed result");
-    await expectResultImages(form);
+    // The standalone calculator celebrates passing without a result image.
+    await expectResultImages(form, variant.standalone ? 0 : 1);
     await page.screenshot({ path: testInfo.outputPath("passed-result-320.png"), fullPage: true });
     await inputs.first().fill("6");
     await form.calculate.click();
     await expect(form.result).toHaveClass(/is-failed/);
     await resizeAndCheck(page, variant, viewports, "failed result");
-    await expectResultImages(form);
+    await expectResultImages(form, 1);
     await page.screenshot({ path: testInfo.outputPath("failed-result-320.png"), fullPage: true });
     for (const viewport of [viewports[0], viewports[5], viewports[7], viewports[8]]) {
       await page.setViewportSize(viewport);
@@ -311,7 +311,27 @@ for (const variant of variants) {
     await form.calculate.click();
     await expect(form.result).toHaveClass(/is-passed/);
     await resizeAndCheck(page, variant, [viewports[0], viewports[3], viewports[7], viewports[8]], "200% font result");
-    await expectResultImages(form);
+    await expectResultImages(form, variant.standalone ? 0 : 1);
     await page.screenshot({ path: testInfo.outputPath(`large-font-${locale}-320.png`), fullPage: true });
   });
 }
+
+test("the grade calculator loads small artwork only when a result needs it", async ({ page }) => {
+  const requests = [];
+  page.on("request", request => requests.push(new URL(request.url()).pathname));
+  await page.goto("/static/portfolio/notenrechner/index.html");
+  await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "./img/favicon-32.png");
+  expect(requests.some(path => /\/(?:lost\.webp|success\.webp|lost\.png|favicon\.png|gewonnen\.mp3|lost-signal\.mp3)$/.test(path))).toBe(false);
+  await page.locator('[data-action="start"]').click();
+  await page.locator("#subjects").fill("1");
+  await page.locator('[data-action="subjects"]').click();
+  await page.locator("#grade-0").fill("5");
+  await page.locator('button[type="submit"]').click();
+  const image = page.locator(".result-image");
+  await image.scrollIntoViewIfNeeded();
+  await expect(image).toHaveAttribute("src", "./img/lost.webp");
+  await expect(image).toHaveAttribute("width", "512");
+  await expect(image).toHaveAttribute("height", "768");
+  await expect.poll(() => image.evaluate(element => element.complete && element.naturalWidth > 0)).toBe(true);
+  expect(requests.some(path => /\/(?:lost\.png|favicon\.png)$/.test(path))).toBe(false);
+});

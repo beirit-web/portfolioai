@@ -1,3 +1,5 @@
+(() => {
+"use strict";
 // Keep the existing React menu state as the source of truth.
 const mobile = matchMedia("(max-width: 980px)");
 const backdrop = document.createElement("div");
@@ -90,7 +92,7 @@ function synchronize() {
   if (opener && panel) {
     panel.id = "housing-mobile-navigation";
     opener.setAttribute("aria-controls", panel.id);
-    addHomeLink(panel.querySelector(".sidebar-footer"), "sidebar-action");
+    addHomeLink(panel.querySelector(".sidebar-footer"), "sidebar-action footer-link");
     let closeButton = panel.querySelector(".housing-nav-close");
     if (!closeButton) {
       closeButton = document.createElement("button");
@@ -164,3 +166,4 @@ observer.observe(document.getElementById("root"), {
   childList: true, subtree: true, attributes: true, attributeFilter: ["aria-expanded"],
 });
 synchronize();
+})();

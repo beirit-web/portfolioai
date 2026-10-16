@@ -329,9 +329,16 @@
   line-height: 1.2;
 }
 
-.site-shell .home-main .about-tech-carousel__rail,
-.site-shell .home-main .about-tech-carousel__controls {
+.site-shell .home-main .about-tech-carousel__rail {
   display: none;
+}
+
+.site-shell .home-main .about-tech-carousel__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .site-shell .home-main .about-tech-carousel__item {
@@ -362,8 +369,9 @@
 
 .site-shell .home-main .about-tech-carousel__button {
   display: inline-grid;
-  width: 2.55rem;
-  height: 2.55rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
   place-items: center;
   border: 0;
   border-radius: 999px;
@@ -575,5 +583,12 @@ body:has(.about-hero-grid),
 
   .site-shell .home-main .about-language-service-note {
     padding-right: 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-shell .home-main .about-tech-carousel__stage,
+  .site-shell .home-main .about-tech-carousel__item.is-active {
+    animation: none;
   }
 }

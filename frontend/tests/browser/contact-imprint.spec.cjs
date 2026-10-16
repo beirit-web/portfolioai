@@ -1,7 +1,8 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
-test.beforeEach(async ({ context, page }) => {
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+test.beforeEach(async ({ context, page, baseURL }) => {
+  await blockExternalRequests(context, baseURL);
   page.errors = [];
   page.on("pageerror", error => page.errors.push(error.message));
 });
@@ -65,6 +66,7 @@ test("contact can be identified by role and labels, requires consent and reports
   await expect(form).toHaveAttribute("aria-busy", "false");
   await expect(form.getByRole("checkbox")).not.toBeChecked();
   await expect(submit).toBeEnabled();
+  expect(deliveries).toBe(1);
   await form.getByLabel("Name", { exact: true }).fill("Neue Anfrage");
   await expect(status).toBeEmpty();
   await fits(page);
@@ -133,12 +135,12 @@ test(`${name} navigation supports keyboard, outside click, resize and direct con
   await page.screenshot({ path: testInfo.outputPath("contact-tablet.png") });
 });
 
-test(`${name} links remain available without JavaScript`, async ({ browser, page }) => {
+test(`${name} links remain available without JavaScript`, async ({ browser, page, baseURL }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: page.viewportSize() });
   try {
-    await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+    await blockExternalRequests(context, baseURL);
     const plain = await context.newPage();
-    await plain.goto(`http://127.0.0.1:8765${path}`);
+    await plain.goto(new URL(`${path}`, baseURL).href);
     const nav = plain.getByRole("navigation", { name: "Hauptnavigation" });
     await expect(nav.getByRole("link")).toHaveCount(6);
     for (const link of await nav.getByRole("link").all()) await expect(link).toBeVisible();
@@ -194,11 +196,11 @@ test("privacy has readable lists, adjacent contact links and graphite footer sta
   await expect(links).toHaveCount(5);
   const positions = await links.evaluateAll(elements => elements.map(el => el.getBoundingClientRect().y));
   expect(Math.abs(positions[0] - positions[1])).toBeLessThan(1);
-  await expect(links.first()).toHaveCSS("color", "rgb(82, 82, 82)");
+  await expect(links.first()).toHaveCSS("color", "rgb(91, 97, 104)");
   await links.first().hover();
-  await expect(links.first()).toHaveCSS("color", "rgb(23, 23, 23)");
+  await expect(links.first()).toHaveCSS("color", "rgb(36, 40, 45)");
   await links.first().focus();
-  await expect(links.first()).toHaveCSS("outline-color", "rgb(82, 82, 82)");
+  await expect(links.first()).toHaveCSS("outline-color", "rgb(91, 97, 104)");
   await fits(page);
   expect(loaded.some(url => /\/static\/(?:css\/main\.css|js\/(?:main|i18n-data)\.js)/.test(url))).toBe(false);
 });

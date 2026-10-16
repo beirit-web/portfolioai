@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
 async function ready(page) {
   await expect(page.locator("body")).toHaveClass(/is-enhanced/);
@@ -86,6 +87,7 @@ test("contract editor keeps every field and text download available without Java
     javaScriptEnabled: false,
   });
   try {
+    await blockExternalRequests(context, baseURL);
     const page = await context.newPage();
     await page.goto(`${baseURL}/vertragsgenerator/?template=vehicle`);
     await expect(page.locator(".field-group:visible")).toHaveCount(5);

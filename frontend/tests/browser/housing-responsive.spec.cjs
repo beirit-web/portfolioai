@@ -1,7 +1,8 @@
 const { test, expect } = require("@playwright/test");
+const { blockExternalRequests } = require("./helpers/network.cjs");
 
-test.beforeEach(async ({ context }) => {
-  await context.route(/^https?:\/\/(?!127\.0\.0\.1:8765(?:\/|$))/, route => route.abort());
+test.beforeEach(async ({ context, baseURL }) => {
+  await blockExternalRequests(context, baseURL);
 });
 
 async function expectNoOverflow(page) {
@@ -20,6 +21,19 @@ test("housing controls can be found by their accessible names", async ({ page })
   await expect(page.locator(".listing-card")).toContainText("Konstanz");
   await page.getByRole("button", { name: "Zurücksetzen", exact: true }).click();
   await expect(page.locator(".listing-card")).toHaveCount(3);
+  // Exercise sorting across different rents, after removing the one-city filter.
+  await sort.selectOption({ label: "Niedrigste Warmmiete" });
+  await expect(page.locator(".listing-card h2")).toHaveText([
+    "Private 2-Zimmer-Wohnung in Friedrichshafen",
+    "Helle Wohnung mit Balkon in Radolfzell",
+    "Geförderte 3-Zimmer-Wohnung nahe Seerhein",
+  ]);
+  await sort.selectOption({ label: "Größte Wohnfläche" });
+  await expect(page.locator(".listing-card h2")).toHaveText([
+    "Geförderte 3-Zimmer-Wohnung nahe Seerhein",
+    "Helle Wohnung mit Balkon in Radolfzell",
+    "Private 2-Zimmer-Wohnung in Friedrichshafen",
+  ]);
   await expect(city).toBeVisible();
   await expect(sort).toBeVisible();
 });
@@ -37,7 +51,7 @@ test("housing search fits phones, tablets and desktop screens", async ({ page },
         .map(element => element.className),
     }));
     if (width === 390 || width === 1280) await page.screenshot({
-      path: `../runtime/browser-checks/previews/${testInfo.project.name}-housing-${width}.png`, fullPage: true,
+      path: testInfo.outputPath(`housing-${width}.png`), fullPage: true,
     });
     expect(layout, `Layout at ${width}px`).toEqual({ viewport: width, page: width, overflowing: [] });
   }
@@ -119,7 +133,7 @@ test("persisted profiles, long names and account forms fit small screens", async
     expect(overflowing).toBe(0);
   }
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.screenshot({ path: `../runtime/browser-checks/previews/${testInfo.project.name}-housing-profile.png`, fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath(`housing-profile.png`), fullPage: true });
   await page.getByRole("button", { name: "Abbrechen", exact: true }).click();
   await page.getByRole("button", { name: "Navigation-Menü öffnen" }).click();
   await page.locator('nav[aria-label="Hauptnavigation"]').getByRole("button", { name: "Quellen", exact: true }).click();
