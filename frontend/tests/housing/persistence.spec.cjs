@@ -15,18 +15,30 @@ const test = base.extend({
   housingServer: [async ({}, use, workerInfo) => {
     const port = 8870 + workerInfo.workerIndex;
     const origin = `http://127.0.0.1:${port}`;
-    const child = spawn(python, ["scripts/run_housing_browser_checks.py", "--port", String(port)], {
-      cwd: workspace, stdio: ["ignore", "pipe", "pipe"],
+    const child = spawn(python, ["scripts/run_housing_browser_checks.py", "--port", String(port), "--control-stdin"], {
+      cwd: workspace, stdio: ["pipe", "pipe", "pipe"],
     });
     let output = "";
     let generation = 1;
     let spawnError;
+    let controlOutput = "";
+    const controlReplies = new Map();
     const exited = new Promise(resolve => {
       child.once("error", error => { spawnError = error; resolve(); });
       child.once("exit", resolve);
     });
     const isRunning = () => child.pid !== undefined && child.exitCode === null && child.signalCode === null;
-    child.stdout.on("data", data => { output = (output + data).slice(-20000); });
+    child.stdout.on("data", data => {
+      output = (output + data).slice(-20000);
+      controlOutput += data;
+      const lines = controlOutput.split("\n");
+      controlOutput = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith("HOUSING_BROWSER_CONTROL ")) continue;
+        const reply = JSON.parse(line.slice("HOUSING_BROWSER_CONTROL ".length));
+        controlReplies.set(reply.id, reply);
+      }
+    });
     child.stderr.on("data", data => { output = (output + data).slice(-20000); });
     async function ready(generation = 1) {
       await expect.poll(async () => {
@@ -42,7 +54,24 @@ const test = base.extend({
     }
     try {
       await ready();
-      await use({ origin, restart: async () => { generation += 1; child.kill("SIGUSR1"); await ready(generation); } });
+      await use({
+        origin,
+        restart: async () => { generation += 1; child.kill("SIGUSR1"); await ready(generation); },
+        verificationLink: async username => {
+          const id = randomUUID();
+          child.stdin.write(`${JSON.stringify({ id, command: "verification_link", username })}\n`);
+          await expect.poll(() => {
+            if (!isRunning()) throw new Error(`Disposable housing server exited: ${output}`);
+            return controlReplies.has(id);
+          }, { timeout: 20000 }).toBe(true);
+          const reply = controlReplies.get(id);
+          controlReplies.delete(id);
+          if (reply.error) throw new Error(`Cannot confirm fictional test account: ${reply.error}`);
+          expect(new URL(reply.url).origin).toBe(origin);
+          expect(new URL(reply.url).pathname).toMatch(/^\/verify-email\//);
+          return reply.url;
+        },
+      });
     } finally {
       if (isRunning()) {
         child.kill("SIGTERM");
@@ -59,7 +88,7 @@ async function navigate(page, name) {
   await page.locator(".sidebar").getByRole("button", { name, exact: true }).click();
 }
 
-async function register(page, origin, username) {
+async function register(page, { origin, verificationLink }, username) {
   await page.goto(`${origin}/wohnungssuche/register`);
   const form = page.locator(".login-panel");
   await form.getByLabel("Nutzername", { exact: true }).fill(username);
@@ -68,7 +97,29 @@ async function register(page, origin, username) {
   await form.getByLabel("Passwort wiederholen", { exact: true }).fill("Fictional-Housing-42!");
   const saved = page.waitForResponse(response => response.url().endsWith("/wohnungssuche-api/register/") && response.request().method() === "POST");
   await form.getByRole("button", { name: "Konto erstellen", exact: true }).click();
-  expect((await saved).status()).toBe(201);
+  const registered = await saved;
+  expect(registered.status()).toBe(201);
+  expect(await registered.json()).toMatchObject({ emailVerificationRequired: true });
+  await expect(form.getByRole("status")).toContainText(/E-Mail/i);
+  await expect(form.getByRole("status")).toContainText(/bestätig/i);
+  expect(await page.evaluate(() => localStorage.getItem("token"))).toBeNull();
+
+  await page.goto(`${origin}/wohnungssuche/login`);
+  await page.getByLabel("Nutzername", { exact: true }).fill(username);
+  await page.getByLabel("Passwort", { exact: true }).fill("Fictional-Housing-42!");
+  const rejected = page.waitForResponse(response => response.url().endsWith("/wohnungssuche-api/token-auth/") && response.request().method() === "POST");
+  await page.getByRole("button", { name: "Einloggen", exact: true }).click();
+  const denied = await rejected;
+  expect(denied.status()).toBe(403);
+  const rejectedPayload = await denied.json();
+  expect(rejectedPayload).toMatchObject({ code: "email_verification_required" });
+  expect(rejectedPayload).not.toHaveProperty("token");
+  await expect(page.getByRole("alert")).toContainText(/bestätig/i);
+  expect(await page.evaluate(() => localStorage.getItem("token"))).toBeNull();
+
+  await page.goto(await verificationLink(username));
+  await expect(page).toHaveURL(`${origin}/wohnungssuche/login`);
+  await expect(page.locator(".login-panel")).toBeVisible();
 }
 
 async function login(page, origin, username) {
@@ -88,7 +139,7 @@ test("profiles and locations survive reload and server restart and stay private 
   await blockExternalRequests(context, origin);
   const suffix = randomUUID().slice(0, 8);
   const userA = `housing-a-${suffix}`, userB = `housing-b-${suffix}`;
-  await register(page, origin, userA);
+  await register(page, housingServer, userA);
   const tokenA = await login(page, origin, userA);
   await navigate(page, "Suchprofile");
   await page.getByRole("button", { name: "Neues Profil", exact: true }).click();
@@ -144,7 +195,7 @@ test("profiles and locations survive reload and server restart and stay private 
   await navigate(page, "Abmelden");
   await expect(page.locator(".login-panel")).toBeVisible();
   expect((await context.request.get(`${origin}/wohnungssuche-api/search-profiles/`, { headers: auth(tokenA) })).status()).toBe(401);
-  await register(page, origin, userB);
+  await register(page, housingServer, userB);
   const tokenB = await login(page, origin, userB);
   await navigate(page, "Suchprofile");
   await expect(page.locator(".profile-card")).toHaveCount(0);
@@ -181,7 +232,7 @@ test("validation, offline saves and an expired login never report a saved profil
   const { origin } = housingServer;
   await blockExternalRequests(context, origin);
   const username = `housing-errors-${randomUUID().slice(0, 8)}`;
-  await register(page, origin, username);
+  await register(page, housingServer, username);
   await login(page, origin, username);
   await navigate(page, "Suchprofile");
   await page.getByRole("button", { name: "Neues Profil", exact: true }).click();

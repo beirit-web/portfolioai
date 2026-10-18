@@ -178,6 +178,13 @@ def build_projects_overview(projects, language="de", config=None, catalog=None):
     small_logo = config.get("logoSmallUrl") or logo
     large_logo = config.get("logoLargeUrl") or small_logo
     public_base = config.get("publicPageBaseUrl") or ""
+    authenticated = bool(config.get("isAuthenticated"))
+    account_path = config.get("profileUrl") or "/profil/" if authenticated else config.get("loginUrl") or "/login/"
+    account_link = {
+        "href": f"{public_base}{account_path}",
+        "label": locale["nav"].get("profile" if authenticated else "login", "Mein Bereich" if authenticated else "Anmelden"),
+        "active": False,
+    }
     return {
         "language": language,
         "cards": cards,
@@ -185,7 +192,7 @@ def build_projects_overview(projects, language="de", config=None, catalog=None):
         "nav": [
             {"href": href, "label": locale["nav"][label], "active": href == "/projekte"}
             for href, label in [("/", "home"), ("/projekte", "portfolio"), ("/kompetenzen", "skills"), ("/ueber-mich", "aboutLink"), ("/kontakt", "contact")]
-        ],
+        ] + [account_link],
         "menu": locale["nav"],
         "footer": locale["footer"],
         "footerLinks": [
@@ -193,7 +200,10 @@ def build_projects_overview(projects, language="de", config=None, catalog=None):
             {"href": "/kontakt", "label": locale["footer"]["links"]["contact"]},
             {"href": f"{public_base}/impressum", "label": locale["footer"]["links"]["imprint"]},
             {"href": f"{public_base}/datenschutz/", "label": locale["footer"]["links"]["privacy"]},
-        ],
+        ] + [account_link] + ([] if authenticated else [{
+            "href": f"{public_base}{config.get('registerUrl') or '/register/'}",
+            "label": locale["nav"].get("register", "Registrieren"),
+        }]),
         "brand": locale["brand"],
         "logo": {"src": logo, "srcSet": f"{small_logo} 160w, {large_logo} 320w" if small_logo != large_logo else ""},
     }

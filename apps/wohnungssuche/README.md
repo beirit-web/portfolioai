@@ -30,7 +30,12 @@ keine Anmeldetokens oder Zugangsdaten in einen Build einbetten.
 ## Daten und Bedienung
 
 Die API bietet Registrierung, Anmeldung, Abmeldung, Suchprofile, Suchorte,
-Beispielangebote und Quellen. Suchprofile und Suchorte
+Beispielangebote und Quellen. Neue Konten bleiben bis zur Bestätigung ihrer
+E-Mail-Adresse gesperrt. Erst danach gibt die Anmeldung einen Zugangstoken aus.
+Abgelaufene Bestätigungslinks und vergessene Passwörter werden über die gemeinsamen
+[Kontoformulare](../../server/pages/README.md#account-forms) behandelt. Die lokale
+Demo gibt E-Mails in der Serverkonsole aus.
+Suchprofile und Suchorte
 werden in der gemeinsamen Django-Datenbank gespeichert. Jeder Zugriff und jede
 Ortszuordnung wird auf den angemeldeten Nutzer begrenzt. Anlegen, Bearbeiten,
 Löschen und Neuladen verwenden die gespeicherten Datensätze; bei fehlgeschlagenem

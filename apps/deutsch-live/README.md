@@ -12,5 +12,10 @@ Einstieg: `http://127.0.0.1:8000/deutschlive/`. Eigene Audioaufnahmen bleiben im
 der bisherige Download-Einstieg `/deutschlive/recordings-archiv` bleibt bestehen.
 Die Vokabelbox liegt im Hauptserver unter `/vokabelbox/`.
 
+Neue Konten werden erst nach Bestätigung der E-Mail-Adresse freigeschaltet, auch
+im Entwicklungsmodus. Bestätigungslinks und Passwortwiederherstellung verwenden
+die gemeinsamen [Kontoformulare](../../server/pages/README.md#account-forms).
+In der lokalen Demo stehen die E-Mails in der Serverkonsole.
+
 Die [Prüfanleitung](../../docs/checks.md) beschreibt den gemeinsamen Workspace-Check
 einschließlich der DeutschLive-TypeScript-Prüfung.

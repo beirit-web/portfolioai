@@ -47,18 +47,19 @@
         </div>
       </div>
       <div class="document-bar">
-        <div class="template-field">
+        <form class="template-field" method="get">
           <label class="sr-only" id="templateLabel" for="templateSelect">Vertragstyp</label>
-          <select id="templateSelect" aria-labelledby="templateLabel">
+          <select id="templateSelect" name="template" aria-labelledby="templateLabel">
             {% for key, template in config.templates.items %}
             <option value="{{ key }}"{% if key == config.selectedTemplate %} selected{% endif %}>{{ template.label }}</option>
             {% endfor %}
           </select>
+          <noscript><button class="button button--secondary" type="submit">Vorlage wechseln</button></noscript>
           <button type="button" class="template-trigger" id="templateTrigger" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="templateListbox" aria-labelledby="templateLabel templateValue" hidden>
             <span id="templateValue">{{ definition.label }}</span>{% contract_icon 'chevron-down' %}
           </button>
           <div class="template-popup" id="templateListbox" role="listbox" aria-labelledby="templateLabel" hidden></div>
-        </div>
+        </form>
         <div class="save-indicator" role="status"><span class="save-dot" aria-hidden="true"></span><span id="storageBadge">Lokal</span></div>
       </div>
       <div class="view-tabs" role="tablist" aria-label="Arbeitsansicht">

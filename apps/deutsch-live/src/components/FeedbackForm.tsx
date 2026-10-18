@@ -5,13 +5,7 @@ import { submitFeedback, type FeedbackCategory } from "../api";
 import { ui } from "../i18n";
 import { AppButton, SelectInput, TextArea, TextInput } from "./UiPrimitives";
 
-const categories: Array<{ value: FeedbackCategory; label: string }> = [
-  { value: "bug", label: ui.feedback.bug },
-  { value: "suggestion", label: ui.feedback.suggestion },
-  { value: "content", label: ui.feedback.content },
-  { value: "account", label: ui.feedback.account },
-  { value: "other", label: ui.feedback.other }
-];
+const categories: FeedbackCategory[] = ["bug", "suggestion", "content", "account", "other"];
 
 export default function FeedbackForm() {
   const [category, setCategory] = useState<FeedbackCategory>("suggestion");
@@ -64,8 +58,8 @@ export default function FeedbackForm() {
             onChange={(event) => setCategory(event.target.value as FeedbackCategory)}
             value={category}
           >
-            {categories.map((item) => (
-              <option key={item.value} value={item.value}>{item.label}</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>{ui.feedback[category]}</option>
             ))}
           </SelectInput>
 
@@ -95,7 +89,7 @@ export default function FeedbackForm() {
             <Send className="h-4 w-4" />
             {isSaving ? ui.feedback.sending : ui.feedback.send}
           </AppButton>
-          {status && <p className={`status-message mt-3 status-message--${statusType}`}>{status}</p>}
+          {status && <p role={statusType === "error" ? "alert" : "status"} className={`status-message mt-3 status-message--${statusType}`}>{status}</p>}
         </form>
       </div>
     </section>

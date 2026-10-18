@@ -101,10 +101,15 @@ test("technology autoplay can stay paused and reacts to motion preference change
   await expect(activeTechnology).toHaveText(pausedTechnology);
   await expect(carousel.getByRole("button", { name: "Automatischen Wechsel fortsetzen", exact: true })).toHaveAttribute("aria-pressed", "true");
   await carousel.getByRole("button", { name: "Automatischen Wechsel fortsetzen", exact: true }).click();
+  await expect(carousel.getByRole("button", { name: "Automatischen Wechsel pausieren", exact: true })).toHaveAttribute("aria-pressed", "false");
   await page.mouse.move(0, 0);
   await page.evaluate(() => document.activeElement?.blur());
-  await page.clock.runFor(100);
-  await expect(page.locator(".about-tech-carousel__stage")).toHaveAttribute("aria-live", "off");
+  await expect.poll(() => carousel.evaluate(element => !element.matches(":hover") && !element.contains(document.activeElement))).toBe(true);
+  await expect.poll(async () => {
+    // Flush the effects after the committed control update and pointer/focus exit.
+    await page.clock.runFor(100);
+    return page.locator(".about-tech-carousel__stage").getAttribute("aria-live");
+  }).toBe("off");
   await advanceCarouselClock(page, 3000);
   await expect(activeTechnology).not.toHaveText(pausedTechnology);
   await page.emulateMedia({ reducedMotion: "reduce" });

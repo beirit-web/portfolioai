@@ -7,6 +7,7 @@ import TechnologyTags from "../shared/TechnologyTags.jsx";
 import { TechnicalLabel } from "../shared/TechnicalLabel.jsx";
 import { PageHero } from "../shared/PageShell.jsx";
 import { isExternalUrl, projectLiveHref } from "../../lib/appNavigation.js";
+import { isPlainLinkClick } from "../shared/cardActivation.js";
 
 export function ProjectsOverviewPage({ items, language, onNavigate }) {
   const copy = PROJECTS_OVERVIEW_COPY[language] || PROJECTS_OVERVIEW_COPY.de;
@@ -33,6 +34,7 @@ export function ProjectsOverviewPage({ items, language, onNavigate }) {
                       href={detailPath}
                       className={`project-overview-card__media${thumbnail.variant === "cover" ? " project-overview-card__media--cover" : ""}`}
                       onClick={(event) => {
+                        if (!isPlainLinkClick(event)) return;
                         event.preventDefault();
                         onNavigate(detailPath);
                       }}
@@ -62,6 +64,7 @@ export function ProjectsOverviewPage({ items, language, onNavigate }) {
                         href={detailPath}
                         className="project-overview-card__button"
                         onClick={(event) => {
+                          if (!isPlainLinkClick(event)) return;
                           event.preventDefault();
                           onNavigate(detailPath);
                         }}

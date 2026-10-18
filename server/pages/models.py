@@ -37,6 +37,7 @@ class Profile(models.Model):
   image_name = models.CharField(max_length=255, blank=True, default="")
   last_activity_at = models.DateTimeField(blank=True, null=True)
   session_generation = models.PositiveBigIntegerField(default=0)
+  email_verification_pending = models.BooleanField(default=False)
   privacy_consent_at = models.DateTimeField("Datenschutz zugestimmt am", blank=True, null=True)
   privacy_consent_version = models.CharField("Datenschutzhinweis-Version", max_length=32, blank=True, default="")
   privacy_consent_source = models.CharField("Quelle der Zustimmung", max_length=32, blank=True, default="")
@@ -513,6 +514,14 @@ class HousingTokenRevocation(models.Model):
   expires_at = models.DateTimeField()
 
 
+class LoginAttemptBucket(models.Model):
+  """Shared, short-lived authentication budget; identifiers are hashed."""
+
+  key = models.CharField(max_length=64, primary_key=True)
+  attempts = models.PositiveIntegerField(default=0)
+  expires_at = models.DateTimeField(db_index=True)
+
+
 class Appointment(models.Model):
   """
   Einzelne Terminblöcke, die im Kalender als belegt erscheinen.
@@ -535,9 +544,6 @@ class Appointment(models.Model):
   note = models.TextField("Notiz", blank=True)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
-
-  class Meta:
-    ordering = ["date", "start_time", "id"]
 
   def __str__(self):
     time_span = ""

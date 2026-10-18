@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { BookOpenCheck, ChevronRight, FileText, Folder, FolderOpen, ListChecks, MessageCircle, Mic2, Play, Volume2 } from "lucide-react";
-import { fetchLearningTopic, fetchTopics, saveProgress, saveVocabulary, type CurrentUser, type Topic, type TopicSummary } from "../api";
+import { ApiError, fetchLearningTopic, fetchTopics, saveProgress, saveVocabulary, type CurrentUser, type Topic, type TopicSummary } from "../api";
 import { learning, ui } from "../i18n";
 import { SkeletonPanel } from "./UiPrimitives";
 
@@ -138,6 +138,11 @@ export default function SceneLearning({ user, onProgressSaved }: { user: Current
       setMessage(ui.sceneLearning.guestProgress);
       return;
     }
+    if (!user.settings.saveProgress) {
+      setHasSaveError(false);
+      setMessage(ui.sceneLearning.savingDisabled);
+      return;
+    }
     const requestId = ++saveRequestRef.current;
     const savingSelection = selectionRef.current;
     const savingUserId = user.id;
@@ -152,7 +157,7 @@ export default function SceneLearning({ user, onProgressSaved }: { user: Current
     setMessage("");
     setHasSaveError(false);
     try {
-      await saveProgress({ topicId: topic.id, status: "completed", completedExercises: 1 });
+      await saveProgress({ topicId: topic.id, sceneId: activeScene?.id ?? `fallback:${topic.id}`, status: "completed", completedExercises: 1 });
       if (!isCurrent()) return;
       progressSaved = true;
       onProgressSaved();
@@ -160,10 +165,12 @@ export default function SceneLearning({ user, onProgressSaved }: { user: Current
         await saveVocabulary({ topicId: topic.id, wordDe: phrase.de.split(" ").slice(0, 3).join(" "), translationRu: phrase.ru });
       }
       if (isCurrent()) setMessage(phrase ? ui.sceneLearning.completed : ui.sceneLearning.completedWithoutVocabulary);
-    } catch {
+    } catch (error) {
       if (isCurrent()) {
         setHasSaveError(true);
-        setMessage(progressSaved ? ui.sceneLearning.vocabularySaveError : ui.sceneLearning.saveError);
+        setMessage(error instanceof ApiError && error.code === "save_progress_disabled"
+          ? ui.sceneLearning.savingDisabled
+          : progressSaved ? ui.sceneLearning.vocabularySaveError : ui.sceneLearning.saveError);
       }
     } finally {
       if (isCurrent()) {

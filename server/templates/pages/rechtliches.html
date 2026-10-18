@@ -31,7 +31,7 @@
       />
     </a>
     <a href="{% url 'pages:home' %}#top" class="nav-link nav-link--home" data-i18n="nav.home">{% if initial_lang|slice:':2' == 'ru' %}Главная{% else %}Start{% endif %}</a>
-    <a href="{% url 'pages:home' %}#leistungen" class="nav-link" data-i18n="nav.interpreters">{% if initial_lang|slice:':2' == 'ru' %}Услуги{% else %}Leistungen{% endif %}</a>
+    <a href="{% url 'pages:skills_page_no_slash' %}" class="nav-link" data-i18n="nav.interpreters">{% if initial_lang|slice:':2' == 'ru' %}Услуги{% else %}Leistungen{% endif %}</a>
     <a href="{% url 'pages:home' %}#preise" class="nav-link" data-i18n="nav.prices">{% if initial_lang|slice:':2' == 'ru' %}Цены{% else %}Preise{% endif %}</a>
     <a href="{% url 'pages:home' %}#profil" class="nav-link" data-i18n="nav.about">{% if initial_lang|slice:':2' == 'ru' %}Обо мне{% else %}Über{% endif %}</a>
     <a href="{% url 'pages:home' %}#kontakt" class="nav-link nav-link--contact" data-i18n="nav.contact">{% if initial_lang|slice:':2' == 'ru' %}Контакты{% else %}Kontakt{% endif %}</a>

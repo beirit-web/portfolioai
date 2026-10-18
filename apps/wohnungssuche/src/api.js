@@ -1,4 +1,9 @@
 export const API_BASE = `${(import.meta.env.VITE_API_BASE || "/wohnungssuche-api/").replace(/\/+$/, "")}/`;
+const configuredPasswordResetUrl = String(import.meta.env.VITE_PASSWORD_RESET_URL || "").trim();
+export const PASSWORD_RESET_URL = configuredPasswordResetUrl.startsWith("/")
+  && !configuredPasswordResetUrl.startsWith("//") && !/[\\\s]/.test(configuredPasswordResetUrl)
+  ? configuredPasswordResetUrl : "/auth/password_reset/";
+export const EMAIL_VERIFICATION_RESEND_URL = "/email-bestaetigung/";
 
 export async function apiRequest(endpoint, { token = "", method = "GET", body, signal } = {}) {
   let response;
@@ -19,7 +24,9 @@ export async function apiRequest(endpoint, { token = "", method = "GET", body, s
   const data = response.status === 204 ? null : await response.json().catch(() => null);
   if (!response.ok) {
     const fields = data?.errors ? Object.values(data.errors).flat().join(" ") : "";
-    const message = response.status === 401 || response.status === 403
+    const message = data?.code === "email_verification_required"
+      ? fields || data?.detail || "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse."
+      : response.status === 401 || response.status === 403
       ? "Ihre Anmeldung ist abgelaufen oder fehlt. Bitte melden Sie sich erneut an."
       : fields || data?.detail || "Die Anfrage konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.";
     const error = new Error(message);

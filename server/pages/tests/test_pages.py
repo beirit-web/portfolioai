@@ -941,6 +941,7 @@ class RegistrationVerificationTests(TestCase):
             password="starkespasswort123",
             is_active=False,
         )
+        Profile.objects.create(user=user, email_verification_pending=True)
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         token = email_verification_token_generator.make_token(user)
 
@@ -958,12 +959,13 @@ class RegistrationVerificationTests(TestCase):
         self.assertEqual(str(self.client.session.get("_auth_user_id")), str(user.pk))
 
     def test_login_rejects_inactive_user_with_verification_hint(self):
-        User.objects.create_user(
+        user = User.objects.create_user(
             username="neu@example.com",
             email="neu@example.com",
             password="starkespasswort123",
             is_active=False,
         )
+        Profile.objects.create(user=user, email_verification_pending=True)
 
         response = self.client.post(
             reverse("pages:login"),
@@ -1020,7 +1022,7 @@ class RegistrationVerificationTests(TestCase):
         self.assertEqual(response["Location"], reverse("pages:home"))
 
     def test_register_keeps_no_user_when_verification_mail_fails(self):
-        with patch("pages.views.send_account_verification_email", return_value=False):
+        with patch("pages.verification.send_account_verification_email", return_value=False):
             response = self.client.post(
                 reverse("pages:register"),
                 {

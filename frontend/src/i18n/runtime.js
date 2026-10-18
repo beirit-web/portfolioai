@@ -64,9 +64,12 @@ export function createTranslationStore(initialTranslations, languageLoaders = {}
     if (!languagePromises.has(lang)) {
       languagePromises.set(
         lang,
-        loader().then((module) => {
+        Promise.resolve().then(loader).then((module) => {
           translations[lang] = module.default;
           return translations[lang];
+        }).catch((error) => {
+          languagePromises.delete(lang);
+          throw error;
         }),
       );
     }

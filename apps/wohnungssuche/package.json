@@ -11,5 +11,10 @@
     "preact": "10.29.8",
     "lucide-react": "0.468.0"
   },
-  "devDependencies": { "vite": "5.4.21" }
+  "devDependencies": {
+    "vite": "7.3.7"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  }
 }

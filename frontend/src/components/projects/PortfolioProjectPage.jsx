@@ -9,6 +9,7 @@ import PortfolioFeatureList from "../home/portfolio/PortfolioFeatureList";
 import TechnologyTags from "../shared/TechnologyTags";
 import { projectModuleActions } from "./projectModuleActions.mjs";
 import { paragraphList, PortfolioProjectPreview, PortfolioProjectDetails } from "./PortfolioProjectContent";
+import { isPlainLinkClick } from "../shared/cardActivation.js";
 
 export default function PortfolioProjectPage({ item, t, language, onNavigate }) {
   item = languageServicesCaseStudy(item, language);
@@ -23,7 +24,7 @@ export default function PortfolioProjectPage({ item, t, language, onNavigate }) 
   const isExternalAction = isExternalUrl(actionHref);
   const screenshots = projectScreenshotImages(item);
   const handlePrimaryAction = (event) => {
-    if (actionHref !== contactPath) {
+    if (actionHref !== contactPath || !isPlainLinkClick(event)) {
       return;
     }
     event.preventDefault();
@@ -37,6 +38,7 @@ export default function PortfolioProjectPage({ item, t, language, onNavigate }) 
           href="/projekte/"
           className="portfolio-project-back"
           onClick={(event) => {
+            if (!isPlainLinkClick(event)) return;
             event.preventDefault();
             onNavigate("/projekte");
           }}
@@ -124,6 +126,7 @@ export default function PortfolioProjectPage({ item, t, language, onNavigate }) 
                 href={contactPath}
                 className="portfolio-contact-button"
                 onClick={(event) => {
+                  if (!isPlainLinkClick(event)) return;
                   event.preventDefault();
                   onNavigate(contactPath);
                 }}

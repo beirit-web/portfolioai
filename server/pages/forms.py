@@ -207,6 +207,7 @@ class RegistrationForm(UserCreationForm):
       # Profildaten persistieren, sobald der User gespeichert ist.
       image = self.cleaned_data.get("image")
       profile, _ = Profile.objects.get_or_create(user=user)
+      profile.email_verification_pending = True
       profile.privacy_consent_at = timezone.now()
       profile.privacy_consent_version = getattr(settings, "PRIVACY_CONSENT_VERSION", "")
       profile.privacy_consent_source = "registration"
@@ -260,14 +261,20 @@ class LoginForm(AuthenticationForm):
       if email:
         self.initial.setdefault("username", email)
 
+  def clean_username(self):
+    return self.cleaned_data["username"].strip().lower()
+
   def clean(self):
     username = (self.cleaned_data.get("username") or self.data.get("username") or "").strip().lower()
     password = self.cleaned_data.get("password") or self.data.get("password") or ""
     if username and password:
-      user = User.objects.filter(
+      users = list(User.objects.filter(
         models.Q(email__iexact=username) | models.Q(username__iexact=username)
-      ).first()
-      if user and not user.is_active and user.check_password(password):
+      )[:2])
+      user = users[0] if len(users) == 1 else None
+      if (user and not user.is_active
+          and Profile.objects.filter(user=user, email_verification_pending=True).exists()
+          and user.check_password(password)):
         raise forms.ValidationError(
           "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse über den Link in der Bestätigungs-E-Mail."
         )

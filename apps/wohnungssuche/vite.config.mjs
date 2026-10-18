@@ -1,5 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { djangoAccountProxy } from "../../frontend/vite.django-proxy.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const repository = path.resolve(root, "../..");
@@ -37,6 +38,9 @@ export default {
   server: {
     host: "127.0.0.1",
     port: 5174,
-    proxy: { "/wohnungssuche-api": "http://127.0.0.1:8000" },
+    proxy: {
+      ...djangoAccountProxy({ localStaticPrefix: "/static/portfolio/wohnungssuche/" }),
+      "/wohnungssuche-api": "http://127.0.0.1:8000",
+    },
   },
 };

@@ -59,8 +59,28 @@ berechnet und nur bei geänderten Abmessungen oder einer neuen Bildquelle erneue
 - Alte Bestellungen ohne Eigentuemer werden keinem Konto anhand seiner
   E-Mail-Adresse zugeordnet; sie bleiben im Admin verfuegbar.
 - Wird ein Konto geloescht, bleibt die Anfrage erhalten und verliert die
-  Kontozuordnung (`SET_NULL`). Kontaktangaben werden nicht automatisch geloescht.
-  Eine passende Datenaufbewahrung und Loeschroutine ist vor Livebetrieb festzulegen.
+  Kontozuordnung (`SET_NULL`). Sie unterliegt danach derselben Aufbewahrung wie
+  eine Gastanfrage.
+- Gastanfragen samt Positionen werden nach 30 Tagen bei der naechsten gueltigen
+  Anfrage entfernt. Anfragen mit einer bestehenden Kontozuordnung bleiben erhalten.
+  `SHOP_GUEST_RETENTION_DAYS` steuert die Aufbewahrung in Django-Settings.
+- HTML- und API-Anfragen teilen atomare Datenbankzaehler: standardmaessig maximal
+  fuenf Anfragen pro Session und 20 pro direkter IP-Adresse innerhalb einer Stunde.
+  Weitergeleitete IP-Header veraendern das Budget nicht. Wiederholungen einer bereits
+  gespeicherten Anfrage verbrauchen kein weiteres Budget. Bei erschoepftem Budget
+  folgt HTTP 429 mit `Retry-After`.
+
+Die Django-Settings `SHOP_SESSION_SUBMISSION_LIMIT`, `SHOP_IP_SUBMISSION_LIMIT`
+und `SHOP_SUBMISSION_WINDOW_SECONDS` passen diese Demo-Limits an. Die Zaehler
+enthalten nur gehashte Schluessel; abgelaufene Zaehler werden ebenfalls bereinigt.
+Fuer eine lokale Demo ohne weitere Anfragen kann die Bereinigung manuell laufen:
+
+```bash
+server/.venv/bin/python server/manage.py cleanup_shop_demo --dry-run
+server/.venv/bin/python server/manage.py cleanup_shop_demo
+# Optional andere Aufbewahrung, zwischen 1 und 3650 Tagen:
+server/.venv/bin/python server/manage.py cleanup_shop_demo --days 60 --dry-run
+```
 
 Die Admin-Ansicht erlaubt Statuspflege, aber keine manuellen Aenderungen an
 Mengen und Preispositionen, die nicht mit der gespeicherten Summe uebereinstimmen.
@@ -92,7 +112,8 @@ Bei `local_delivery` sind `deliveryAddress`, `postalCode` und `city` erforderlic
 Unbekannte Artikel und ungueltige Mengen fuehren zur Ablehnung der gesamten
 Anfrage; es wird nichts stillschweigend entfernt oder auf 20 gekuerzt.
 Neue Anfrage: HTTP 201. Autorisierte Wiederholung: HTTP 200 mit gleicher Nummer.
-Validierungsfehler: HTTP 400. Der Schluessel ist nach erfolgreicher Speicherung
+Validierungsfehler: HTTP 400. Demo-Limit erreicht: HTTP 429 mit `Retry-After`.
+Der Schluessel ist nach erfolgreicher Speicherung
 verbraucht; fuer eine neue Anfrage erneut den Produktkatalog abrufen.
 
 ## Pruefungen und Werkzeuge
@@ -138,6 +159,8 @@ Gastbestaetigungen sind an die Lebensdauer der bestehenden Session gebunden.
 
 Vor echtem oeffentlichem Betrieb fehlen insbesondere reale Anbieter-/Abholdaten,
 gepruefte Produktangaben und Fotos, Liefergebiet, Produktionskapazitaet,
-Spam-/Abrufschutz, Benachrichtigungen und die betrieblichen Checkout-Texte.
+Abrufschutz ueber die Demo-Anfragelimits hinaus, Benachrichtigungen und die
+betrieblichen Checkout-Texte. Die Demo-Aufbewahrung ersetzt keine fuer einen
+echten Betrieb festgelegten Aufbewahrungsfristen.
 Die Beispieldaten sind keine geprueften Angaben zu tatsaechlich verkauften Lebensmitteln.
 Zahlungsintegration und betriebliche Anforderungen sind separate Ausbauschritte.

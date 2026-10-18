@@ -92,23 +92,24 @@ test("filters and mobile navigation remain usable, including landscape", async (
   await expectNoOverflow(page);
 });
 
-test("persisted profiles, long names and account forms fit small screens", async ({ page, context }, testInfo) => {
-  const username = `housing-layout-${testInfo.project.name}-${Date.now()}`;
-  const password = "Fictional-Layout-42!";
-  const registered = await context.request.post("/wohnungssuche-api/register/", { data: {
-    username, email: `${username}@example.invalid`, password, password_confirm: password,
-  } });
-  expect(registered.status()).toBe(201);
-  const signedIn = await context.request.post("/wohnungssuche-api/token-auth/", { data: { username, password } });
-  expect(signedIn.status()).toBe(200);
-  const { token } = await signedIn.json();
-  const headers = { Authorization: `Token ${token}` };
-  const savedLocation = await context.request.post("/wohnungssuche-api/search-locations/", { headers, data: { name: "Bodman-Ludwigshafen", radius_km: 15 } });
-  expect(savedLocation.status()).toBe(201);
-  const location = await savedLocation.json();
-  const profile = { name: "Wohnungssuche für eine fiktive Familie rund um den Bodensee", location_ids: [location.id], max_warm_rent: 1200, min_rooms: 2, max_rooms: 4 };
-  const savedProfile = await context.request.post("/wohnungssuche-api/search-profiles/", { headers, data: profile });
-  expect(savedProfile.status()).toBe(201);
+test("saved profile layouts, long names and account forms fit small screens", async ({ page, context }, testInfo) => {
+  // Real registration, confirmation and persistence run in the isolated housing suite.
+  const username = `housing-layout-${testInfo.project.name}`;
+  const token = "fictional-layout-token";
+  const location = { id: 1, name: "Bodman-Ludwigshafen", radius_km: 15 };
+  const profile = {
+    id: 1, name: "Wohnungssuche für eine fiktive Familie rund um den Bodensee",
+    location_ids: [location.id], locations: [location], max_warm_rent: 1200, min_rooms: 2, max_rooms: 4,
+    balcony: false, fitted_kitchen: false, ground_floor_or_elevator: false,
+  };
+  await context.route("**/wohnungssuche-api/**", async route => {
+    expect(route.request().headers().authorization).toBe(`Token ${token}`);
+    const endpoint = new URL(route.request().url()).pathname;
+    if (endpoint.endsWith("/logout/") && route.request().method() === "POST") return route.fulfill({ status: 204 });
+    const results = endpoint.endsWith("/search-profiles/") ? [profile]
+      : endpoint.endsWith("/search-locations/") ? [location] : [];
+    return route.fulfill({ json: { results } });
+  });
   await context.addInitScript(({ token, username }) => {
     localStorage.setItem("token", token);
     localStorage.setItem("username", username);

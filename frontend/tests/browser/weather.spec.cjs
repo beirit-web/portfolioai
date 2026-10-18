@@ -65,7 +65,9 @@ const airQuality = {
   },
 };
 
-async function mockWeather(context, baseURL, { failForecastOnce = false } = {}) {
+async function mockWeather(context, baseURL, {
+  failForecastOnce = false, forecastData = forecast, airQualityData = airQuality,
+} = {}) {
   const origin = new URL(baseURL).origin;
   const requests = { cities: [], forecasts: 0, airQuality: 0 };
   await context.route("**/*", async route => {
@@ -88,11 +90,11 @@ async function mockWeather(context, baseURL, { failForecastOnce = false } = {}) 
       if (failForecastOnce && requests.forecasts === 1) {
         return route.fulfill({ headers, status: 503, json: { error: true, reason: "Simulierter Ausfall" } });
       }
-      return route.fulfill({ headers, json: forecast });
+      return route.fulfill({ headers, json: forecastData });
     }
     if (url.hostname === "air-quality-api.open-meteo.com" && url.pathname === "/v1/air-quality") {
       requests.airQuality++;
-      return route.fulfill({ headers, json: airQuality });
+      return route.fulfill({ headers, json: airQualityData });
     }
     return route.abort();
   });
@@ -197,6 +199,37 @@ test("weather flow loads a searched city with current, hourly and five-day forec
     }),
     contentType: "image/png",
   });
+});
+
+test("missing weather readings stay unavailable instead of becoming zero or a favorable forecast", async ({ page, context, baseURL }) => {
+  const emptyReadings = readings => Object.fromEntries(Object.keys(readings).map(key => [key,
+    key === "time" ? readings[key] : Array.isArray(readings[key]) ? readings[key].map(() => null) : null,
+  ]));
+  await mockWeather(context, baseURL, {
+    forecastData: {
+      ...forecast,
+      current: emptyReadings(forecast.current),
+      hourly: emptyReadings(forecast.hourly),
+      daily: emptyReadings(forecast.daily),
+    },
+    airQualityData: {
+      current: emptyReadings(airQuality.current),
+      hourly: emptyReadings(airQuality.hourly),
+    },
+  });
+  await openWeather(page);
+  await expect(page.locator(".weather-widget")).toHaveAttribute("data-status", "updated_live");
+  for (const selector of ["#windValue", "#humValue", "#pressureValue", "#precipValue"]) {
+    await expect(page.locator(selector)).toHaveText("--");
+  }
+  await expect(page.locator("#uvValue")).toHaveText("k.A.");
+  await expect(page.locator("#rainWindowValue")).toHaveText("Keine Daten");
+  await expect(page.locator("#rainWindowHint")).toHaveText("");
+  for (const selector of ["#respiratoryRisk", "#pollenRisk", "#heartRisk"]) {
+    await expect(page.locator(selector)).toHaveAttribute("data-level", "unavailable");
+  }
+  await expect(page.locator("#healthTimeline [data-level='unavailable']")).toHaveCount(8);
+  await expect(page.locator("#healthBestValue")).toHaveText("Keine Daten");
 });
 
 test("weather flow recovers from an API error using the refresh button", async ({ page, context, baseURL }) => {

@@ -5,6 +5,7 @@ from django.views.generic import RedirectView
 from lessons import views as lessons_views
 
 from . import views
+from .verification import AccountVerificationResendView
 
 app_name = "pages"
 
@@ -74,6 +75,7 @@ urlpatterns = [
   path("impressum/", RedirectView.as_view(pattern_name="pages:imprint", permanent=True), name="imprint_slash_redirect"),
   path("dolmetscher/", RedirectView.as_view(url="/kompetenzen", permanent=True), name="interpreter_list"),
   path("register/", views.register, name="register"),
+  path("email-bestaetigung/", AccountVerificationResendView.as_view(), name="verification_resend"),
   path("verify-email/<uidb64>/<token>/", views.verify_email, name="verify_email"),
   path("login/", views.login_view, name="login"),
   path("logout/", views.logout_view, name="logout"),

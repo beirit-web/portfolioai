@@ -327,16 +327,13 @@ test("a real guest quiz remains assessable after a session refresh without savin
   expect(dashboard.status()).toBe(401);
 });
 
-test("a real registered account saves its assessed quiz in the dashboard", async ({ page }, testInfo) => {
-  const username = `quiz-browser-${testInfo.project.name}-${Date.now()}-${testInfo.workerIndex}`;
+test("a real confirmed account saves its assessed quiz in the dashboard", async ({ page }, testInfo) => {
+  // The disposable runner seeds one already-confirmed fictional account per viewport.
+  const username = `quiz-browser-${testInfo.project.name}@example.test`;
   const password = "Example-only-Quiz-42!";
   const csrf = await page.request.get("/deutschlive/api/auth/csrf/");
   expect(csrf.ok()).toBe(true);
   const { csrfToken } = await csrf.json();
-  const registered = await page.request.post("/deutschlive/api/auth/register/", {
-    headers: { "X-CSRFToken": csrfToken }, data: { username, email: `${username}@example.test`, password },
-  });
-  expect(registered.status()).toBe(201);
   const loggedIn = await page.request.post("/deutschlive/api/auth/login/", {
     headers: { "X-CSRFToken": csrfToken }, data: { username, password },
   });

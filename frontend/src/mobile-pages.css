@@ -1,9 +1,10 @@
 /* Small-screen styles for contact and skills. The full desktop sheets use a
    matching media attribute so their selectors do not enter the mobile layout. */
+@import "tailwindcss";
+@import "../tailwind-compat.css";
 @import "./about-shell.css";
 @import "./components/shared/serviceIllustrations.css";
-@tailwind base;
-@tailwind utilities;
+@config "../tailwind.config.mjs";
 
 :root {
   --page-x: clamp(1.15rem, 5.6vw, 1.45rem);

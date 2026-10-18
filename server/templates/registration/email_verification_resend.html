@@ -1,0 +1,30 @@
+{% extends "registration/account_base.html" %}
+{% block title %}Bestätigungs-E-Mail erneut senden{% endblock %}
+{% block account_title %}Bestätigungs-E-Mail erneut senden{% endblock %}
+{% block account_content %}
+  {% if verification_sent %}
+    <p role="status">Wenn die Adresse zu einem noch nicht bestätigten Konto gehört, wurde eine neue Bestätigungs-E-Mail angefordert. Bitte prüfen Sie auch Ihren Spam-Ordner.</p>
+    {% if account_mail_is_console %}<p class="template-inline-note">Lokale Demo: Prüfen Sie die Serverkonsole. In dieser Konfiguration wird keine E-Mail an ein Postfach zugestellt.</p>{% endif %}
+    <div class="template-actions">
+      <a class="btn-primary" href="{% url 'pages:login' %}">Zum Login</a>
+      <a class="btn-ghost" href="{% url 'pages:verification_resend' %}">Erneut versuchen</a>
+    </div>
+  {% else %}
+    <p>Ist Ihr Bestätigungslink abgelaufen oder die E-Mail nicht angekommen? Fordern Sie hier einen neuen Link für Ihr noch nicht bestätigtes Konto an.</p>
+    {% if account_mail_is_console %}<p class="template-inline-note">Lokale Demo: Die E-Mail mit dem Bestätigungslink wird in der Serverkonsole ausgegeben.</p>{% endif %}
+    <form method="post" class="form auth-form" aria-label="Bestätigungs-E-Mail erneut senden" data-submit-once>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="form-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="form-field">
+        <label for="{{ form.email.id_for_label }}">E-Mail-Adresse</label>
+        {{ form.email }}
+        {% if form.email.errors %}<div class="form-error" role="alert">{{ form.email.errors }}</div>{% endif %}
+      </div>
+      <button type="submit" class="btn-primary auth-btn">Bestätigungs-E-Mail anfordern</button>
+    </form>
+    <div class="template-actions">
+      <a href="{% url 'pages:login' %}">Zurück zum Login</a>
+      <a href="{% url 'pages:register' %}">Konto anlegen</a>
+    </div>
+  {% endif %}
+{% endblock %}

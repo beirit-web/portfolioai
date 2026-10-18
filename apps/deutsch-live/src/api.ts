@@ -125,7 +125,7 @@ export type CurrentUser = {
 
 
 export type WritingExercise = {
-  id: number;
+  id: number | null;
   topicId: string;
   topicLabel: string;
   prompt: string;
@@ -189,6 +189,11 @@ export type DashboardData = {
 };
 
 const CONFIGURED_API_BASE = normalizeApiBase(import.meta.env.VITE_API_BASE ?? "");
+const configuredPasswordResetUrl = String(import.meta.env.VITE_PASSWORD_RESET_URL ?? "").trim();
+export const PASSWORD_RESET_URL = configuredPasswordResetUrl.startsWith("/")
+  && !configuredPasswordResetUrl.startsWith("//") && !/[\\\s]/.test(configuredPasswordResetUrl)
+  ? configuredPasswordResetUrl : "/auth/password_reset/";
+export const EMAIL_VERIFICATION_RESEND_URL = "/email-bestaetigung/";
 
 function normalizeApiBase(value: string) {
   const trimmed = value.trim().replace(/\/+$/, "");
@@ -210,8 +215,8 @@ export function getWebSocketUrl(path: string) {
   return `${protocol}//${window.location.host}${getApiBase()}${path}`;
 }
 
-async function getJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${getApiBase()}${path}`, { credentials: "include" });
+async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(`${getApiBase()}${path}`, { credentials: "include", signal });
   if (!response.ok) {
     throw new ApiError(`Request failed: ${response.status}`, response.status);
   }
@@ -301,7 +306,7 @@ export async function fetchMe() {
 }
 
 export async function registerUser(payload: { username: string; email: string; password: string }) {
-  return postJson<{ ok: boolean; message: string; emailVerificationRequired?: boolean; emailVerificationToken?: string }>("/api/auth/register/", payload);
+  return postJson<{ ok: boolean; message: string; emailVerificationRequired: boolean; emailDelivery: "console" | "email" }>("/api/auth/register/", payload);
 }
 
 export async function loginUser(payload: { username: string; password: string }) {
@@ -312,20 +317,12 @@ export async function logoutUser() {
   return postJson<{ ok: boolean }>("/api/auth/logout/", {});
 }
 
-export async function requestPasswordReset(identifier: string) {
-  return postJson<{ ok: boolean; message: string; resetToken?: string }>("/api/auth/password-reset/", { identifier });
-}
-
-export async function confirmPasswordReset(token: string, password: string) {
-  return postJson<{ ok: boolean; message: string }>("/api/auth/password-reset/confirm/", { token, password });
-}
-
 export async function changePassword(currentPassword: string, newPassword: string) {
   return postJson<{ ok: boolean; message: string }>("/api/auth/change-password/", { currentPassword, newPassword });
 }
 
 export async function resendEmailConfirmation() {
-  return postJson<{ ok: boolean; message: string; emailVerificationToken?: string }>("/api/auth/email/resend/", {});
+  return postJson<{ ok: boolean; message: string }>("/api/auth/email/resend/", {});
 }
 
 export async function exportUserData() {
@@ -336,8 +333,8 @@ export async function deleteAccount(password: string) {
   return postJson<{ ok: boolean }>("/api/auth/delete-account/", { password });
 }
 
-export async function fetchDashboard() {
-  return getJson<DashboardData>("/api/dashboard/");
+export async function fetchDashboard(signal?: AbortSignal) {
+  return getJson<DashboardData>("/api/dashboard/", signal);
 }
 
 export async function clearLearningProgress() {
@@ -360,8 +357,8 @@ export async function saveQuizAttempt(payload: {
   );
 }
 
-export async function saveProgress(payload: { topicId: string; status: "started" | "completed"; completedExercises?: number }) {
-  return postJson<{ progress: { topicId: string; status: string; completedExercises: number } }>("/api/progress/", payload);
+export async function saveProgress(payload: { topicId: string; sceneId: string; status: "started" | "completed"; completedExercises?: number }) {
+  return postJson<{ progress: { topicId: string; sceneId: string; status: string; completedExercises: number } }>("/api/progress/", payload);
 }
 
 export async function saveVocabulary(payload: { topicId: string; wordDe: string; translationRu: string; notes?: string }) {
@@ -369,13 +366,13 @@ export async function saveVocabulary(payload: { topicId: string; wordDe: string;
 }
 
 
-export async function fetchWritingExercises() {
-  const data = await getJson<{ exercises: WritingExercise[] }>("/api/writing/exercises/");
+export async function fetchWritingExercises(signal?: AbortSignal) {
+  const data = await getJson<{ exercises: WritingExercise[] }>("/api/writing/exercises/", signal);
   return data.exercises;
 }
 
 export async function saveWritingExercise(payload: { topicId: string; prompt: string; text: string }) {
-  return postJson<{ exercise: WritingExercise }>("/api/writing/exercises/", payload);
+  return postJson<{ exercise: WritingExercise; saved: boolean }>("/api/writing/exercises/", payload);
 }
 
 export async function submitFeedback(payload: { category: FeedbackCategory; message: string; contactEmail?: string; pagePath?: string }) {

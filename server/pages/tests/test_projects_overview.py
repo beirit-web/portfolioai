@@ -32,6 +32,26 @@ def sample_catalog():
 
 
 class ProjectsOverviewPresentationTests(SimpleTestCase):
+    def test_native_account_navigation_uses_configured_urls_and_keeps_the_portfolio_links(self):
+        catalog = sample_catalog()
+        catalog["locales"]["de"]["nav"].update(login="Anmelden", profile="Mein Bereich", register="Registrieren")
+        config = {
+            "publicPageBaseUrl": "https://portfolio.example.test",
+            "loginUrl": "/members/sign-in/", "registerUrl": "/members/join/", "profileUrl": "/members/account/",
+        }
+        guest = build_projects_overview([], config=config, catalog=catalog)
+        self.assertEqual([item["href"] for item in guest["nav"][:5]], ["/", "/projekte", "/kompetenzen", "/ueber-mich", "/kontakt"])
+        self.assertEqual(guest["nav"][-1]["href"], "https://portfolio.example.test/members/sign-in/")
+        self.assertEqual([item["label"] for item in guest["footerLinks"][-2:]], ["Anmelden", "Registrieren"])
+        self.assertEqual(guest["footerLinks"][-1]["href"], "https://portfolio.example.test/members/join/")
+
+        authenticated = build_projects_overview([], config={**config, "isAuthenticated": True}, catalog=catalog)
+        self.assertEqual(authenticated["nav"][-1], {
+            "href": "https://portfolio.example.test/members/account/", "label": "Mein Bereich", "active": False,
+        })
+        self.assertEqual(authenticated["footerLinks"][-1], authenticated["nav"][-1])
+        self.assertNotIn("Registrieren", [item["label"] for item in authenticated["footerLinks"]])
+
     def test_current_german_content_uses_locale_type_and_canonical_cover(self):
         overview = build_projects_overview([
             dict(slug="empty-image", title="Without image", sortOrder=0),

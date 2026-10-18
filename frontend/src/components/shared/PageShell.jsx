@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { ArrowUp } from "lucide-react";
 import { homeConfig as config, publicPageUrl } from "../../lib/homeConfig.js";
 import { getScrollBehavior } from "../../lib/appNavigation.js";
+import { isPlainLinkClick } from "./cardActivation.js";
 
 const configuredBrandLogoUrl = config.logoUrl || "/static/images/beirit-digital-logo-160.webp";
 const configuredBrandLogoSmallUrl = config.logoSmallUrl || configuredBrandLogoUrl;
@@ -19,8 +20,23 @@ const footerLinkItems = [
   { href: publicPageUrl("/impressum"), labelKey: "footer.links.imprint" },
   { href: publicPageUrl("/datenschutz/"), labelKey: "footer.links.privacy" },
 ];
+
+function accountLinks() {
+  const authenticated = config.isAuthenticated ?? globalThis.AUTH_SESSION_CONFIG?.isAuthenticated ?? false;
+  return {
+    authenticated,
+    account: {
+      href: publicPageUrl(authenticated ? config.profileUrl || "/profil/" : config.loginUrl || "/login/"),
+      labelKey: authenticated ? "nav.profile" : "nav.login",
+    },
+    register: { href: publicPageUrl(config.registerUrl || "/register/"), labelKey: "nav.register" },
+  };
+}
+
 export function PageFooter({ t, onNavigate }) {
   const [isScrollTopVisible, setIsScrollTopVisible] = React.useState(false);
+  const account = accountLinks();
+  const links = [...footerLinkItems, account.account, ...(account.authenticated ? [] : [account.register])];
 
   React.useEffect(() => {
     const updateVisibility = () => {
@@ -71,12 +87,13 @@ export function PageFooter({ t, onNavigate }) {
           </div>
         </div>
         <div className="site-footer__links flex flex-wrap gap-x-5 gap-y-2">
-          {footerLinkItems.map((link) => (
+          {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
               className="footer-link transition hover:text-stone-950"
               onClick={link.appPath && onNavigate ? (event) => {
+                if (!isPlainLinkClick(event)) return;
                 event.preventDefault();
                 onNavigate(link.appPath);
               } : undefined}
@@ -103,12 +120,14 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const mobileMenuToggleRef = React.useRef(null);
   const mobileMenuPanelRef = React.useRef(null);
+  const account = accountLinks().account;
   const navItems = [
     { href: "/", label: t("nav.home") },
     { href: "/projekte", label: t("nav.portfolio") },
     { href: "/kompetenzen", label: t("nav.skills") },
     { href: "/ueber-mich", label: t("nav.aboutLink") },
     { href: "/kontakt", label: t("nav.contact") },
+    { href: account.href, label: t(account.labelKey), native: true },
   ];
   const closeMobileMenu = React.useCallback((restoreFocus = false) => {
     setIsMobileMenuOpen(false);
@@ -117,6 +136,7 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
     }
   }, []);
   const handleNavigate = React.useCallback((event, href) => {
+    if (!isPlainLinkClick(event)) return;
     event.preventDefault();
     closeMobileMenu();
     onNavigate(href);
@@ -129,7 +149,7 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
         href={item.href}
         className={`${className}${isActive ? " is-active" : ""}`}
         aria-current={isActive ? "page" : undefined}
-        onClick={(event) => handleNavigate(event, item.href)}
+        onClick={item.native ? () => closeMobileMenu() : (event) => handleNavigate(event, item.href)}
       >
         {item.label}
       </a>

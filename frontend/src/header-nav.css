@@ -761,13 +761,6 @@
     transform: rotate(-45deg);
   }
 
-  .site-shell
-    > header
-    .site-header-nav--optimized
-    #site-navigation.site-nav-links {
-    display: none;
-  }
-
   .site-mobile-menu-panel {
     box-sizing: border-box;
     position: fixed;
@@ -780,10 +773,8 @@
     grid-template-columns: minmax(0, 1fr);
     align-content: start;
     gap: 0.35rem;
-    width: 100vw;
     width: 100dvw;
     max-width: none;
-    height: calc(100vh - var(--site-header-height, 4.25rem));
     height: calc(100dvh - var(--site-header-height, 4.25rem));
     min-height: 0;
     max-height: none;

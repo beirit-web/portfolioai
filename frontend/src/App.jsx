@@ -14,6 +14,7 @@ import { usePortfolioStageHeight } from "./components/home/portfolio/usePortfoli
 import { isProjectPublished, portfolioSlugFor } from "./components/home/portfolio/portfolioPresentation.mjs";
 
 import CardIllustration from "./components/shared/CardIllustration";
+import { isPlainLinkClick } from "./components/shared/cardActivation.js";
 
 
 const LazyContactForm = React.lazy(() => import("./components/contact/ContactForm.jsx"));
@@ -192,6 +193,7 @@ function UnderConstructionNote({ t, onNavigate }) {
   return (
     <div className="section-cta-strip mx-auto mt-8 max-w-7xl px-3 sm:px-8 lg:px-10">
       <a href="/kontakt" className="portfolio-contact-button" onClick={(event) => {
+        if (!isPlainLinkClick(event)) return;
         event.preventDefault();
         onNavigate("/kontakt");
       }}>
@@ -734,6 +736,7 @@ function HomePortfolioSection({ t, language, homeOverviewCopy, onNavigate }) {
             href="/projekte/"
             className="portfolio-contact-button portfolio-contact-button--projects"
             onClick={(event) => {
+              if (!isPlainLinkClick(event)) return;
               event.preventDefault();
               onNavigate?.("/projekte");
             }}
@@ -796,7 +799,7 @@ function HomePage({ onNavigate }) {
   }, [navigateFromHome]);
 
   const handleAnchorNavigate = React.useCallback((event, href) => {
-    if (!href?.startsWith("#") || href === "#top") return;
+    if (!isPlainLinkClick(event) || !href?.startsWith("#") || href === "#top") return;
     event.preventDefault();
     revealHomeSections().finally(() => {
       setTimeout(() => scrollToHashTarget(href), 0);
@@ -870,6 +873,7 @@ function HomePage({ onNavigate }) {
                   href={servicePath}
                   className={`service-card reveal-card clickable-card${featured ? " service-card--featured" : ""}${essential ? " service-card--essential" : ""}`}
                   onClick={(event) => {
+                    if (!isPlainLinkClick(event)) return;
                     event.preventDefault();
                     onNavigate?.(servicePath);
                   }}

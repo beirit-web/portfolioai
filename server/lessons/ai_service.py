@@ -46,7 +46,7 @@ class GPTService:
                 f"Erstelle eine einfache deutsche Szene zum Thema {topic_id} "
                 f"für Niveau {level_label}. Ziel: {goal_text}."
             ),
-            "source": "gpt" if self.is_configured else "fallback",
+            "source": "fallback",
         }
 
     def streaming_status(self):

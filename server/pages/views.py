@@ -2,7 +2,6 @@ import hashlib
 import html
 import json
 import logging
-import uuid
 from pathlib import Path
 from datetime import date, timedelta
 from urllib.parse import quote, urlencode
@@ -11,9 +10,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.password_validation import validate_password
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.conf import settings
-from django.core import signing
 from django.forms import ValidationError
 from django.core.cache import cache
 from django.http import FileResponse, Http404, HttpResponse, HttpResponseRedirect, JsonResponse
@@ -25,15 +24,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
 from django.urls import reverse
-from django.utils.encoding import force_bytes, force_str
+from django.utils.encoding import force_str
 from django.utils.http import (
     url_has_allowed_host_and_scheme,
     urlsafe_base64_decode,
-    urlsafe_base64_encode,
 )
 from django.utils import timezone
 
-from pages.modules.mail import send_account_verification_email, send_notification_email
+from lessons.models import UserProfile as LearningUserProfile
+from pages.modules.mail import send_notification_email
 from pages.modules.tokens import email_verification_token_generator
 
 from .auth_session import (
@@ -44,6 +43,11 @@ from .auth_session import (
     get_session_idle_timeout_seconds,
     initialize_authenticated_session,
     touch_user_activity,
+)
+from .login_security import clear_login_attempts
+from .verification import (
+    account_email_delivery_mode, pending_account_for_credentials,
+    send_pending_account_verification,
 )
 from .forms import ContactRequestForm, LoginForm, RegistrationForm, UserAccountForm
 from .models import ChatMessage, Profile, Project, WeatherSearch
@@ -59,8 +63,8 @@ from .seo import (
 from .project_detail import build_project_detail
 from .projects_overview import build_projects_overview, projects_presentation_catalog
 from .housing_api import (
-    HOUSING_TOKEN_SALT,
     housing_authenticated_user,
+    make_housing_auth_token,
     housing_json_body,
     housing_logout_api,
     housing_search_location_detail_api,
@@ -333,15 +337,17 @@ def housing_register_api(request):
             errors[key] = ["Dieses Textfeld ist erforderlich."]
     if errors:
         return JsonResponse({"errors": errors}, status=400)
-    username = username.strip()
-    email = email.strip()
+    username = User.normalize_username(username.strip())
+    email = email.strip().lower()
     for key, value in (("username", username), ("email", email)):
         try:
             User._meta.get_field(key).clean(value, None)
         except ValidationError as exc:
             errors[key] = list(exc.messages)
-    if User.objects.filter(username=username).exists():
+    if User.objects.filter(Q(username__iexact=username) | Q(email__iexact=username)).exists():
         errors["username"] = ["Dieser Nutzername ist bereits vergeben."]
+    if User.objects.filter(Q(email__iexact=email) | Q(username__iexact=email)).exists():
+        errors["email"] = ["Diese E-Mail wird bereits verwendet."]
     if password != password_confirm:
         errors["password_confirm"] = ["Die Passwoerter stimmen nicht ueberein."]
     try:
@@ -353,13 +359,20 @@ def housing_register_api(request):
         return JsonResponse({"errors": errors}, status=400)
 
     try:
-        user = User.objects.create_user(username=username, email=email, password=password)
+        with transaction.atomic():
+            user = User.objects.create_user(username=username, email=email, password=password, is_active=False)
+            if not send_pending_account_verification(user, next_url="/wohnungssuche/login"):
+                raise ValidationError("Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen.")
     except IntegrityError:
         return JsonResponse({"errors": {"username": ["Dieser Nutzername ist bereits vergeben."]}}, status=400)
+    except ValidationError as exc:
+        return JsonResponse({"errors": {"detail": exc.messages}}, status=503)
     return JsonResponse(
         {
-            "detail": "Registrierung erfolgreich. Du kannst dich jetzt einloggen.",
+            "detail": "Bitte bestätige deine E-Mail-Adresse über den Link in der Bestätigungs-E-Mail. Erst danach ist dein Konto aktiv.",
             "email": user.email,
+            "emailVerificationRequired": True,
+            "emailDelivery": account_email_delivery_mode(),
             "login_url": "/wohnungssuche/login",
         },
         status=201,
@@ -377,8 +390,14 @@ def housing_token_auth_api(request):
         return JsonResponse({"errors": {"detail": ["Nutzername und Passwort sind erforderlich."]}}, status=400)
     user = authenticate(request, username=data["username"], password=data["password"])
     if not user:
+        if pending_account_for_credentials(data["username"], data["password"]):
+            return JsonResponse({
+                "errors": {"detail": ["Bitte bestätige zuerst deine E-Mail-Adresse über den Link in der Bestätigungs-E-Mail."]},
+                "code": "email_verification_required",
+            }, status=403)
         return JsonResponse({"errors": {"detail": ["Nutzername oder Passwort wurden nicht akzeptiert."]}}, status=400)
-    token = signing.dumps({"uid": user.pk, "nonce": uuid.uuid4().hex}, salt=HOUSING_TOKEN_SALT)
+    clear_login_attempts(request)
+    token = make_housing_auth_token(user)
     return JsonResponse({"token": token, "user_id": user.pk, "username": user.username})
 
 
@@ -472,14 +491,6 @@ def build_sitemap_entries() -> list[dict[str, str]]:
             "lastmod": project.updated_at.date().isoformat(),
         })
     return entries
-
-
-def build_email_verification_url(user: User) -> str:
-    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-    token = email_verification_token_generator.make_token(user)
-    return build_absolute_site_url(
-        reverse("pages:verify_email", kwargs={"uidb64": uidb64, "token": token})
-    )
 
 
 def store_contact_request(request, contact_form: ContactRequestForm, lang: str) -> str:
@@ -661,6 +672,7 @@ def home(request, project_slug=None):
         "projectsApiUrl": reverse("pages:projects_api"),
         "weatherSearchesUrl": reverse("pages:weather_searches"),
         "loginUrl": reverse("pages:login"),
+        "isAuthenticated": request.user.is_authenticated,
         "registerUrl": reverse("pages:register"),
         "profileUrl": reverse("pages:profile"),
         "logoutUrl": reverse("pages:logout"),
@@ -771,6 +783,9 @@ def weather_searches_api(request):
     except (json.JSONDecodeError, UnicodeDecodeError):
         return JsonResponse({"error": "invalid_json"}, status=400)
 
+    if not isinstance(body, dict) or any(key in body and not isinstance(body[key], str) for key in ("query", "city")):
+        return JsonResponse({"error": "invalid_query"}, status=400)
+
     query = " ".join(str(body.get("query") or "").strip().split())
     city_label = " ".join(str(body.get("city") or "").strip().split())
     normalized_query = normalize_weather_query(query or city_label)
@@ -829,23 +844,26 @@ def donate(request):
 
 def register(request):
     already_logged_in = request.user.is_authenticated
+    next_url = get_safe_login_redirect(request) if request.POST.get("next") or request.GET.get("next") else ""
     if request.method == "POST":
         form = RegistrationForm(request.POST, request.FILES)
         try:
             if form.is_valid():
-                user = form.save()
-                activation_url = build_email_verification_url(user)
-                if not send_account_verification_email(user, activation_url):
-                    user.delete()
-                    raise ValidationError(
-                        "Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen."
-                    )
+                with transaction.atomic():
+                    user = form.save()
+                    if not send_pending_account_verification(user, next_url=next_url):
+                        raise ValidationError(
+                            "Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen."
+                        )
                 reg_msg = (
-                    "Registrierung erfolgreich. Bitte bestätigen Sie jetzt Ihre E-Mail-Adresse über den Link in der E-Mail."
+                    "Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in der E-Mail. Erst danach ist Ihr Konto aktiv."
                 )
                 messages.success(request, reg_msg)
                 login_url = reverse("pages:login")
-                return redirect(f"{login_url}?email={quote(user.email)}")
+                login_params = {"email": user.email}
+                if next_url:
+                    login_params["next"] = next_url
+                return redirect(f"{login_url}?{urlencode(login_params)}")
         except ValidationError as exc:
             form.add_error(None, exc.message or str(exc) or "Ungültige Eingabe.")
         except Exception as exc:
@@ -859,35 +877,45 @@ def register(request):
     context = build_base_context(request)
     context["form"] = form
     context["already_logged_in"] = already_logged_in
+    context["registration_next"] = next_url
     return render(request, "pages/register.html", context)
 
 
 @require_GET
 @never_cache
 def verify_email(request, uidb64, token):
-    try:
-        user_id = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=user_id)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
+    next_url = get_safe_login_redirect(request)
+    with transaction.atomic():
+        try:
+            user_id = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.select_for_update().get(
+                pk=user_id, is_active=False, profile__email_verification_pending=True,
+            )
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
 
-    if not user or not email_verification_token_generator.check_token(user, token):
-        messages.error(
-            request,
-            "Der Bestätigungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut.",
-        )
-        return redirect("pages:register")
+        if not user or not email_verification_token_generator.check_token(user, token):
+            messages.error(
+                request,
+                "Der Bestätigungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut.",
+            )
+            registration_url = reverse("pages:register")
+            if request.GET.get("next"):
+                registration_url += "?" + urlencode({"next": next_url})
+            return redirect(registration_url)
 
-    user.is_active = True
-    user.save(update_fields=["is_active"])
+        Profile.objects.filter(user=user).update(email_verification_pending=False)
+        user.is_active = True
+        user.save(update_fields=["is_active"])
+        LearningUserProfile.objects.update_or_create(user=user, defaults={"email_verified": True})
     cache.delete("footer_user_stats_v2")
-    login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+    login(request, user, backend="pages.authentication.EmailOrUsernameBackend")
     initialize_authenticated_session(request, user, reset_activity=True)
     messages.success(
         request,
         "Ihre E-Mail-Adresse wurde bestätigt. Sie sind jetzt eingeloggt.",
     )
-    return redirect("pages:home")
+    return redirect(next_url)
 
 
 def build_session_response_payload(request, authenticated: bool, reason: str = "") -> dict:
@@ -956,12 +984,13 @@ def get_safe_login_redirect(request) -> str:
 @never_cache
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect("pages:home")
+        return redirect(get_safe_login_redirect(request))
     maybe_add_idle_timeout_message(request)
     form = LoginForm(request, data=request.POST or None)
     if request.method == "POST" and form.is_valid():
         user = form.get_user()
         login(request, user)
+        clear_login_attempts(request)
         initialize_authenticated_session(request, user, reset_activity=True)
         request.session.set_expiry(0)
         lang = get_preferred_language(request)
@@ -974,7 +1003,7 @@ def login_view(request):
         return redirect(get_safe_login_redirect(request))
     context = build_base_context(request)
     context["form"] = form
-    context["login_next"] = request.GET.get("next", "")
+    context["login_next"] = get_safe_login_redirect(request) if request.POST.get("next") or request.GET.get("next") else ""
     context["login_meta"] = login_page_metadata(request, build_absolute_site_url)
     response = render(request, "pages/login.html", context)
     response["X-Robots-Tag"] = context["login_meta"]["robots"]
@@ -1251,6 +1280,7 @@ def profile_page(request):
 
 def build_base_context(request) -> dict:
     return {
+        "account_mail_is_console": settings.EMAIL_BACKEND == "django.core.mail.backends.console.EmailBackend",
         "site_url": settings.SITE_URL,
         "profile_image_url": settings.PROFILE_IMAGE_URL,
         "initial_lang": get_preferred_language(request),

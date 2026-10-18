@@ -83,6 +83,13 @@ class LoginSeoTests(TestCase):
         self.client.force_login(user)
         response = self.client.get(reverse("pages:login"), {"next": self.target})
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], self.target)
+
+    def test_signed_in_user_cannot_follow_an_external_next_url(self):
+        user = get_user_model().objects.create_user(username="signed-in@example.test")
+        self.client.force_login(user)
+        response = self.client.get(reverse("pages:login"), {"next": "https://external.example.test/"})
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(response["Location"], reverse("pages:home"))
 
     def test_register_remains_excluded_from_indexing(self):

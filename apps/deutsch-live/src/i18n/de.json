@@ -281,7 +281,11 @@
     "noBadgesTitle": "Abzeichen erscheinen später",
     "noBadges": "Noch keine Abzeichen. Erste Ergebnisse und Szenen schalten hier Lernsignale frei.",
     "noRecommendationsTitle": "Empfehlungen erscheinen nach den ersten Aktionen",
-    "noRecommendations": "Noch keine persönlichen Empfehlungen. Starte ein Quiz oder eine Szene, damit das Dashboard Hinweise ableiten kann."
+    "noRecommendations": "Noch keine persönlichen Empfehlungen. Starte ein Quiz oder eine Szene, damit das Dashboard Hinweise ableiten kann.",
+    "loadFailed": "Das Dashboard konnte nicht geladen werden.",
+    "retry": "Erneut versuchen",
+    "actionFailed": "Die Anfrage ist fehlgeschlagen. Ihre Eingaben bleiben erhalten. Bitte versuchen Sie es erneut.",
+    "working": "Anfrage wird bearbeitet…"
   },
   "account": {
     "active": "Account aktiv",
@@ -290,7 +294,7 @@
     "title": "Fortschritt speichern",
     "description": "Eine Registrierung ist optional. Ohne Account können Sie lernen und Quizze lösen; mit Account werden Punkte, Verlauf und Einstellungen gespeichert.",
     "loginSuccess": "Sie sind angemeldet.",
-    "registerSuccess": "Account wurde erstellt.",
+    "registerSuccess": "Ihr Konto wurde erstellt. Sie können sich jetzt anmelden.",
     "authFailed": "Anmeldung oder Registrierung konnte nicht ausgeführt werden.",
     "username": "Benutzername",
     "email": "E-Mail",
@@ -300,9 +304,7 @@
     "registerTitle": "Neuen Account erstellen",
     "forgotPassword": "Passwort vergessen?",
     "resetTitle": "Passwort zurücksetzen",
-    "resetDescription": "Geben Sie Benutzername oder E-Mail ein. Dieser Schritt ist aktuell als sicher vorbereiteter Ablauf ohne Mailversand umgesetzt.",
-    "resetIdentifier": "Benutzername oder E-Mail",
-    "resetSend": "Zurücksetzen vorbereiten",
+    "resetDescription": "Im Formular zur Passwortwiederherstellung können Sie einen Link an die E-Mail-Adresse Ihres Kontos anfordern.",
     "backToLogin": "Zurück zur Anmeldung",
     "deleteAccount": "Account löschen",
     "deleteWarning": "Das Löschen des Accounts kann nicht rückgängig gemacht werden. Fortschritt, Punkte und Verlauf werden gelöscht.",
@@ -317,9 +319,19 @@
     "newPassword": "Neues Passwort",
     "passwordChanged": "Passwort geändert. Bitte erneut anmelden.",
     "emailNotVerified": "E-Mail ist noch nicht bestätigt.",
-    "resendEmail": "Bestätigungslink vorbereiten",
-    "emailTokenPrepared": "Bestätigungslink wurde für lokale Entwicklung vorbereitet.",
-    "resetTokenLabel": "Lokaler Reset-Token"
+    "resendEmail": "Bestätigungs-E-Mail erneut senden",
+    "registrationEmailSent": "Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in der E-Mail. Erst danach können Sie sich anmelden.",
+    "registrationEmailConsole": "Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie sich anmelden. In dieser lokalen Demo finden Sie den Bestätigungslink in der Serverkonsole; eine E-Mail wird nicht zugestellt.",
+    "registrationRequiresConfirmation": "Nach der Registrierung bestätigen Sie Ihre E-Mail-Adresse über einen Link. Erst danach ist die Anmeldung möglich.",
+    "emailConfirmationSent": "Die Bestätigungs-E-Mail wurde angefordert. Bitte prüfen Sie auch Ihren Spam-Ordner.",
+    "emailConfirmed": "Ihre E-Mail-Adresse wurde bestätigt. Sie können sich jetzt anmelden.",
+    "emailConfirmInvalid": "Der Bestätigungslink ist ungültig oder abgelaufen.",
+    "repeatPassword": "Passwort wiederholen",
+    "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+    "passwordHelp": "Mindestens 8 Zeichen. Verwenden Sie ein eigenes Passwort, das nicht nur aus Zahlen besteht.",
+    "working": "Bitte warten …",
+    "passwordCopied": "Passwort kopiert. Bitte sicher speichern.",
+    "copyFailed": "Das Passwort konnte nicht kopiert werden. Bitte prüfen Sie die Zwischenablage-Berechtigung Ihres Browsers."
   },
   "writing": {
     "title": "Schreibtraining",
@@ -335,7 +347,8 @@
     "saveFailed": "Die Schreibübung konnte nicht gespeichert werden.",
     "typing": "Korrektur wird vorbereitet",
     "liveCorrection": "Live-Korrektur",
-    "liveCorrectionRunning": "Live-Korrektur läuft"
+    "liveCorrectionRunning": "Live-Korrektur läuft",
+    "notSaved": "Speichern ist deaktiviert. Die Korrektur wird nur hier angezeigt und nicht im Verlauf gespeichert."
   },
   "feedback": {
     "eyebrow": "Feedback",
@@ -455,8 +468,8 @@
     "bestGrade": "Beste Note",
     "weakestGrade": "Schwächste Note",
     "passedLead": "Bestanden mit {distance} Abstand zur Grenze.",
-    "failedLead": "{distance} Punkte fehlen bis zur Bestehensgrenze.",
-    "detailText": "{count} Noten wurden ausgewertet. Bestehensgrenze: schlechter als {limit} gilt als nicht bestanden.",
+    "failedLead": "Nicht bestanden: Der ungerundete Durchschnitt muss unter {limit} liegen.",
+    "detailText": "{count} Noten wurden ausgewertet. In dieser Demo gilt nur ein ungerundeter Durchschnitt unter {limit} als bestanden; ab {limit} ist die Prüfung nicht bestanden.",
     "livePreview": "Live-Vorschau: aktueller Durchschnitt {average}"
   },
   "sceneLearning": {
@@ -487,7 +500,8 @@
     "scenesFolder": "Szenen in diesem Ordner",
     "sceneNumber": "Szene",
     "playScene": "Szene anhören",
-    "audioPrepared": "Audio folgt. Lesen Sie den Dialog bis dahin laut vor."
+    "audioPrepared": "Audio folgt. Lesen Sie den Dialog bis dahin laut vor.",
+    "savingDisabled": "Speichern ist in Ihren Einstellungen deaktiviert. Diese Szene und ihre Wörter wurden nicht gespeichert."
   },
   "manual": {
     "title": "Handbuch",

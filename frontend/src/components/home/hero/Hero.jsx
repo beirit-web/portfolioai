@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
+import { isPlainLinkClick } from "../../shared/cardActivation.js";
 
 const LazyWaveGridHero = React.lazy(() => import("./WaveGridHero.jsx"));
 
@@ -82,15 +83,6 @@ function DeferredWaveGridHero() {
       ) : null}
     </div>
   );
-}
-
-function isPlainLinkClick(event) {
-  return !event.defaultPrevented
-    && event.button === 0
-    && !event.metaKey
-    && !event.ctrlKey
-    && !event.shiftKey
-    && !event.altKey;
 }
 
 export default function Hero({ t, onAnchorNavigate, onRouteNavigate }) {

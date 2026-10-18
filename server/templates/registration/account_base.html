@@ -1,0 +1,18 @@
+{% extends "base_public.html" %}
+
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block body_attrs %} class="has-topnav password-reset-page theme-light-locked backstube-account login-page"{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% asset_url 'shop/brand.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'shop/account.css' %}">
+{% endblock %}
+
+{% block content %}
+  <main class="backstube-account-page">
+    <section class="template-panel template-form-card" aria-labelledby="account-title">
+      <h1 id="account-title" class="template-panel__kicker">{% block account_title %}Konto{% endblock %}</h1>
+      {% include "partials/auth_messages.html" %}
+      {% block account_content %}{% endblock %}
+    </section>
+  </main>
+{% endblock %}

@@ -112,3 +112,11 @@ class CakeOrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product_name}"
+
+
+class OrderSubmissionBudget(models.Model):
+    """Shared, short-lived counters; keys contain no raw IP or session data."""
+
+    key = models.CharField(max_length=64, primary_key=True)
+    window_started_at = models.DateTimeField(default=timezone.now, db_index=True)
+    submissions = models.PositiveIntegerField(default=0)

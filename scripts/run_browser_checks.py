@@ -47,10 +47,10 @@ def stop_child(process):
         process.wait(timeout=3)
 
 
-def run_migrations(env, stopping):
-    """Supervise migrations so an interrupted startup also reaps its child."""
+def run_setup_command(env, stopping, arguments):
+    """Supervise setup so an interrupted startup also reaps its child."""
     process = subprocess.Popen(
-        [sys.executable, "manage.py", "migrate", "--noinput"],
+        [sys.executable, *arguments],
         cwd=SERVER_DIR, env=env,
     )
     try:
@@ -62,6 +62,25 @@ def run_migrations(env, stopping):
         return 0
     finally:
         stop_child(process)
+
+
+def run_migrations(env, stopping):
+    return run_setup_command(env, stopping, ["manage.py", "migrate", "--noinput"])
+
+
+def seed_confirmed_quiz_accounts(env, stopping):
+    """Only this disposable database gets already-confirmed quiz test accounts."""
+    source = """
+from django.contrib.auth import get_user_model
+from lessons.models import UserProfile
+for viewport in ("mobile", "desktop"):
+    email = f"quiz-browser-{viewport}@example.test"
+    user = get_user_model().objects.create_user(
+        username=email, email=email, password="Example-only-Quiz-42!", is_active=True,
+    )
+    UserProfile.objects.create(user=user, email_verified=True, interface_language="de")
+"""
+    return run_setup_command(env, stopping, ["manage.py", "shell", "--no-imports", "-c", source])
 
 
 def check_environment(directory):
@@ -105,6 +124,9 @@ def main():
     with TemporaryDirectory(prefix="beirit-browser-") as directory:
         env = check_environment(directory)
         status = run_migrations(env, lambda: stopping)
+        if status or stopping:
+            return status
+        status = seed_confirmed_quiz_accounts(env, lambda: stopping)
         if status or stopping:
             return status
         process = subprocess.Popen(

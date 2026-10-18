@@ -30,15 +30,6 @@ export function mountSiteApp(App) {
 
   hideIntroLoader();
 
-  const keepHeaderCssLast = () => {
-    const headerCss = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
-      .find((link) => /\/header-nav-[^/]+\.css(?:$|\?)/.test(link.href));
-
-    if (headerCss) {
-      document.head.appendChild(headerCss);
-    }
-  };
-
   const loadDeferredCss = () => {
     if (deferredCssPromise) return deferredCssPromise;
     const urls = Array.isArray(window.BEIRIT_DEFERRED_CSS)
@@ -63,9 +54,7 @@ export function mountSiteApp(App) {
       link.onload = resolve;
       link.onerror = resolve;
       document.head.appendChild(link);
-    }))).then(() => {
-      keepHeaderCssLast();
-    });
+    })));
 
     return deferredCssPromise;
   };

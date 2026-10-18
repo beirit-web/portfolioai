@@ -3333,26 +3333,7 @@ html[data-theme="light"] .legal-page-shell .legal-callout {
   transform: translateY(-2px);
 }
 
-.template-body .template-panel--accent {
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(14, 165, 233, 0.2),
-      transparent 34%
-    ),
-    linear-gradient(145deg, rgba(8, 47, 73, 0.9), rgba(17, 36, 58, 0.9));
-  border-color: rgba(125, 211, 252, 0.24);
-}
 
-.template-body .template-panel--soft {
-  background:
-    radial-gradient(
-      circle at top left,
-      rgba(148, 163, 184, 0.14),
-      transparent 34%
-    ),
-    linear-gradient(145deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.62));
-}
 
 .template-body .template-panel--danger {
   background:
@@ -4069,10 +4050,7 @@ footer.site-footer .footer-link {
   gap: 0.45rem;
   min-height: 2.4rem;
   padding: 0.42rem 0.78rem;
-  border: 1px solid rgba(125, 211, 252, 0.14);
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.38);
-  color: #7dd3fc;
+  color: var(--manual-primary, #45d6b5);
   font-weight: 600;
   font-size: 0.92rem;
   line-height: 1.25;
@@ -5666,18 +5644,7 @@ iframe {
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.template-body .template-panel--accent {
-  border-color: rgba(125, 211, 252, 0.34);
-  background:
-    linear-gradient(145deg, rgba(8, 47, 73, 0.96), rgba(17, 36, 58, 0.94)),
-    rgba(8, 47, 73, 0.94);
-}
 
-.template-body .template-panel--soft {
-  background:
-    linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.88)),
-    rgba(15, 23, 42, 0.92);
-}
 
 .template-body .template-panel--danger {
   border-color: rgba(248, 113, 113, 0.32);
@@ -6236,13 +6203,6 @@ footer.site-footer {
   color: var(--manual-text, #eef7f0);
 }
 
-footer.site-footer .footer-link {
-  border-radius: 8px;
-  border-color: rgba(190, 232, 212, 0.18);
-  background: rgba(238, 247, 240, 0.07);
-  color: var(--manual-primary, #45d6b5);
-  box-shadow: none;
-}
 
 footer.site-footer .footer-link:hover,
 footer.site-footer .footer-link:focus-visible {
@@ -7733,6 +7693,7 @@ body.legal-body .terms-hero.is-revealed::after,
 }
 
 .template-body .template-panel--accent {
+  border-color: rgba(125, 211, 252, 0.34);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 2.3rem),
     linear-gradient(145deg, rgba(7, 56, 76, 0.98), rgba(12, 39, 56, 0.96)),

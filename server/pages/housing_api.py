@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import uuid
 from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
@@ -10,6 +11,7 @@ from django.core import signing
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
+from django.utils.crypto import constant_time_compare
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST
@@ -58,7 +60,17 @@ def housing_authenticated_user(request):
     token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()
     if HousingTokenRevocation.objects.filter(token_hash=token_hash, expires_at__gt=timezone.now()).exists():
         return None
-    return User.objects.filter(pk=user_id, is_active=True).first()
+    user = User.objects.filter(pk=user_id, is_active=True).first()
+    auth_hash = data.get("auth")
+    if not user or not isinstance(auth_hash, str) or not constant_time_compare(auth_hash, user.get_session_auth_hash()):
+        return None
+    return user
+
+
+def make_housing_auth_token(user):
+    return signing.dumps({
+        "uid": user.pk, "auth": user.get_session_auth_hash(), "nonce": uuid.uuid4().hex,
+    }, salt=HOUSING_TOKEN_SALT)
 
 
 def _unauthorized():

@@ -19,6 +19,7 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 from .forms import CheckoutForm, QuantityForm
 from .models import CakeOrder, CakeProduct
 from .services import DELIVERY_FEES, CartError, cart_context, cart_quantities, quantities_from_items, quote, save_order, set_cart
+from .submissions import SubmissionLimit, reserve_submission
 
 
 def money(value):
@@ -142,6 +143,7 @@ def cart_update(request, pk):
 @never_cache
 @require_http_methods(["GET", "POST"])
 def checkout(request):
+    response_status, retry_after = 200, None
     if request.method == "POST":
         duplicate = _duplicate(request, request.POST.get("request_key"))
         if duplicate:
@@ -160,7 +162,11 @@ def checkout(request):
             form.add_error(None, "Der Warenkorb wurde zwischenzeitlich geändert. Bitte neu laden und erneut prüfen.")
         else:
             try:
+                reserve_submission(request)
                 order, _ = save_order(form, quantities, request.user if request.user.is_authenticated else None)
+            except SubmissionLimit as exc:
+                form.add_error(None, str(exc))
+                response_status, retry_after = 429, exc.retry_after
             except CartError as exc:
                 form.add_error(None, str(exc))
             except IntegrityError:
@@ -172,7 +178,11 @@ def checkout(request):
                 _remember(request, order)
                 set_cart(request, {})
                 return redirect("storefront:confirmation", number=order.order_number)
-    return render(request, "shop/checkout.html", _context(request, "cart", **pricing, form=form, local_delivery_fee=DELIVERY_FEES[CakeOrder.DELIVERY_LOCAL]))
+    response = render(request, "shop/checkout.html", _context(request, "cart", **pricing, form=form, local_delivery_fee=DELIVERY_FEES[CakeOrder.DELIVERY_LOCAL]), status=response_status)
+    if retry_after is not None:
+        response["Retry-After"] = str(retry_after)
+        response.status_page_handled = True
+    return response
 
 
 @never_cache
@@ -243,7 +253,12 @@ def create_order(request):
     if not form.is_valid():
         return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
     try:
+        reserve_submission(request)
         order, created = save_order(form, quantities, request.user if request.user.is_authenticated else None)
+    except SubmissionLimit as exc:
+        response = JsonResponse({"errors": {"detail": [str(exc)]}}, status=429)
+        response["Retry-After"] = str(exc.retry_after)
+        return response
     except CartError as exc:
         return JsonResponse({"errors": {"items": [str(exc)]}}, status=400)
     except IntegrityError:

@@ -1,9 +1,14 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import TemplateView
+
+from pages.views import login_view
+from pages.account_views import (
+    AccountPasswordResetView, AccountPasswordResetDoneView,
+    AccountPasswordResetConfirmView, AccountPasswordResetCompleteView,
+)
 
 from .asset_redirects import urlpatterns as legacy_asset_patterns
 from .deutschlive_views import (
@@ -19,14 +24,14 @@ handler404 = "config.error_views.page_not_found"
 handler500 = "config.error_views.server_error"
 
 password_reset_patterns = [
-    path(settings.PASSWORD_RESET_URL, auth_views.PasswordResetView.as_view(), name="password_reset"),
-    path(settings.PASSWORD_RESET_DONE_URL, auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
+    path(settings.PASSWORD_RESET_URL, AccountPasswordResetView.as_view(), name="password_reset"),
+    path(settings.PASSWORD_RESET_DONE_URL, AccountPasswordResetDoneView.as_view(), name="password_reset_done"),
     path(
         f"{settings.PASSWORD_RESET_CONFIRM_PREFIX}<uidb64>/<token>/",
-        auth_views.PasswordResetConfirmView.as_view(),
+        AccountPasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
-    path(settings.PASSWORD_RESET_COMPLETE_URL, auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    path(settings.PASSWORD_RESET_COMPLETE_URL, AccountPasswordResetCompleteView.as_view(), name="password_reset_complete"),
     path(
         settings.PASSWORD_RESET_INVALID_URL,
         TemplateView.as_view(template_name="registration/password_reset_invalid.html"),
@@ -52,6 +57,12 @@ urlpatterns = [
     path("vertragsgenerator/", include("contracts.urls")),
     path("botanic/", include("botanic.urls")),
     path("", include("pages.urls")),
+    # Keep Django's named auth URLs while sharing the portfolio login UI/session rules.
+    path(f"{settings.AUTH_URL_PREFIX}login/", login_view),
+    path(f"{settings.AUTH_URL_PREFIX}password_reset/", AccountPasswordResetView.as_view()),
+    path(f"{settings.AUTH_URL_PREFIX}password_reset/done/", AccountPasswordResetDoneView.as_view()),
+    path(f"{settings.AUTH_URL_PREFIX}reset/<uidb64>/<token>/", AccountPasswordResetConfirmView.as_view()),
+    path(f"{settings.AUTH_URL_PREFIX}reset/done/", AccountPasswordResetCompleteView.as_view()),
     path(settings.AUTH_URL_PREFIX, include("django.contrib.auth.urls")),
     *password_reset_patterns,
 ]

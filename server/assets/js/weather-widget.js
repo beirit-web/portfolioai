@@ -1,4 +1,10 @@
 (() => {
+  // Provider nulls and blank values represent missing measurements, not zero.
+  const optionalNumber = (value) => {
+    if (typeof value !== "number" && (typeof value !== "string" || !value.trim())) return Number.NaN;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : Number.NaN;
+  };
   const WEATHER_CODE_MAP = {
     0: { icon: "☀️", labels: { de: "klar", ru: "ясно" } },
     1: { icon: "🌤️", labels: { de: "haupts. klar", ru: "в основном ясно" } },
@@ -600,17 +606,17 @@
     };
 
     const formatPercent = (value) => {
-      const numeric = Number(value);
+      const numeric = optionalNumber(value);
       return Number.isFinite(numeric) ? `${Math.round(numeric)}%` : "--";
     };
 
     const formatTemperature = (value) => {
-      const numeric = Number(value);
+      const numeric = optionalNumber(value);
       return Number.isFinite(numeric) ? `${Math.round(numeric)}°` : "--";
     };
 
     const formatWindDirection = (value) => {
-      const degrees = Number(value);
+      const degrees = optionalNumber(value);
       if (!Number.isFinite(degrees)) return null;
 
       const lang = getCurrentLang();
@@ -642,7 +648,7 @@
     };
 
     const formatDurationHours = (milliseconds) => {
-      const numeric = Number(milliseconds);
+      const numeric = optionalNumber(milliseconds);
       if (!Number.isFinite(numeric) || numeric < 0) return "--";
       const hours = numeric / (60 * 60 * 1000);
       return new Intl.NumberFormat(getCurrentLocale(), {
@@ -834,11 +840,11 @@
         items.push({
           date: hourDate,
           time: formatClock(hourDate, timezone),
-          probability: Number(hourly.precipitation_probability?.[idx]),
-          precipitation: Number(hourly.precipitation?.[idx]),
-          temp: Number(hourly.temperature_2m?.[idx]),
+          probability: optionalNumber(hourly.precipitation_probability?.[idx]),
+          precipitation: optionalNumber(hourly.precipitation?.[idx]),
+          temp: optionalNumber(hourly.temperature_2m?.[idx]),
           weatherCode: hourly.weather_code?.[idx],
-          wind: Number(hourly.wind_speed_10m?.[idx]),
+          wind: optionalNumber(hourly.wind_speed_10m?.[idx]),
         });
       });
 
@@ -854,14 +860,15 @@
       );
       const peak = items.reduce(
         (best, item) => {
-          const probability = Number.isFinite(item.probability) ? item.probability : 0;
-          return probability > best.probability ? { ...item, probability } : best;
+          const probability = item.probability;
+          return Number.isFinite(probability) && probability > best.probability
+            ? { ...item, probability } : best;
         },
         { probability: -1, time: "" },
       );
 
       if (rainyIndex < 0) {
-        return { hasRain: false, peak };
+        return { hasRain: false, available: items.some((item) => Number.isFinite(item.probability) || Number.isFinite(item.precipitation)), peak };
       }
 
       let endIndex = rainyIndex;
@@ -876,6 +883,7 @@
 
       return {
         hasRain: true,
+        available: true,
         start: items[rainyIndex],
         end: items[endIndex],
         peak,
@@ -902,12 +910,12 @@
         currentSnapshot.probability ??
         daily?.precipitation_probability_max?.[0] ??
         null;
-      const wind = Number(current?.wind_speed_10m);
-      const uv = Number(current?.uv_index ?? daily?.uv_index_max?.[0]);
-      const apparent = Number(current?.apparent_temperature ?? current?.temperature_2m);
+      const wind = optionalNumber(current?.wind_speed_10m);
+      const uv = optionalNumber(current?.uv_index ?? daily?.uv_index_max?.[0]);
+      const apparent = optionalNumber(current?.apparent_temperature ?? current?.temperature_2m);
       const summary = [];
 
-      if (Number(precipChance) >= 55) {
+      if (optionalNumber(precipChance) >= 55) {
         summary.push(texts.summary_rain_now);
       } else if (rainWindow.hasRain) {
         summary.push(`${texts.summary_dry_until} ${rainWindow.start.time}`);
@@ -918,7 +926,8 @@
       if (Number.isFinite(apparent) && apparent >= 29) summary.push(texts.summary_hot);
 
       if (weatherSummaryLabelEl) weatherSummaryLabelEl.textContent = texts.summary_title;
-      weatherSummaryTextEl.textContent = summary.slice(0, 3).join(" • ") || texts.summary_default;
+      const hasSummaryData = [wind, uv, apparent].some(Number.isFinite) || rainWindow.available;
+      weatherSummaryTextEl.textContent = summary.slice(0, 3).join(" • ") || (hasSummaryData ? texts.summary_default : texts.health_unavailable);
 
       if (rainWindowLabelEl) rainWindowLabelEl.textContent = texts.rain_window_title;
       if (rainWindow.hasRain) {
@@ -927,7 +936,7 @@
             ? rainWindow.start.time
             : `${rainWindow.start.time} - ${rainWindow.end.time}`;
       } else {
-        rainWindowValueEl.textContent = texts.rain_window_dry;
+        rainWindowValueEl.textContent = rainWindow.available ? texts.rain_window_dry : texts.health_unavailable;
       }
       rainWindowHintEl.textContent =
         rainWindow.peak?.probability >= 0
@@ -964,10 +973,10 @@
         daily?.precipitation_probability_max?.[0] ??
         null;
       const uv = current?.uv_index ?? daily?.uv_index_max?.[0];
-      const humidity = Number(current?.relative_humidity_2m);
-      const wind = Number(current?.wind_speed_10m);
+      const humidity = optionalNumber(current?.relative_humidity_2m);
+      const wind = optionalNumber(current?.wind_speed_10m);
       const windDirection = formatWindDirection(current?.wind_direction_10m);
-      const pressure = Number(current?.pressure_msl);
+      const pressure = optionalNumber(current?.pressure_msl);
 
       cityNameEl.textContent = city;
       timeTextEl.textContent = `${formatDateTime(currentDate, timezone)} • ${weather.label}`;
@@ -982,31 +991,31 @@
       windValueEl.textContent = Number.isFinite(wind)
         ? `${Math.round(wind)} km/h${windDirection ? ` · ${windDirection[0]}` : ""}`
         : "--";
-      windHintEl.textContent = windDirection
+      windHintEl.textContent = !Number.isFinite(wind) ? texts.health_unavailable : windDirection
         ? `${windStrength} · ${texts.wind_from} ${windDirection[1]}`
         : windStrength;
 
       humValueEl.textContent = Number.isFinite(humidity) ? `${Math.round(humidity)}%` : "--";
       humHintEl.textContent =
-        humidity > 70
+        !Number.isFinite(humidity) ? texts.health_unavailable : humidity > 70
           ? texts.humidity_humid
           : humidity < 40
             ? texts.humidity_dry
             : texts.humidity_ok;
 
-      uvValueEl.textContent = Number.isFinite(Number(uv)) ? Math.round(Number(uv)) : texts.uv_unknown;
+      uvValueEl.textContent = Number.isFinite(optionalNumber(uv)) ? Math.round(optionalNumber(uv)) : texts.uv_unknown;
       uvHintEl.textContent =
-        Number(uv) >= 6
+        optionalNumber(uv) >= 6
           ? texts.uv_high
-          : Number(uv) >= 3
+          : optionalNumber(uv) >= 3
             ? texts.uv_medium
-            : Number.isFinite(Number(uv))
+            : Number.isFinite(optionalNumber(uv))
               ? texts.uv_low
               : texts.uv_unknown;
 
       precipValueEl.textContent = formatPercent(precipChance);
       precipHintEl.textContent =
-        Number(precipChance) > 50 ? texts.precip_likely : texts.precip_low;
+        !Number.isFinite(optionalNumber(precipChance)) ? texts.health_unavailable : optionalNumber(precipChance) > 50 ? texts.precip_likely : texts.precip_low;
 
       pressureValueEl.textContent = Number.isFinite(pressure) ? `${Math.round(pressure)} hPa` : "--";
       pressureHintEl.textContent = Number.isFinite(pressure)
@@ -1021,9 +1030,9 @@
     const renderHealthGuidance = (payload) => {
       const texts = getWeatherTexts();
       const air = payload?.airQuality || {};
-      const aqi = Number(air.european_aqi);
-      const pm25 = Number(air.pm2_5);
-      const apparent = Number(
+      const aqi = optionalNumber(air.european_aqi);
+      const pm25 = optionalNumber(air.pm2_5);
+      const apparent = optionalNumber(
         payload?.current?.apparent_temperature ?? payload?.current?.temperature_2m,
       );
       const numberFormatter = new Intl.NumberFormat(getCurrentLocale(), {
@@ -1088,7 +1097,7 @@
             ragweed_pollen: "Ambrosia",
           };
       const pollenValues = Object.entries(pollenLabels)
-        .map(([key, label]) => ({ label, value: Number(air[key]) }))
+        .map(([key, label]) => ({ label, value: optionalNumber(air[key]) }))
         .filter((item) => Number.isFinite(item.value));
       const strongestPollen = pollenValues.sort((a, b) => b.value - a.value)[0];
 
@@ -1160,19 +1169,19 @@
         if (!date || date.getTime() < currentTs - 60 * 60 * 1000) return;
         const airIndex = airIndexByTime.get(time);
         const pollenValues = pollenKeys
-          .map((key) => Number(air[key]?.[airIndex]))
+          .map((key) => optionalNumber(air[key]?.[airIndex]))
           .filter(Number.isFinite);
         items.push({
           time,
           date,
           hour: Number(time.slice(11, 13)),
-          rain: Number(weather.precipitation_probability?.[weatherIndex]),
-          apparent: Number(
+          rain: optionalNumber(weather.precipitation_probability?.[weatherIndex]),
+          apparent: optionalNumber(
             weather.apparent_temperature?.[weatherIndex] ??
               weather.temperature_2m?.[weatherIndex],
           ),
-          uv: Number(weather.uv_index?.[weatherIndex]),
-          aqi: Number(air.european_aqi?.[airIndex]),
+          uv: optionalNumber(weather.uv_index?.[weatherIndex]),
+          aqi: optionalNumber(air.european_aqi?.[airIndex]),
           pollen: pollenValues.length ? Math.max(...pollenValues) : null,
         });
       });
@@ -1192,10 +1201,12 @@
           ? Math.min(Math.max(item.uv - 3, 0) / 5, 1) * 15
           : 0;
         const score = rainPenalty + airPenalty + pollenPenalty + temperaturePenalty + uvPenalty;
+        const complete = [item.rain, item.aqi, item.pollen, item.apparent, item.uv].every(Number.isFinite);
         return {
           ...item,
           score,
-          level: score >= 55 ? "high" : score >= 25 ? "elevated" : "low",
+          complete,
+          level: !complete ? "unavailable" : score >= 55 ? "high" : score >= 25 ? "elevated" : "low",
         };
       });
     };
@@ -1211,7 +1222,7 @@
       }
 
       const levelLabel = (level) =>
-        level === "high"
+        level === "unavailable" ? texts.health_unavailable : level === "high"
           ? texts.health_level_high
           : level === "elevated"
             ? texts.health_level_elevated
@@ -1236,8 +1247,9 @@
           start: item,
           end: items[index + 2],
           score: (item.score + items[index + 1].score) / 2,
+          complete: item.complete && items[index + 1].complete && items[index + 2].complete,
         }))
-        .filter((window) => window.start.hour >= 6 && window.start.hour <= 20)
+        .filter((window) => window.complete && window.start.hour >= 6 && window.start.hour <= 20)
         .sort((a, b) => a.score - b.score);
       const best = candidateWindows[0];
 

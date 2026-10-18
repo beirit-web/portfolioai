@@ -184,6 +184,12 @@ for (const variant of variants) {
     await inputs.last().fill("1.21");
     await form.calculate.click();
     await expect(metric(form.copy.roundedUp)).toHaveText("1,3");
+    await inputs.first().fill("3.99");
+    await inputs.last().fill("4");
+    await form.calculate.click();
+    await expect(metric(form.copy.average)).toHaveText(variant.standalone ? "< 4,0" : "3,995");
+    await expect(form.result).toHaveClass(/is-passed/);
+    await expect(form.result).toContainText(variant.standalone ? "weniger als 0,01" : "0,005");
     await inputs.first().fill("4");
     await inputs.last().fill("4");
     await form.calculate.click();

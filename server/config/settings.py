@@ -140,6 +140,7 @@ MIDDLEWARE = [
     "config.middleware.AdminIPRestrictionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "config.middleware.LoginAttemptLimitMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "config.middleware.AuthSessionIdleTimeoutMiddleware",
     "config.middleware.LoginRequiredMiddleware",
@@ -197,6 +198,8 @@ CACHES = {
 _raw_backup_dir = _server_path(
     env_path("DB_BACKUP_PATH", SERVER_DIR / "data" / "db_backups"))
 DB_BACKUP_PATH = _ensure_dir(_raw_backup_dir)
+
+AUTHENTICATION_BACKENDS = ["pages.authentication.EmailOrUsernameBackend"]
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -349,11 +352,16 @@ MAINTENANCE_MESSAGE = env("MAINTENANCE_MESSAGE",
                           "Wir aktualisieren gerade – gleich geht es weiter.")
 
 # Mail / Upload
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-EMAIL_HOST = ""
+# An old SMTP configuration alone must never turn delivery on in this workspace.
+ACCOUNT_EMAIL_DELIVERY_ENABLED = env_bool("ACCOUNT_EMAIL_DELIVERY_ENABLED", False)
+EMAIL_BACKEND = (
+    env("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+    if ACCOUNT_EMAIL_DELIVERY_ENABLED else "django.core.mail.backends.console.EmailBackend"
+)
+EMAIL_HOST = env("EMAIL_HOST", "") if ACCOUNT_EMAIL_DELIVERY_ENABLED else ""
 EMAIL_PORT = env_int("EMAIL_PORT", 587)
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", "") if ACCOUNT_EMAIL_DELIVERY_ENABLED else ""
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", "") if ACCOUNT_EMAIL_DELIVERY_ENABLED else ""
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL", False)
 EMAIL_TIMEOUT = env_int("EMAIL_TIMEOUT", 10)
@@ -361,7 +369,7 @@ EMAIL_SSL_CERTFILE = env("EMAIL_SSL_CERTFILE")
 EMAIL_SSL_KEYFILE = env("EMAIL_SSL_KEYFILE")
 EMAIL_SSL_CA_FILE = env("EMAIL_SSL_CA_FILE")
 EMAIL_SSL_SKIP_VERIFY = env_bool("EMAIL_SSL_SKIP_VERIFY", False)
-DEFAULT_FROM_EMAIL = "noreply@example.com"
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "noreply@example.com") if ACCOUNT_EMAIL_DELIVERY_ENABLED else "noreply@example.com"
 CONTACT_EMAIL = env("CONTACT_EMAIL", DEFAULT_FROM_EMAIL)
 CONTACT_PHONE_LANDLINE = env("CONTACT_PHONE_LANDLINE", "")
 CONTACT_REGION = env("CONTACT_REGION", "")

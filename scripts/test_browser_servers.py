@@ -148,6 +148,11 @@ class MigrationTests(unittest.TestCase):
 
 
 class BrowserRunnerTests(unittest.TestCase):
+    def setUp(self):
+        patcher = patch.object(run_browser_checks, "seed_confirmed_quiz_accounts", return_value=0)
+        self.seed_accounts = patcher.start()
+        self.addCleanup(patcher.stop)
+
     def test_port_blockade_stops_both_runners_before_any_data_or_process(self):
         for runner, port in ((run_browser_checks, 8765), (run_housing_browser_checks, 8873)):
             with self.subTest(runner=runner.__name__), \
@@ -224,6 +229,17 @@ class BrowserRunnerTests(unittest.TestCase):
                 temporary_database = Path(migrate.call_args.args[0]["DB_PATH"])
                 self.assertFalse(temporary_database.parent.exists())
                 start.assert_not_called()
+
+    def test_quiz_fixture_failure_removes_temporary_data_without_starting_server(self):
+        self.seed_accounts.return_value = 23
+        with patch.object(run_browser_checks, "check_loopback_port"), \
+                patch.object(run_browser_checks, "run_migrations", return_value=0), \
+                patch.object(run_browser_checks.subprocess, "Popen") as start, \
+                patch.object(run_browser_checks.signal, "signal"):
+            self.assertEqual(run_browser_checks.main(), 23)
+        temporary_database = Path(self.seed_accounts.call_args.args[0]["DB_PATH"])
+        self.assertFalse(temporary_database.parent.exists())
+        start.assert_not_called()
 
     def test_signal_during_migration_cleans_temporary_data_without_starting_server(self):
         for runner in RUNNERS:

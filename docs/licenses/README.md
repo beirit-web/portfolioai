@@ -31,6 +31,8 @@ Font Awesome und Inter. Vorhandene Urheberhinweise und Quellkommentare der
 | Devicon-Technologielogos | [devicon-LICENSE.txt](../../server/assets/images/devicon-LICENSE.txt) |
 | Lucide-Symbole | [lucide-LICENSE.txt](../../server/assets/images/lucide-LICENSE.txt) |
 | iNaturalist | [inaturalist-LICENSE.txt](../../server/assets/images/inaturalist-LICENSE.txt) |
+| Caveat: lokal mitgelieferte Latin-/Cyrillic-Webfonts, Copyright 2014 The Caveat Project Authors | [Original-OFL 1.1](caveat-OFL.txt) |
+| Cormorant Garamond: lokal mitgelieferte Latin-/Cyrillic-Webfonts, Copyright 2015 The Cormorant Project Authors | [Original-OFL 1.1](cormorantgaramond-OFL.txt) |
 | Portfolio-Screenshots und ihre Entstehung | [Vorschaubilder](../../server/assets/images/portfolio-previews/README.md) |
 
 Die Paketlizenzen der eingesetzten Bibliotheken gelten zusätzlich. Die
@@ -38,3 +40,9 @@ Veröffentlichung dieses Portfolios vergibt keine gemeinsame freie Lizenz für
 alle Bestandteile. Bei Änderungen an Bildern, Symbolen oder übernommenem Code
 werden die zugehörigen Nachweise mit gepflegt; Originaltexte bleiben vollständig
 erhalten.
+
+Die Schriftlizenztexte wurden unverändert aus den Originaldateien des
+[Google-Fonts-Repositories für Caveat](https://github.com/google/fonts/blob/main/ofl/caveat/OFL.txt)
+und [Cormorant Garamond](https://github.com/google/fonts/blob/main/ofl/cormorantgaramond/OFL.txt)
+übernommen. Sie gelten für die vier WOFF2-Dateien unter `server/assets/fonts/`;
+die eingebetteten Copyright- und Lizenz-URL-Metadaten bleiben erhalten.

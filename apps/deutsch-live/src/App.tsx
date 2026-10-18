@@ -163,7 +163,7 @@ export default function App() {
     if (path === "/writing") return <BotTutor user={user} />;
     if (path === "/dashboard") {
       return user ? (
-        <Dashboard refreshToken={dashboardRefresh} user={user} />
+        <Dashboard refreshToken={dashboardRefresh} user={user} onSettingsSaved={settings => setUser(current => current?.id === user.id ? { ...current, settings } : current)} />
       ) : (
         <AuthPanel user={user} onDashboardRefresh={refreshDashboard} onUserChange={setUser} />
       );
@@ -175,7 +175,7 @@ export default function App() {
     if (path === "/kontakt" || path === "/feedback") return <KontaktPage />;
     if (path === "/settings") {
       return user ? (
-        <Dashboard refreshToken={dashboardRefresh} user={user} />
+        <Dashboard refreshToken={dashboardRefresh} user={user} onSettingsSaved={settings => setUser(current => current?.id === user.id ? { ...current, settings } : current)} />
       ) : (
         <AuthPanel user={user} onDashboardRefresh={refreshDashboard} onUserChange={setUser} />
       );

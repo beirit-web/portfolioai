@@ -1,4 +1,5 @@
 import logging
+import json
 import re
 from urllib.parse import urlencode, urlsplit
 
@@ -21,6 +22,7 @@ from pages.auth_session import (
   check_authenticated_session,
   get_session_idle_timeout_seconds,
 )
+from pages.login_security import clear_login_attempts, consume_login_attempt
 from .error_views import error_response, wants_json_error_response
 
 logger = logging.getLogger(__name__)
@@ -107,6 +109,49 @@ class AdminIPRestrictionMiddleware:
         # Tarnish the admin endpoint by returning 404 instead of 403.
         return HttpResponseNotFound()
     return self.get_response(request)
+
+
+class LoginAttemptLimitMiddleware:
+  """Apply the same account/peer budget to every route that checks passwords."""
+
+  def __init__(self, get_response):
+    self.get_response = get_response
+    self.login_paths = {
+      "/login/", "/api/auth/login/", "/deutschlive/api/auth/login/",
+      "/wohnungssuche-api/token-auth/",
+      _normalize_prefix(settings.AUTH_URL_PREFIX) + "login/",
+      _normalize_prefix(settings.ADMIN_URL) + "login/",
+    }
+
+  def __call__(self, request):
+    response = self.get_response(request)
+    # Django's built-in/admin login views redirect only after a successful login.
+    if (request.path in self.login_paths and response.status_code == 302
+        and getattr(request.user, "is_authenticated", False)):
+      clear_login_attempts(request)
+    return response
+
+  def process_view(self, request, view_func, view_args, view_kwargs):
+    if request.method != "POST" or request.path not in self.login_paths:
+      return None
+    if request.content_type == "application/json":
+      try:
+        data = json.loads(request.body.decode("utf-8"))
+      except (UnicodeDecodeError, ValueError, RecursionError):
+        return None  # The API's schema validation provides the input error.
+      identifier = data.get("username") if isinstance(data, dict) else None
+    else:
+      identifier = request.POST.get("username", "")
+    if not isinstance(identifier, str):
+      return None
+    if consume_login_attempt(request, identifier):
+      return None
+    response = JsonResponse({
+      "error": "Zu viele Anmeldeversuche. Bitte versuchen Sie es später erneut.",
+      "code": "login_rate_limited",
+    }, status=429) if wants_json_error_response(request) else error_response(request, 429)
+    response["Retry-After"] = "900"
+    return response
 
 
 class SuspiciousRequestBlockMiddleware:
@@ -294,7 +339,7 @@ class LoginRequiredMiddleware:
     }
     login_url = _ensure_leading_slash(settings.LOGIN_URL)
     self.login_url = login_url
-    self.exempt_paths = {login_url, "/login/", "/logout/", "/register/", "/favicon.ico", "/wetter", "/wetter/", "/vokabelbox", "/vokabelbox/"}
+    self.exempt_paths = {login_url, "/login/", "/logout/", "/register/", "/email-bestaetigung/", "/favicon.ico", "/wetter", "/wetter/", "/vokabelbox", "/vokabelbox/"}
     self.exempt_paths.update(
       _ensure_leading_slash(value)
       for key in (

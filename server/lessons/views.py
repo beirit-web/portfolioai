@@ -1,23 +1,23 @@
 import json
+import ipaddress
 from datetime import timedelta
-from urllib.parse import quote
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import Group, User
-from django.core.cache import cache
+from django.contrib.auth.tokens import default_token_generator
 from django.core import signing
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
 from django.core.validators import validate_email
-from django.db.models import Sum
-from django.db import DatabaseError
+from django.db.models import Q, Sum
+from django.db import DatabaseError, IntegrityError, transaction
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
+from django.utils.crypto import constant_time_compare
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
@@ -34,6 +34,11 @@ from .learning_content import (
 from .models import BotExchange, Category, ChatHistory, Feedback, Plan, QuizAttempt, QuizResult, Scene, Subscription, UserProfile, UserProgress, UserVocabulary, WritingExercise
 from .realtime import realtime_feature_status, send_user_notification
 from .security import log_security_event, rate_limit, staff_required
+from .input import Field, invalid_input, json_input, text
+from .progress import resolve_progress_scene
+from pages.auth_session import initialize_authenticated_session
+from pages.login_security import clear_login_attempts
+from pages.verification import account_email_delivery_mode, pending_account_for_credentials, send_pending_account_verification
 
 
 def api_login_required(view_func):
@@ -173,64 +178,68 @@ def me(request):
         return JsonResponse({"user": None})
 
     profile = _get_profile(request.user)
-    if settings.DEBUG and not profile.email_verified:
-        profile.email_verified = True
-        profile.save(update_fields=["email_verified", "updated_at"])
     return JsonResponse({"user": _serialize_user(request.user, profile), "authTokenExpiresAt": _token_expires_at()})
 
 
 @require_POST
+@json_input(username=text(150), email=text(254), password=text(1024))
 def register(request):
     data = _json_body(request)
-    username = data.get("username", "").strip()
+    username = User.normalize_username(data.get("username", "").strip())
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
 
     if not username or not email or not password:
         return JsonResponse({"error": "Укажите имя пользователя, E-Mail и пароль."}, status=400)
     try:
+        User._meta.get_field("username").clean(username, None)
         validate_email(email)
-        validate_password(password)
+        validate_password(password, User(username=username, email=email))
     except ValidationError as error:
         return JsonResponse({"error": " ".join(error.messages)}, status=400)
-    if User.objects.filter(username__iexact=username).exists() or User.objects.filter(email__iexact=email).exists():
+    if User.objects.filter(
+        Q(username__iexact=username) | Q(email__iexact=username)
+        | Q(username__iexact=email) | Q(email__iexact=email),
+    ).exists():
         return JsonResponse({"error": "Регистрацию нельзя завершить с этими данными."}, status=400)
 
-    user = User.objects.create_user(username=username, email=email, password=password)
-    _ensure_groups()
-    learner_group = Group.objects.get(name="learner")
-    user.groups.add(learner_group)
-    profile = _get_profile(user)
-    if settings.DEBUG and not profile.email_verified:
-        profile.email_verified = True
-        profile.save(update_fields=["email_verified", "updated_at"])
-    if not _send_email_confirmation(user):
-        user.delete()
-        return JsonResponse({"error": "Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen."}, status=503)
+    try:
+        with transaction.atomic():
+            user = User.objects.create_user(username=username, email=email, password=password, is_active=False)
+            _ensure_groups()
+            user.groups.add(Group.objects.get(name="learner"))
+            _get_profile(user)
+            if not send_pending_account_verification(user, next_url="/deutschlive/account?emailConfirmed=1"):
+                raise ValidationError("Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen.")
+    except ValidationError as error:
+        return JsonResponse({"error": " ".join(error.messages)}, status=503)
+    except IntegrityError:
+        return JsonResponse({"error": "Регистрацию нельзя завершить с этими данными."}, status=400)
 
     payload = {
         "ok": True,
-        "message": "Registrierung erfolgreich.",
-        "emailVerificationRequired": not profile.email_verified,
+        "message": "Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in der E-Mail. Erst danach ist Ihr Konto aktiv.",
+        "emailVerificationRequired": True,
+        "emailDelivery": account_email_delivery_mode(),
     }
-    if settings.DEBUG and not profile.email_verified:
-        payload["emailVerificationToken"] = _make_email_confirmation_token(user)
     response = JsonResponse(payload, status=201)
     return response
 
 
 @require_POST
+@json_input(username=text(150), password=text(1024))
 def login_view(request):
     data = _json_body(request)
     username = data.get("username", "").strip()
     password = data.get("password", "")
-    rate_key = _login_rate_key(request, username)
-    if not rate_limit(rate_key, limit=5, timeout_seconds=15 * 60):
-        return JsonResponse({"error": "Слишком много попыток входа. Попробуйте позже."}, status=429)
-
     user = authenticate(request, username=username, password=password)
 
     if user is None:
+        if pending_account_for_credentials(username, password):
+            return JsonResponse({
+                "error": "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse über den Link in der E-Mail.",
+                "code": "email_verification_required",
+            }, status=403)
         log_security_event("login_failed", username=username, ip=_client_ip(request))
         return JsonResponse({"error": "Неверное имя пользователя или пароль."}, status=400)
     if not user.is_active:
@@ -239,12 +248,10 @@ def login_view(request):
         return JsonResponse({"error": "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse."}, status=403)
 
     login(request, user)
+    initialize_authenticated_session(request, user, reset_activity=True)
     request.session.set_expiry(settings.AUTH_TOKEN_MAX_AGE)
-    cache.delete(rate_key)
+    clear_login_attempts(request)
     profile = _get_profile(user)
-    if settings.DEBUG and not profile.email_verified:
-        profile.email_verified = True
-        profile.save(update_fields=["email_verified", "updated_at"])
     response = JsonResponse({"user": _serialize_user(user, profile), "authTokenExpiresAt": _token_expires_at()})
     _set_auth_token(response, user)
     return response
@@ -259,7 +266,10 @@ def logout_view(request):
 
 
 @require_POST
+@json_input(identifier=text(254))
 def request_password_reset(request):
+    if not _local_demo_recovery_enabled(request):
+        return _demo_recovery_disabled()
     data = _json_body(request)
     identifier = data.get("identifier", "").strip()
     if not identifier:
@@ -270,13 +280,18 @@ def request_password_reset(request):
         "ok": True,
         "message": "Если аккаунт найден, мы подготовим ссылку для сброса пароля.",
     }
-    if settings.DEBUG and user:
+    if user and user.is_active:
         payload["resetToken"] = _make_password_reset_token(user)
+    payload["demo"] = True
+    payload["message"] = "Lokale Demo: Falls das Beispielkonto existiert, wurde ein Wiederherstellungstoken vorbereitet. Es wird keine E-Mail versendet."
     return JsonResponse(payload)
 
 
 @require_POST
+@json_input(token=text(2048), password=text(1024))
 def confirm_password_reset(request):
+    if not _local_demo_recovery_enabled(request):
+        return _demo_recovery_disabled()
     data = _json_body(request)
     token = data.get("token", "")
     password = data.get("password", "")
@@ -293,6 +308,7 @@ def confirm_password_reset(request):
 
 
 @require_http_methods(["GET", "POST"])
+@json_input(token=text(2048))
 def confirm_email(request):
     token = request.GET.get("token", "") if request.method == "GET" else _json_body(request).get("token", "")
     user = _user_from_signed_token(token, "email-confirm", max_age=60 * 60 * 24)
@@ -308,10 +324,14 @@ def confirm_email(request):
     return JsonResponse({"ok": True, "message": "E-Mail подтверждён."})
 
 
-@api_login_required
 @require_POST
+@json_input()
 def resend_email_confirmation(request):
-    payload = {"ok": True, "message": "Если E-Mail ещё не подтверждён, ссылка подготовлена."}
+    if not _local_demo_recovery_enabled(request):
+        return _demo_recovery_disabled()
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required."}, status=401)
+    payload = {"ok": True, "demo": True, "message": "Lokale Demo: Es wird keine Bestätigungs-E-Mail versendet."}
     profile = _get_profile(request.user)
     if settings.DEBUG and not profile.email_verified:
         payload["emailVerificationToken"] = _make_email_confirmation_token(request.user)
@@ -320,6 +340,7 @@ def resend_email_confirmation(request):
 
 @api_login_required
 @require_POST
+@json_input(password=text(1024))
 def delete_account(request):
     data = _json_body(request)
     password = data.get("password", "")
@@ -336,6 +357,7 @@ def delete_account(request):
 
 @api_login_required
 @require_POST
+@json_input(currentPassword=text(1024), newPassword=text(1024))
 def change_password(request):
     data = _json_body(request)
     current_password = data.get("currentPassword", "")
@@ -364,7 +386,10 @@ def export_user_data(request):
             "username": request.user.username,
             "email": request.user.email,
             "dateJoined": request.user.date_joined.isoformat(),
+            "firstName": request.user.first_name,
+            "lastName": request.user.last_name,
         },
+        "scope": "DeutschLive account and learning data",
         "profile": _serialize_profile(profile),
         "quizAttempts": [
             {
@@ -381,6 +406,7 @@ def export_user_data(request):
         "sceneProgress": [
             {
                 "topicId": item.topic_id,
+                "sceneId": item.scene_key,
                 "status": item.status,
                 "completedExercises": item.completed_exercises,
                 "lastActivityAt": item.last_activity_at.isoformat(),
@@ -399,6 +425,19 @@ def export_user_data(request):
         ],
         "writingHistory": [
             _serialize_writing_exercise(item) for item in WritingExercise.objects.filter(user=request.user)
+        ],
+        "botExchanges": list(BotExchange.objects.filter(user=request.user).values("id", "question", "answer", "created_at")),
+        "chatHistory": list(ChatHistory.objects.filter(user=request.user).values(
+            "id", "mode", "user_message", "bot_response", "correction", "created_at",
+        )),
+        "feedback": list(Feedback.objects.filter(user=request.user).values(
+            "id", "category", "message", "status", "page_path", "contact_email",
+            "user_agent", "ip_address", "created_at", "updated_at",
+        )),
+        "subscriptions": [
+            {**_serialize_subscription(item), "providerSubscriptionId": item.provider_subscription_id,
+             "currentPeriodStart": item.current_period_start, "createdAt": item.created_at, "updatedAt": item.updated_at}
+            for item in Subscription.objects.filter(user=request.user).select_related("plan")
         ],
         "achievements": list(request.user.achievements.values("code", "title")),
     }
@@ -482,7 +521,7 @@ def dashboard(request):
             "progress": {
                 "completedScenes": progress.filter(status="completed").count(),
                 "startedScenes": progress.count(),
-                "totalScenes": Scene.objects.filter(is_published=True).count(),
+                "totalScenes": Scene.objects.filter(is_published=True, category__is_published=True).count(),
             },
             "learningPlan": _dashboard_learning_plan(request.user, by_topic),
             "premiumHints": _premium_hints_for_user(request.user),
@@ -518,23 +557,28 @@ def save_quiz_attempt(request):
 
 @api_login_required
 @require_POST
+@json_input(topicId=text(64), sceneId=text(160), status=text(16, choices=("started", "completed")), completedExercises=Field(kind=int))
 def save_progress(request):
     data = _json_body(request)
-    topic_id = data.get("topicId")
+    if not _get_profile(request.user).save_progress:
+        return _saving_disabled()
+    topic_id = data.get("topicId", "")
     status = data.get("status", "started")
-    topic = TOPICS.get(topic_id)
-    if topic is None or status not in ["started", "completed"]:
-        return JsonResponse({"error": "Некорректные данные прогресса."}, status=400)
+    scene_key, scene = resolve_progress_scene(topic_id, data.get("sceneId", ""))
+    if not scene_key:
+        return invalid_input("Die Szene gehört nicht zu diesem veröffentlichten Thema.", code="invalid_scene")
 
     progress, _created = UserProgress.objects.update_or_create(
         user=request.user,
         topic_id=topic_id,
-        defaults={"status": status, "completed_exercises": int(data.get("completedExercises", 0))},
+        scene_key=scene_key,
+        defaults={"scene": scene, "status": status, "completed_exercises": data.get("completedExercises", 0)},
     )
     return JsonResponse(
         {
             "progress": {
                 "topicId": progress.topic_id,
+                "sceneId": progress.scene_key,
                 "status": progress.status,
                 "completedExercises": progress.completed_exercises,
             }
@@ -545,8 +589,11 @@ def save_progress(request):
 
 @api_login_required
 @require_POST
+@json_input(wordDe=text(160), translationRu=text(220), topicId=text(64), notes=text(4000))
 def save_vocabulary(request):
     data = _json_body(request)
+    if not _get_profile(request.user).save_progress:
+        return _saving_disabled()
     word_de = data.get("wordDe", "").strip()
     translation_ru = data.get("translationRu", "").strip()
     if not word_de or not translation_ru:
@@ -566,6 +613,7 @@ def save_vocabulary(request):
 
 @api_login_required
 @require_POST
+@json_input(question=text(10000), prompt=text(4000), topicId=text(64))
 def bot_reply(request):
     data = _json_body(request)
     question = data.get("question", "").strip()
@@ -580,6 +628,15 @@ def bot_reply(request):
     correction = feedback.correction
     explanation = feedback.explanation
     answer = feedback.answer
+    if not profile.save_progress:
+        exercise = WritingExercise(
+            user=request.user, topic_id=topic_id, topic_label=topic_label, prompt=prompt,
+            user_text=question, correction=correction, explanation=explanation, created_at=timezone_now(),
+        )
+        return JsonResponse({
+            "exchange": {"id": None, "question": question, "answer": answer},
+            "exercise": _serialize_writing_exercise(exercise), "saved": False, "source": feedback.source,
+        })
     exchange = BotExchange.objects.create(user=request.user, question=question, answer=answer)
     ChatHistory.objects.create(
         user=request.user,
@@ -605,11 +662,13 @@ def bot_reply(request):
     return JsonResponse({
         "exchange": {"id": exchange.id, "question": question, "answer": answer},
         "exercise": _serialize_writing_exercise(exercise),
+        "saved": True, "source": feedback.source,
     })
 
 
 @api_login_required
 @require_http_methods(["GET", "POST"])
+@json_input(text=text(10000), prompt=text(4000), topicId=text(64))
 def writing_exercises(request):
     if request.method == "GET":
         exercises = WritingExercise.objects.filter(user=request.user)[:12]
@@ -622,9 +681,16 @@ def writing_exercises(request):
     if not user_text or not prompt:
         return JsonResponse({"error": "Напишите текст и выберите задание."}, status=400)
 
-    feedback = get_gpt_service().writing_feedback(user_text, prompt, _get_profile(request.user))
+    profile = _get_profile(request.user)
+    feedback = get_gpt_service().writing_feedback(user_text, prompt, profile)
     correction = feedback.correction
     explanation = feedback.explanation
+    if not profile.save_progress:
+        exercise = WritingExercise(
+            user=request.user, topic_id=topic_id, topic_label=_topic_label(topic_id), prompt=prompt,
+            user_text=user_text, correction=correction, explanation=explanation, created_at=timezone_now(),
+        )
+        return JsonResponse({"exercise": _serialize_writing_exercise(exercise), "saved": False, "source": feedback.source})
     exercise = WritingExercise.objects.create(
         user=request.user,
         topic_id=topic_id,
@@ -646,10 +712,11 @@ def writing_exercises(request):
         "writing_correction",
         {"exerciseId": exercise.id, "message": "Новая Korrektur ist bereit."},
     )
-    return JsonResponse({"exercise": _serialize_writing_exercise(exercise)}, status=201)
+    return JsonResponse({"exercise": _serialize_writing_exercise(exercise), "saved": True, "source": feedback.source}, status=201)
 
 
 @require_POST
+@json_input(category=text(24), message=text(8000), contactEmail=text(254), pagePath=text(2000))
 def submit_feedback(request):
     data = _json_body(request)
     category = data.get("category", "suggestion").strip()
@@ -703,6 +770,7 @@ def billing_status(request):
 
 @api_login_required
 @require_POST
+@json_input(provider=text(64), planCode=text(64))
 def billing_checkout_placeholder(request):
     data = _json_body(request)
     provider = data.get("provider", "stripe")
@@ -748,6 +816,7 @@ def realtime_status(request):
 
 @api_login_required
 @require_POST
+@json_input(topicId=text(64), level=text(16, choices=(value for value, _label in UserProfile.LEVEL_CHOICES)), goal=text(160))
 def adaptive_scene_preview(request):
     data = _json_body(request)
     profile = _get_profile(request.user)
@@ -780,6 +849,12 @@ def security_admin_summary(request):
 
 @api_login_required
 @require_http_methods(["PATCH"])
+@json_input(
+    level=text(16, choices=(value for value, _label in UserProfile.LEVEL_CHOICES)),
+    mainGoal=text(160), preferredTopic=text(64), saveProgress=Field(kind=bool),
+    interfaceLanguage=text(8, choices=(value for value, _label in UserProfile.LANGUAGE_CHOICES)),
+    explanationLanguage=text(8, choices=(value for value, _label in UserProfile.LANGUAGE_CHOICES)),
+)
 def update_settings(request):
     data = _json_body(request)
     profile = _get_profile(request.user)
@@ -861,17 +936,15 @@ def _feedback_rate_key(request):
 
 
 def _client_ip(request):
-    forwarded = request.META.get("HTTP_X_FORWARDED_FOR", "")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.META.get("REMOTE_ADDR")
+    try:
+        return str(ipaddress.ip_address(request.META.get("REMOTE_ADDR", "")))
+    except ValueError:
+        return None
 
 
 def _json_body(request):
-    try:
-        return json.loads(request.body.decode("utf-8") or "{}")
-    except json.JSONDecodeError:
-        return {}
+    # Every endpoint using this helper declares its schema with @json_input.
+    return request.learning_api_data
 
 
 
@@ -880,17 +953,42 @@ def _make_email_confirmation_token(user):
 
 
 def _make_password_reset_token(user):
-    return signing.TimestampSigner(salt="password-reset").sign(str(user.id))
+    return signing.dumps({"uid": user.pk, "token": default_token_generator.make_token(user)}, salt="password-reset")
 
 
 def _user_from_signed_token(token, salt, max_age):
     if not token:
         return None
     try:
+        if salt == "password-reset":
+            payload = signing.loads(token, salt=salt, max_age=max_age)
+            if not isinstance(payload, dict) or type(payload.get("uid")) is not int:
+                return None
+            user = User.objects.filter(pk=payload["uid"], is_active=True).first()
+            return user if user and default_token_generator.check_token(user, payload.get("token", "")) else None
         user_id = signing.TimestampSigner(salt=salt).unsign(token, max_age=max_age)
-    except (signing.BadSignature, signing.SignatureExpired):
+    except (signing.BadSignature, ValueError, TypeError, OverflowError):
         return None
-    return User.objects.filter(id=user_id, is_active=True).first()
+    try:
+        return User.objects.filter(id=user_id, is_active=True).first()
+    except (ValueError, TypeError, OverflowError):
+        return None
+
+
+def _local_demo_recovery_enabled(request):
+    if not settings.DEBUG:
+        return False
+    try:
+        return ipaddress.ip_address(request.META.get("REMOTE_ADDR", "")).is_loopback
+    except ValueError:
+        return False
+
+
+def _demo_recovery_disabled():
+    return JsonResponse({
+        "error": "Portfolio-Demo: Passwort- und E-Mail-Wiederherstellung ist nur lokal im Entwicklungsmodus verfügbar. Es werden keine E-Mails versendet.",
+        "code": "demo_recovery_disabled", "demo": True,
+    }, status=501)
 
 
 def _token_expires_at():
@@ -904,7 +1002,7 @@ def timezone_now():
 
 
 def _set_auth_token(response, user):
-    token = signing.TimestampSigner(salt="learning-auth").sign(str(user.id))
+    token = signing.dumps({"uid": user.pk, "auth": user.get_session_auth_hash()}, salt="learning-auth")
     response.set_cookie(
         "learning_auth_token",
         token,
@@ -920,49 +1018,22 @@ def _has_valid_auth_token(request):
     if not token:
         return False
     try:
-        user_id = signing.TimestampSigner(salt="learning-auth").unsign(
+        payload = signing.loads(
             token,
+            salt="learning-auth",
             max_age=settings.AUTH_TOKEN_MAX_AGE,
         )
-    except (signing.BadSignature, signing.SignatureExpired):
+    except (signing.BadSignature, ValueError, TypeError):
         return False
-    return str(request.user.id) == str(user_id)
+    return (isinstance(payload, dict) and payload.get("uid") == request.user.pk
+            and isinstance(payload.get("auth"), str)
+            and constant_time_compare(payload["auth"], request.user.get_session_auth_hash()))
 
 
 def _can_use_learning_account(user):
-    if user.is_staff or user.is_superuser:
-        return True
-    if settings.DEBUG:
-        return True
-    if not user.email:
-        return True
-    profile = _get_profile(user)
-    return profile.email_verified
-
-
-def _send_email_confirmation(user):
-    if settings.DEBUG:
-        return True
-    if not getattr(settings, "EMAIL_HOST", "") or not user.email:
-        return False
-
-    token = _make_email_confirmation_token(user)
-    confirmation_url = f"{settings.SITE_URL.rstrip('/')}/deutschlive/api/auth/email/confirm/?token={quote(token)}"
-    subject = "E-Mail-Adresse für DeutschLive bestätigen"
-    message = (
-        "Hallo,\n\n"
-        "bitte bestätigen Sie Ihre E-Mail-Adresse für DeutschLive.\n\n"
-        f"Bestätigungslink:\n{confirmation_url}\n\n"
-        "Der Link ist 24 Stunden gültig.\n\n"
-        "Falls Sie diese Registrierung nicht durchgeführt haben, ignorieren Sie diese E-Mail bitte.\n\n"
-        "Beirit Digital"
-    )
-    try:
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email], fail_silently=False)
-    except Exception as exc:
-        log_security_event("email_confirmation_send_failed", user_id=user.id, error=str(exc))
-        return False
-    return True
+    # New accounts stay inactive until the shared email confirmation succeeds.
+    # Existing active accounts retain access without a second verification state.
+    return user.is_active
 
 
 def _get_profile(user):
@@ -982,6 +1053,13 @@ def _serialize_writing_exercise(item):
         "status": item.status,
         "createdAt": item.created_at.isoformat(),
     }
+
+
+def _saving_disabled():
+    return JsonResponse({
+        "error": "Das Speichern des Lernfortschritts ist in Ihren Einstellungen deaktiviert.",
+        "code": "save_progress_disabled",
+    }, status=403)
 
 
 def _topic_label(topic_id):
@@ -1024,20 +1102,15 @@ def _ensure_groups():
         Group.objects.get_or_create(name=group_name)
 
 
-def _login_rate_key(request, username):
-    ip = request.META.get("REMOTE_ADDR", "unknown")
-    return f"login-attempts:{ip}:{username.lower()}"
-
-
 def _dashboard_learning_plan(user, by_topic):
     profile = _get_profile(user)
-    completed_topics = set(
-        UserProgress.objects.filter(user=user, status="completed").values_list("topic_id", flat=True)
+    completed_scenes = set(
+        UserProgress.objects.filter(user=user, status="completed", scene__isnull=False).values_list("scene_id", flat=True)
     )
-    scene_query = Scene.objects.filter(is_published=True)
+    scene_query = Scene.objects.filter(is_published=True, category__is_published=True)
     if not profile.has_premium_access:
         scene_query = scene_query.filter(is_premium=False)
-    next_scene = scene_query.exclude(topic_id__in=completed_topics).order_by("category__order", "topic_id", "title").first()
+    next_scene = scene_query.exclude(pk__in=completed_scenes).order_by("category__order", "topic_id", "title").first()
     if next_scene is None:
         next_scene = scene_query.order_by("category__order", "topic_id", "title").first()
 
@@ -1073,7 +1146,7 @@ def _premium_hints_for_user(user):
     profile = _get_profile(user)
     if profile.has_premium_access:
         return []
-    scenes = Scene.objects.filter(is_published=True, is_premium=True).order_by("category__order", "topic_id", "title")[:3]
+    scenes = Scene.objects.filter(is_published=True, category__is_published=True, is_premium=True).order_by("category__order", "topic_id", "title")[:3]
     return [
         {
             "id": scene.slug,

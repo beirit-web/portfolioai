@@ -38,6 +38,10 @@ function formatGrade(value: number) {
   });
 }
 
+function formatAverage(value: number) {
+  return value.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 4 });
+}
+
 function createEmptyGrades(count: number) {
   return Array.from({ length: count }, () => "");
 }
@@ -384,14 +388,14 @@ export default function GradeCalculator() {
                   <h3>{ui.gradeCalculator.resultTitle}</h3>
                 </div>
                 <div className="grade-calculator__metrics">
-                  <Metric label={ui.gradeCalculator.average} value={formatGrade(result.average)} />
+                  <Metric label={ui.gradeCalculator.average} value={formatAverage(result.average)} />
                   <Metric label={ui.gradeCalculator.roundedUp} value={formatGrade(result.roundedUp)} />
                   <Metric label={ui.gradeCalculator.bestGrade} value={formatGrade(result.bestGrade)} />
                   <Metric label={ui.gradeCalculator.weakestGrade} value={formatGrade(result.weakestGrade)} />
                 </div>
                 <p className="grade-calculator__lead">
                   {(result.passed ? ui.gradeCalculator.passedLead : ui.gradeCalculator.failedLead)
-                    .replace("{distance}", formatGrade(result.distance))}
+                    .replace("{distance}", formatAverage(result.distance)).replace("{limit}", formatGrade(PASSING_GRADE_LIMIT))}
                 </p>
                 <p>
                   {ui.gradeCalculator.detailText

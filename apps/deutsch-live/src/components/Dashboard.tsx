@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { BarChart3, BookOpenCheck, Download, Flame, Lightbulb, Lock, PenLine, RotateCcw, Route, Settings, Sparkles, Target, Trash2, Trophy } from "lucide-react";
 import { clearLearningProgress, exportUserData, fetchDashboard, updateSettings, type CurrentUser, type DashboardData, type UserSettings } from "../api";
@@ -8,6 +8,7 @@ import { EmptyState, Panel, PanelForm, SkeletonBlock, SkeletonPanel, SkeletonSta
 type DashboardProps = {
   user: CurrentUser | null;
   refreshToken: number;
+  onSettingsSaved?: (settings: UserSettings) => void;
 };
 
 function formatLevel(level?: string) {
@@ -22,30 +23,65 @@ function percentage(value: number, total: number) {
   return Math.max(0, Math.min(100, Math.round((value / total) * 100)));
 }
 
-export default function Dashboard({ user, refreshToken }: DashboardProps) {
+export default function Dashboard({ user, ...props }: DashboardProps) {
+  return user ? <AccountDashboard key={user.id} user={user} {...props} /> : null;
+}
+
+function AccountDashboard({ user, refreshToken, onSettingsSaved }: Omit<DashboardProps, "user"> & { user: CurrentUser }) {
   const [data, setData] = useState<DashboardData | null>(null);
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [message, setMessage] = useState("");
   const [showClearProgress, setShowClearProgress] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [loadRetry, setLoadRetry] = useState(0);
+  const [actionError, setActionError] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const active = useRef(false);
+  const busyRef = useRef(false);
+  const dirty = useRef(false);
 
   useEffect(() => {
-    if (!user) {
-      setData(null);
-      return;
-    }
-    fetchDashboard().then((dashboard) => {
-      setData(dashboard);
-      setSettings(dashboard.settings);
-    });
-  }, [user, refreshToken]);
+    active.current = true;
+    return () => { active.current = false; };
+  }, []);
 
-  if (!user) return null;
+  useEffect(() => {
+    const controller = new AbortController();
+    setLoadError(false);
+    fetchDashboard(controller.signal).then((dashboard) => {
+      if (controller.signal.aborted) return;
+      setData(dashboard);
+      if (!dirty.current) setSettings(dashboard.settings);
+    }).catch(() => { if (!controller.signal.aborted) setLoadError(true); });
+    return () => controller.abort();
+  }, [refreshToken, loadRetry]);
+
+  const loadFailure = loadError ? <Panel>
+    <p role="alert">{ui.dashboard.loadFailed}</p>
+    <button className="mt-3 rounded-xl bg-cyan-500 px-4 py-2 font-bold text-slate-950" type="button" onClick={() => setLoadRetry(value => value + 1)}>{ui.dashboard.retry}</button>
+  </Panel> : null;
+  if (loadError && !data) return loadFailure;
   if (!data || !settings) return <DashboardSkeleton />;
+
+  function editSettings(next: UserSettings) {
+    dirty.current = true;
+    setSettings(next);
+  }
+
+  async function runAction(action: () => Promise<void>) {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setBusy(true); setMessage(""); setActionError(false);
+    try { await action(); }
+    catch { if (active.current) { setActionError(true); setMessage(ui.dashboard.actionFailed); } }
+    finally { if (active.current) { busyRef.current = false; setBusy(false); } }
+  }
 
   async function saveSettings(event: FormEvent) {
     event.preventDefault();
     if (!settings) return;
-    const response = await updateSettings({
+    await runAction(async () => {
+      const response = await updateSettings({
       level: settings.level,
       mainGoal: settings.mainGoal,
       preferredTopic: settings.preferredTopic,
@@ -53,15 +89,21 @@ export default function Dashboard({ user, refreshToken }: DashboardProps) {
       interfaceLanguage: settings.interfaceLanguage,
       explanationLanguage: settings.explanationLanguage
     });
-    setSettings(response.settings);
-    if (response.settings.interfaceLanguage === "ru" || response.settings.interfaceLanguage === "de") {
-      setLocale(response.settings.interfaceLanguage as Locale);
-    }
-    setMessage(ui.dashboard.settingsSaved);
+      if (!active.current) return;
+      dirty.current = false;
+      setSettings(response.settings);
+      onSettingsSaved?.(response.settings);
+      if (response.settings.interfaceLanguage === "ru" || response.settings.interfaceLanguage === "de") {
+        setLocale(response.settings.interfaceLanguage as Locale);
+      }
+      setMessage(ui.dashboard.settingsSaved);
+    });
   }
 
   async function exportData() {
+    await runAction(async () => {
     const payload = await exportUserData();
+    if (!active.current) return;
     const blob = new Blob([JSON.stringify(payload.export, null, 2)], { type: "application/json" });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -70,19 +112,25 @@ export default function Dashboard({ user, refreshToken }: DashboardProps) {
     link.click();
     window.URL.revokeObjectURL(url);
     setMessage(ui.dashboard.exportReady);
+    });
   }
 
   async function removeProgress() {
+    await runAction(async () => {
     await clearLearningProgress();
     const dashboard = await fetchDashboard();
+    if (!active.current) return;
     setData(dashboard);
-    setSettings(dashboard.settings);
+    if (!dirty.current) setSettings(dashboard.settings);
     setShowClearProgress(false);
     setMessage(ui.dashboard.clearProgressDone);
+    });
   }
 
   return (
     <section id="dashboard" className="dashboard-shell section-shell">
+      {loadFailure}
+      <p role={actionError ? "alert" : "status"} aria-live="polite">{busy ? ui.dashboard.working : message}</p>
       <div className="dashboard-header section-header">
         <div>
           <p className="section-kicker">
@@ -175,12 +223,13 @@ export default function Dashboard({ user, refreshToken }: DashboardProps) {
         </Panel>
 
         <PanelForm className="dashboard-settings-panel" onSubmit={saveSettings}>
+          <fieldset disabled={busy} className="min-w-0 border-0 p-0">
           <h3 className="flex items-center gap-2 text-xl font-black">
             <Settings className="h-6 w-6" />
             {ui.dashboard.settings}
           </h3>
           <label className="mt-4 block text-sm font-bold" htmlFor="level">{ui.dashboard.level}</label>
-          <select className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="level" onChange={(event) => setSettings({ ...settings, level: event.target.value })} value={settings.level}>
+          <select className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="level" onChange={(event) => editSettings({ ...settings, level: event.target.value })} value={settings.level}>
             <option value="start">{ui.levels.easy}</option>
             <option value="a1">{ui.levels.easy}</option>
             <option value="a2">{ui.levels.medium}</option>
@@ -188,25 +237,25 @@ export default function Dashboard({ user, refreshToken }: DashboardProps) {
           </select>
 
           <label className="mt-4 block text-sm font-bold" htmlFor="goal">{ui.dashboard.goal}</label>
-          <input className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="goal" onChange={(event) => setSettings({ ...settings, mainGoal: event.target.value })} value={settings.mainGoal} />
+          <input className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="goal" onChange={(event) => editSettings({ ...settings, mainGoal: event.target.value })} value={settings.mainGoal} />
 
           <label className="mt-4 block text-sm font-bold" htmlFor="topic">{ui.dashboard.mainTopic}</label>
-          <input className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="topic" onChange={(event) => setSettings({ ...settings, preferredTopic: event.target.value })} value={settings.preferredTopic} />
+          <input className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="topic" onChange={(event) => editSettings({ ...settings, preferredTopic: event.target.value })} value={settings.preferredTopic} />
 
           <label className="mt-4 block text-sm font-bold" htmlFor="interface-language">{ui.dashboard.interfaceLanguage}</label>
-          <select className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="interface-language" onChange={(event) => setSettings({ ...settings, interfaceLanguage: event.target.value })} value={settings.interfaceLanguage}>
+          <select className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="interface-language" onChange={(event) => editSettings({ ...settings, interfaceLanguage: event.target.value })} value={settings.interfaceLanguage}>
             <option value="ru">Русский</option>
             <option value="de">Deutsch</option>
           </select>
 
           <label className="mt-4 block text-sm font-bold" htmlFor="explanation-language">{ui.dashboard.explanationLanguage}</label>
-          <select className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="explanation-language" onChange={(event) => setSettings({ ...settings, explanationLanguage: event.target.value })} value={settings.explanationLanguage}>
+          <select className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="explanation-language" onChange={(event) => editSettings({ ...settings, explanationLanguage: event.target.value })} value={settings.explanationLanguage}>
             <option value="ru">Русский</option>
             <option value="de">Deutsch</option>
           </select>
 
           <label className="mt-4 flex items-center gap-3 font-semibold">
-            <input checked={settings.saveProgress} onChange={(event) => setSettings({ ...settings, saveProgress: event.target.checked })} type="checkbox" />
+            <input checked={settings.saveProgress} onChange={(event) => editSettings({ ...settings, saveProgress: event.target.checked })} type="checkbox" />
             {ui.dashboard.saveProgress}
           </label>
 
@@ -217,7 +266,7 @@ export default function Dashboard({ user, refreshToken }: DashboardProps) {
               {ui.dashboard.exportData}
             </button>
           </div>
-          {message && <p className="mt-3 font-semibold text-emerald-700 dark:text-emerald-300">{message}</p>}
+          </fieldset>
         </PanelForm>
 
         <div className="dashboard-danger-zone rounded-xl bg-red-500/10 p-3 sm:rounded-[1.5rem] sm:p-5">
@@ -230,15 +279,15 @@ export default function Dashboard({ user, refreshToken }: DashboardProps) {
           </p>
           {showClearProgress ? (
             <div className="mt-4 flex flex-wrap gap-2">
-              <button className="rounded-2xl bg-red-600 px-5 py-3 font-bold text-white" onClick={removeProgress} type="button">
+              <button className="rounded-2xl bg-red-600 px-5 py-3 font-bold text-white" onClick={removeProgress} disabled={busy} type="button">
                 {ui.dashboard.clearProgressConfirm}
               </button>
-              <button className="rounded-2xl border border-slate-300/70 px-5 py-3 font-bold dark:border-slate-700" onClick={() => setShowClearProgress(false)} type="button">
+              <button className="rounded-2xl border border-slate-300/70 px-5 py-3 font-bold dark:border-slate-700" onClick={() => setShowClearProgress(false)} disabled={busy} type="button">
                 {ui.dashboard.clearProgressCancel}
               </button>
             </div>
           ) : (
-            <button className="mt-4 rounded-2xl border border-red-300/70 px-5 py-3 font-bold text-red-700 dark:border-red-500/40 dark:text-red-200" onClick={() => setShowClearProgress(true)} type="button">
+            <button className="mt-4 rounded-2xl border border-red-300/70 px-5 py-3 font-bold text-red-700 dark:border-red-500/40 dark:text-red-200" onClick={() => setShowClearProgress(true)} disabled={busy} type="button">
               {ui.dashboard.clearProgress}
             </button>
           )}

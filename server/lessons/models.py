@@ -54,7 +54,9 @@ class UserProfile(models.Model):
     def has_premium_access(self):
         if self.premium_status in ["trial", "active"] or self.role == "premium":
             return True
-        return self.user.subscriptions.filter(status__in=["trialing", "active"], current_period_end__gte=timezone.now()).exists()
+        return self.user.subscriptions.filter(
+            plan__is_premium=True, status__in=["trialing", "active"],
+        ).filter(models.Q(current_period_end__isnull=True) | models.Q(current_period_end__gte=timezone.now())).exists()
 
 
 class Plan(models.Model):
@@ -326,13 +328,14 @@ class UserProgress(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="scene_progress")
     scene = models.ForeignKey(Scene, on_delete=models.CASCADE, related_name="progress_entries", null=True, blank=True)
+    scene_key = models.CharField(max_length=160)
     topic_id = models.CharField(max_length=64)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default="started")
     completed_exercises = models.PositiveSmallIntegerField(default=0)
     last_activity_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ["user", "topic_id"]
+        unique_together = ["user", "topic_id", "scene_key"]
 
     def __str__(self):
         return f"{self.user.username}: {self.topic_id} {self.status}"

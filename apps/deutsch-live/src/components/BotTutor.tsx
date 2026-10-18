@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { Bot, BookOpenText, History, MessageSquareText, Send, Sparkles, UserRound } from "lucide-react";
 import {
@@ -177,6 +177,10 @@ const buildingBlocks = [
 ];
 
 export default function BotTutor({ user }: { user: CurrentUser | null }) {
+  return <WritingSession key={user?.id ?? "guest"} user={user} />;
+}
+
+function WritingSession({ user }: { user: CurrentUser | null }) {
   const [selectedTaskId, setSelectedTaskId] = useState<string>(writingTasks[0].id);
   const [text, setText] = useState("");
   const [latestExercise, setLatestExercise] = useState<WritingExercise | null>(null);
@@ -185,6 +189,13 @@ export default function BotTutor({ user }: { user: CurrentUser | null }) {
   const [isSaving, setIsSaving] = useState(false);
   const [liveCorrection, setLiveCorrection] = useState("");
   const [liveStatus, setLiveStatus] = useState<"idle" | "connected" | "streaming" | "done">("idle");
+  const active = useRef(false);
+  const submitting = useRef(false);
+
+  useEffect(() => {
+    active.current = true;
+    return () => { active.current = false; };
+  }, []);
 
   const selectedTask = useMemo(
     () => writingTasks.find((task) => task.id === selectedTaskId) ?? writingTasks[0],
@@ -192,20 +203,21 @@ export default function BotTutor({ user }: { user: CurrentUser | null }) {
   );
 
   useEffect(() => {
-    if (!user) {
-      setHistory([]);
-      setLiveCorrection("");
-      setLiveStatus("idle");
-      return;
-    }
-    fetchWritingExercises().then(setHistory).catch(() => setHistory([]));
-  }, [user]);
+    if (!user) return;
+    const controller = new AbortController();
+    fetchWritingExercises(controller.signal)
+      .then(items => { if (!controller.signal.aborted) setHistory(items); })
+      .catch(() => { if (!controller.signal.aborted) setHistory([]); });
+    return () => controller.abort();
+  }, [user?.id]);
 
   useEffect(() => {
     if (!user || typeof WebSocket === "undefined") return;
+    let connected = true;
     const socket = new WebSocket(getWebSocketUrl("/ws/notifications/"));
-    socket.onopen = () => setLiveStatus("connected");
+    socket.onopen = () => { if (connected) setLiveStatus("connected"); };
     socket.onmessage = (event) => {
+      if (!connected) return;
       let payload: { type?: string; chunk?: string } = {};
       try {
         payload = JSON.parse(event.data);
@@ -225,17 +237,20 @@ export default function BotTutor({ user }: { user: CurrentUser | null }) {
         setLiveStatus("done");
       }
     };
-    socket.onclose = () => setLiveStatus("idle");
-    return () => socket.close();
-  }, [user]);
+    socket.onclose = () => { if (connected) setLiveStatus("idle"); };
+    return () => { connected = false; socket.close(); };
+  }, [user?.id]);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (submitting.current) return;
     if (!user) {
       setMessage(ui.writing.loginRequired);
       return;
     }
+    submitting.current = true;
     setIsSaving(true);
+    setMessage("");
     setLiveCorrection("");
     try {
       const response = await saveWritingExercise({
@@ -243,14 +258,17 @@ export default function BotTutor({ user }: { user: CurrentUser | null }) {
         prompt: selectedTask.prompt,
         text
       });
+      if (!active.current) return;
       setLatestExercise(response.exercise);
-      setHistory((items) => [response.exercise, ...items.filter((item) => item.id !== response.exercise.id)].slice(0, 12));
+      if (response.saved && response.exercise.id !== null) {
+        setHistory((items) => [response.exercise, ...items.filter((item) => item.id !== response.exercise.id)].slice(0, 12));
+      }
       setText("");
-      setMessage("");
+      setMessage(response.saved ? "" : ui.writing.notSaved);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : ui.writing.saveFailed);
+      if (active.current) setMessage(error instanceof Error ? error.message : ui.writing.saveFailed);
     } finally {
-      setIsSaving(false);
+      if (active.current) { submitting.current = false; setIsSaving(false); }
     }
   }
 
@@ -283,6 +301,7 @@ export default function BotTutor({ user }: { user: CurrentUser | null }) {
                 }`}
                 key={task.id}
                 onClick={() => setSelectedTaskId(task.id)}
+                disabled={isSaving}
                 type="button"
               >
                 <span className="flex items-center gap-2 font-black">
@@ -320,6 +339,7 @@ export default function BotTutor({ user }: { user: CurrentUser | null }) {
                 className="rounded-full border border-slate-200 bg-white/80 px-3 py-2 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200"
                 key={block}
                 onClick={() => addBlock(block)}
+                disabled={isSaving}
                 type="button"
               >
                 {block}
@@ -333,13 +353,14 @@ export default function BotTutor({ user }: { user: CurrentUser | null }) {
             onChange={(event) => setText(event.target.value)}
             placeholder={ui.writing.placeholder}
             required
+            readOnly={isSaving}
             value={text}
           />
           <button className="writing-submit-button mt-4 inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-5 py-3 font-bold text-slate-950" disabled={isSaving} type="submit">
             {isSaving ? <Sparkles className="h-4 w-4" /> : <Send className="h-4 w-4" />}
             {isSaving ? ui.writing.saving : ui.common.send}
           </button>
-          {message && <p className="mt-4 font-semibold text-amber-700 dark:text-amber-300">{message}</p>}
+          {message && <p role="status" className="mt-4 font-semibold text-amber-700 dark:text-amber-300">{message}</p>}
           {liveCorrection && (
             <ChatBubble className="mt-4" icon={<Bot />} tone="bot">
               <p className="text-kicker text-cyan-700 dark:text-cyan-200">

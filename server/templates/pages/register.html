@@ -15,6 +15,9 @@
   <main class="backstube-account-page">
     <section class="template-panel template-form-card" aria-labelledby="register-title">
       <h1 class="template-panel__kicker" id="register-title">Registrierung</h1>
+      <p class="template-inline-note">Nach der Registrierung bestätigen Sie Ihre E-Mail-Adresse über einen Link. Erst danach ist Ihr Konto aktiv und Sie können sich anmelden.</p>
+      {% include "partials/auth_messages.html" %}
+      {% if account_mail_is_console %}<p class="template-inline-note">Lokale Demo: Die Bestätigungs-E-Mail wird in der Serverkonsole ausgegeben. Es wird keine E-Mail an ein Postfach zugestellt.</p>{% endif %}
       {% if already_logged_in %}
         <div class="form-error" role="alert">
           Sie sind bereits angemeldet. Falls Sie ein weiteres Konto anlegen
@@ -27,6 +30,7 @@
       {% endif %}
       <form method="post" class="form" enctype="multipart/form-data" data-submit-once>
         {% csrf_token %}
+        {% if registration_next %}<input type="hidden" name="next" value="{{ registration_next }}" />{% endif %}
         {% if form.non_field_errors %}
           <div class="form-error" role="alert">{{ form.non_field_errors }}</div>
         {% endif %}
@@ -134,7 +138,11 @@
       </form>
       <p class="template-empty">
         Bereits registriert?
-        <a href="{% url 'pages:login' %}">Zum Login</a>
+        <a href="{% url 'pages:login' %}{% if registration_next %}?next={{ registration_next|urlencode }}{% endif %}">Zum Login</a>
+      </p>
+      <p class="template-empty">
+        Bestätigungslink abgelaufen oder keine E-Mail erhalten?
+        <a href="{% url 'pages:verification_resend' %}">Bestätigungs-E-Mail erneut senden</a>
       </p>
     </section>
   </main>

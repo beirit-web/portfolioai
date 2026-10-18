@@ -30,6 +30,11 @@ if (productCards.length) {
   colourSample.height = 1;
   const sampleContext = colourSample.getContext("2d", {willReadFrequently: true});
   const edgeColour = (image, x, y, width) => {
+    // External admin images may taint a canvas even when the image itself loads.
+    // Reset its bitmap between cards so that one such image cannot poison others.
+    colourSample.width = 64;
+    if (!sampleContext) return { value: "rgb(245 245 245)", luminance: 1 };
+    try {
     sampleContext.drawImage(image, x, y, width, 1, 0, 0, colourSample.width, 1);
     const pixels = sampleContext.getImageData(0, 0, colourSample.width, 1).data;
     const channels = [0, 0, 0];
@@ -42,6 +47,9 @@ if (productCards.length) {
       return channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4;
     });
     return {value: `rgb(${rgb.join(" ")})`, luminance: linear[0] * .2126 + linear[1] * .7152 + linear[2] * .0722};
+    } catch {
+      return { value: "rgb(245 245 245)", luminance: 1 };
+    }
   };
   const svgNode = (tag, attributes, children = []) => {
     const node = document.createElementNS("http://www.w3.org/2000/svg", tag);

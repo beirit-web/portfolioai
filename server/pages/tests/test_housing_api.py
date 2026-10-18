@@ -1,12 +1,14 @@
 from unittest.mock import patch
+import re
+from urllib.parse import urlsplit
 
 from django.contrib.auth import get_user_model
-from django.core import signing
+from django.core import mail, signing
 from django.db import IntegrityError, transaction
 from django.test import Client, TestCase, override_settings
 
-from pages.housing_api import HOUSING_TOKEN_MAX_AGE, HOUSING_TOKEN_SALT
-from pages.models import HousingSearchLocation, HousingSearchProfile, HousingTokenRevocation
+from pages.housing_api import HOUSING_TOKEN_MAX_AGE, HOUSING_TOKEN_SALT, make_housing_auth_token
+from pages.models import HousingSearchLocation, HousingSearchProfile, HousingTokenRevocation, Profile
 
 
 API = "/wohnungssuche-api/"
@@ -21,7 +23,7 @@ class HousingApiSafetyTests(TestCase):
 
     def test_listings_return_only_search_sources_for_authenticated_user(self):
         user = get_user_model().objects.create_user(username="housing-user", password="secret")
-        token = signing.dumps({"uid": user.pk}, salt=HOUSING_TOKEN_SALT)
+        token = make_housing_auth_token(user)
 
         response = self.client.get("/wohnungssuche-api/listings/", HTTP_AUTHORIZATION=f"Token {token}")
 
@@ -55,8 +57,8 @@ class HousingPersistenceTests(TestCase):
     def setUp(self):
         self.user_a = get_user_model().objects.create_user(username="housing-example-a", email="housing-a@example.com", password="sample-password-a")
         self.user_b = get_user_model().objects.create_user(username="housing-example-b", email="housing-b@example.com", password="sample-password-b")
-        self.token_a = signing.dumps({"uid": self.user_a.pk}, salt=HOUSING_TOKEN_SALT)
-        self.token_b = signing.dumps({"uid": self.user_b.pk}, salt=HOUSING_TOKEN_SALT)
+        self.token_a = make_housing_auth_token(self.user_a)
+        self.token_b = make_housing_auth_token(self.user_b)
         self.client_a = Client(HTTP_AUTHORIZATION=f"Token {self.token_a}")
         self.client_b = Client(HTTP_AUTHORIZATION=f"Token {self.token_b}")
 
@@ -205,7 +207,7 @@ class HousingPersistenceTests(TestCase):
             self.assertEqual(self.client.get(API + "search-profiles/", HTTP_AUTHORIZATION=f"Token {token}").status_code, 401)
         self.assertEqual(self.client.get(API + "search-profiles/", HTTP_AUTHORIZATION="Token broken").status_code, 401)
         with patch("django.core.signing.time.time", return_value=1):
-            expired = signing.dumps({"uid": self.user_a.pk}, salt=HOUSING_TOKEN_SALT)
+            expired = make_housing_auth_token(self.user_a)
         with patch("django.core.signing.time.time", return_value=HOUSING_TOKEN_MAX_AGE + 2):
             self.assertEqual(self.client.get(API + "search-profiles/", HTTP_AUTHORIZATION=f"Token {expired}").status_code, 401)
         self.user_a.is_active = False
@@ -226,16 +228,108 @@ class HousingPersistenceTests(TestCase):
         self.assertEqual(HousingTokenRevocation.objects.count(), 1)
         self.assertNotEqual(HousingTokenRevocation.objects.get().token_hash, first["token"])
 
+    @override_settings(EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
     def test_registration_login_and_duplicate_validation(self):
         account = {"username": "housing-example-c", "email": "housing-c@example.com", "password": "sample-password-c", "password_confirm": "sample-password-c"}
         response = self.client.post(API + "register/", account, content_type="application/json")
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.json()["login_url"], "/wohnungssuche/login")
-        self.assertTrue(get_user_model().objects.get(username=account["username"]).check_password(account["password"]))
+        self.assertTrue(response.json()["emailVerificationRequired"])
+        self.assertEqual(response.json()["emailDelivery"], "email")
+        user = get_user_model().objects.get(username=account["username"])
+        self.assertTrue(user.check_password(account["password"]))
+        self.assertFalse(user.is_active)
+        self.assertTrue(user.profile.email_verification_pending)
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertNotIn("token", response.json())
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [account["email"]])
         self.assertEqual(self.client.post(API + "register/", account, content_type="application/json").status_code, 400)
         for field, value in (("email", "invalid"), ("username", []), ("password", None), ("password_confirm", "mismatch")):
             bad = {**account, "username": "housing-invalid-example", field: value}
             self.assertEqual(self.client.post(API + "register/", bad, content_type="application/json").status_code, 400)
-        login = self.client.post(API + "token-auth/", {"username": account["username"], "password": account["password"]}, content_type="application/json")
+        credentials = {"username": account["username"], "password": account["password"]}
+        blocked = self.client.post(API + "token-auth/", credentials, content_type="application/json")
+        self.assertEqual(blocked.status_code, 403)
+        self.assertEqual(blocked.json()["code"], "email_verification_required")
+        self.assertNotIn("token", blocked.json())
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertEqual(self.client.get(API + "search-profiles/", HTTP_AUTHORIZATION=f"Token {make_housing_auth_token(user)}").status_code, 401)
+        link = urlsplit(re.search(r'https?://[^\s<>\"]+', mail.outbox[0].body).group())
+        activated = self.client.get(f"{link.path}?{link.query}")
+        self.assertEqual(activated.status_code, 302)
+        self.assertEqual(activated["Location"], "/wohnungssuche/login")
+        user.refresh_from_db()
+        self.assertTrue(user.is_active)
+        self.assertFalse(user.profile.email_verification_pending)
+        self.assertTrue(user.learning_profile.email_verified)
+        login = self.client.post(API + "token-auth/", credentials, content_type="application/json")
         self.assertEqual(login.status_code, 200)
         self.assertEqual(self.client.get(API + "search-profiles/", HTTP_AUTHORIZATION=f"Token {login.json()['token']}").json()["results"], [])
+
+
+@override_settings(
+    LOGIN_REQUIRED=False,
+    AUTH_PASSWORD_VALIDATORS=[],
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"],
+)
+class HousingRegistrationVerificationTests(TestCase):
+    account = {
+        "username": "pending-housing-example", "email": "pending-housing@example.test",
+        "password": "fictional-housing-password", "password_confirm": "fictional-housing-password",
+    }
+
+    def register(self, **overrides):
+        return self.client.post(API + "register/", {**self.account, **overrides}, content_type="application/json")
+
+    def test_failed_delivery_rolls_back_the_entire_registration(self):
+        with patch("pages.verification.send_account_verification_email", return_value=False):
+            response = self.register()
+        self.assertEqual(response.status_code, 503)
+        self.assertIn("Bestätigungs-E-Mail", response.json()["errors"]["detail"][0])
+        self.assertFalse(get_user_model().objects.filter(username=self.account["username"]).exists())
+        self.assertFalse(Profile.objects.exists())
+        self.assertNotIn("_auth_user_id", self.client.session)
+        self.assertNotIn("token", response.json())
+
+    @override_settings(EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend")
+    def test_console_delivery_is_identified_without_exposing_a_confirmation_token(self):
+        with patch("pages.verification.send_account_verification_email", return_value=True):
+            response = self.register()
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.json()["emailVerificationRequired"])
+        self.assertEqual(response.json()["emailDelivery"], "console")
+        self.assertEqual(set(response.json()), {"detail", "email", "login_url", "emailVerificationRequired", "emailDelivery"})
+
+    def test_wrong_password_and_administratively_disabled_accounts_get_generic_errors(self):
+        self.assertEqual(self.register().status_code, 201)
+        pending = self.client.post(API + "token-auth/", {
+            "username": self.account["username"], "password": "fictional-wrong-password",
+        }, content_type="application/json")
+        self.assertEqual(pending.status_code, 400)
+        self.assertNotIn("code", pending.json())
+        Profile.objects.filter(user__username=self.account["username"]).update(email_verification_pending=False)
+        disabled = self.client.post(API + "token-auth/", {
+            "username": self.account["username"], "password": self.account["password"],
+        }, content_type="application/json")
+        self.assertEqual(disabled.status_code, 400)
+        self.assertNotIn("code", disabled.json())
+        self.assertNotIn("token", disabled.json())
+
+    def test_duplicate_addresses_and_cross_field_collisions_are_rejected(self):
+        get_user_model().objects.create_user(
+            username="existing-address@example.test", email="existing-email@example.test",
+            password="fictional-existing-password",
+        )
+        for fields, error_field in (
+            ({"username": "EXISTING-ADDRESS@EXAMPLE.TEST"}, "username"),
+            ({"username": "EXISTING-EMAIL@EXAMPLE.TEST"}, "username"),
+            ({"email": "EXISTING-EMAIL@EXAMPLE.TEST"}, "email"),
+            ({"email": "EXISTING-ADDRESS@EXAMPLE.TEST"}, "email"),
+        ):
+            with self.subTest(fields=fields):
+                response = self.register(**fields)
+                self.assertEqual(response.status_code, 400)
+                self.assertIn(error_field, response.json()["errors"])
+        self.assertEqual(len(mail.outbox), 0)

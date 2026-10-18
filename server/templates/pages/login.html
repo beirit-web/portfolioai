@@ -22,6 +22,8 @@
   <main class="backstube-account-page">
     <section class="template-panel template-form-card login-form-card" aria-labelledby="login-form-title">
       <h1 id="login-form-title" class="template-panel__kicker" data-i18n="login.form_title">Anmeldedaten</h1>
+      {% include "partials/auth_messages.html" %}
+      {% if account_mail_is_console %}<p class="template-inline-note">Lokale Demo: Bestätigungs- und Wiederherstellungs-E-Mails werden in der Serverkonsole ausgegeben. Es wird keine E-Mail an ein Postfach zugestellt.</p>{% endif %}
       {% if form.non_field_errors %}
         <div class="form-error" role="alert">{{ form.non_field_errors }}</div>
       {% endif %}
@@ -73,10 +75,11 @@
         </button>
       </form>
       <div class="template-actions login-actions" aria-label="Weitere Aktionen">
-        <a class="btn-secondary" href="{% url 'pages:register' %}" data-i18n="login.register">Registrieren</a>
+        <a class="btn-secondary" href="{% url 'pages:register' %}{% if login_next %}?next={{ login_next|urlencode }}{% endif %}" data-i18n="login.register">Registrieren</a>
         <a class="btn-ghost cta-highlight" href="{% url 'password_reset' %}" data-i18n="login.reset">Passwort zurücksetzen</a>
         <a class="btn-ghost" href="{% url 'pages:home' %}" data-i18n="login.cancel">Abbrechen</a>
       </div>
+      <p class="template-empty"><a href="{% url 'pages:verification_resend' %}">Bestätigungs-E-Mail erneut senden</a></p>
     </section>
   </main>
 {% endblock %}

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   ArrowDownUp, Bell, Building2, CheckCircle2, Database, ExternalLink, Filter,
@@ -8,7 +8,7 @@ import {
 import "./styles.css";
 import "./enhancements.css";
 import "../../../server/assets/css/footer-links.css";
-import { apiRequest, resultsOf } from "./api";
+import { apiRequest, EMAIL_VERIFICATION_RESEND_URL, PASSWORD_RESET_URL, resultsOf } from "./api";
 import { sampleListings, statusLabels } from "./demoData";
 import { useRoute, navigateTo } from "./routes";
 import { useCollection } from "./useCollection";
@@ -179,40 +179,67 @@ function LoginPage({ mode, onDemo, onLogin }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
+  const active = useRef(false);
+  const pending = useRef(false);
+  const confirmationInput = useRef(null);
   const registering = mode === "register";
+  useEffect(() => {
+    active.current = true;
+    return () => { active.current = false; };
+  }, []);
   async function submit(event) {
-    event.preventDefault(); setError(""); setSuccess(""); setBusy(true);
+    event.preventDefault();
+    if (pending.current) return;
+    if (registering && password !== confirmation) {
+      setError("Die Passwörter stimmen nicht überein.");
+      confirmationInput.current?.focus();
+      return;
+    }
+    pending.current = true;
+    setError(""); setSuccess(""); setBusy(true);
     try {
       const data = await apiRequest(`${registering ? "register" : "token-auth"}/`, {
-        method: "POST", body: registering ? { username, email, password, password_confirm: confirmation } : { username, password },
+        method: "POST", body: registering
+          ? { username: username.trim(), email: email.trim(), password, password_confirm: confirmation }
+          : { username: username.trim(), password },
       });
+      if (!active.current) return;
       if (registering) {
-        setSuccess(data.detail || "Registrierung erfolgreich. Sie können sich jetzt einloggen.");
+        const confirmationMessage = data.detail || "Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in der E-Mail. Danach können Sie sich anmelden.";
+        setSuccess(data.emailDelivery === "console"
+          ? `${confirmationMessage} In dieser lokalen Demo finden Sie den Bestätigungslink in der Serverkonsole; eine E-Mail wird nicht zugestellt.`
+          : confirmationMessage);
         setPassword(""); setConfirmation("");
       } else {
         if (!data?.token) throw new Error("Die Anmeldung hat keinen gültigen Zugang zurückgegeben.");
         onLogin(data.token, data.username || username);
       }
-    } catch (failure) { setError(failure.message); }
-    finally { setBusy(false); }
+    } catch (failure) { if (active.current) setError(failure.message); }
+    finally { if (active.current) { pending.current = false; setBusy(false); } }
+  }
+  async function showDemo() {
+    if (pending.current) return;
+    pending.current = true;
+    setError(""); setBusy(true);
+    try { await onDemo(); }
+    catch (failure) { if (active.current) setError(failure.message); }
+    finally { if (active.current) { pending.current = false; setBusy(false); } }
   }
   return <main className="login-page"><section className="login-panel">
     <div className="brand login-brand"><Home size={30} /><div><strong>Wohnungssuche Bodensee</strong><span>Privates Suchwerkzeug</span></div></div>
-    <div><h1>{registering ? "Registrieren" : "Login"}</h1><p>{registering ? "Erstelle ein Konto, um Suchprofile und Suchorte dauerhaft zu speichern." : "Melde dich an, um Suchprofile und gespeicherte Daten zu verwalten."}</p></div>
-    <form className="login-form standalone" onSubmit={submit}>
-      <label>Nutzername<input value={username} onChange={event => setUsername(event.target.value)} required autoComplete="username" /></label>
-      {registering && <label>E-Mail-Adresse<input type="email" value={email} onChange={event => setEmail(event.target.value)} required autoComplete="email" /></label>}
-      <label>Passwort<input type="password" value={password} onChange={event => setPassword(event.target.value)} required autoComplete={registering ? "new-password" : "current-password"} /></label>
-      {registering && <label>Passwort wiederholen<input type="password" value={confirmation} onChange={event => setConfirmation(event.target.value)} required autoComplete="new-password" /></label>}
+    <div><h1>{registering ? "Registrieren" : "Login"}</h1><p>{registering ? "Erstelle ein Konto und bestätige anschließend deine E-Mail-Adresse über den Bestätigungslink. Erst danach kannst du dich anmelden und Suchprofile speichern." : "Melde dich an, um Suchprofile und gespeicherte Daten zu verwalten."}</p></div>
+    <form aria-label={registering ? "Registrierung" : "Anmeldung"} aria-busy={busy} className="login-form standalone" onSubmit={submit}>
+      <label>Nutzername<input name="username" value={username} onChange={event => setUsername(event.target.value)} required maxLength={150} disabled={busy} autoCapitalize="none" spellCheck={false} autoComplete="username" /></label>
+      {registering && <label>E-Mail-Adresse<input name="email" type="email" value={email} onChange={event => setEmail(event.target.value)} required maxLength={254} disabled={busy} autoCapitalize="none" autoComplete="email" /></label>}
+      <label>Passwort<input name="password" type="password" value={password} onChange={event => setPassword(event.target.value)} required minLength={registering ? 8 : undefined} maxLength={1024} disabled={busy} autoComplete={registering ? "new-password" : "current-password"} /></label>
+      {registering && <label>Passwort wiederholen<input name="password_confirm" type="password" ref={confirmationInput} value={confirmation} onChange={event => setConfirmation(event.target.value)} required minLength={8} maxLength={1024} disabled={busy} autoComplete="new-password" /></label>}
       {error && <p className="error" role="alert">{error}</p>}{success && <p className="success" role="status">{success}</p>}
       <button type="submit" className="primary" disabled={busy}>{busy ? registering ? "Konto wird erstellt..." : "Anmeldung läuft..." : registering ? "Konto erstellen" : "Einloggen"}</button>
     </form>
-    <button className="text-button" type="button" onClick={() => navigateTo(registering ? "/login" : "/register")}>{registering ? "Ich habe bereits ein Konto" : "Noch kein Konto? Jetzt registrieren"}</button>
-    <button className="text-button" type="button" disabled={busy} onClick={async () => {
-      setError(""); setBusy(true);
-      try { await onDemo(); } catch (failure) { setError(failure.message); }
-      finally { setBusy(false); }
-    }}>Dashboard im Demo-Modus ansehen</button>
+    <button className="text-button" type="button" disabled={busy} onClick={() => navigateTo(registering ? "/login" : "/register")}>{registering ? "Ich habe bereits ein Konto" : "Noch kein Konto? Jetzt registrieren"}</button>
+    <a className="text-button" href={PASSWORD_RESET_URL}>Passwort vergessen?</a>
+    <a className="text-button" href={EMAIL_VERIFICATION_RESEND_URL}>Bestätigungs-E-Mail erneut senden</a>
+    <button className="text-button" type="button" disabled={busy} onClick={showDemo}>Dashboard im Demo-Modus ansehen</button>
   </section></main>;
 }
 

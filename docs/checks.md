@@ -81,8 +81,13 @@ den aktuellen Stand prüfen.
 Backend- und Browserprüfungen des gemeinsamen Laufs verwenden temporäre
 Datenbanken und getrennte Verzeichnisse für Medien, statische Dateien und
 Backups. Die Browserhelfer starten ihre Django-Prozesse selbst. Die
+allgemeinen Browserprüfungen erhalten zwei bereits bestätigte fiktive Quizkonten
+aus ihrem temporären Testaufbau. Die
 Wohnungssuche behält ihre Testdatenbank über Serverneustarts hinweg und prüft
-mit getrennten fiktiven Konten. Die Migrationsprüfung verwendet
+mit getrennten fiktiven Konten einschließlich Registrierung und E-Mail-Bestätigung.
+Der lokale Testprozess stellt die Bestätigungslinks bereit; der Browser öffnet
+den regulären Bestätigungsendpunkt. Dafür gibt es keinen zusätzlichen HTTP-Endpunkt.
+Die Migrationsprüfung verwendet
 `--check --dry-run` und schreibt selbst keine Migration.
 
 Vor einem Commit oder Push ist mindestens

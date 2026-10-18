@@ -159,10 +159,10 @@ function getGrades() {
   return grades;
 }
 
-function formatGrade(value) {
+function formatGrade(value, maximumFractionDigits = 2) {
   return value.toLocaleString("de-DE", {
     minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
+    maximumFractionDigits,
   });
 }
 
@@ -181,7 +181,7 @@ function renderResult(grades) {
   const metrics = document.createElement("div");
   metrics.className = "result-metrics";
   metrics.append(
-    createMetric("Durchschnitt", formatGrade(average)),
+    createMetric("Durchschnitt", average < PASSING_GRADE_LIMIT && average >= 3.995 ? "< 4,0" : formatGrade(average)),
     createMetric("Aufgerundet", formatGrade(roundedUp)),
     createMetric("Beste Note", formatGrade(bestGrade)),
     createMetric("Schwächste Note", formatGrade(weakestGrade))
@@ -190,11 +190,11 @@ function renderResult(grades) {
   const averageText = document.createElement("p");
   averageText.className = "result-lead";
   averageText.textContent = passed
-    ? `Bestanden mit ${formatGrade(distance)} Abstand zur Grenze.`
-    : `${formatGrade(distance)} Punkte fehlen bis zur Bestehensgrenze.`;
+    ? `Bestanden mit ${distance < 0.01 ? "weniger als 0,01" : formatGrade(distance)} Abstand zur Grenze.`
+    : average === PASSING_GRADE_LIMIT ? "Die Bestehensgrenze ist erreicht. Zum Bestehen muss der Durchschnitt darunter liegen." : `${formatGrade(distance)} Punkte bis zur Grenze; zum Bestehen muss der Durchschnitt darunter liegen.`;
 
   const detailText = document.createElement("p");
-  detailText.textContent = `${grades.length} ${grades.length === 1 ? "Note wurde" : "Noten wurden"} ausgewertet. Bestehensgrenze: schlechter als ${formatGrade(PASSING_GRADE_LIMIT)} gilt als nicht bestanden.`;
+  detailText.textContent = `${grades.length} ${grades.length === 1 ? "Note wurde" : "Noten wurden"} ausgewertet. Bestehensgrenze: ein Durchschnitt unter ${formatGrade(PASSING_GRADE_LIMIT)} gilt als bestanden; ab ${formatGrade(PASSING_GRADE_LIMIT)} gilt er als nicht bestanden.`;
 
   const feedback = document.createElement("p");
   feedback.textContent = passed

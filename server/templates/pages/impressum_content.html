@@ -1,0 +1,32 @@
+<section class="imprint-section imprint-section--provider" aria-labelledby="imprint-provider">
+  <h2 id="imprint-provider">{{ copy.details.title }}</h2>
+  <p class="legal-callout">{{ copy.notice }}</p>
+  <address><strong>Beirit Web</strong><br>{{ copy.details.owner }}<br>{{ copy.details.legal_form.value }}<br><br>Musterstraße 1<br>12345 Musterstadt<br>{{ copy.details.country }}</address>
+</section>
+<section class="imprint-section imprint-section--contact" aria-labelledby="imprint-contact">
+  <h2 id="imprint-contact">{{ copy.details.contact.label }}</h2>
+  <div class="imprint-contact-actions" aria-label="{{ copy.details.contact.actions_label }}">
+    <a class="imprint-contact-link" href="tel:+490000000000" aria-label="{{ copy.details.contact.phone_aria }}">{{ copy.details.contact.phone_link }}</a>
+    <a class="imprint-contact-link" href="https://example.com/kontakt" aria-label="{{ copy.details.contact.whatsapp_aria }}" rel="noopener">{{ copy.details.contact.whatsapp_link }}</a>
+    <a class="imprint-contact-link" href="{% url 'pages:contact' %}" aria-label="{{ copy.details.contact.email_aria }}">{{ copy.details.contact.email_link }}</a>
+  </div>
+</section>
+<section class="imprint-section imprint-section--purpose" aria-labelledby="imprint-purpose">
+  <h2 id="imprint-purpose">{{ copy.purpose.title }}</h2>
+  <ul class="imprint-list">{% for item in copy.purpose.items.values %}<li>{{ item }}</li>{% endfor %}</ul>
+</section>
+<section class="imprint-section imprint-section--tax" aria-labelledby="imprint-tax">
+  <h2 id="imprint-tax">{{ copy.tax.title }}</h2><p>{{ copy.tax.text_primary }}</p><p>{{ copy.tax.text_secondary }}</p>
+</section>
+<section class="imprint-section imprint-section--dispute" aria-labelledby="imprint-dispute">
+  <h2 id="imprint-dispute">{{ copy.dispute.title }}</h2><p>{{ copy.dispute.text }}</p>
+</section>
+<section class="imprint-section imprint-section--content-liability" aria-labelledby="imprint-content-liability">
+  <h2 id="imprint-content-liability">{{ copy.content_liability.title }}</h2><p>{{ copy.content_liability.text }}</p>
+</section>
+<section class="imprint-section imprint-section--link-liability" aria-labelledby="imprint-link-liability">
+  <h2 id="imprint-link-liability">{{ copy.link_liability.title }}</h2><p>{{ copy.link_liability.text }}</p>
+</section>
+<section class="imprint-section imprint-section--copyright" aria-labelledby="imprint-copyright">
+  <h2 id="imprint-copyright">{{ copy.copyright.title }}</h2><p>{{ copy.copyright.text }}</p>
+</section>
