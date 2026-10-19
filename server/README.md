@@ -39,4 +39,5 @@ Für Musterdaten und
 deaktivierte Integrationen gelten die
 [Portfolio-Grenzen](../README.md#musterdaten-und-grenzen).
 
-Die Lizenz des Servers steht in [LICENSE](LICENSE).
+Der eigene Servercode steht unter der [MIT-Lizenz](LICENSE).
+Die [Drittlizenzen](../docs/licenses/README.md) gelten für übernommene Bestandteile.

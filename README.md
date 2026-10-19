@@ -82,9 +82,10 @@ Pushes benötigen einen ausdrücklichen Auftrag. Ein Push löst kein Deployment 
 Der lokale Push-Schutz lässt sich mit `git config core.hooksPath scripts/git-hooks`
 aktivieren.
 
-Es gibt keine gemeinsame freie Lizenz im Repository-Stamm. Maßgeblich sind
-[server/LICENSE](server/LICENSE) und die [erhaltenen Projektlizenzen](docs/licenses/README.md).
-Die Veröffentlichung erlaubt keine pauschale Weiterverwendung aller Bestandteile.
+Der eigene Projektcode steht unter der [MIT-Lizenz](LICENSE), Copyright
+2025–2026 Eugen Beirit, Beirit Digital. Er kann unter diesen Bedingungen als
+Vorlage kopiert, angepasst und weiterentwickelt werden. Für übernommene
+Bestandteile gelten die [jeweiligen Drittlizenzen](docs/licenses/README.md).
 
 [technologien]: docs/images/portfolio-technologies.svg
 [c1]: server/assets/images/portfolio-covers/sprachdienstleistungen-cover-v1-240.webp

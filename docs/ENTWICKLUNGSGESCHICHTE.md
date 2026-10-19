@@ -27,7 +27,7 @@ Eine erneute öffentliche Bereitstellung ist für später geplant. Weiterarbeite
 möchte ich an Bedienbarkeit, responsivem Design, SEO, Performance, Barrierefreiheit
 und KI-Zugänglichkeit sowie an Sicherheit, Tests, Dokumentation und weiteren Projekten.
 
-Mit der erforderlichen schriftlichen Zustimmung und unter Beachtung der
-[Lizenzbedingungen](../README.md#repository-und-lizenz) kann der Quellcode als
-Vorlage kopiert, angepasst und weiterentwickelt werden. Vor einer produktiven
-Nutzung sind eigene Prüfungen erforderlich.
+Unter der [MIT-Lizenz](../LICENSE) kann mein eigener Quellcode als Vorlage
+kopiert, angepasst und weiterentwickelt werden. Dabei sind die
+[Drittlizenzen](licenses/README.md) zu beachten. Vor einer produktiven Nutzung
+sind eigene Prüfungen erforderlich.

@@ -2,21 +2,24 @@
 
 [Dokumentationsübersicht](../README.md) · [Architektur](../architecture.md)
 
-Eigentümer und Autor des Portfolios ist Eugen Beirit. Die Hauptlizenz steht in
-[server/LICENSE](../../server/LICENSE). Die folgende Übersicht ordnet die
-erhaltenen Lizenztexte ihren ursprünglichen Projektbestandteilen zu; maßgeblich
-bleibt jeweils der vollständige Originaltext.
+Der eigene Portfolio-Code von Eugen Beirit steht unter der [MIT-Lizenz][mit].
+Für übernommene Bestandteile gelten weiterhin ihre eigenen Lizenzen. Die
+folgende Übersicht ordnet die erhaltenen Originaltexte ihren Quellen zu.
 
 ## Erhaltene Projektlizenzen
 
-| Bestandteil und Herkunft | Originaltext |
-| --- | --- |
-| Früherer Sprachplattform-Beispielstand | [sprachdienstleistungen-LICENSE](sprachdienstleistungen-LICENSE) |
-| Frühere Botanic-Demo mit React und Express | [botanic-LICENSE](botanic-LICENSE) |
-| Ursprüngliche Musikplayer-Übung „Neumorphic Music Player“ | [musikplayer-LICENSE](musikplayer-LICENSE) |
-| Früherer Vertragsgenerator-Beispielstand | [vertragsgenerator-LICENSE](vertragsgenerator-LICENSE) |
-| Ursprüngliche Vokabelbox-Übung | [vokabelbox-LICENSE](vokabelbox-LICENSE) |
-| Three.js-Referenzprojekt für das Wellenraster; Copyright 2026 franky-adl | [3d-wave-grid-LICENSE](3d-wave-grid-LICENSE) |
+| Bestandteil und Herkunft                         | Originaltext           |
+| ------------------------------------------------ | ---------------------- |
+| Frühere Sprachplattform                          | [Lizenz][sprache]      |
+| Frühere Botanic-Demo mit React und Express       | [Lizenz][botanic]      |
+| Musikplayer-Übung „Neumorphic Music Player“      | [Lizenz][musikplayer]  |
+| Früherer Vertragsgenerator                       | [Lizenz][vertrag]      |
+| Ursprüngliche Vokabelbox-Übung                   | [Lizenz][vokabelbox]   |
+| Three.js-Wellenraster; Copyright 2026 franky-adl | [Lizenz][wellenraster] |
+
+Die proprietäre Sprachplattform-Lizenz dokumentiert die frühere
+Produktionsfassung. Für den eigenen Code der heutigen Portfolio-Fassung gilt
+die MIT-Lizenz im Repository-Stamm.
 
 Die vollständigen Originalquellen samt READMEs und Urheberhinweisen liegen im
 externen Bereinigungsarchiv. Die Musikplayer-Referenz enthält auch Hinweise auf
@@ -25,24 +28,41 @@ Font Awesome und Inter. Vorhandene Urheberhinweise und Quellkommentare der
 
 ## Weitere Herkunfts- und Lizenzhinweise
 
-| Bestandteil | Nachweis im Repository |
-| --- | --- |
-| Wohnungssuche: Preact, Lucide und ursprüngliche React-Hinweise | [THIRD_PARTY_LICENSES.md](../../apps/wohnungssuche/public/THIRD_PARTY_LICENSES.md) |
-| Devicon-Technologielogos | [devicon-LICENSE.txt](../../server/assets/images/devicon-LICENSE.txt) |
-| Lucide-Symbole | [lucide-LICENSE.txt](../../server/assets/images/lucide-LICENSE.txt) |
-| iNaturalist | [inaturalist-LICENSE.txt](../../server/assets/images/inaturalist-LICENSE.txt) |
-| Caveat: lokal mitgelieferte Latin-/Cyrillic-Webfonts, Copyright 2014 The Caveat Project Authors | [Original-OFL 1.1](caveat-OFL.txt) |
-| Cormorant Garamond: lokal mitgelieferte Latin-/Cyrillic-Webfonts, Copyright 2015 The Cormorant Project Authors | [Original-OFL 1.1](cormorantgaramond-OFL.txt) |
-| Portfolio-Screenshots und ihre Entstehung | [Vorschaubilder](../../server/assets/images/portfolio-previews/README.md) |
+| Bestandteil                                  | Nachweis im Repository        |
+| -------------------------------------------- | ----------------------------- |
+| Wohnungssuche: Preact, Lucide und React      | [Drittlizenzen][wohnung]      |
+| Devicon-Technologielogos                     | [Lizenz][devicon]             |
+| Lucide-Symbole                               | [Lizenz][lucide]              |
+| iNaturalist                                  | [Lizenz][inaturalist]         |
+| Caveat: Latin-/Cyrillic-Webfonts             | [Original-OFL 1.1][caveat]    |
+| Cormorant Garamond: Latin-/Cyrillic-Webfonts | [Original-OFL 1.1][cormorant] |
+| Portfolio-Screenshots und ihre Entstehung    | [Bildnachweis][bilder]        |
 
-Die Paketlizenzen der eingesetzten Bibliotheken gelten zusätzlich. Die
-Veröffentlichung dieses Portfolios vergibt keine gemeinsame freie Lizenz für
-alle Bestandteile. Bei Änderungen an Bildern, Symbolen oder übernommenem Code
-werden die zugehörigen Nachweise mit gepflegt; Originaltexte bleiben vollständig
-erhalten.
+Die Paketlizenzen der eingesetzten Bibliotheken gelten zusätzlich. Die eigene
+MIT-Lizenz ersetzt keine Drittanbieter-Lizenz. Bei Änderungen an Bildern,
+Symbolen oder übernommenem Code werden die zugehörigen Nachweise mit gepflegt;
+Originaltexte bleiben vollständig erhalten.
 
-Die Schriftlizenztexte wurden unverändert aus den Originaldateien des
-[Google-Fonts-Repositories für Caveat](https://github.com/google/fonts/blob/main/ofl/caveat/OFL.txt)
-und [Cormorant Garamond](https://github.com/google/fonts/blob/main/ofl/cormorantgaramond/OFL.txt)
-übernommen. Sie gelten für die vier WOFF2-Dateien unter `server/assets/fonts/`;
-die eingebetteten Copyright- und Lizenz-URL-Metadaten bleiben erhalten.
+Die Schriftlizenztexte wurden unverändert aus dem Google-Fonts-Repository für
+[Caveat][caveat-quelle] (Copyright 2014 The Caveat Project Authors) und
+[Cormorant Garamond][cormorant-quelle]
+(Copyright 2015 The Cormorant Project Authors) übernommen. Sie gelten für die
+vier WOFF2-Dateien unter `server/assets/fonts/`; die eingebetteten Copyright-
+und Lizenz-URL-Metadaten bleiben erhalten.
+
+[mit]: ../../LICENSE
+[sprache]: sprachdienstleistungen-LICENSE
+[botanic]: botanic-LICENSE
+[musikplayer]: musikplayer-LICENSE
+[vertrag]: vertragsgenerator-LICENSE
+[vokabelbox]: vokabelbox-LICENSE
+[wellenraster]: 3d-wave-grid-LICENSE
+[wohnung]: ../../apps/wohnungssuche/public/THIRD_PARTY_LICENSES.md
+[devicon]: ../../server/assets/images/devicon-LICENSE.txt
+[lucide]: ../../server/assets/images/lucide-LICENSE.txt
+[inaturalist]: ../../server/assets/images/inaturalist-LICENSE.txt
+[caveat]: caveat-OFL.txt
+[cormorant]: cormorantgaramond-OFL.txt
+[bilder]: ../../server/assets/images/portfolio-previews/README.md
+[caveat-quelle]: https://github.com/google/fonts/blob/main/ofl/caveat/OFL.txt
+[cormorant-quelle]: https://github.com/google/fonts/blob/main/ofl/cormorantgaramond/OFL.txt
