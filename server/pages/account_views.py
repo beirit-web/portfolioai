@@ -1,5 +1,7 @@
 """Shared password recovery forms for all portfolio accounts."""
 
+from .account_i18n import account_text_lazy as account_copy
+
 from urllib.parse import urlsplit
 
 from django import forms
@@ -9,11 +11,12 @@ from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.http import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
+from django.views.generic import TemplateView
 
 
 class AccountPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(
-        label="E-Mail-Adresse", max_length=254,
+        label=account_copy("E-Mail-Adresse"), max_length=254,
         widget=forms.EmailInput(attrs={
             "autocomplete": "email", "autocapitalize": "none",
             "spellcheck": "false", "class": "auth-input", "autofocus": True,
@@ -37,6 +40,9 @@ class AccountContextMixin:
         context = super().get_context_data(**kwargs)
         context.update(build_base_context(self.request))
         context["account_mail_is_console"] = settings.EMAIL_BACKEND == "django.core.mail.backends.console.EmailBackend"
+        from .local_activation import local_activation_enabled
+
+        context["local_activation_available"] = local_activation_enabled(self.request)
         return context
 
     def render_to_response(self, context, **response_kwargs):
@@ -75,3 +81,8 @@ class AccountPasswordResetConfirmView(AccountContextMixin, auth_views.PasswordRe
 @method_decorator(never_cache, name="dispatch")
 class AccountPasswordResetCompleteView(AccountContextMixin, auth_views.PasswordResetCompleteView):
     pass
+
+
+@method_decorator(never_cache, name="dispatch")
+class AccountPasswordResetInvalidView(AccountContextMixin, TemplateView):
+    template_name = "registration/password_reset_invalid.html"

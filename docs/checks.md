@@ -82,7 +82,9 @@ Backend- und Browserprüfungen des gemeinsamen Laufs verwenden temporäre
 Datenbanken und getrennte Verzeichnisse für Medien, statische Dateien und
 Backups. Die Browserhelfer starten ihre Django-Prozesse selbst. Die
 allgemeinen Browserprüfungen erhalten zwei bereits bestätigte fiktive Quizkonten
-aus ihrem temporären Testaufbau. Die
+aus ihrem temporären Testaufbau. Neue Kontoabläufe prüfen außerdem Registrierung,
+das lokale Beispielpostfach `/examplemail`, Code-Eingabe und anschließende Anmeldung
+einschließlich der Rückkehr zu Wohnungssuche und DeutschLive. Die
 Wohnungssuche behält ihre Testdatenbank über Serverneustarts hinweg und prüft
 mit getrennten fiktiven Konten einschließlich Registrierung und E-Mail-Bestätigung.
 Der lokale Testprozess stellt die Bestätigungslinks bereit; der Browser öffnet
@@ -224,6 +226,9 @@ npm --prefix frontend run audit:projects -- \
 
 Den temporären Server anschließend mit `Ctrl+C` beenden. Diese Messungen gehören
 weder zum gemeinsamen lokalen Check noch zum GitHub-Workflow.
+
+Die Ergebnisse und Änderungen der Formularprüfung stehen im
+[Bericht zu Kontrast, Übersetzungen und Lighthouse](forms-checks.md).
 
 ## Automatische Prüfungen auf GitHub
 

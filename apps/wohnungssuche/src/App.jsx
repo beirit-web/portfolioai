@@ -42,7 +42,9 @@ function useListings(token, reload) {
 
 function App() {
   const route = useRoute();
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [accountHandoff, setAccountHandoff] = useState(new URLSearchParams(location.search).get("accountLogin") === "1");
+  const [handoffError, setHandoffError] = useState("");
+  const [token, setToken] = useState(() => new URLSearchParams(location.search).get("accountLogin") === "1" ? "" : localStorage.getItem("token") || "");
   const [currentUser, setCurrentUser] = useState(localStorage.getItem("username") || "");
   const [reload, setReload] = useState(0);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -53,6 +55,24 @@ function App() {
   const [sort, setSort] = useState("score");
   const { listings, status } = useListings(token, reload);
   const sources = useCollection("sources/?ordering=name", token);
+
+  useEffect(() => {
+    if (!accountHandoff) return;
+    const controller = new AbortController();
+    apiRequest("account-session/", { signal: controller.signal }).then(data => {
+      if (controller.signal.aborted) return;
+      setToken(data.token); setCurrentUser(data.username);
+      localStorage.setItem("token", data.token); localStorage.setItem("username", data.username);
+      const url = new URL(location.href);
+      url.searchParams.delete("accountLogin");
+      history.replaceState(null, "", url);
+      setAccountHandoff(false);
+      if (route === "login" || route === "register") navigateTo("/dashboard");
+    }).catch(error => {
+      if (error.name !== "AbortError") { setHandoffError(error.message); setAccountHandoff(false); }
+    });
+    return () => controller.abort();
+  }, [accountHandoff]);
 
   useEffect(() => {
     if (token) localStorage.setItem("token", token);
@@ -115,6 +135,8 @@ function App() {
     setDraft(emptyFilters); setFilters(emptyFilters); go("/dashboard");
   }
 
+  if (accountHandoff) return <main className="login-page"><section className="login-panel" role="status">Anmeldung wird übernommen…</section></main>;
+  if (handoffError) return <main className="login-page"><section className="login-panel"><p role="alert">{handoffError}</p><a href="/login/?next=/wohnungssuche/dashboard">Erneut anmelden</a></section></main>;
   if (route === "login" || route === "register") return <LoginPage key={route} mode={route} onDemo={enterDemo} onLogin={(nextToken, username) => {
     setToken(nextToken); setCurrentUser(username); localStorage.setItem("token", nextToken);
     localStorage.setItem("username", username); go("/dashboard");
@@ -205,6 +227,10 @@ function LoginPage({ mode, onDemo, onLogin }) {
       });
       if (!active.current) return;
       if (registering) {
+        if (data.emailDelivery === "local" && data.activationUrl) {
+          location.assign(data.activationUrl);
+          return;
+        }
         const confirmationMessage = data.detail || "Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in der E-Mail. Danach können Sie sich anmelden.";
         setSuccess(data.emailDelivery === "console"
           ? `${confirmationMessage} In dieser lokalen Demo finden Sie den Bestätigungslink in der Serverkonsole; eine E-Mail wird nicht zugestellt.`
@@ -227,7 +253,7 @@ function LoginPage({ mode, onDemo, onLogin }) {
   }
   return <main className="login-page"><section className="login-panel">
     <div className="brand login-brand"><Home size={30} /><div><strong>Wohnungssuche Bodensee</strong><span>Privates Suchwerkzeug</span></div></div>
-    <div><h1>{registering ? "Registrieren" : "Login"}</h1><p>{registering ? "Erstelle ein Konto und bestätige anschließend deine E-Mail-Adresse über den Bestätigungslink. Erst danach kannst du dich anmelden und Suchprofile speichern." : "Melde dich an, um Suchprofile und gespeicherte Daten zu verwalten."}</p></div>
+    <div><h1>{registering ? "Registrieren" : "Login"}</h1><p>{registering ? "Erstelle ein Konto und aktiviere es anschließend. Die nächsten Schritte werden dir nach der Registrierung angezeigt. Danach kannst du dich anmelden und Suchprofile speichern." : "Melde dich an, um Suchprofile und gespeicherte Daten zu verwalten."}</p></div>
     <form aria-label={registering ? "Registrierung" : "Anmeldung"} aria-busy={busy} className="login-form standalone" onSubmit={submit}>
       <label>Nutzername<input name="username" value={username} onChange={event => setUsername(event.target.value)} required maxLength={150} disabled={busy} autoCapitalize="none" spellCheck={false} autoComplete="username" /></label>
       {registering && <label>E-Mail-Adresse<input name="email" type="email" value={email} onChange={event => setEmail(event.target.value)} required maxLength={254} disabled={busy} autoCapitalize="none" autoComplete="email" /></label>}

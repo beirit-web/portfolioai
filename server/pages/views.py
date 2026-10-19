@@ -1,10 +1,11 @@
+from .account_i18n import account_text_lazy as account_copy
 import hashlib
 import html
 import json
 import logging
 from pathlib import Path
 from datetime import date, timedelta
-from urllib.parse import quote, urlencode
+from urllib.parse import parse_qsl, quote, urlencode, urlsplit, urlunsplit
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -30,6 +31,7 @@ from django.utils.http import (
     urlsafe_base64_decode,
 )
 from django.utils import timezone
+from django.utils.translation import override
 
 from lessons.models import UserProfile as LearningUserProfile
 from pages.modules.mail import send_notification_email
@@ -45,6 +47,11 @@ from .auth_session import (
     touch_user_activity,
 )
 from .login_security import clear_login_attempts
+from .local_activation import (
+    LocalActivationForm, SESSION_KEY as LOCAL_ACTIVATION_SESSION_KEY,
+    activate_local_account, issue_local_activation, local_activation_enabled,
+    local_activation_login_url, local_registration_payload, pending_local_activation,
+)
 from .verification import (
     account_email_delivery_mode, pending_account_for_credentials,
     send_pending_account_verification,
@@ -358,10 +365,11 @@ def housing_register_api(request):
     if errors:
         return JsonResponse({"errors": errors}, status=400)
 
+    confirmation_next = "/wohnungssuche/dashboard" if local_activation_enabled(request) else "/wohnungssuche/login"
     try:
         with transaction.atomic():
             user = User.objects.create_user(username=username, email=email, password=password, is_active=False)
-            if not send_pending_account_verification(user, next_url="/wohnungssuche/login"):
+            if not send_pending_account_verification(user, next_url=confirmation_next, request=request):
                 raise ValidationError("Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen.")
     except IntegrityError:
         return JsonResponse({"errors": {"username": ["Dieser Nutzername ist bereits vergeben."]}}, status=400)
@@ -372,8 +380,9 @@ def housing_register_api(request):
             "detail": "Bitte bestätige deine E-Mail-Adresse über den Link in der Bestätigungs-E-Mail. Erst danach ist dein Konto aktiv.",
             "email": user.email,
             "emailVerificationRequired": True,
-            "emailDelivery": account_email_delivery_mode(),
+            "emailDelivery": account_email_delivery_mode(request),
             "login_url": "/wohnungssuche/login",
+            **local_registration_payload(request, user, next_url=confirmation_next),
         },
         status=201,
     )
@@ -851,12 +860,14 @@ def register(request):
             if form.is_valid():
                 with transaction.atomic():
                     user = form.save()
-                    if not send_pending_account_verification(user, next_url=next_url):
+                    if not send_pending_account_verification(user, next_url=next_url, request=request):
                         raise ValidationError(
-                            "Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen."
+                            account_copy("Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen.")
                         )
                 reg_msg = (
-                    "Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in der E-Mail. Erst danach ist Ihr Konto aktiv."
+                    account_copy("Ihr Konto wurde gespeichert. Bitte aktivieren Sie es mit Ihrem Aktivierungscode.")
+                    if local_activation_enabled(request) else
+                    account_copy("Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in der E-Mail. Erst danach ist Ihr Konto aktiv.")
                 )
                 messages.success(request, reg_msg)
                 login_url = reverse("pages:login")
@@ -865,12 +876,12 @@ def register(request):
                     login_params["next"] = next_url
                 return redirect(f"{login_url}?{urlencode(login_params)}")
         except ValidationError as exc:
-            form.add_error(None, exc.message or str(exc) or "Ungültige Eingabe.")
+            form.add_error(None, exc.message or str(exc) or account_copy("Ungültige Eingabe."))
         except Exception as exc:
             logger.error("Registration failed: %s", exc, exc_info=True)
             form.add_error(
                 None,
-                "Registrierung gerade nicht möglich. Bitte später erneut versuchen.",
+                account_copy("Registrierung gerade nicht möglich. Bitte später erneut versuchen."),
             )
     else:
         form = RegistrationForm()
@@ -878,6 +889,7 @@ def register(request):
     context["form"] = form
     context["already_logged_in"] = already_logged_in
     context["registration_next"] = next_url
+    context["local_activation_available"] = local_activation_enabled(request)
     return render(request, "pages/register.html", context)
 
 
@@ -897,12 +909,12 @@ def verify_email(request, uidb64, token):
         if not user or not email_verification_token_generator.check_token(user, token):
             messages.error(
                 request,
-                "Der Bestätigungslink ist ungültig oder abgelaufen. Bitte registrieren Sie sich erneut.",
+                account_copy("Der Bestätigungslink ist ungültig oder abgelaufen. Bitte fordern Sie eine neue Bestätigungs-E-Mail an."),
             )
-            registration_url = reverse("pages:register")
+            resend_url = reverse("pages:verification_resend")
             if request.GET.get("next"):
-                registration_url += "?" + urlencode({"next": next_url})
-            return redirect(registration_url)
+                resend_url += "?" + urlencode({"next": next_url})
+            return redirect(resend_url)
 
         Profile.objects.filter(user=user).update(email_verification_pending=False)
         user.is_active = True
@@ -913,7 +925,7 @@ def verify_email(request, uidb64, token):
     initialize_authenticated_session(request, user, reset_activity=True)
     messages.success(
         request,
-        "Ihre E-Mail-Adresse wurde bestätigt. Sie sind jetzt eingeloggt.",
+        account_copy("Ihre E-Mail-Adresse wurde bestätigt. Sie sind jetzt eingeloggt."),
     )
     return redirect(next_url)
 
@@ -951,16 +963,10 @@ def maybe_add_idle_timeout_message(request) -> None:
 
     lang = get_preferred_language(request)
     timeout_minutes = max(1, get_session_idle_timeout_seconds() // 60)
-    if lang == "de":
-        message = (
-            f"Sie wurden nach {timeout_minutes} Minuten Inaktivität "
-            "automatisch auf allen Geräten abgemeldet."
-        )
-    else:
-        message = (
-            f"Вы были автоматически выведены со всех устройств "
-            f"после {timeout_minutes} минут бездействия."
-        )
+    with override(lang):
+        message = account_copy(
+            "Sie wurden nach %(minutes)s Minuten Inaktivität automatisch auf allen Geräten abgemeldet."
+        ) % {"minutes": timeout_minutes}
     messages.warning(request, message)
 
 
@@ -981,30 +987,73 @@ def get_safe_login_redirect(request) -> str:
     return reverse("pages:home")
 
 
+def account_login_redirect(request, user):
+    target = get_safe_login_redirect(request)
+    if local_activation_enabled(request) and not (request.POST.get("next") or request.GET.get("next")):
+        target = reverse("pages:profile")
+    if local_activation_enabled(request) and urlsplit(target).path.startswith("/wohnungssuche/"):
+        parsed = urlsplit(target)
+        query = dict(parse_qsl(parsed.query))
+        query["accountLogin"] = "1"
+        target = urlunsplit(parsed._replace(query=urlencode(query)))
+    response = redirect(target)
+    if local_activation_enabled(request) and urlsplit(target).path.startswith("/deutschlive/"):
+        from lessons.views import _set_auth_token
+
+        _set_auth_token(response, user)
+    return response
+
+
 @never_cache
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect(get_safe_login_redirect(request))
+        return account_login_redirect(request, request.user)
     maybe_add_idle_timeout_message(request)
-    form = LoginForm(request, data=request.POST or None)
-    if request.method == "POST" and form.is_valid():
+    next_url = get_safe_login_redirect(request) if request.POST.get("next") or request.GET.get("next") else ""
+    pending = pending_local_activation(request)
+    activation_form = LocalActivationForm()
+    action = request.POST.get("action", "login")
+    if request.method == "POST" and action == "cancel_local_activation" and local_activation_enabled(request):
+        request.session.pop(LOCAL_ACTIVATION_SESSION_KEY, None)
+        return redirect(f"{reverse('pages:login')}?{urlencode({'next': next_url})}" if next_url else reverse("pages:login"))
+    if request.method == "POST" and action == "activate_local" and local_activation_enabled(request):
+        activation_form = LocalActivationForm(request.POST)
+        if activation_form.is_valid():
+            activated, explanation = activate_local_account(request, activation_form.cleaned_data["activation_code"])
+            if activated:
+                clear_login_attempts(request)
+                messages.success(request, explanation)
+                return redirect(local_activation_login_url(request, pending[0], next_url=next_url or pending[1]["next_url"]))
+            activation_form.add_error("activation_code", explanation)
+    login_data = request.POST if request.method == "POST" and action == "login" and not pending else None
+    form = LoginForm(request, data=login_data)
+    if pending:
+        form.initial["username"] = pending[0].email
+        form.fields["username"].widget.attrs.pop("autofocus", None)
+    if login_data is not None and form.is_valid():
         user = form.get_user()
         login(request, user)
         clear_login_attempts(request)
         initialize_authenticated_session(request, user, reset_activity=True)
         request.session.set_expiry(0)
-        lang = get_preferred_language(request)
-        login_msg = (
-            "Login erfolgreich. Willkommen zurück!"
-            if lang == "de"
-            else "Вы успешно вошли. Добро пожаловать!"
-        )
+        login_msg = account_copy("Login erfolgreich. Willkommen zurück!")
         messages.success(request, login_msg)
-        return redirect(get_safe_login_redirect(request))
+        return account_login_redirect(request, user)
+    if login_data is not None and local_activation_enabled(request):
+        unconfirmed = pending_account_for_credentials(request.POST.get("username"), request.POST.get("password"))
+        if unconfirmed:
+            issue_local_activation(request, unconfirmed, next_url=next_url)
+            messages.info(request, account_copy("Öffnen Sie /examplemail im selben Browser. Geben Sie den dort angezeigten Aktivierungscode hier ein."))
+            return redirect(local_activation_login_url(request, unconfirmed, next_url=next_url))
     context = build_base_context(request)
     context["form"] = form
     context["login_next"] = get_safe_login_redirect(request) if request.POST.get("next") or request.GET.get("next") else ""
     context["login_meta"] = login_page_metadata(request, build_absolute_site_url)
+    context["local_activation_available"] = local_activation_enabled(request)
+    context["local_activation_pending"] = bool(pending)
+    context["activation_form"] = activation_form
+    if pending:
+        context["activation_email"] = pending[0].email
     response = render(request, "pages/login.html", context)
     response["X-Robots-Tag"] = context["login_meta"]["robots"]
     return response
@@ -1082,7 +1131,7 @@ def delete_account(request):
         logout(request)
         User.objects.filter(pk=user_id).delete()
         cache.delete("footer_user_stats_v2")
-        messages.success(request, "Ihr Konto wurde endgültig gelöscht.")
+        messages.success(request, account_copy("Ihr Konto wurde endgültig gelöscht."))
         return redirect("pages:home")
     context = build_base_context(request)
     return render(request, "pages/delete_account.html", context)
@@ -1271,7 +1320,7 @@ def profile_page(request):
         form = UserAccountForm(request.POST, instance=request.user, prefix="account")
         if form.is_valid():
             form.save()
-            messages.success(request, "Ihre Kontodaten wurden aktualisiert.")
+            messages.success(request, account_copy("Ihre Kontodaten wurden aktualisiert."))
             return redirect("pages:profile")
     return render(request, "pages/profile.html", {
         **build_base_context(request), "profile": profile, "account_form": form,

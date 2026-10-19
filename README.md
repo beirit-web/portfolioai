@@ -1,12 +1,12 @@
 # Beirit Web Portfolio
 
 Persönliches Entwicklerportfolio von Eugen Beirit mit sechs demonstrativen
-Webprojekten. Entstanden aus einer klassischen HTML/CSS/JavaScript-Webseite,
-weiterentwickelt mit Django und einer React/Preact-Oberfläche. Die Projekte
-befinden sich weiterhin in Entwicklung.
+Webprojekten auf Basis von Django und React/Preact.
 
 Die [Projektdokumentation](docs/README.md) führt zu Architektur, Demo-Routen,
 Prüfungen und Lizenzhinweisen.
+Meinen persönlichen Entwicklungsweg beschreibt die
+[Entwicklungsgeschichte](docs/ENTWICKLUNGSGESCHICHTE.md).
 
 ## Lokal starten
 
@@ -28,16 +28,25 @@ server/.venv/bin/python server/manage.py runserver
 Das Portfolio läuft unter `http://127.0.0.1:8000/`. Für die Frontend-Entwicklung:
 `npm --prefix frontend run dev`.
 
+Registrierung lokal ausprobieren: `http://localhost:8000/register/` öffnen,
+ein fiktives Testkonto anlegen und anschließend im selben Browser
+`http://localhost:8000/examplemail` öffnen. Den dort angezeigten sechsstelligen
+Code innerhalb einer Minute auf der Anmeldeseite eingeben. Danach sind die
+Anmeldefelder freigeschaltet. Das Konto bleibt gespeichert; spätere Anmeldungen
+benötigen nur E-Mail-Adresse und Passwort. Abgelaufene Codes können im
+Beispielpostfach ersetzt werden. Die [Account-Dokumentation](server/pages/README.md#local-browser-activation)
+beschreibt den Ablauf und die lokale Begrenzung.
+
 ## Musterdaten und Grenzen
 
 Dieses Repository enthält fiktive Beispielkonfiguration und lokale Portfolio-Demos.
 Öffentliche Kontakt- und Über-mich-Angaben des Eigentümers bleiben erhalten.
 Die öffentlichen `.env`-Dateien entsprechen ihren `.env.example`-Vorlagen;
-lokale Overrides, Datenbanken, Medien und Backups bleiben ignoriert. E-Mails werden
-lokal auf der Konsole ausgegeben. Zahlungen und Billing-Webhooks sind deaktiviert.
+lokale Overrides, Datenbanken, Medien und Backups bleiben ignoriert.
+Aktivierungscodes erscheinen im lokalen Beispielpostfach; Wiederherstellungs-E-Mails
+werden in der Konsole ausgegeben. Zahlungen und Billing-Webhooks sind deaktiviert.
 Es gibt keine Deployment-Konfiguration für frühere Hosting-Umgebungen.
 
-Responsive Design, Accessibility, SEO und Performance werden weiterentwickelt.
 Tests belegen geprüfte Abläufe; sie sind keine Zusage allgemeiner Produktreife.
 
 ## Repository und Lizenz

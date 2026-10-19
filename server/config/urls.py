@@ -2,12 +2,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic import TemplateView
 
 from pages.views import login_view
 from pages.account_views import (
     AccountPasswordResetView, AccountPasswordResetDoneView,
     AccountPasswordResetConfirmView, AccountPasswordResetCompleteView,
+    AccountPasswordResetInvalidView,
 )
 
 from .asset_redirects import urlpatterns as legacy_asset_patterns
@@ -34,7 +34,7 @@ password_reset_patterns = [
     path(settings.PASSWORD_RESET_COMPLETE_URL, AccountPasswordResetCompleteView.as_view(), name="password_reset_complete"),
     path(
         settings.PASSWORD_RESET_INVALID_URL,
-        TemplateView.as_view(template_name="registration/password_reset_invalid.html"),
+        AccountPasswordResetInvalidView.as_view(),
         name="password_reset_invalid",
     ),
 ]

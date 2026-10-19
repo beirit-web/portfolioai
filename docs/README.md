@@ -3,6 +3,7 @@
 | Thema | Maßgebliche Seite |
 | --- | --- |
 | Installation und gemeinsamer Start | [Hauptanleitung](../README.md#lokal-starten) |
+| Entstehung und persönliche Lernerfahrungen | [Entwicklungsgeschichte](ENTWICKLUNGSGESCHICHTE.md) |
 | Ordner, Anwendungen, Routen und Build-Ausgaben | [Architektur](architecture.md) |
 | Prüfkommandos, Berichte und Fehlerhilfe | [Builds und Prüfungen](checks.md) |
 | Lizenzen und Herkunft übernommener Bestandteile | [Lizenzübersicht](licenses/README.md) |

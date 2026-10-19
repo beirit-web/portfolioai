@@ -1,3 +1,4 @@
+from .account_i18n import account_text_lazy as account_copy
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -24,7 +25,7 @@ class ContactRequestForm(forms.Form):
     ),
   )
   email = forms.EmailField(
-    label="E-Mail-Adresse",
+    label=account_copy("E-Mail-Adresse"),
     widget=forms.EmailInput(
       attrs={
         "autocomplete": "email",
@@ -85,13 +86,21 @@ class RegistrationForm(UserCreationForm):
   Registrierungsformular mit E-Mail als Benutzername.
   """
 
-  email = forms.EmailField(label="E-Mail", required=True)
-  image = forms.ImageField(label="Profilbild (optional)", required=False)
+  email = forms.EmailField(
+    label=account_copy("E-Mail"),
+    required=True,
+    help_text=account_copy("Diese Adresse wird für die Bestätigung und für spätere Logins verwendet."),
+  )
+  image = forms.ImageField(
+    label=account_copy("Profilbild (optional)"),
+    required=False,
+    help_text=account_copy("JPG oder PNG, maximal 5 MB, idealerweise quadratisch."),
+  )
   privacy_consent = forms.BooleanField(
-    label="Datenschutz-Zustimmung",
+    label=account_copy("Datenschutz-Zustimmung"),
     required=True,
     error_messages={
-      "required": "Bitte bestätigen Sie die Datenschutz-Zustimmung.",
+      "required": account_copy("Bitte bestätigen Sie die Datenschutz-Zustimmung."),
     },
   )
   PROFILE_IMAGE_MAX_BYTES = 5 * 1024 * 1024
@@ -116,14 +125,14 @@ class RegistrationForm(UserCreationForm):
     self.fields["password1"].widget.attrs.update(
       {
         "autocomplete": "new-password",
-        "placeholder": "Mindestens 8 Zeichen",
+        "placeholder": account_copy("Mindestens 8 Zeichen"),
         "minlength": 8,
       }
     )
     self.fields["password2"].widget.attrs.update(
       {
         "autocomplete": "new-password",
-        "placeholder": "Passwort wiederholen",
+        "placeholder": account_copy("Passwort wiederholen"),
         "minlength": 8,
       }
     )
@@ -140,10 +149,10 @@ class RegistrationForm(UserCreationForm):
       }
     )
     self.fields["password1"].help_text = (
-      "Mindestens 8 Zeichen. Bitte keine leicht erratbaren Angaben wie Ihren Namen oder Ihre E-Mail-Adresse verwenden."
+      account_copy("Mindestens 8 Zeichen. Bitte keine leicht erratbaren Angaben wie Ihren Namen oder Ihre E-Mail-Adresse verwenden.")
     )
     self.fields["password2"].help_text = (
-      "Bitte geben Sie dasselbe Passwort zur Bestätigung noch einmal ein."
+      account_copy("Bitte geben Sie dasselbe Passwort zur Bestätigung noch einmal ein.")
     )
 
   class Meta:
@@ -153,13 +162,13 @@ class RegistrationForm(UserCreationForm):
   def clean_email(self):
     email = (self.cleaned_data.get("email") or "").strip().lower()
     if not email:
-      raise forms.ValidationError("Bitte eine gültige E-Mail eingeben.")
+      raise forms.ValidationError(account_copy("Bitte eine gültige E-Mail eingeben."))
     if len(email) > User._meta.get_field("username").max_length:
-      raise forms.ValidationError("E-Mail ist zu lang für das Benutzerkonto.")
+      raise forms.ValidationError(account_copy("E-Mail ist zu lang für das Benutzerkonto."))
     if User.objects.filter(email__iexact=email).exists():
-      raise forms.ValidationError("Diese E-Mail wird bereits verwendet.")
+      raise forms.ValidationError(account_copy("Diese E-Mail wird bereits verwendet."))
     if User.objects.filter(username__iexact=email).exists():
-      raise forms.ValidationError("Diese E-Mail wird bereits verwendet.")
+      raise forms.ValidationError(account_copy("Diese E-Mail wird bereits verwendet."))
     return email
 
   def clean_image(self):
@@ -169,10 +178,10 @@ class RegistrationForm(UserCreationForm):
 
     content_type = str(getattr(image, "content_type", "") or "").lower()
     if content_type and content_type not in self.PROFILE_IMAGE_ALLOWED_TYPES:
-      raise forms.ValidationError("Bitte nur JPG oder PNG als Profilbild hochladen.")
+      raise forms.ValidationError(account_copy("Bitte nur JPG oder PNG als Profilbild hochladen."))
 
     if getattr(image, "size", 0) > self.PROFILE_IMAGE_MAX_BYTES:
-      raise forms.ValidationError("Das Profilbild darf maximal 5 MB groß sein.")
+      raise forms.ValidationError(account_copy("Das Profilbild darf maximal 5 MB groß sein."))
 
     return image
 
@@ -198,11 +207,11 @@ class RegistrationForm(UserCreationForm):
         user.save()
       except IntegrityError:
         # Falls ein Rennen um den Username/E-Mail passiert.
-        raise forms.ValidationError("Diese E-Mail wird bereits verwendet.")
+        raise forms.ValidationError(account_copy("Diese E-Mail wird bereits verwendet."))
       except Exception:
         # Unerwarteter DB-Fehler (z. B. DB down).
         raise forms.ValidationError(
-          "Registrierung gerade nicht möglich. Bitte später erneut versuchen."
+          account_copy("Registrierung gerade nicht möglich. Bitte später erneut versuchen.")
         )
       # Profildaten persistieren, sobald der User gespeichert ist.
       image = self.cleaned_data.get("image")
@@ -226,23 +235,24 @@ class RegistrationForm(UserCreationForm):
 
 class LoginForm(AuthenticationForm):
   username = forms.EmailField(
-    label="E-Mail-Adresse",
+    label=account_copy("E-Mail-Adresse"),
+    help_text=account_copy("Bitte verwenden Sie die E-Mail-Adresse, mit der Sie sich registriert haben."),
     widget=forms.EmailInput(
       attrs={
         "autocomplete": "email",
         "inputmode": "email",
         "spellcheck": "false",
-        "placeholder": "ihre-email@beispiel.com",
+        "placeholder": "name@example.com",
         "required": True,
       }
     ),
   )
   password = forms.CharField(
-    label="Passwort",
+    label=account_copy("Passwort"),
     widget=forms.PasswordInput(
       attrs={
         "autocomplete": "current-password",
-        "placeholder": "Ihr Passwort",
+        "placeholder": account_copy("Ihr Passwort"),
         "required": True,
       }
     ),
@@ -276,15 +286,15 @@ class LoginForm(AuthenticationForm):
           and Profile.objects.filter(user=user, email_verification_pending=True).exists()
           and user.check_password(password)):
         raise forms.ValidationError(
-          "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse über den Link in der Bestätigungs-E-Mail."
+          account_copy("Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse über den Link in der Bestätigungs-E-Mail.")
         )
     return super().clean()
 
 
 class UserAccountForm(forms.ModelForm):
-  email = forms.EmailField(label="E-Mail", required=True)
-  first_name = forms.CharField(label="Vorname", required=False, max_length=150)
-  last_name = forms.CharField(label="Nachname", required=False, max_length=150)
+  email = forms.EmailField(label=account_copy("E-Mail"), required=True)
+  first_name = forms.CharField(label=account_copy("Vorname"), required=False, max_length=150)
+  last_name = forms.CharField(label=account_copy("Nachname"), required=False, max_length=150)
 
   class Meta:
     model = User
@@ -305,12 +315,12 @@ class UserAccountForm(forms.ModelForm):
   def clean_email(self):
     email = (self.cleaned_data.get("email") or "").strip().lower()
     if not email:
-      raise forms.ValidationError("Bitte eine gültige E-Mail eingeben.")
+      raise forms.ValidationError(account_copy("Bitte eine gültige E-Mail eingeben."))
     if len(email) > User._meta.get_field("username").max_length:
-      raise forms.ValidationError("E-Mail ist zu lang für das Benutzerkonto.")
+      raise forms.ValidationError(account_copy("E-Mail ist zu lang für das Benutzerkonto."))
     existing = User.objects.filter(models.Q(email__iexact=email) | models.Q(username__iexact=email)).exclude(pk=self.instance.pk)
     if existing.exists():
-      raise forms.ValidationError("Diese E-Mail wird bereits verwendet.")
+      raise forms.ValidationError(account_copy("Diese E-Mail wird bereits verwendet."))
     return email
 
   def save(self, commit=True):

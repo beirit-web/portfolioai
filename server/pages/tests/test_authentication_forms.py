@@ -8,7 +8,7 @@ import subprocess
 import sys
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -261,6 +261,67 @@ class NativeAuthenticationFormTests(TestCase):
         self.assertTrue(user.is_active)
         self.assertFalse(user.profile.email_verification_pending)
         self.assertEqual(str(self.client.session.get("_auth_user_id")), str(user.pk))
+
+    def test_expired_activation_can_be_replaced_without_losing_the_application_target(self):
+        user = self.make_user(active=False)
+        target = "/wohnungssuche/?source=registration&mode=demo#profile"
+        issued_at = datetime(2026, 1, 1, 12)
+        with patch.object(email_verification_token_generator, "_now", return_value=issued_at):
+            token = email_verification_token_generator.make_token(user)
+        expired_at = issued_at + timedelta(seconds=settings.EMAIL_VERIFICATION_TIMEOUT + 1)
+        path = reverse("pages:verify_email", kwargs={
+            "uidb64": urlsafe_base64_encode(force_bytes(user.pk)), "token": token,
+        })
+        with patch.object(email_verification_token_generator, "_now", return_value=expired_at):
+            expired = self.client.get(f"{path}?{urlencode({'next': target})}", follow=True)
+        self.assertEqual(expired.wsgi_request.path, reverse("pages:verification_resend"))
+        self.assertContains(expired, "ungültig oder abgelaufen")
+        self.assertContains(expired, f'name="next" value="{escape(target)}"')
+        self.assertEqual(expired.context["verification_next"], target)
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+        sent = self.client.post(reverse("pages:verification_resend"), {"email": user.email, "next": target})
+        self.assertEqual(sent.status_code, 302)
+        self.assertEqual(parse_qs(urlsplit(sent["Location"]).query), {"sent": ["1"], "next": [target]})
+        confirmation = self.client.get(sent["Location"])
+        self.assertIs(confirmation.context["verification_sent"], True)
+        self.assertEqual(confirmation.context["verification_next"], target)
+        link = self.email_link()
+        self.assertEqual(parse_qs(link.query), {"next": [target]})
+        activated = self.client.get(f"{link.path}?{link.query}")
+        self.assertEqual(activated.status_code, 302)
+        self.assertEqual(activated["Location"], target)
+        self.assertEqual(get_user_model().objects.count(), 1)
+        user.refresh_from_db()
+        self.assertTrue(user.is_active)
+        self.assertFalse(user.profile.email_verification_pending)
+        self.assertEqual(str(self.client.session.get("_auth_user_id")), str(user.pk))
+
+    def test_invalid_replacement_email_preserves_the_application_target(self):
+        target = "/deutschlive/#dashboard"
+        response = self.client.post(reverse("pages:verification_resend"), {
+            "email": "not-an-email", "next": target,
+        })
+        self.assert_visible_errors(response, "email")
+        self.assertEqual(response.context["verification_next"], target)
+        self.assertContains(response, f'name="next" value="{target}"')
+        self.assertContains(response, 'value="not-an-email"')
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_replacement_activation_rejects_external_and_insecure_return_targets(self):
+        user = self.make_user(active=False)
+        for target in (
+            "https://outside.example.test/", "//outside.example.test/",
+            "\\\\outside.example.test/", "http://portfolio.example.test/wohnungssuche/",
+        ):
+            with self.subTest(target=target):
+                mail.outbox.clear()
+                response = self.client.post(reverse("pages:verification_resend"), {
+                    "email": user.email, "next": target,
+                }, secure=True)
+                self.assertEqual(response.status_code, 302)
+                self.assertEqual(parse_qs(urlsplit(response["Location"]).query), {"sent": ["1"], "next": ["/"]})
+                self.assertEqual(parse_qs(self.email_link().query), {"next": ["/"]})
 
     def test_resend_does_not_reactivate_a_confirmed_account_disabled_later(self):
         user = self.make_user(active=False)

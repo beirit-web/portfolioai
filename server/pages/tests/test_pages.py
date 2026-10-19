@@ -743,6 +743,10 @@ class PublicAccessTests(TestCase):
 
 
 
+@override_settings(STORAGES={
+    **settings.STORAGES,
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+})
 class ProfilePageTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(

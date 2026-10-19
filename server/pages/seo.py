@@ -53,10 +53,12 @@ def portfolio_page_metadata(path, absolute_url, project=None, project_slug=None)
 
 
 def login_page_metadata(request, absolute_url):
+    from .account_i18n import account_text
+
     public_form = request.method == "GET" and not request.GET.get("email", "").strip()
     return {
-        "title": "Anmelden | Beirit Digital",
-        "description": (
+        "title": account_text("Anmelden | Beirit Digital"),
+        "description": account_text(
             "Melde dich bei Beirit Digital an, um deine persönlichen Projekte wie "
             "ENBT Botanic zu nutzen. Mit E-Mail und Passwort einloggen oder den Zugang wiederherstellen."
         ),

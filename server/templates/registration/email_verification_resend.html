@@ -1,30 +1,40 @@
 {% extends "registration/account_base.html" %}
-{% block title %}Bestätigungs-E-Mail erneut senden{% endblock %}
-{% block account_title %}Bestätigungs-E-Mail erneut senden{% endblock %}
+{% block title %}{% if local_activation_available %}{% account_text "Neuen Aktivierungscode anfordern" %}{% else %}{% account_text "Bestätigungs-E-Mail erneut senden" %}{% endif %}{% endblock %}
+{% block account_title %}{% if local_activation_available %}{% account_text "Neuen Aktivierungscode anfordern" %}{% else %}{% account_text "Bestätigungs-E-Mail erneut senden" %}{% endif %}{% endblock %}
 {% block account_content %}
   {% if verification_sent %}
-    <p role="status">Wenn die Adresse zu einem noch nicht bestätigten Konto gehört, wurde eine neue Bestätigungs-E-Mail angefordert. Bitte prüfen Sie auch Ihren Spam-Ordner.</p>
-    {% if account_mail_is_console %}<p class="template-inline-note">Lokale Demo: Prüfen Sie die Serverkonsole. In dieser Konfiguration wird keine E-Mail an ein Postfach zugestellt.</p>{% endif %}
+    {% if local_activation_available %}<p class="template-inline-note">{% account_text "Für eine offene Aktivierung in diesem Browser finden Sie den neuen Code unter" %} <a href="{% url 'pages:example_mail' %}">/examplemail</a>{% account_text ". Er ist eine Minute gültig." %}</p>{% endif %}
+    {% if local_activation_available %}
+      <p role="status">{% account_text "Falls keine Aktivierung offen ist, geben Sie zuerst die Zugangsdaten Ihres noch nicht bestätigten Kontos auf der Anmeldeseite ein." %}</p>
+    {% else %}
+      <p role="status">{% account_text "Wenn die Adresse zu einem noch nicht bestätigten Konto gehört, wurde eine neue Bestätigungs-E-Mail angefordert. Bitte prüfen Sie auch Ihren Spam-Ordner." %}</p>
+      {% if account_mail_is_console %}<p class="template-inline-note">{% account_text "Lokale Demo: Prüfen Sie die Serverkonsole. In dieser Konfiguration wird keine E-Mail an ein Postfach zugestellt." %}</p>{% endif %}
+    {% endif %}
     <div class="template-actions">
-      <a class="btn-primary" href="{% url 'pages:login' %}">Zum Login</a>
-      <a class="btn-ghost" href="{% url 'pages:verification_resend' %}">Erneut versuchen</a>
+      <a class="btn-primary" href="{% url 'pages:login' %}{% if verification_next %}?next={{ verification_next|urlencode }}{% endif %}">{% account_text "Zum Login" %}</a>
+      <a class="btn-ghost" href="{% url 'pages:verification_resend' %}{% if verification_next %}?next={{ verification_next|urlencode }}{% endif %}">{% account_text "Erneut versuchen" %}</a>
     </div>
   {% else %}
-    <p>Ist Ihr Bestätigungslink abgelaufen oder die E-Mail nicht angekommen? Fordern Sie hier einen neuen Link für Ihr noch nicht bestätigtes Konto an.</p>
-    {% if account_mail_is_console %}<p class="template-inline-note">Lokale Demo: Die E-Mail mit dem Bestätigungslink wird in der Serverkonsole ausgegeben.</p>{% endif %}
-    <form method="post" class="form auth-form" aria-label="Bestätigungs-E-Mail erneut senden" data-submit-once>
+    {% if local_activation_available %}
+      <p>{% account_text "Fordern Sie einen neuen Aktivierungscode für die offene Registrierung in diesem Browser an. Sie finden ihn unter /examplemail." %}</p>
+    {% else %}
+      <p>{% account_text "Ist Ihr Bestätigungslink abgelaufen oder die E-Mail nicht angekommen? Fordern Sie hier einen neuen Link für Ihr noch nicht bestätigtes Konto an." %}</p>
+      {% if account_mail_is_console %}<p class="template-inline-note">{% account_text "Lokale Demo: Die E-Mail mit dem Bestätigungslink wird in der Serverkonsole ausgegeben." %}</p>{% endif %}
+    {% endif %}
+    <form method="post" class="form auth-form" aria-label="{% if local_activation_available %}{% account_text "Neuen Aktivierungscode anfordern" %}{% else %}{% account_text "Bestätigungs-E-Mail erneut senden" %}{% endif %}" data-submit-once>
       {% csrf_token %}
+      {% if verification_next %}<input type="hidden" name="next" value="{{ verification_next }}" />{% endif %}
       {% if form.non_field_errors %}<div class="form-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
       <div class="form-field">
-        <label for="{{ form.email.id_for_label }}">E-Mail-Adresse</label>
+        <label for="{{ form.email.id_for_label }}">{% account_text "E-Mail-Adresse" %}</label>
         {{ form.email }}
         {% if form.email.errors %}<div class="form-error" role="alert">{{ form.email.errors }}</div>{% endif %}
       </div>
-      <button type="submit" class="btn-primary auth-btn">Bestätigungs-E-Mail anfordern</button>
+      <button type="submit" class="btn-primary auth-btn">{% if local_activation_available %}{% account_text "Neuen Aktivierungscode anfordern" %}{% else %}{% account_text "Bestätigungs-E-Mail anfordern" %}{% endif %}</button>
     </form>
     <div class="template-actions">
-      <a href="{% url 'pages:login' %}">Zurück zum Login</a>
-      <a href="{% url 'pages:register' %}">Konto anlegen</a>
+      <a href="{% url 'pages:login' %}{% if verification_next %}?next={{ verification_next|urlencode }}{% endif %}">{% account_text "Zurück zum Login" %}</a>
+      <a href="{% url 'pages:register' %}{% if verification_next %}?next={{ verification_next|urlencode }}{% endif %}">{% account_text "Konto anlegen" %}</a>
     </div>
   {% endif %}
 {% endblock %}

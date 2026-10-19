@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ComponentType, type MouseEvent } from "react";
+import type { AuthPanelProps } from "./components/AuthPanel";
 import {
   BookOpen,
   ClipboardCheck,
@@ -55,7 +56,8 @@ function withBase(pathname: string) {
   return pathname === "/" ? `${APP_BASE}/` : `${APP_BASE}${pathname}`;
 }
 
-export default function App() {
+export default function App({ initialAccountPanel }: { initialAccountPanel?: ComponentType<AuthPanelProps> } = {}) {
+  const AccountPanel = initialAccountPanel || AuthPanel;
   const [path, setPath] = useState(stripBase(window.location.pathname));
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [accountLoaded, setAccountLoaded] = useState(false);
@@ -165,7 +167,7 @@ export default function App() {
       return user ? (
         <Dashboard refreshToken={dashboardRefresh} user={user} onSettingsSaved={settings => setUser(current => current?.id === user.id ? { ...current, settings } : current)} />
       ) : (
-        <AuthPanel user={user} onDashboardRefresh={refreshDashboard} onUserChange={setUser} />
+        <AccountPanel user={user} onDashboardRefresh={refreshDashboard} onUserChange={setUser} />
       );
     }
     if (path === "/manual" || path === "/handbuch") return <ManualPage />;
@@ -177,14 +179,14 @@ export default function App() {
       return user ? (
         <Dashboard refreshToken={dashboardRefresh} user={user} onSettingsSaved={settings => setUser(current => current?.id === user.id ? { ...current, settings } : current)} />
       ) : (
-        <AuthPanel user={user} onDashboardRefresh={refreshDashboard} onUserChange={setUser} />
+        <AccountPanel user={user} onDashboardRefresh={refreshDashboard} onUserChange={setUser} />
       );
     }
     if (path === "/account") {
-      return <AuthPanel user={user} onDashboardRefresh={refreshDashboard} onUserChange={setUser} />;
+      return <AccountPanel user={user} onDashboardRefresh={refreshDashboard} onUserChange={setUser} />;
     }
     return <LandingPage navigate={navigate} />;
-  }, [path, user, dashboardRefresh, locale, accountLoaded]);
+  }, [path, user, dashboardRefresh, locale, accountLoaded, AccountPanel]);
 
   return (
     <main className="app-shell">

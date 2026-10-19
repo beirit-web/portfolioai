@@ -61,7 +61,7 @@ test("contact can be identified by role and labels, requires consent and reports
   } finally {
     if (release) release();
   }
-  await expect(status).toContainText("Lokale Anfrage bestätigt.");
+  await expect(status).toContainText("Ihre Nachricht wurde gespeichert.");
   await expect(status).toContainText("demo@example.test");
   await expect(form).toHaveAttribute("aria-busy", "false");
   await expect(form.getByRole("checkbox")).not.toBeChecked();

@@ -376,6 +376,7 @@ function initAuthSessionTimeout() {
 
 function authFormToggleLabels() {
   const lang = (document.documentElement.lang || fallbackLang).slice(0, 2);
+  if (lang === "uk") return { show: "Показати пароль", hide: "Приховати пароль" };
   if (lang === "ru") {
     return {
       show: "Показать пароль",
@@ -509,6 +510,11 @@ function getLocaleOverlayUrl(lang) {
 
 async function ensureLocaleOverlay(lang) {
   const targetLang = supportedLanguages.includes(lang) ? lang : fallbackLang;
+
+  if (window.I18N_COMPLETE_LOCALES?.includes(targetLang)) {
+    appState.loadedLocaleOverlays.add(targetLang);
+    return patchTranslations();
+  }
 
   if (appState.loadedLocaleOverlays.has(targetLang)) {
     return patchTranslations();
@@ -859,7 +865,7 @@ function initProfileFileInput() {
   if (!input || !nameEl) return;
   const update = () => {
     const file = input.files && input.files[0];
-    nameEl.textContent = file ? file.name : "Keine Datei ausgewählt";
+    nameEl.textContent = file ? file.name : (nameEl.dataset.emptyLabel || "Keine Datei ausgewählt");
   };
   input.addEventListener("change", update);
   update();

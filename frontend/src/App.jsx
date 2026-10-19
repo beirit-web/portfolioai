@@ -204,7 +204,7 @@ function UnderConstructionNote({ t, onNavigate }) {
 }
 
 
-function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
+function StandalonePage({ routeKey, projectSlug, t, language, onNavigate, contactComponents }) {
   useScrollReveal();
   const services = t("home.services.items");
   const shouldFetchPortfolio = routeKey === "projects" || routeKey === "portfolioProject";
@@ -315,6 +315,8 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
   }
 
   if (routeKey === "contact") {
+    const ContactForm = contactComponents?.Form || LazyContactForm;
+    const ContactDetails = contactComponents?.Details || LazyContactDetails;
     const params = new URLSearchParams(window.location.search);
     const selectedProject = params.get("project") || "";
     const subjectPrefix = { de: "Frage zu", ru: "Вопрос о", uk: "Питання про" }[language] || "Frage zu";
@@ -327,12 +329,12 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate }) {
         </header>
         <div className="contact-panel">
           <React.Suspense fallback={<div className="contact-form contact-form--loading contact-mobile-stage" aria-hidden="true" />}>
-            <LazyContactForm
+            <ContactForm
               language={language}
               selectedSubject={selectedSubject}
               t={t}
             />
-            <LazyContactDetails language={language} />
+            <ContactDetails language={language} />
           </React.Suspense>
         </div>
       </section>
@@ -912,7 +914,7 @@ function HomePage({ onNavigate }) {
   );
 }
 
-export default function App() {
+export default function App({ contactComponents } = {}) {
   useDocumentStateClasses();
   const { t, language } = useI18n();
   const [path, setPath] = useBrowserPath();
@@ -943,7 +945,7 @@ export default function App() {
   return (
     <PageShell t={t} activePath={activePath} onNavigate={handleNavigate}>
       <React.Suspense fallback={null}>
-        <StandalonePage routeKey={route?.key || "notFound"} projectSlug={projectSlug} t={t} language={language} onNavigate={handleNavigate} />
+        <StandalonePage routeKey={route?.key || "notFound"} projectSlug={projectSlug} t={t} language={language} onNavigate={handleNavigate} contactComponents={contactComponents} />
       </React.Suspense>
     </PageShell>
   );

@@ -7,7 +7,7 @@ import {
 } from "../api";
 import { ui } from "../i18n";
 
-type AuthPanelProps = {
+export type AuthPanelProps = {
   user: CurrentUser | null;
   onUserChange: (user: CurrentUser | null) => void;
   onDashboardRefresh: () => void;
@@ -20,9 +20,9 @@ type AuthSessionProps = AuthPanelProps & {
   setHasError: (hasError: boolean) => void;
 };
 
-const inputClass = "mt-2 w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-slate-950 outline-none focus:border-cyan-400";
-const primaryClass = "inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-5 py-3 font-bold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60";
-const secondaryClass = "inline-flex items-center gap-2 rounded-2xl border border-slate-300/70 px-4 py-3 font-bold disabled:opacity-60 dark:border-slate-700";
+const inputClass = "form-control mt-2 rounded-2xl";
+const primaryClass = "inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-5 py-3 font-bold text-slate-950 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-700 disabled:opacity-100 dark:disabled:bg-slate-800 dark:disabled:text-slate-200";
+const secondaryClass = "inline-flex items-center gap-2 rounded-2xl border border-slate-300/70 px-4 py-3 font-bold disabled:opacity-100 disabled:text-slate-700 dark:border-slate-700 dark:disabled:text-slate-200";
 
 export default function AuthPanel(props: AuthPanelProps) {
   const [message, setMessage] = useState(() => {
@@ -96,6 +96,10 @@ function AuthSession({ user, onUserChange, onDashboardRefresh, message, setMessa
       } else {
         const response = await registerUser({ username: username.trim(), email: email.trim(), password });
         if (!active.current) return;
+        if (response.emailDelivery === "local" && response.activationUrl) {
+          window.location.assign(response.activationUrl);
+          return;
+        }
         setMode("login"); setEmail(""); setPassword(""); setConfirmation("");
         setMessage(response.emailDelivery === "console" ? ui.account.registrationEmailConsole : ui.account.registrationEmailSent);
       }

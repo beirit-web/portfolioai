@@ -134,6 +134,7 @@ MIDDLEWARE = [
     "config.middleware.VersionedStaticCacheMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "pages.account_i18n.AccountLanguageMiddleware",
     "django.middleware.common.CommonMiddleware",
     "config.middleware.HostRedirectMiddleware",
     "config.middleware.MaintenanceMiddleware",
@@ -158,6 +159,7 @@ TEMPLATES = [
         "OPTIONS": {
             "builtins": [
                 "pages.templatetags.asset_tags",
+                "pages.templatetags.account_copy",
             ],
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -354,6 +356,7 @@ MAINTENANCE_MESSAGE = env("MAINTENANCE_MESSAGE",
 # Mail / Upload
 # An old SMTP configuration alone must never turn delivery on in this workspace.
 ACCOUNT_EMAIL_DELIVERY_ENABLED = env_bool("ACCOUNT_EMAIL_DELIVERY_ENABLED", False)
+LOCAL_ACCOUNT_ACTIVATION_ENABLED = env_bool("LOCAL_ACCOUNT_ACTIVATION_ENABLED", False)
 EMAIL_BACKEND = (
     env("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
     if ACCOUNT_EMAIL_DELIVERY_ENABLED else "django.core.mail.backends.console.EmailBackend"

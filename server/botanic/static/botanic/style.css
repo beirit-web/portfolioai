@@ -403,6 +403,7 @@ textarea {
 input::placeholder,
 textarea::placeholder {
   color: var(--muted);
+  opacity: 1;
 }
 
 input:focus,

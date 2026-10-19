@@ -39,6 +39,7 @@ from .progress import resolve_progress_scene
 from pages.auth_session import initialize_authenticated_session
 from pages.login_security import clear_login_attempts
 from pages.verification import account_email_delivery_mode, pending_account_for_credentials, send_pending_account_verification
+from pages.local_activation import local_registration_payload
 
 
 def api_login_required(view_func):
@@ -209,7 +210,7 @@ def register(request):
             _ensure_groups()
             user.groups.add(Group.objects.get(name="learner"))
             _get_profile(user)
-            if not send_pending_account_verification(user, next_url="/deutschlive/account?emailConfirmed=1"):
+            if not send_pending_account_verification(user, next_url="/deutschlive/account?emailConfirmed=1", request=request):
                 raise ValidationError("Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen.")
     except ValidationError as error:
         return JsonResponse({"error": " ".join(error.messages)}, status=503)
@@ -220,7 +221,8 @@ def register(request):
         "ok": True,
         "message": "Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in der E-Mail. Erst danach ist Ihr Konto aktiv.",
         "emailVerificationRequired": True,
-        "emailDelivery": account_email_delivery_mode(),
+        "emailDelivery": account_email_delivery_mode(request),
+        **local_registration_payload(request, user, next_url="/deutschlive/account?emailConfirmed=1"),
     }
     response = JsonResponse(payload, status=201)
     return response

@@ -306,7 +306,7 @@ export async function fetchMe() {
 }
 
 export async function registerUser(payload: { username: string; email: string; password: string }) {
-  return postJson<{ ok: boolean; message: string; emailVerificationRequired: boolean; emailDelivery: "console" | "email" }>("/api/auth/register/", payload);
+  return postJson<{ ok: boolean; message: string; emailVerificationRequired: boolean; emailDelivery: "console" | "email" | "local"; activationUrl?: string; exampleMailUrl?: string }>("/api/auth/register/", payload);
 }
 
 export async function loginUser(payload: { username: string; password: string }) {

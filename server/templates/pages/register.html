@@ -1,31 +1,25 @@
-{% extends "base_public.html" %}
+{% extends "registration/account_shell.html" %}
 
-{% block title %}Registrieren | Beirit Digital{% endblock %}
+{% block title %}{% account_text "Registrieren | Beirit Digital" %}{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
-{% block meta_description %}Konto für Beirit Digital anlegen, um geschützte Funktionen und persönliche Anliegen zu verwalten.{% endblock %}
+{% block meta_description %}{% account_text "Konto für Beirit Digital anlegen, um geschützte Funktionen und persönliche Anliegen zu verwalten." %}{% endblock %}
 
 {% block body_attrs %} class="has-topnav register-page template-body theme-dark-locked backstube-account"{% endblock %}
-
-{% block extra_head %}
-  <link rel="stylesheet" href="{% asset_url 'shop/brand.css' %}">
-  <link rel="stylesheet" href="{% asset_url 'shop/account.css' %}">
-{% endblock %}
 
 {% block content %}
   <main class="backstube-account-page">
     <section class="template-panel template-form-card" aria-labelledby="register-title">
-      <h1 class="template-panel__kicker" id="register-title">Registrierung</h1>
-      <p class="template-inline-note">Nach der Registrierung bestätigen Sie Ihre E-Mail-Adresse über einen Link. Erst danach ist Ihr Konto aktiv und Sie können sich anmelden.</p>
+      <h1 class="template-panel__kicker" id="register-title">{% account_text "Registrierung" %}</h1>
+      <p class="template-inline-note">{% if local_activation_available %}{% account_text "Nach der Registrierung finden Sie unter /examplemail einen Aktivierungscode. Geben Sie ihn auf der Anmeldeseite ein. Der Code ist eine Minute gültig." %}{% else %}{% account_text "Nach der Registrierung bestätigen Sie Ihre E-Mail-Adresse über einen Link. Erst danach ist Ihr Konto aktiv und Sie können sich anmelden." %}{% endif %}</p>
       {% include "partials/auth_messages.html" %}
-      {% if account_mail_is_console %}<p class="template-inline-note">Lokale Demo: Die Bestätigungs-E-Mail wird in der Serverkonsole ausgegeben. Es wird keine E-Mail an ein Postfach zugestellt.</p>{% endif %}
+      {% if account_mail_is_console and not local_activation_available %}<p class="template-inline-note">{% account_text "Lokale Demo: Die Bestätigungs-E-Mail wird in der Serverkonsole ausgegeben. Es wird keine E-Mail an ein Postfach zugestellt." %}</p>{% endif %}
       {% if already_logged_in %}
         <div class="form-error" role="alert">
-          Sie sind bereits angemeldet. Falls Sie ein weiteres Konto anlegen
-          wollen, melden Sie sich bitte zuerst ab.
+          {% account_text "Sie sind bereits angemeldet. Falls Sie ein weiteres Konto anlegen wollen, melden Sie sich bitte zuerst ab." %}
         </div>
         <div class="template-actions">
-          <a class="btn-ghost cta-highlight" href="{% url 'pages:logout' %}">Abmelden</a>
-          <a class="btn-primary" href="{% url 'pages:delete_account' %}">Konto löschen</a>
+          <a class="btn-ghost cta-highlight" href="{% url 'pages:logout' %}">{% account_text "Abmelden" %}</a>
+          <a class="btn-primary" href="{% url 'pages:delete_account' %}">{% account_text "Konto löschen" %}</a>
         </div>
       {% endif %}
       <form method="post" class="form" enctype="multipart/form-data" data-submit-once>
@@ -37,32 +31,32 @@
         <div class="template-panel-grid">
           <div class="template-panel--span-6">
             <div class="form-field">
-              <label for="{{ form.email.id_for_label }}">E-Mail</label>
+              <label for="{{ form.email.id_for_label }}">{% account_text "E-Mail" %}</label>
               {{ form.email }}
-              <small class="form-help">Diese Adresse wird für die Bestätigung und für spätere Logins verwendet.</small>
+              <small id="{{ form.email.auto_id }}_helptext" class="form-help">{{ form.email.help_text }}</small>
               {% if form.email.errors %}
-                <div class="form-error">{{ form.email.errors }}</div>
+                <div class="form-error" role="alert">{{ form.email.errors }}</div>
               {% endif %}
             </div>
           </div>
           <div class="template-panel--span-6">
             <div class="form-field">
-              <label for="{{ form.image.id_for_label }}">Profilbild (optional)</label>
+              <label for="{{ form.image.id_for_label }}">{% account_text "Profilbild (optional)" %}</label>
               <div class="file-inline">
                 {{ form.image }}
-                <label class="file-inline__button" for="{{ form.image.id_for_label }}">Datei wählen</label>
-                <span class="file-inline__name" data-file-name-target="profile">Keine Datei ausgewählt</span>
+                <label class="file-inline__button" for="{{ form.image.id_for_label }}">{% account_text "Datei wählen" %}</label>
+                <span class="file-inline__name" data-file-name-target="profile" data-empty-label="{% account_text "Keine Datei ausgewählt" %}">{% account_text "Keine Datei ausgewählt" %}</span>
                 <span class="file-inline__preview" data-file-preview="profile" aria-hidden="true"></span>
               </div>
               {% if form.image.errors %}
-                <div class="form-error">{{ form.image.errors }}</div>
+                <div class="form-error" role="alert">{{ form.image.errors }}</div>
               {% endif %}
-              <small class="form-help">JPG oder PNG, maximal 5 MB, idealerweise quadratisch.</small>
+              <small id="{{ form.image.auto_id }}_helptext" class="form-help">{{ form.image.help_text }}</small>
             </div>
           </div>
           <div class="template-panel--span-6">
             <div class="form-field">
-              <label for="{{ form.password1.id_for_label }}">Passwort</label>
+              <label for="{{ form.password1.id_for_label }}">{% account_text "Passwort" %}</label>
               <div class="form-input-row">
                 {{ form.password1 }}
                 <button
@@ -70,23 +64,23 @@
                   class="form-input-action"
                   data-password-toggle="{{ form.password1.id_for_label }}"
                   aria-controls="{{ form.password1.id_for_label }}"
-                  aria-label="Passwort anzeigen"
+                  aria-label="{% account_text "Passwort anzeigen" %}"
                 >
                   <span aria-hidden="true">👁</span>
-                  <span class="visually-hidden" data-password-toggle-text>Passwort anzeigen</span>
+                  <span class="visually-hidden" data-password-toggle-text>{% account_text "Passwort anzeigen" %}</span>
                 </button>
               </div>
               {% if form.password1.help_text %}
-                <small class="form-help">{{ form.password1.help_text }}</small>
+                <small id="{{ form.password1.auto_id }}_helptext" class="form-help">{{ form.password1.help_text }}</small>
               {% endif %}
               {% if form.password1.errors %}
-                <div class="form-error">{{ form.password1.errors }}</div>
+                <div class="form-error" role="alert">{{ form.password1.errors }}</div>
               {% endif %}
             </div>
           </div>
           <div class="template-panel--span-6">
             <div class="form-field">
-              <label for="{{ form.password2.id_for_label }}">Passwort wiederholen</label>
+              <label for="{{ form.password2.id_for_label }}">{% account_text "Passwort wiederholen" %}</label>
               <div class="form-input-row">
                 {{ form.password2 }}
                 <button
@@ -94,55 +88,47 @@
                   class="form-input-action"
                   data-password-toggle="{{ form.password2.id_for_label }}"
                   aria-controls="{{ form.password2.id_for_label }}"
-                  aria-label="Passwort anzeigen"
+                  aria-label="{% account_text "Passwort anzeigen" %}"
                 >
                   <span aria-hidden="true">👁</span>
-                  <span class="visually-hidden" data-password-toggle-text>Passwort anzeigen</span>
+                  <span class="visually-hidden" data-password-toggle-text>{% account_text "Passwort anzeigen" %}</span>
                 </button>
               </div>
               {% if form.password2.help_text %}
-                <small class="form-help">{{ form.password2.help_text }}</small>
+                <small id="{{ form.password2.auto_id }}_helptext" class="form-help">{{ form.password2.help_text }}</small>
               {% endif %}
               {% if form.password2.errors %}
-                <div class="form-error">{{ form.password2.errors }}</div>
+                <div class="form-error" role="alert">{{ form.password2.errors }}</div>
               {% endif %}
             </div>
           </div>
         </div>
         <p class="template-inline-note template-inline-note--stack">
-          <strong>Ablauf:</strong>
-          <span>Nach dem Absenden erhalten Sie eine Bestätigungs-E-Mail. Erst nach dem Klick auf den Link ist Ihr Konto aktiv.</span>
+          <strong>{% account_text "Ablauf:" %}</strong>
+          <span>{% if local_activation_available %}{% account_text "Konto speichern, /examplemail im selben Browser öffnen und den Aktivierungscode auf der Anmeldeseite eingeben. Danach melden Sie sich mit E-Mail-Adresse und Passwort an." %}{% else %}{% account_text "Nach dem Absenden erhalten Sie eine Bestätigungs-E-Mail. Erst nach dem Klick auf den Link ist Ihr Konto aktiv." %}{% endif %}</span>
         </p>
         <div class="template-consent">
           {{ form.privacy_consent }}
           <label for="{{ form.privacy_consent.id_for_label }}">
-            {% if initial_lang|slice:':2' == 'ru' %}
-            Я соглашаюсь, что мой e-mail, пароль в защищённой форме и,
-            при необходимости, фото профиля обрабатываются для создания аккаунта,
-            входа и управления аккаунтом. Подробности указаны в
-            <a href="{% url 'pages:privacy' %}">информации о защите данных</a>.
-            {% else %}
-            Ich stimme zu, dass meine E-Mail-Adresse, mein Passwort in geschützter Form
-            und optional mein Profilbild zur Kontoerstellung, Anmeldung und
-            Kontoverwaltung verarbeitet werden. Hinweise dazu stehen in den
-            <a href="{% url 'pages:privacy' %}">Datenschutzhinweisen</a>.
-            {% endif %}
+            {% account_text "Ich stimme zu, dass meine E-Mail-Adresse, mein Passwort in geschützter Form und optional mein Profilbild zur Kontoerstellung, Anmeldung und Kontoverwaltung verarbeitet werden. Hinweise dazu stehen in den" %}
+            <a href="{% url 'pages:privacy' %}">{% account_text "Datenschutzhinweisen" %}</a>.
+
           </label>
         </div>
         {% if form.privacy_consent.errors %}
-          <div class="form-error">{{ form.privacy_consent.errors }}</div>
+          <div class="form-error" role="alert">{{ form.privacy_consent.errors }}</div>
         {% endif %}
-        <button type="submit" class="btn-primary" data-loading-label="Registrierung läuft...">
-          Konto anlegen und E-Mail bestätigen
+        <button type="submit" class="btn-primary" data-loading-label="{% account_text "Registrierung läuft..." %}">
+          {% if local_activation_available %}{% account_text "Konto speichern und Aktivierungscode abrufen" %}{% else %}{% account_text "Konto anlegen und E-Mail bestätigen" %}{% endif %}
         </button>
       </form>
       <p class="template-empty">
-        Bereits registriert?
-        <a href="{% url 'pages:login' %}{% if registration_next %}?next={{ registration_next|urlencode }}{% endif %}">Zum Login</a>
+        {% account_text "Bereits registriert?" %}
+        <a href="{% url 'pages:login' %}{% if registration_next %}?next={{ registration_next|urlencode }}{% endif %}">{% account_text "Zum Login" %}</a>
       </p>
       <p class="template-empty">
-        Bestätigungslink abgelaufen oder keine E-Mail erhalten?
-        <a href="{% url 'pages:verification_resend' %}">Bestätigungs-E-Mail erneut senden</a>
+        {% if local_activation_available %}{% account_text "Aktivierungscode abgelaufen?" %}{% else %}{% account_text "Bestätigungslink abgelaufen oder keine E-Mail erhalten?" %}{% endif %}
+        <a href="{% url 'pages:verification_resend' %}{% if registration_next %}?next={{ registration_next|urlencode }}{% endif %}">{% if local_activation_available %}{% account_text "Neuen Aktivierungscode anfordern" %}{% else %}{% account_text "Bestätigungs-E-Mail erneut senden" %}{% endif %}</a>
       </p>
     </section>
   </main>
@@ -157,7 +143,7 @@
       const previewEl = document.querySelector('[data-file-preview="profile"]');
       const update = () => {
         const file = input.files && input.files[0];
-        nameEl.textContent = file ? file.name : "Keine Datei ausgewählt";
+        nameEl.textContent = file ? file.name : nameEl.dataset.emptyLabel;
         if (!previewEl) return;
         if (file && file.type.startsWith("image/")) {
           const reader = new FileReader();

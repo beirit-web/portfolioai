@@ -49,7 +49,7 @@ class HousingApiSafetyTests(TestCase):
     def test_housing_routes_preserve_platform_login(self):
         self.assertEqual(self.client.get("/wohnungssuche/unknown").status_code, 404)
         self.assertEqual(self.client.get("/login/").status_code, 200)
-        self.assertRedirects(self.client.get("/login?next=search-profiles"), "/wohnungssuche/login?next=search-profiles", status_code=301)
+        self.assertRedirects(self.client.get("/login?next=search-profiles"), "/login/?next=search-profiles", status_code=302)
 
 
 @override_settings(AUTH_PASSWORD_VALIDATORS=[])

@@ -1411,7 +1411,9 @@
       "subjectRequired": "Bitte geben Sie einen Betreff ein.",
       "topicRequired": "Bitte wählen Sie die Art der Anfrage aus.",
       "messageRequired": "Bitte beschreiben Sie kurz Ihr Anliegen.",
-      "privacyRequired": "Bitte bestätigen Sie den Datenschutzhinweis."
+      "privacyRequired": "Bitte bestätigen Sie den Datenschutzhinweis.",
+      "tooLong": "Diese Eingabe ist zu lang. Bitte kürzen Sie den Text.",
+      "fieldInvalid": "Bitte prüfen Sie diese Eingabe."
     },
     "submit": "Nachricht senden",
     "submitting": "Wird gesendet...",
@@ -1424,6 +1426,8 @@
     "genericError": "Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie die Seite neu und versuchen Sie es erneut.",
     "networkError": "Die Anfrage konnte gerade nicht gesendet werden. Bitte später erneut versuchen.",
     "title": "Kontaktformular",
-    "requiredHint": "Alle Felder und die Zustimmung zum Datenschutzhinweis sind erforderlich."
+    "requiredHint": "Alle Felder und die Zustimmung zum Datenschutzhinweis sind erforderlich.",
+    "successText": "Ihre Nachricht wurde gespeichert. Ich melde mich, sobald ich sie gelesen habe.",
+    "rateLimited": "Bitte warten Sie kurz, bevor Sie erneut senden."
   }
 }

@@ -4,7 +4,7 @@ import React from "react";
 export default function ContactDetails({ language }) {
   return (
     <address className="mx-auto mt-8 max-w-4xl rounded-xl border border-stone-300 bg-white/80 p-5 not-italic text-stone-800">
-      <h2 className="text-xl font-bold">{language === "ru" ? "Прямой контакт" : "Direkter Kontakt"}</h2>
+      <h2 className="text-xl font-bold">{{ de: "Direkter Kontakt", ru: "Прямой контакт", uk: "Прямий контакт" }[language] || "Direkter Kontakt"}</h2>
       <p className="mt-3 font-semibold">Eugen Beirit</p>
       <p>Großer Katthagen 13 · 38350 Helmstedt</p>
       <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">

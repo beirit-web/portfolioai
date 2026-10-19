@@ -67,8 +67,8 @@
     "file": "assets/three-vendor-BJgQQUs9.js",
     "name": "three-vendor"
   },
-  "_useI18n-CQ_PjzOI.js": {
-    "file": "assets/useI18n-CQ_PjzOI.js",
+  "_useI18n-CwxsZNqp.js": {
+    "file": "assets/useI18n-CwxsZNqp.js",
     "name": "useI18n",
     "imports": [
       "_preload-helper-DAqlcvze.js",
@@ -98,7 +98,7 @@
     ]
   },
   "src/about.jsx": {
-    "file": "assets/about-D9z5wlmI.js",
+    "file": "assets/about-QLa4WVjQ.js",
     "name": "about",
     "src": "src/about.jsx",
     "isEntry": true,
@@ -132,7 +132,7 @@
     ]
   },
   "src/components/contact/ContactDetails.jsx": {
-    "file": "assets/ContactDetails-H0Uj-hmA.js",
+    "file": "assets/ContactDetails-BP5KORDN.js",
     "name": "ContactDetails",
     "src": "src/components/contact/ContactDetails.jsx",
     "isDynamicEntry": true,
@@ -141,7 +141,7 @@
     ]
   },
   "src/components/contact/ContactForm.jsx": {
-    "file": "assets/ContactForm-DQdRhEGw.js",
+    "file": "assets/ContactForm-BtBYFARo.js",
     "name": "ContactForm",
     "src": "src/components/contact/ContactForm.jsx",
     "isDynamicEntry": true,
@@ -150,7 +150,7 @@
       "_mountSiteApp-BnjmpXFU.js"
     ],
     "css": [
-      "assets/ContactForm-DrBUWA5E.css"
+      "assets/ContactForm-6wRaWgpR.css"
     ]
   },
   "src/components/home/FaqSection.css": {
@@ -262,19 +262,19 @@
     ]
   },
   "src/i18n/locales/ru.json": {
-    "file": "assets/ru-Df6aIlQJ.js",
+    "file": "assets/ru-Cs5JqHF0.js",
     "name": "ru",
     "src": "src/i18n/locales/ru.json",
     "isDynamicEntry": true
   },
   "src/i18n/locales/uk.json": {
-    "file": "assets/uk-C7Fim3IB.js",
+    "file": "assets/uk-C3cePNt0.js",
     "name": "uk",
     "src": "src/i18n/locales/uk.json",
     "isDynamicEntry": true
   },
   "src/main.jsx": {
-    "file": "assets/main-CB9MFZW-.js",
+    "file": "assets/main-D7ToRN9I.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
@@ -283,7 +283,7 @@
       "_preact-vendor-CK4IGXRi.js",
       "_PortfolioFeatureList-Bzideh_Q.js",
       "_mountSiteApp-BnjmpXFU.js",
-      "_useI18n-CQ_PjzOI.js",
+      "_useI18n-CwxsZNqp.js",
       "_TechnologyTags-ChZI7mGr.js",
       "_TechnicalLabel-C_pyzfyL.js",
       "_arrow-right-DvmvtFEL.js",
@@ -295,7 +295,9 @@
       "src/components/contact/ContactDetails.jsx",
       "src/components/projects/PortfolioProjectPage.jsx",
       "src/components/projects/ProjectsOverviewPage.jsx",
-      "src/components/about/AboutPage.jsx"
+      "src/components/about/AboutPage.jsx",
+      "src/components/contact/ContactForm.jsx",
+      "src/components/contact/ContactDetails.jsx"
     ]
   },
   "src/mobile-pages.css": {
@@ -326,7 +328,7 @@
     ]
   },
   "src/project-detail.js": {
-    "file": "assets/project-detail-D4avPbp0.js",
+    "file": "assets/project-detail-CuisglJf.js",
     "name": "project-detail",
     "src": "src/project-detail.js",
     "isEntry": true,
@@ -339,14 +341,14 @@
     ]
   },
   "src/project-detail.jsx": {
-    "file": "assets/project-detail-app-DizfJuV2.js",
+    "file": "assets/project-detail-app-Dauipz3u.js",
     "name": "project-detail-app",
     "src": "src/project-detail.jsx",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
       "_preact-vendor-CK4IGXRi.js",
-      "_useI18n-CQ_PjzOI.js",
+      "_useI18n-CwxsZNqp.js",
       "_mountSiteApp-BnjmpXFU.js",
       "_TechnologyTags-ChZI7mGr.js",
       "src/components/projects/PortfolioProjectPage.jsx",

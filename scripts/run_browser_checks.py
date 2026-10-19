@@ -98,6 +98,8 @@ def check_environment(directory):
         "MEDIA_ROOT": f"{directory}/media",
         "STATIC_ROOT": f"{directory}/static",
         "EMAIL_BACKEND": "django.core.mail.backends.locmem.EmailBackend",
+        "ACCOUNT_EMAIL_DELIVERY_ENABLED": "false",
+        "LOCAL_ACCOUNT_ACTIVATION_ENABLED": "false",
         "REALTIME_NOTIFICATIONS_ENABLED": "false",
         "MAINTENANCE_MODE": "false",
         "LOGIN_REQUIRED": "false",
@@ -123,6 +125,8 @@ def main():
     signal.signal(signal.SIGINT, stop)
     with TemporaryDirectory(prefix="beirit-browser-") as directory:
         env = check_environment(directory)
+        env["LOCAL_ACCOUNT_ACTIVATION_ENABLED"] = "true"
+        env["EMAIL_BACKEND"] = "django.core.mail.backends.console.EmailBackend"
         status = run_migrations(env, lambda: stopping)
         if status or stopping:
             return status

@@ -64,6 +64,6 @@ test("tablet contact layout keeps controls usable and retains input when rotatin
     await route.fulfill({ json: { ok: true, message: "Tablet-Prüfung erfolgreich." } });
   });
   await page.locator('form button[type="submit"]').click();
-  await expect(page.locator("#contact-form-status")).toContainText("Tablet-Prüfung erfolgreich.");
+  await expect(page.locator("#contact-form-status")).toContainText("Ihre Nachricht wurde gespeichert.");
   expect(deliveries).toBe(1);
 });

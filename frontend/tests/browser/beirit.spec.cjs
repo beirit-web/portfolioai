@@ -1,6 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const { blockExternalRequests } = require("./helpers/network.cjs");
 const { withoutEmbeddedProjects } = require("./helpers/portfolioConfig.cjs");
+const { forms: contactCopy } = require("../../src/i18n/locales/de.json");
 
 test.beforeEach(async ({ context, page, baseURL }) => {
   // All browser checks stay local; no external APIs or form deliveries.
@@ -128,7 +129,7 @@ test("contact validates input, sends CSRF and shows success", async ({ page, con
   expect(submitted).toBe(0);
   await fillContact(page);
   await page.locator('form button[type="submit"]').click();
-  await expect(page.locator("#contact-form-status")).toContainText("Testanfrage erhalten.");
+  await expect(page.locator("#contact-form-status")).toContainText(contactCopy.successText);
   await expect(page.locator("#contact-form-status")).toHaveAttribute("role", "status");
   for (const field of ["name", "email", "subject", "message"]) {
     await expect(page.locator(`#${field}`)).toHaveValue("");
@@ -185,7 +186,7 @@ test("contact retains input on server errors and supports a retry after network 
   await expect(page.locator("#message")).toHaveValue("Lokaler Test mit simulierter Antwort.");
   await expect(page.locator('form button[type="submit"]')).toBeEnabled();
   await page.locator('form button[type="submit"]').click();
-  await expect(page.locator("#contact-form-status")).toContainText("Erneuter Versuch erfolgreich.");
+  await expect(page.locator("#contact-form-status")).toContainText(contactCopy.successText);
   expect(attempt).toBe(3);
 });
 
@@ -215,7 +216,7 @@ for (const endpoint of [undefined, "/api/custom-contact/"]) {
     await open(page, "/kontakt/");
     await fillContact(page);
     await page.locator('form button[type="submit"]').click();
-    await expect(page.locator("#contact-form-status")).toContainText("Konfigurierter Versand geprüft.");
+    await expect(page.locator("#contact-form-status")).toContainText(contactCopy.successText);
     expect(submitted).toBe(true);
   });
 }

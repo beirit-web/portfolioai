@@ -1,0 +1,36 @@
+{% extends "registration/account_base.html" %}
+{% block title %}{% account_text "Lokales Beispielpostfach" %}{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block account_title %}{% account_text "Lokales Beispielpostfach" %}{% endblock %}
+{% block account_content %}
+  <p>{% account_text "Hier finden Sie den Aktivierungscode für Ihre Registrierung im selben Browser. Eine E-Mail an ein echtes Postfach ist dafür nicht erforderlich." %}</p>
+  {% if activation_email %}
+    <p>{% account_text "Für:" %} <strong>{{ activation_email }}</strong></p>
+    {% if activation_expired %}
+      <p role="alert">{% account_text "Der Aktivierungscode ist abgelaufen oder wurde gesperrt. Fordern Sie einen neuen Code an." %}</p>
+    {% else %}
+      <div class="local-activation-message" role="status" data-code-expires="{{ activation_expires_at|date:'c' }}">
+        <p>{% account_text "Ihr Aktivierungscode:" %}</p>
+        <output id="local-activation-code" aria-label="{% account_text "Aktivierungscode" %}">{{ activation_code }}</output>
+        <p>{% account_text "Eine Minute gültig. Ablaufzeit:" %} <time>{{ activation_expires_at|date:"H:i:s" }}</time>{% account_text ". Geben Sie den Code auf der Anmeldeseite ein." %}</p>
+      </div>
+      <p class="local-activation-expired" role="status" hidden>{% account_text "Der Aktivierungscode ist abgelaufen. Bitte fordern Sie einen neuen Code an." %}</p>
+    {% endif %}
+    <div class="template-actions">
+      <a class="btn-primary" href="{{ activation_login_url }}">{% account_text "Code auf der Anmeldeseite eingeben" %}</a>
+    </div>
+    <form method="post" class="form" aria-label="{% account_text "Neuen Aktivierungscode anfordern" %}" data-submit-once>
+      {% csrf_token %}
+      <button type="submit" class="btn-secondary">{% account_text "Neuen Aktivierungscode anfordern" %}</button>
+    </form>
+  {% else %}
+    <p role="status">{% account_text "Für diesen Browser liegt keine offene Aktivierung vor. Registrieren Sie sich oder melden Sie sich mit Ihrem noch nicht bestätigten Konto an, um einen Code anzufordern." %}</p>
+    <div class="template-actions">
+      <a class="btn-primary" href="{% url 'pages:register' %}">{% account_text "Registrieren" %}</a>
+      <a class="btn-secondary" href="{% url 'pages:login' %}">{% account_text "Zur Anmeldung" %}</a>
+    </div>
+  {% endif %}
+{% endblock %}
+{% block extra_scripts %}
+  <script src="{% asset_url 'js/local-activation.js' %}" defer></script>
+{% endblock %}

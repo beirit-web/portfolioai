@@ -74,15 +74,22 @@ export default function ContactForm({ selectedSubject = "", initialMessage = "",
       });
       const payload = response.headers.get("content-type")?.includes("application/json") ? await response.json() : null;
       if (!response.ok || !payload?.ok) {
-        const serverErrors = Object.fromEntries(Object.entries(payload?.errors || {}).map(([name, list]) => [name, list[0]?.message || list[0] || ""]));
-        showErrors(serverErrors, payload?.message || t("forms.genericError"));
+        const serverErrors = Object.fromEntries(Object.entries(payload?.errors || {}).map(([name, list]) => {
+          const code = list[0]?.code;
+          const key = code === "required" ? `${name === "privacy_consent" ? "privacy" : name}Required`
+            : code === "invalid" && name === "email" ? "emailInvalid"
+            : code === "max_length" ? "tooLong" : "fieldInvalid";
+          return [name, t(`forms.validation.${key}`)];
+        }));
+        showErrors(serverErrors, t(response.status === 429 ? "forms.rateLimited"
+          : Object.keys(serverErrors).length ? "forms.validationSummary" : "forms.genericError"));
         return;
       }
       setSentEmail(String(data.get("email") || ""));
       setValues({ name: "", email: "", subject: selectedSubject, message: initialMessage });
       setConsent(false);
       setStatus("success");
-      setMessage(payload.message || t("forms.successTitle"));
+      setMessage(t("forms.successText"));
     } catch {
       setStatus("error");
       setMessage(t("forms.networkError"));

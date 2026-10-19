@@ -116,10 +116,12 @@ class LoginAttemptLimitMiddleware:
 
   def __init__(self, get_response):
     self.get_response = get_response
-    self.login_paths = {
-      "/login/", "/api/auth/login/", "/deutschlive/api/auth/login/",
+    self.native_login_paths = {
+      "/login/", _normalize_prefix(settings.AUTH_URL_PREFIX) + "login/",
+    }
+    self.login_paths = self.native_login_paths | {
+      "/api/auth/login/", "/deutschlive/api/auth/login/",
       "/wohnungssuche-api/token-auth/",
-      _normalize_prefix(settings.AUTH_URL_PREFIX) + "login/",
       _normalize_prefix(settings.ADMIN_URL) + "login/",
     }
 
@@ -134,6 +136,14 @@ class LoginAttemptLimitMiddleware:
   def process_view(self, request, view_func, view_args, view_kwargs):
     if request.method != "POST" or request.path not in self.login_paths:
       return None
+    if (request.path in self.native_login_paths
+        and request.POST.get("action") in {"activate_local", "cancel_local_activation"}):
+      from pages.local_activation import local_activation_enabled
+
+      # These native actions never authenticate a password. Activation has its
+      # own code-attempt limit; other login routes must retain their budget.
+      if local_activation_enabled(request):
+        return None
     if request.content_type == "application/json":
       try:
         data = json.loads(request.body.decode("utf-8"))
@@ -339,7 +349,7 @@ class LoginRequiredMiddleware:
     }
     login_url = _ensure_leading_slash(settings.LOGIN_URL)
     self.login_url = login_url
-    self.exempt_paths = {login_url, "/login/", "/logout/", "/register/", "/email-bestaetigung/", "/favicon.ico", "/wetter", "/wetter/", "/vokabelbox", "/vokabelbox/"}
+    self.exempt_paths = {login_url, "/login/", "/logout/", "/register/", "/email-bestaetigung/", "/examplemail", "/examplemail/", "/favicon.ico", "/wetter", "/wetter/", "/vokabelbox", "/vokabelbox/"}
     self.exempt_paths.update(
       _ensure_leading_slash(value)
       for key in (

@@ -1,38 +1,26 @@
-{% extends "base_public.html" %}
+{% extends "registration/account_base.html" %}
 
-{% block title %}Konto löschen | Beirit Digital{% endblock %}
+{% block title %}{% account_text "Konto löschen | Beirit Digital" %}{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
-{% block body_attrs %} class="has-topnav delete-account-page template-body theme-dark-locked"{% endblock %}
-
-{% block content %}
-  <main class="page-shell has-topnav template-page template-page--narrow">
-    <header class="hero-card hero-card--static template-hero">
-      <p class="section-kicker">Konto</p>
-      <h1>Konto löschen</h1>
+{% block account_title %}{% account_text "Konto löschen" %}{% endblock %}
+{% block account_content %}
       <p class="section-intro">
-        Dieser Schritt entfernt Ihr Konto und Ihre hinterlegten Profildaten. Sie
-        können sich später jederzeit neu registrieren.
+        {% account_text "Dieser Schritt entfernt Ihr Konto und Ihre hinterlegten Profildaten. Sie können sich später jederzeit neu registrieren." %}
       </p>
-    </header>
-
-    <section class="template-panel template-panel--danger template-form-card">
-      <p class="template-panel__kicker">Bestätigung</p>
+      <p class="template-panel__kicker">{% account_text "Bestätigung" %}</p>
       <form method="post" class="form">
         {% csrf_token %}
         <p class="template-inline-note">
-          Bestätigen Sie die Löschung Ihres Kontos
-          (E-Mail:
+          {% account_text "Bestätigen Sie die Löschung Ihres Kontos (E-Mail:" %}
           {% if request.user.email %}
             {{ request.user.email }}
           {% else %}
-            Keine E-Mail hinterlegt
+            {% account_text "Keine E-Mail hinterlegt" %}
           {% endif %}).
         </p>
         <button type="submit" class="btn-primary">
-          Konto endgültig löschen
+          {% account_text "Konto endgültig löschen" %}
         </button>
       </form>
-    </section>
-  </main>
 {% endblock %}

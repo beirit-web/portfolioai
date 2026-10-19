@@ -1,0 +1,630 @@
+{
+  ". Er ist eine Minute gültig.": {
+    "ru": ". Он действителен одну минуту.",
+    "uk": ". Він дійсний одну хвилину."
+  },
+  ". Geben Sie den Code auf der Anmeldeseite ein.": {
+    "ru": ". Введите код на странице входа.",
+    "uk": ". Введіть код на сторінці входу."
+  },
+  "Abbrechen": {
+    "ru": "Отмена",
+    "uk": "Скасувати"
+  },
+  "Ablauf:": {
+    "ru": "Порядок действий:",
+    "uk": "Порядок дій:"
+  },
+  "Abmelden": {
+    "ru": "Выйти",
+    "uk": "Вийти"
+  },
+  "Aktivierungscode": {
+    "ru": "Код активации",
+    "uk": "Код активації"
+  },
+  "Aktuelles Profilbild": {
+    "ru": "Текущее фото профиля",
+    "uk": "Поточне фото профілю"
+  },
+  "Anderes Konto anmelden": {
+    "ru": "Войти в другой аккаунт",
+    "uk": "Увійти в інший обліковий запис"
+  },
+  "Anmeldedaten": {
+    "ru": "Данные для входа",
+    "uk": "Дані для входу"
+  },
+  "Anmelden": {
+    "ru": "Войти",
+    "uk": "Увійти"
+  },
+  "Anmeldung läuft...": {
+    "ru": "Выполняется вход...",
+    "uk": "Виконується вхід..."
+  },
+  "Aus Sicherheitsgründen erfolgt bei Inaktivität nach 10 Minuten eine automatische Abmeldung.": {
+    "ru": "В целях безопасности выход выполняется автоматически после 10 минут бездействия.",
+    "uk": "З міркувань безпеки вихід виконується автоматично після 10 хвилин бездіяльності."
+  },
+  "Bereits registriert?": {
+    "ru": "Уже зарегистрированы?",
+    "uk": "Уже зареєстровані?"
+  },
+  "Bestätigen Sie die Löschung Ihres Kontos (E-Mail:": {
+    "ru": "Подтвердите удаление аккаунта (электронная почта:",
+    "uk": "Підтвердьте видалення облікового запису (електронна пошта:"
+  },
+  "Bestätigung": {
+    "ru": "Подтверждение",
+    "uk": "Підтвердження"
+  },
+  "Bestätigungs-E-Mail anfordern": {
+    "ru": "Запросить письмо с подтверждением",
+    "uk": "Запросити лист із підтвердженням"
+  },
+  "Bestätigungs-E-Mail erneut senden": {
+    "ru": "Отправить письмо с подтверждением повторно",
+    "uk": "Надіслати лист із підтвердженням повторно"
+  },
+  "Bestätigungs-E-Mail konnte gerade nicht versendet werden. Bitte später erneut versuchen.": {
+    "ru": "Не удалось отправить письмо с подтверждением. Повторите попытку позже.",
+    "uk": "Не вдалося надіслати лист із підтвердженням. Спробуйте пізніше."
+  },
+  "Bestätigungslink abgelaufen oder keine E-Mail erhalten?": {
+    "ru": "Ссылка истекла или письмо не пришло?",
+    "uk": "Термін дії посилання минув або лист не надійшов?"
+  },
+  "Bild entfernen": {
+    "ru": "Удалить фото",
+    "uk": "Видалити фото"
+  },
+  "Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link in der E-Mail. Erst danach ist Ihr Konto aktiv.": {
+    "ru": "Подтвердите адрес электронной почты по ссылке в письме. После этого аккаунт станет активным.",
+    "uk": "Підтвердьте адресу електронної пошти за посиланням у листі. Після цього обліковий запис стане активним."
+  },
+  "Bitte bestätigen Sie die Datenschutz-Zustimmung.": {
+    "ru": "Подтвердите согласие на обработку данных.",
+    "uk": "Підтвердьте згоду на обробку даних."
+  },
+  "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse über den Link in der Bestätigungs-E-Mail.": {
+    "ru": "Сначала подтвердите адрес электронной почты по ссылке в письме с подтверждением.",
+    "uk": "Спочатку підтвердьте адресу електронної пошти за посиланням у листі з підтвердженням."
+  },
+  "Bitte eine gültige E-Mail eingeben.": {
+    "ru": "Введите действительный адрес электронной почты.",
+    "uk": "Введіть дійсну адресу електронної пошти."
+  },
+  "Bitte fordern Sie zuerst einen Aktivierungscode an.": {
+    "ru": "Сначала запросите код активации.",
+    "uk": "Спочатку запросіть код активації."
+  },
+  "Bitte geben Sie dasselbe Passwort zur Bestätigung noch einmal ein.": {
+    "ru": "Для подтверждения введите тот же пароль ещё раз.",
+    "uk": "Для підтвердження введіть той самий пароль ще раз."
+  },
+  "Bitte geben Sie den sechsstelligen Aktivierungscode ein.": {
+    "ru": "Введите шестизначный код активации.",
+    "uk": "Введіть шестизначний код активації."
+  },
+  "Bitte nur JPG oder PNG als Profilbild hochladen.": {
+    "ru": "Загрузите фото профиля в формате JPG или PNG.",
+    "uk": "Завантажте фото профілю у форматі JPG або PNG."
+  },
+  "Bitte verwenden Sie die E-Mail-Adresse, mit der Sie sich registriert haben.": {
+    "ru": "Используйте адрес электронной почты, указанный при регистрации.",
+    "uk": "Використовуйте адресу електронної пошти, зазначену під час реєстрації."
+  },
+  "Code auf der Anmeldeseite eingeben": {
+    "ru": "Ввести код на странице входа",
+    "uk": "Ввести код на сторінці входу"
+  },
+  "Das Profilbild darf maximal 5 MB groß sein.": {
+    "ru": "Размер фото профиля не должен превышать 5 МБ.",
+    "uk": "Розмір фото профілю не повинен перевищувати 5 МБ."
+  },
+  "Datei wählen": {
+    "ru": "Выбрать файл",
+    "uk": "Вибрати файл"
+  },
+  "Datenschutz-Zustimmung": {
+    "ru": "Согласие на обработку данных",
+    "uk": "Згода на обробку даних"
+  },
+  "Datenschutzhinweisen": {
+    "ru": "уведомлении о защите данных",
+    "uk": "повідомленні про захист даних"
+  },
+  "Den Aktivierungscode nach einer Registrierung finden Sie unter": {
+    "ru": "После регистрации код активации доступен на странице",
+    "uk": "Після реєстрації код активації доступний на сторінці"
+  },
+  "Der Aktivierungscode ist abgelaufen oder wurde gesperrt. Fordern Sie einen neuen Code an.": {
+    "ru": "Срок действия кода истёк или код заблокирован. Запросите новый код.",
+    "uk": "Термін дії коду минув або код заблоковано. Запросіть новий код."
+  },
+  "Der Aktivierungscode ist abgelaufen. Bitte fordern Sie einen neuen Code an.": {
+    "ru": "Срок действия кода активации истёк. Запросите новый код.",
+    "uk": "Термін дії коду активації минув. Запросіть новий код."
+  },
+  "Der Aktivierungscode ist abgelaufen. Bitte fordern Sie unter /examplemail einen neuen Code an.": {
+    "ru": "Срок действия кода активации истёк. Запросите новый код на странице /examplemail.",
+    "uk": "Термін дії коду активації минув. Запросіть новий код на сторінці /examplemail."
+  },
+  "Der Aktivierungscode ist ungültig. Prüfen Sie den Code unter /examplemail.": {
+    "ru": "Неверный код активации. Проверьте код на странице /examplemail.",
+    "uk": "Неправильний код активації. Перевірте код на сторінці /examplemail."
+  },
+  "Der Aktivierungscode wurde bereits verwendet.": {
+    "ru": "Этот код активации уже использован.",
+    "uk": "Цей код активації вже використано."
+  },
+  "Der Bestätigungslink ist ungültig oder abgelaufen. Bitte fordern Sie eine neue Bestätigungs-E-Mail an.": {
+    "ru": "Ссылка подтверждения недействительна или срок её действия истёк. Запросите новое письмо с подтверждением.",
+    "uk": "Посилання підтвердження недійсне або термін його дії минув. Запросіть новий лист із підтвердженням."
+  },
+  "Der Reset-Link ist abgelaufen oder ungültig. Fordern Sie einfach einen neuen an.": {
+    "ru": "Ссылка для сброса пароля недействительна или срок её действия истёк. Запросите новую ссылку.",
+    "uk": "Посилання для скидання пароля недійсне або термін його дії минув. Запросіть нове посилання."
+  },
+  "Diese Adresse wird für die Bestätigung und für spätere Logins verwendet.": {
+    "ru": "Этот адрес используется для подтверждения и последующих входов.",
+    "uk": "Ця адреса використовується для підтвердження та подальших входів."
+  },
+  "Diese E-Mail wird bereits verwendet.": {
+    "ru": "Этот адрес электронной почты уже используется.",
+    "uk": "Ця адреса електронної пошти вже використовується."
+  },
+  "Dieser Link ist abgelaufen oder unvollständig.": {
+    "ru": "Срок действия ссылки истёк или ссылка неполная.",
+    "uk": "Термін дії посилання минув або посилання неповне."
+  },
+  "Dieser Schritt entfernt Ihr Konto und Ihre hinterlegten Profildaten. Sie können sich später jederzeit neu registrieren.": {
+    "ru": "Аккаунт и сохранённые данные профиля будут удалены. Позже вы сможете зарегистрироваться заново.",
+    "uk": "Обліковий запис і збережені дані профілю буде видалено. Пізніше ви зможете зареєструватися знову."
+  },
+  "E-Mail": {
+    "ru": "Электронная почта",
+    "uk": "Електронна пошта"
+  },
+  "E-Mail ist zu lang für das Benutzerkonto.": {
+    "ru": "Адрес электронной почты слишком длинный для аккаунта.",
+    "uk": "Адреса електронної пошти задовга для облікового запису."
+  },
+  "E-Mail-Adresse": {
+    "ru": "Адрес электронной почты",
+    "uk": "Адреса електронної пошти"
+  },
+  "E-Mail-Adresse und Passwort werden nach der Aktivierung freigeschaltet.": {
+    "ru": "Поля электронной почты и пароля станут доступны после активации.",
+    "uk": "Поля електронної пошти та пароля стануть доступні після активації."
+  },
+  "Ein neuer Aktivierungscode wurde erstellt. Er ist eine Minute gültig.": {
+    "ru": "Создан новый код активации. Он действителен одну минуту.",
+    "uk": "Створено новий код активації. Він дійсний одну хвилину."
+  },
+  "Eine Minute gültig. Ablaufzeit:": {
+    "ru": "Действителен одну минуту. Истекает в:",
+    "uk": "Дійсний одну хвилину. Термін дії спливає о:"
+  },
+  "Erneut versuchen": {
+    "ru": "Повторить попытку",
+    "uk": "Спробувати ще раз"
+  },
+  "Für diesen Browser liegt keine offene Aktivierung vor. Registrieren Sie sich oder melden Sie sich mit Ihrem noch nicht bestätigten Konto an, um einen Code anzufordern.": {
+    "ru": "В этом браузере нет аккаунта, ожидающего активации. Зарегистрируйтесь или введите данные ещё не подтверждённого аккаунта на странице входа, чтобы запросить код.",
+    "uk": "У цьому браузері немає облікового запису, що очікує активації. Зареєструйтеся або введіть дані ще не підтвердженого облікового запису на сторінці входу, щоб запросити код."
+  },
+  "Für eine offene Aktivierung in diesem Browser finden Sie den neuen Code unter": {
+    "ru": "Для аккаунта, ожидающего активации в этом браузере, новый код доступен на странице",
+    "uk": "Для облікового запису, що очікує активації в цьому браузері, новий код доступний на сторінці"
+  },
+  "Für:": {
+    "ru": "Для:",
+    "uk": "Для:"
+  },
+  "Geben Sie Ihre E-Mail-Adresse ein. Wir senden Ihnen einen Link zum Zurücksetzen.": {
+    "ru": "Введите адрес электронной почты. Мы отправим ссылку для сброса пароля.",
+    "uk": "Введіть адресу електронної пошти. Ми надішлемо посилання для скидання пароля."
+  },
+  "Geben Sie den sechsstelligen Code aus /examplemail ein. Er ist eine Minute gültig.": {
+    "ru": "Введите шестизначный код со страницы /examplemail. Он действителен одну минуту.",
+    "uk": "Введіть шестизначний код зі сторінки /examplemail. Він дійсний одну хвилину."
+  },
+  "Hier finden Sie den Aktivierungscode für Ihre Registrierung im selben Browser. Eine E-Mail an ein echtes Postfach ist dafür nicht erforderlich.": {
+    "ru": "Здесь отображается код активации для регистрации в этом же браузере. Отправка письма на настоящий почтовый ящик не требуется.",
+    "uk": "Тут відображається код активації для реєстрації в цьому самому браузері. Надсилання листа на справжню поштову скриньку не потрібне."
+  },
+  "Ich stimme zu, dass meine E-Mail-Adresse, mein Passwort in geschützter Form und optional mein Profilbild zur Kontoerstellung, Anmeldung und Kontoverwaltung verarbeitet werden. Hinweise dazu stehen in den": {
+    "ru": "Я соглашаюсь на обработку моего адреса электронной почты, пароля в защищённом виде и, при наличии, фото профиля для создания аккаунта, входа и управления аккаунтом. Подробности приведены в",
+    "uk": "Я погоджуюся на обробку моєї адреси електронної пошти, пароля в захищеному вигляді та, за наявності, фото профілю для створення облікового запису, входу та керування ним. Подробиці наведено в"
+  },
+  "Ihr Aktivierungscode:": {
+    "ru": "Ваш код активации:",
+    "uk": "Ваш код активації:"
+  },
+  "Ihr Konto ist aktiviert. Sie können sich jetzt mit E-Mail-Adresse und Passwort anmelden.": {
+    "ru": "Аккаунт активирован. Теперь вы можете войти с адресом электронной почты и паролем.",
+    "uk": "Обліковий запис активовано. Тепер ви можете увійти за допомогою адреси електронної пошти та пароля."
+  },
+  "Ihr Konto ist gespeichert. Öffnen Sie das": {
+    "ru": "Аккаунт сохранён. Откройте",
+    "uk": "Обліковий запис збережено. Відкрийте"
+  },
+  "Ihr Konto wurde endgültig gelöscht.": {
+    "ru": "Аккаунт безвозвратно удалён.",
+    "uk": "Обліковий запис безповоротно видалено."
+  },
+  "Ihr Konto wurde gespeichert. Bitte aktivieren Sie es mit Ihrem Aktivierungscode.": {
+    "ru": "Аккаунт сохранён. Активируйте его с помощью кода активации.",
+    "uk": "Обліковий запис збережено. Активуйте його за допомогою коду активації."
+  },
+  "Ihr Passwort": {
+    "ru": "Ваш пароль",
+    "uk": "Ваш пароль"
+  },
+  "Ihr Passwort wurde erfolgreich geändert. Sie können sich jetzt mit dem neuen Passwort anmelden.": {
+    "ru": "Пароль успешно изменён. Теперь вы можете войти с новым паролем.",
+    "uk": "Пароль успішно змінено. Тепер ви можете увійти з новим паролем."
+  },
+  "Ihre E-Mail-Adresse wurde bestätigt. Sie sind jetzt eingeloggt.": {
+    "ru": "Адрес электронной почты подтверждён. Вы вошли в аккаунт.",
+    "uk": "Адресу електронної пошти підтверджено. Ви увійшли в обліковий запис."
+  },
+  "Ihre Kontodaten wurden aktualisiert.": {
+    "ru": "Данные аккаунта обновлены.",
+    "uk": "Дані облікового запису оновлено."
+  },
+  "Ist Ihr Bestätigungslink abgelaufen oder die E-Mail nicht angekommen? Fordern Sie hier einen neuen Link für Ihr noch nicht bestätigtes Konto an.": {
+    "ru": "Срок действия ссылки истёк или письмо не пришло? Запросите новую ссылку для ещё не подтверждённого аккаунта.",
+    "uk": "Термін дії посилання минув або лист не надійшов? Запросіть нове посилання для ще не підтвердженого облікового запису."
+  },
+  "Keine Datei ausgewählt": {
+    "ru": "Файл не выбран",
+    "uk": "Файл не вибрано"
+  },
+  "Keine E-Mail hinterlegt": {
+    "ru": "Адрес электронной почты не указан",
+    "uk": "Адресу електронної пошти не вказано"
+  },
+  "Konto": {
+    "ru": "Аккаунт",
+    "uk": "Обліковий запис"
+  },
+  "Konto aktivieren": {
+    "ru": "Активировать аккаунт",
+    "uk": "Активувати обліковий запис"
+  },
+  "Konto anlegen": {
+    "ru": "Создать аккаунт",
+    "uk": "Створити обліковий запис"
+  },
+  "Konto anlegen und E-Mail bestätigen": {
+    "ru": "Создать аккаунт и подтвердить почту",
+    "uk": "Створити обліковий запис і підтвердити пошту"
+  },
+  "Konto endgültig löschen": {
+    "ru": "Удалить аккаунт безвозвратно",
+    "uk": "Видалити обліковий запис безповоротно"
+  },
+  "Konto für Beirit Digital anlegen, um geschützte Funktionen und persönliche Anliegen zu verwalten.": {
+    "ru": "Создайте аккаунт Beirit Digital для доступа к защищённым функциям и управления личными данными.",
+    "uk": "Створіть обліковий запис Beirit Digital для доступу до захищених функцій і керування особистими даними."
+  },
+  "Konto löschen": {
+    "ru": "Удалить аккаунт",
+    "uk": "Видалити обліковий запис"
+  },
+  "Konto löschen | Beirit Digital": {
+    "ru": "Удалить аккаунт | Beirit Digital",
+    "uk": "Видалити обліковий запис | Beirit Digital"
+  },
+  "Konto speichern und Aktivierungscode abrufen": {
+    "ru": "Сохранить аккаунт и получить код активации",
+    "uk": "Зберегти обліковий запис і отримати код активації"
+  },
+  "Konto speichern, /examplemail im selben Browser öffnen und den Aktivierungscode auf der Anmeldeseite eingeben. Danach melden Sie sich mit E-Mail-Adresse und Passwort an.": {
+    "ru": "Сохраните аккаунт, откройте /examplemail в этом же браузере и введите код активации на странице входа. Затем войдите с адресом электронной почты и паролем.",
+    "uk": "Збережіть обліковий запис, відкрийте /examplemail у цьому самому браузері та введіть код активації на сторінці входу. Потім увійдіть за допомогою адреси електронної пошти та пароля."
+  },
+  "Link senden": {
+    "ru": "Отправить ссылку",
+    "uk": "Надіслати посилання"
+  },
+  "Link ungültig": {
+    "ru": "Недействительная ссылка",
+    "uk": "Недійсне посилання"
+  },
+  "Login": {
+    "ru": "Вход",
+    "uk": "Вхід"
+  },
+  "Login erfolgreich. Willkommen zurück!": {
+    "ru": "Вы успешно вошли. С возвращением!",
+    "uk": "Ви успішно увійшли. З поверненням!"
+  },
+  "Lokale Demo:": {
+    "ru": "Локальная демоверсия:",
+    "uk": "Локальна демоверсія:"
+  },
+  "Lokale Demo: Die Bestätigungs-E-Mail wird in der Serverkonsole ausgegeben. Es wird keine E-Mail an ein Postfach zugestellt.": {
+    "ru": "Локальная демоверсия: письмо с подтверждением отображается в консоли сервера. Оно не отправляется на почтовый ящик.",
+    "uk": "Локальна демоверсія: лист із підтвердженням відображається в консолі сервера. Він не надсилається на поштову скриньку."
+  },
+  "Lokale Demo: Die E-Mail mit dem Bestätigungslink wird in der Serverkonsole ausgegeben.": {
+    "ru": "Локальная демоверсия: письмо со ссылкой подтверждения отображается в консоли сервера.",
+    "uk": "Локальна демоверсія: лист із посиланням підтвердження відображається в консолі сервера."
+  },
+  "Lokale Demo: Die E-Mail mit dem Wiederherstellungslink wird in der Serverkonsole ausgegeben.": {
+    "ru": "Локальная демоверсия: письмо со ссылкой восстановления отображается в консоли сервера.",
+    "uk": "Локальна демоверсія: лист із посиланням відновлення відображається в консолі сервера."
+  },
+  "Lokale Demo: Prüfen Sie die Serverkonsole. In dieser Konfiguration wird keine E-Mail an ein Postfach zugestellt.": {
+    "ru": "Локальная демоверсия: проверьте консоль сервера. В этой конфигурации письма не отправляются на почтовый ящик.",
+    "uk": "Локальна демоверсія: перевірте консоль сервера. У цій конфігурації листи не надсилаються на поштову скриньку."
+  },
+  "Lokales Beispielpostfach": {
+    "ru": "Локальный демонстрационный почтовый ящик",
+    "uk": "Локальна демонстраційна поштова скринька"
+  },
+  "Mein Demo-Konto": {
+    "ru": "Мой демоаккаунт",
+    "uk": "Мій демонстраційний обліковий запис"
+  },
+  "Mein Demo-Konto | Beirit Web": {
+    "ru": "Мой демоаккаунт | Beirit Web",
+    "uk": "Мій демонстраційний обліковий запис | Beirit Web"
+  },
+  "Mindestens 8 Zeichen": {
+    "ru": "Не менее 8 символов",
+    "uk": "Щонайменше 8 символів"
+  },
+  "Mindestens 8 Zeichen. Bitte keine leicht erratbaren Angaben wie Ihren Namen oder Ihre E-Mail-Adresse verwenden.": {
+    "ru": "Не менее 8 символов. Не используйте легко угадываемые данные, например имя или адрес электронной почты.",
+    "uk": "Щонайменше 8 символів. Не використовуйте дані, які легко вгадати, наприклад ім’я або адресу електронної пошти."
+  },
+  "Nach dem Absenden erhalten Sie eine Bestätigungs-E-Mail. Erst nach dem Klick auf den Link ist Ihr Konto aktiv.": {
+    "ru": "После отправки формы вы получите письмо с подтверждением. Аккаунт станет активным после перехода по ссылке.",
+    "uk": "Після надсилання форми ви отримаєте лист із підтвердженням. Обліковий запис стане активним після переходу за посиланням."
+  },
+  "Nach der Registrierung bestätigen Sie Ihre E-Mail-Adresse über einen Link. Erst danach ist Ihr Konto aktiv und Sie können sich anmelden.": {
+    "ru": "После регистрации подтвердите адрес электронной почты по ссылке. После этого аккаунт станет активным и вы сможете войти.",
+    "uk": "Після реєстрації підтвердьте адресу електронної пошти за посиланням. Після цього обліковий запис стане активним і ви зможете увійти."
+  },
+  "Nach der Registrierung finden Sie unter /examplemail einen Aktivierungscode. Geben Sie ihn auf der Anmeldeseite ein. Der Code ist eine Minute gültig.": {
+    "ru": "После регистрации код активации появится на странице /examplemail. Введите его на странице входа. Код действителен одну минуту.",
+    "uk": "Після реєстрації код активації з’явиться на сторінці /examplemail. Введіть його на сторінці входу. Код дійсний одну хвилину."
+  },
+  "Neuen Aktivierungscode anfordern": {
+    "ru": "Запросить новый код активации",
+    "uk": "Запросити новий код активації"
+  },
+  "Neuen Link anfordern": {
+    "ru": "Запросить новую ссылку",
+    "uk": "Запросити нове посилання"
+  },
+  "Neues Passwort": {
+    "ru": "Новый пароль",
+    "uk": "Новий пароль"
+  },
+  "Neues Passwort setzen": {
+    "ru": "Установить новый пароль",
+    "uk": "Установити новий пароль"
+  },
+  "Passwort": {
+    "ru": "Пароль",
+    "uk": "Пароль"
+  },
+  "Passwort aktualisiert": {
+    "ru": "Пароль обновлён",
+    "uk": "Пароль оновлено"
+  },
+  "Passwort anzeigen": {
+    "ru": "Показать пароль",
+    "uk": "Показати пароль"
+  },
+  "Passwort bestätigen": {
+    "ru": "Подтвердить пароль",
+    "uk": "Підтвердити пароль"
+  },
+  "Passwort wiederherstellen": {
+    "ru": "Восстановить пароль",
+    "uk": "Відновити пароль"
+  },
+  "Passwort wiederholen": {
+    "ru": "Повторите пароль",
+    "uk": "Повторіть пароль"
+  },
+  "Passwort zurücksetzen": {
+    "ru": "Сбросить пароль",
+    "uk": "Скинути пароль"
+  },
+  "Profilbild (optional)": {
+    "ru": "Фото профиля (необязательно)",
+    "uk": "Фото профілю (необов’язково)"
+  },
+  "Registrieren": {
+    "ru": "Зарегистрироваться",
+    "uk": "Зареєструватися"
+  },
+  "Registrieren | Beirit Digital": {
+    "ru": "Регистрация | Beirit Digital",
+    "uk": "Реєстрація | Beirit Digital"
+  },
+  "Registrierung": {
+    "ru": "Регистрация",
+    "uk": "Реєстрація"
+  },
+  "Registrierung gerade nicht möglich. Bitte später erneut versuchen.": {
+    "ru": "Сейчас регистрация недоступна. Повторите попытку позже.",
+    "uk": "Зараз реєстрація недоступна. Спробуйте пізніше."
+  },
+  "Registrierung läuft...": {
+    "ru": "Выполняется регистрация...",
+    "uk": "Виконується реєстрація..."
+  },
+  "Sie sind bereits angemeldet. Falls Sie ein weiteres Konto anlegen wollen, melden Sie sich bitte zuerst ab.": {
+    "ru": "Вы уже вошли. Чтобы создать другой аккаунт, сначала выйдите.",
+    "uk": "Ви вже увійшли. Щоб створити інший обліковий запис, спочатку вийдіть."
+  },
+  "Sie wurden nach %(minutes)s Minuten Inaktivität automatisch auf allen Geräten abgemeldet.": {
+    "ru": "Вы были автоматически выведены со всех устройств после %(minutes)s минут бездействия.",
+    "uk": "Вас було автоматично виведено з усіх пристроїв після %(minutes)s хвилин бездіяльності."
+  },
+  "Speichern": {
+    "ru": "Сохранить",
+    "uk": "Зберегти"
+  },
+  "Ungültige Eingabe.": {
+    "ru": "Недопустимые данные.",
+    "uk": "Неприпустимі дані."
+  },
+  "Vergeben Sie jetzt ein neues Passwort für Ihr Konto.": {
+    "ru": "Установите новый пароль для аккаунта.",
+    "uk": "Установіть новий пароль для облікового запису."
+  },
+  "Weitere Aktionen": {
+    "ru": "Другие действия",
+    "uk": "Інші дії"
+  },
+  "Wenn die Adresse zu einem noch nicht bestätigten Konto gehört, wurde eine neue Bestätigungs-E-Mail angefordert. Bitte prüfen Sie auch Ihren Spam-Ordner.": {
+    "ru": "Если этот адрес относится к ещё не подтверждённому аккаунту, запрошено новое письмо с подтверждением. Проверьте также папку «Спам».",
+    "uk": "Якщо ця адреса належить ще не підтвердженому обліковому запису, запитано новий лист із підтвердженням. Перевірте також папку «Спам»."
+  },
+  "Wenn ein Konto mit dieser E-Mail existiert, wurde Ihnen ein Link zum Zurücksetzen gesendet.": {
+    "ru": "Если аккаунт с этим адресом существует, ссылка для сброса пароля отправлена.",
+    "uk": "Якщо обліковий запис із цією адресою існує, посилання для скидання пароля надіслано."
+  },
+  "Wiederherstellungs-E-Mails werden in der Serverkonsole ausgegeben.": {
+    "ru": "Письма для восстановления отображаются в консоли сервера.",
+    "uk": "Листи для відновлення відображаються в консолі сервера."
+  },
+  "Wiederherstellungslink angefordert": {
+    "ru": "Ссылка восстановления запрошена",
+    "uk": "Посилання відновлення запитано"
+  },
+  "Zum Login": {
+    "ru": "Перейти ко входу",
+    "uk": "Перейти до входу"
+  },
+  "Zur Anmeldung": {
+    "ru": "Перейти ко входу",
+    "uk": "Перейти до входу"
+  },
+  "Zurück zum Login": {
+    "ru": "Вернуться ко входу",
+    "uk": "Повернутися до входу"
+  },
+  "im selben Browser. Geben Sie den dort angezeigten Code hier ein. Er ist eine Minute gültig; danach können Sie einen neuen anfordern.": {
+    "ru": "в этом же браузере. Введите здесь указанный там код. Он действителен одну минуту; затем можно запросить новый.",
+    "uk": "у цьому самому браузері. Введіть тут зазначений там код. Він дійсний одну хвилину; потім можна запросити новий."
+  },
+  "lokale Beispielpostfach /examplemail": {
+    "ru": "локальный демонстрационный почтовый ящик /examplemail",
+    "uk": "локальну демонстраційну поштову скриньку /examplemail"
+  },
+  "Öffnen Sie /examplemail im selben Browser. Geben Sie den dort angezeigten Aktivierungscode hier ein.": {
+    "ru": "Откройте /examplemail в этом же браузере. Введите здесь указанный там код активации.",
+    "uk": "Відкрийте /examplemail у цьому самому браузері. Введіть тут зазначений там код активації."
+  },
+  "Vorname": {
+    "ru": "Имя",
+    "uk": "Ім’я"
+  },
+  "Nachname": {
+    "ru": "Фамилия",
+    "uk": "Прізвище"
+  },
+  "JPG oder PNG, maximal 5 MB, idealerweise quadratisch.": {
+    "ru": "JPG или PNG, не более 5 МБ, желательно квадратное фото.",
+    "uk": "JPG або PNG, не більше 5 МБ, бажано квадратне фото."
+  },
+  "Hauptnavigation": {
+    "ru": "Главная навигация",
+    "uk": "Головна навігація"
+  },
+  "Projekte": {
+    "ru": "Проекты",
+    "uk": "Проєкти"
+  },
+  "Kompetenzen": {
+    "ru": "Навыки",
+    "uk": "Навички"
+  },
+  "Über mich": {
+    "ru": "Обо мне",
+    "uk": "Про мене"
+  },
+  "Kontakt": {
+    "ru": "Контакты",
+    "uk": "Контакти"
+  },
+  "Mein Konto": {
+    "ru": "Мой аккаунт",
+    "uk": "Мій обліковий запис"
+  },
+  "Impressum": {
+    "ru": "Выходные данные",
+    "uk": "Вихідні дані"
+  },
+  "Datenschutz": {
+    "ru": "Защита данных",
+    "uk": "Захист даних"
+  },
+  "Falls keine Aktivierung offen ist, geben Sie zuerst die Zugangsdaten Ihres noch nicht bestätigten Kontos auf der Anmeldeseite ein.": {
+    "ru": "Если нет аккаунта, ожидающего активации, сначала введите данные ещё не подтверждённого аккаунта на странице входа.",
+    "uk": "Якщо немає облікового запису, що очікує активації, спочатку введіть дані ще не підтвердженого облікового запису на сторінці входу."
+  },
+  "Fordern Sie einen neuen Aktivierungscode für die offene Registrierung in diesem Browser an. Sie finden ihn unter /examplemail.": {
+    "ru": "Запросите новый код для регистрации, ожидающей активации в этом браузере. Код появится на странице /examplemail.",
+    "uk": "Запросіть новий код для реєстрації, що очікує активації в цьому браузері. Код з’явиться на сторінці /examplemail."
+  },
+  "Anmelden | Beirit Digital": {
+    "ru": "Вход | Beirit Digital",
+    "uk": "Вхід | Beirit Digital"
+  },
+  "Melde dich bei Beirit Digital an, um deine persönlichen Projekte wie ENBT Botanic zu nutzen. Mit E-Mail und Passwort einloggen oder den Zugang wiederherstellen.": {
+    "ru": "Войдите в Beirit Digital, чтобы пользоваться личными проектами, например ENBT Botanic. Вход по электронной почте и паролю или восстановление доступа.",
+    "uk": "Увійдіть у Beirit Digital, щоб користуватися особистими проєктами, наприклад ENBT Botanic. Вхід за електронною поштою та паролем або відновлення доступу."
+  },
+  "Hallo,": {
+    "ru": "Здравствуйте,",
+    "uk": "Вітаємо,"
+  },
+  "klicken Sie auf den folgenden Link, um Ihr Passwort zurückzusetzen:": {
+    "ru": "перейдите по следующей ссылке, чтобы сбросить пароль:",
+    "uk": "перейдіть за цим посиланням, щоб скинути пароль:"
+  },
+  "Wenn Sie das nicht waren, ignorieren Sie diese E-Mail.": {
+    "ru": "Если вы не запрашивали сброс пароля, проигнорируйте это письмо.",
+    "uk": "Якщо ви не запитували скидання пароля, проігноруйте цей лист."
+  },
+  "Passwort zurücksetzen – Beirit Digital": {
+    "ru": "Сброс пароля – Beirit Digital",
+    "uk": "Скидання пароля – Beirit Digital"
+  },
+  "Bitte bestätigen Sie Ihre E-Mail-Adresse bei Beirit Digital": {
+    "ru": "Подтвердите адрес электронной почты в Beirit Digital",
+    "uk": "Підтвердьте адресу електронної пошти в Beirit Digital"
+  },
+  "bitte bestätigen Sie Ihre E-Mail-Adresse für Ihr Konto bei Beirit Digital.": {
+    "ru": "подтвердите адрес электронной почты для аккаунта Beirit Digital.",
+    "uk": "підтвердьте адресу електронної пошти для облікового запису Beirit Digital."
+  },
+  "Bestätigungslink:": {
+    "ru": "Ссылка подтверждения:",
+    "uk": "Посилання підтвердження:"
+  },
+  "Gültigkeit in Tagen:": {
+    "ru": "Срок действия в днях:",
+    "uk": "Термін дії у днях:"
+  },
+  "Falls Sie diese Registrierung nicht durchgeführt haben, ignorieren Sie diese E-Mail bitte.": {
+    "ru": "Если вы не регистрировались, проигнорируйте это письмо.",
+    "uk": "Якщо ви не реєструвалися, проігноруйте цей лист."
+  },
+  "Aktivierungscode abgelaufen?": {
+    "ru": "Срок действия кода активации истёк?",
+    "uk": "Термін дії коду активації минув?"
+  }
+}

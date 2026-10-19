@@ -6,6 +6,8 @@ from lessons import views as lessons_views
 
 from . import views
 from .verification import AccountVerificationResendView
+from .local_activation import example_mail
+from .housing_api import housing_account_session_api
 
 app_name = "pages"
 
@@ -51,7 +53,7 @@ urlpatterns = [
   path("search-profiles", RedirectView.as_view(url="/wohnungssuche/search-profiles", permanent=True, query_string=True), name="housing_search_profiles_spa"),
   path("sources", RedirectView.as_view(url="/wohnungssuche/sources", permanent=True, query_string=True), name="housing_sources_spa"),
   path("information", RedirectView.as_view(url="/wohnungssuche/information", permanent=True, query_string=True), name="housing_information_spa"),
-  path("login", RedirectView.as_view(url="/wohnungssuche/login", permanent=True, query_string=True), name="housing_login_spa"),
+  path("login", RedirectView.as_view(pattern_name="pages:login", permanent=False, query_string=True), name="housing_login_spa"),
   path("register", RedirectView.as_view(url="/wohnungssuche/register", permanent=True, query_string=True), name="housing_register_spa"),
   path("weltfrauentag/", views.womens_day, name="womens_day"),
   path("handbuch/", views.manual, name="manual"),
@@ -75,6 +77,8 @@ urlpatterns = [
   path("impressum/", RedirectView.as_view(pattern_name="pages:imprint", permanent=True), name="imprint_slash_redirect"),
   path("dolmetscher/", RedirectView.as_view(url="/kompetenzen", permanent=True), name="interpreter_list"),
   path("register/", views.register, name="register"),
+  path("examplemail", example_mail, name="example_mail"),
+  path("examplemail/", example_mail, name="example_mail_slash"),
   path("email-bestaetigung/", AccountVerificationResendView.as_view(), name="verification_resend"),
   path("verify-email/<uidb64>/<token>/", views.verify_email, name="verify_email"),
   path("login/", views.login_view, name="login"),
@@ -86,6 +90,7 @@ urlpatterns = [
   path("spenden/", views.donate, name="donate"),
   path("wohnungssuche-api/register/", views.housing_register_api, name="housing_register_api"),
   path("wohnungssuche-api/token-auth/", views.housing_token_auth_api, name="housing_token_auth_api"),
+  path("wohnungssuche-api/account-session/", housing_account_session_api, name="housing_account_session_api"),
   path("wohnungssuche-api/logout/", views.housing_logout_api, name="housing_logout_api"),
   path("wohnungssuche-api/listings/", views.housing_listings_api, name="housing_listings_api"),
   path("wohnungssuche-api/search-profiles/", views.housing_search_profiles_api, name="housing_search_profiles_api"),

@@ -7,6 +7,7 @@ from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from django.core import signing
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
@@ -14,7 +15,7 @@ from django.utils import timezone
 from django.utils.crypto import constant_time_compare
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods, require_POST
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from .models import HousingSearchLocation, HousingSearchProfile, HousingTokenRevocation
 
@@ -75,6 +76,14 @@ def make_housing_auth_token(user):
 
 def _unauthorized():
     return JsonResponse({"detail": "Bitte melde dich erneut an."}, status=401)
+
+
+@never_cache
+@require_GET
+def housing_account_session_api(request):
+    if not request.user.is_authenticated or not request.user.is_active:
+        return _unauthorized()
+    return JsonResponse({"token": make_housing_auth_token(request.user), "username": request.user.username})
 
 
 def _not_found():
@@ -196,6 +205,8 @@ def housing_logout_api(request):
         token_hash=hashlib.sha256(token.encode("utf-8")).hexdigest(),
         defaults={"user": user, "expires_at": timezone.now() + timedelta(seconds=HOUSING_TOKEN_MAX_AGE)},
     )
+    if request.user.is_authenticated and request.user.pk == user.pk:
+        logout(request)
     return HttpResponse(status=204)
 
 

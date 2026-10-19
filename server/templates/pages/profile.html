@@ -1,17 +1,14 @@
-{% extends "base_public.html" %}
-{% block title %}Mein Demo-Konto | Beirit Web{% endblock %}
+{% extends "registration/account_base.html" %}
+{% block title %}{% account_text "Mein Demo-Konto | Beirit Web" %}{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
-{% block content %}
-<main class="container" style="max-width: 40rem; margin: 6rem auto 3rem; padding: 1.5rem;">
-  <h1>Mein Demo-Konto</h1>
-  <p>{{ request.user.email|default:"Keine E-Mail hinterlegt" }}</p>
-  {% if messages %}{% for message in messages %}<p role="status">{{ message }}</p>{% endfor %}{% endif %}
+{% block account_title %}{% account_text "Mein Demo-Konto" %}{% endblock %}
+{% block account_content %}
+  <p>{% if request.user.email %}{{ request.user.email }}{% else %}{% account_text "Keine E-Mail hinterlegt" %}{% endif %}</p>
   {% if profile.image_url %}
-  <img src="{{ profile.image_url }}" alt="Aktuelles Profilbild" width="80" height="80" style="object-fit: cover; border-radius: 50%;" />
-  <form method="post" class="form">{% csrf_token %}<input type="hidden" name="image-remove_image" value="on" /><button type="submit" name="image_submit">Bild entfernen</button></form>
+  <img src="{{ profile.image_url }}" alt="{% account_text "Aktuelles Profilbild" %}" width="80" height="80" style="object-fit: cover; border-radius: 50%;" />
+  <form method="post" class="form">{% csrf_token %}<input type="hidden" name="image-remove_image" value="on" /><button type="submit" name="image_submit">{% account_text "Bild entfernen" %}</button></form>
   {% endif %}
-  <form method="post" class="form">{% csrf_token %}{{ account_form.as_p }}<button class="btn" type="submit" name="account_submit">Speichern</button></form>
+  <form method="post" class="form">{% csrf_token %}{{ account_form.as_p }}<button class="btn" type="submit" name="account_submit">{% account_text "Speichern" %}</button></form>
   <p><a href="/deutschlive/">DeutschLive</a> · <a href="/botanic/">Botanic</a> · <a href="/shop/">Shop</a></p>
-  <p><a href="{% url 'pages:delete_account' %}">Konto löschen</a></p>
-</main>
+  <p><a href="{% url 'pages:delete_account' %}">{% account_text "Konto löschen" %}</a></p>
 {% endblock %}

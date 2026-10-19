@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   color: #17211d;
   background: #eef2ef;
   font-family:
@@ -540,7 +541,14 @@ select {
   border: 1px solid #d5ded9;
   border-radius: 8px;
   padding: 0 12px;
+  background: #fff;
+  color: #17211d;
 }
+
+:is(input, textarea)::placeholder { color: #475b52; opacity: 1; }
+.login-panel [role="alert"], .profile-form .error { color: #9a3412; }
+.login-panel .success { color: #14532d; }
+button:disabled { background: #e2e8e4; color: #34473e; opacity: 1; cursor: not-allowed; }
 
 .error {
   color: #a43422;

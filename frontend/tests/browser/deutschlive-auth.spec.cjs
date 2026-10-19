@@ -19,6 +19,7 @@ test.beforeEach(async ({ context, page, baseURL }) => {
 test.afterEach(async ({ page }) => expect(page.errors).toEqual([]));
 
 test("registration requires email confirmation and offers a replacement link before login", async ({ page }) => {
+  const { account: accountCopy } = require("../../../apps/deutsch-live/src/i18n/de.json");
   await page.route("**/deutschlive/api/auth/me/", route => route.fulfill({ json: { user: null } }));
   let registrations = 0;
   await page.route("**/deutschlive/api/auth/register/", route => {
@@ -30,7 +31,7 @@ test("registration requires email confirmation and offers a replacement link bef
   }));
   await page.goto("/deutschlive/account");
   await page.getByRole("button", { name: "Registrieren", exact: true }).click();
-  await expect(page.getByText("Erst danach ist die Anmeldung möglich.", { exact: false })).toBeVisible();
+  await expect(page.getByText(accountCopy.registrationRequiresConfirmation, { exact: true })).toBeVisible();
   await page.getByLabel("Benutzername", { exact: true }).fill("registration-example");
   await page.getByLabel("E-Mail", { exact: true }).fill("registration@example.test");
   await page.getByLabel("Passwort", { exact: true }).fill("Fictional-registration-123!");
@@ -49,7 +50,7 @@ test("registration requires email confirmation and offers a replacement link bef
   await expect(page.locator("#account-status")).toContainText("bestätigen Sie zuerst Ihre E-Mail-Adresse");
   await page.getByRole("link", { name: "Bestätigungs-E-Mail erneut senden", exact: true }).click();
   await expect(page).toHaveURL(/\/email-bestaetigung\/$/);
-  await expect(page.getByRole("form", { name: "Bestätigungs-E-Mail erneut senden", exact: true })).toBeVisible();
+  await expect(page.getByRole("form", { name: "Neuen Aktivierungscode anfordern", exact: true })).toBeVisible();
 });
 
 for (const action of [
