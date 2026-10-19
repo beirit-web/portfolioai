@@ -1,7 +1,7 @@
 # Public portfolio workspace
 
 - This repository is a portfolio with demonstrative source code and sample configuration.
-- The only Git push destination is `git@github.com:beirit-web/angefangenes-portfolio.git`.
+- The only Git push destination is `git@github.com:beirit-web/portfolioai.git`.
 - Do not push unless the user explicitly requests a push for the current changes.
 - Never deploy from this workspace to Fly, IONOS or a previous production environment.
 - Keep payments and billing webhooks disabled. Real credentials must never enable transactions here.

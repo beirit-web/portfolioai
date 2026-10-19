@@ -2,10 +2,10 @@
 set -euo pipefail
 
 case "${2:-}" in
-  git@github.com:beirit-web/angefangenes-portfolio.git)
+  git@github.com:beirit-web/portfolioai.git)
     ;;
   *)
-    echo "Push blocked: this portfolio may only be pushed to git@github.com:beirit-web/angefangenes-portfolio.git." >&2
+    echo "Push blocked: this portfolio may only be pushed to git@github.com:beirit-web/portfolioai.git." >&2
     exit 1
     ;;
 esac

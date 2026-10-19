@@ -77,7 +77,7 @@ Tests belegen geprüfte Abläufe; sie sind keine Zusage allgemeiner Produktreife
 
 ## Repository und Lizenz
 
-Das einzige Push-Ziel ist `git@github.com:beirit-web/angefangenes-portfolio.git`.
+Das einzige Push-Ziel ist `git@github.com:beirit-web/portfolioai.git`.
 Pushes benötigen einen ausdrücklichen Auftrag. Ein Push löst kein Deployment aus.
 Der lokale Push-Schutz lässt sich mit `git config core.hooksPath scripts/git-hooks`
 aktivieren.
