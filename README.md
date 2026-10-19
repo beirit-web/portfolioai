@@ -1,17 +1,43 @@
 # Beirit Web Portfolio
 
+![Python, Django, React/Preact, TypeScript, SQLite und Vite][technologien]
+
 Persönliches Entwicklerportfolio von Eugen Beirit mit sechs demonstrativen
 Webprojekten auf Basis von Django und React/Preact.
+
+**Stand:** In Entwicklung; derzeit kein produktiver Betrieb.
 
 Die [Projektdokumentation](docs/README.md) führt zu Architektur, Demo-Routen,
 Prüfungen und Lizenzhinweisen.
 Meinen persönlichen Entwicklungsweg beschreibt die
 [Entwicklungsgeschichte](docs/ENTWICKLUNGSGESCHICHTE.md).
 
+## Projekte im Überblick
+
+Die Cover stammen aus dem Portfolio-Karussell. Ein Klick auf ein Bild öffnet
+den zugehörigen Demo-Screenshot.
+
+|    Sprachlernplattform    |      Online-Shop      |    Wohnungssuche    |
+| :-----------------------: | :-------------------: | :-----------------: |
+|   [![Sprachen][c1]][s1]   |   [![Shop][c2]][s2]   | [![Wohnen][c3]][s3] |
+|      Lernen und Quiz      | Katalog und Warenkorb | Angebote und Filter |
+| React, TypeScript, Django |  Django, JavaScript   |   Preact, Django    |
+|      [Quellcode][q1]      |    [Quellcode][q2]    |   [Quellcode][q3]   |
+
+|  Botanic mit Wetter   |    Vertragsgenerator    |     Notenrechner      |
+| :-------------------: | :---------------------: | :-------------------: |
+| [![Botanic][c4]][s4]  |  [![Vertrag][c5]][s5]   |  [![Noten][c6]][s6]   |
+| Pflanzen und Gießplan | Vorschau und TXT-Export | Noten und Auswertung  |
+|    Python, Django     |   Django, JavaScript    | HTML, CSS, JavaScript |
+|    [Quellcode][q4]    |     [Quellcode][q5]     |    [Quellcode][q6]    |
+
+Weitere Ansichten und die Herkunft der Screenshots stehen im
+[Bildnachweis](server/assets/images/portfolio-previews/README.md).
+
 ## Lokal starten
 
-Das Backend verwendet Django 5.2 LTS. Python 3.13 und Node.js 22 werden auch in CI
-verwendet. Alle Befehle werden vom Repository-Stamm aus ausgeführt:
+Das Backend verwendet Django 5.2 LTS. Benötigt werden Python 3.13 und
+Node.js ab 22.19.0. Alle Befehle werden vom Repository-Stamm aus ausgeführt:
 
 ```bash
 python3 -m venv server/.venv
@@ -59,3 +85,23 @@ aktivieren.
 Es gibt keine gemeinsame freie Lizenz im Repository-Stamm. Maßgeblich sind
 [server/LICENSE](server/LICENSE) und die [erhaltenen Projektlizenzen](docs/licenses/README.md).
 Die Veröffentlichung erlaubt keine pauschale Weiterverwendung aller Bestandteile.
+
+[technologien]: docs/images/portfolio-technologies.svg
+[c1]: server/assets/images/portfolio-covers/sprachdienstleistungen-cover-v1-240.webp
+[c2]: server/assets/images/portfolio-covers/online-shop-cover-v1-240.webp
+[c3]: server/assets/images/portfolio-covers/wohnungssuche-bodensee-cover-v1-240.webp
+[c4]: server/assets/images/portfolio-covers/enbt-botanic-cover-v1-240.webp
+[c5]: server/assets/images/portfolio-covers/vertragsgenerator-cover-v1-240.webp
+[c6]: server/assets/images/portfolio-covers/notenrechner-cover-v1-240.webp
+[s1]: server/assets/images/portfolio-previews/sprachdienstleistungen-desktop.webp
+[s2]: server/assets/images/portfolio-previews/online-shop-desktop.webp
+[s3]: server/assets/images/portfolio-previews/wohnungssuche-bodensee-desktop.webp
+[s4]: server/assets/images/portfolio-previews/enbt-botanic-desktop.webp
+[s5]: server/assets/images/portfolio-previews/vertragsgenerator-desktop.webp
+[s6]: server/assets/images/portfolio-previews/notenrechner-desktop.webp
+[q1]: apps/deutsch-live/
+[q2]: server/shop/
+[q3]: apps/wohnungssuche/
+[q4]: server/botanic/
+[q5]: server/contracts/
+[q6]: server/assets/portfolio/notenrechner/

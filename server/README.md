@@ -1,12 +1,26 @@
 # Gemeinsamer Portfolio-Server
 
+![Python, Django und SQLite](../docs/images/server-technologies.svg)
+
 Django stellt Portfolio, Konten, Kontaktformular und die Demos bereit. Es gibt
 keine zusätzlich zu startenden Projekt-Backends.
+
+## Aufbau
+
+```mermaid
+flowchart LR
+    Browser["Browser: Portfolio und Demos"] --> Django["Gemeinsamer Django-Server"]
+    Builds["Drei Vite-Builds"] --> Assets["JavaScript und CSS"]
+    Assets --> Django
+    Django <--> SQLite[("SQLite")]
+```
 
 Installation, Frontend-Builds und gemeinsamer Serverstart stehen in der
 [Hauptanleitung](../README.md#lokal-starten). Die
 [Architektur](../docs/architecture.md) beschreibt Anwendungen, Routen und
 Datenhaltung; die [Prüfanleitung](../docs/checks.md) erklärt die Backendtests.
+
+## Lokale Konfiguration
 
 Die lokale Konfiguration liest zuerst die optionale, ignorierte Datei
 `server/.env.local` und danach die öffentlichen Vorgaben aus `server/.env`.

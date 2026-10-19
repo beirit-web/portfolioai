@@ -6,6 +6,9 @@ are 390 × 844 pixels. All originals are viewport screenshots encoded as WebP. R
 variants have widths of 480, 640, 768 and 960 pixels; mobile variants are 256 and 320
 pixels wide. Gallery links still open the original image.
 
+The main README uses 240 × 240 pixel thumbnails of the existing carousel covers
+in `../portfolio-covers/`; clicking a cover opens the original demo screenshot.
+
 | File prefix | Actual demo route | Captured state |
 | --- | --- | --- |
 | `online-shop` | `/shop/` | Seeded cake catalog; mobile view scrolled to the first product. |
@@ -50,7 +53,7 @@ Regenerate responsive candidates from existing original files without recapturin
 ```sh
 server/.venv/bin/python scripts/build_responsive_image_variants.py server/assets/images/portfolio-previews/*-desktop.webp --widths 480 640 768 960
 server/.venv/bin/python scripts/build_responsive_image_variants.py server/assets/images/portfolio-previews/*-mobile.webp --widths 256 320
-server/.venv/bin/python scripts/build_responsive_image_variants.py server/assets/images/portfolio-covers/*-cover-v1.webp --widths 480 640 768 960
+server/.venv/bin/python scripts/build_responsive_image_variants.py server/assets/images/portfolio-covers/*-cover-v1.webp --widths 240 480 640 768 960
 ```
 
 Add `--missing-only` to retain existing variants. Originals remain unchanged.
