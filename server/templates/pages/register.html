@@ -1,16 +1,33 @@
-{% extends "registration/account_shell.html" %}
+{% extends "registration/account_visual_shell.html" %}
+{% load static %}
 
 {% block title %}{% account_text "Registrieren | Beirit Digital" %}{% endblock %}
 {% block meta_robots %}noindex, follow{% endblock %}
 {% block meta_description %}{% account_text "Konto für Beirit Digital anlegen, um geschützte Funktionen und persönliche Anliegen zu verwalten." %}{% endblock %}
 
-{% block body_attrs %} class="has-topnav register-page template-body theme-dark-locked backstube-account"{% endblock %}
+{% block body_attrs %} class="has-topnav register-page login-page--refined register-page--refined template-body backstube-account"{% endblock %}
 
 {% block content %}
   <main class="backstube-account-page">
-    <section class="template-panel template-form-card" aria-labelledby="register-title">
-      <h1 class="template-panel__kicker" id="register-title">{% account_text "Registrierung" %}</h1>
-      <p class="template-inline-note">{% if local_activation_available %}{% account_text "Nach der Registrierung finden Sie unter /examplemail einen Aktivierungscode. Geben Sie ihn auf der Anmeldeseite ein. Der Code ist eine Minute gültig." %}{% else %}{% account_text "Nach der Registrierung bestätigen Sie Ihre E-Mail-Adresse über einen Link. Erst danach ist Ihr Konto aktiv und Sie können sich anmelden." %}{% endif %}</p>
+    <div class="login-layout register-layout">
+    <aside class="login-intro register-intro" aria-labelledby="register-intro-title">
+      <span class="login-eyebrow">BEIRIT WEB</span>
+      <h2 id="register-intro-title">{% account_text "Ihr persönlicher Bereich." %}</h2>
+      <p>{% account_text "Erstellen Sie Ihr Konto. Ein Profilbild können Sie jetzt hinzufügen oder später ergänzen." %}</p>
+      <img class="login-illustration" src="{% static 'images/account-access.svg' %}" alt="" width="320" height="264" aria-hidden="true" />
+      <div class="login-session-note">
+        {% include "partials/login_icon.html" with name="shield" %}
+        <p class="form-help">{% if local_activation_available %}{% account_text "Nach der Registrierung finden Sie unter /examplemail einen Aktivierungscode. Geben Sie ihn auf der Anmeldeseite ein. Der Code ist eine Minute gültig." %}{% else %}{% account_text "Nach der Registrierung bestätigen Sie Ihre E-Mail-Adresse über einen Link. Erst danach ist Ihr Konto aktiv und Sie können sich anmelden." %}{% endif %}</p>
+      </div>
+    </aside>
+    <section class="template-panel template-form-card login-form-card register-form-card" aria-labelledby="register-title">
+      <header class="login-card-heading">
+        <span class="login-card-heading__icon">{% include "partials/login_icon.html" with name="user" %}</span>
+        <div>
+          <h1 class="template-panel__kicker" id="register-title">{% account_text "Registrierung" %}</h1>
+          <p>{% account_text "E-Mail, Passwort und auf Wunsch ein Profilbild." %}</p>
+        </div>
+      </header>
       {% include "partials/auth_messages.html" %}
       {% if account_mail_is_console and not local_activation_available %}<p class="template-inline-note">{% account_text "Lokale Demo: Die Bestätigungs-E-Mail wird in der Serverkonsole ausgegeben. Es wird keine E-Mail an ein Postfach zugestellt." %}</p>{% endif %}
       {% if already_logged_in %}
@@ -28,10 +45,10 @@
         {% if form.non_field_errors %}
           <div class="form-error" role="alert">{{ form.non_field_errors }}</div>
         {% endif %}
-        <div class="template-panel-grid">
-          <div class="template-panel--span-6">
+        <div class="template-panel-grid register-fields">
+          <div class="register-field--wide">
             <div class="form-field">
-              <label for="{{ form.email.id_for_label }}">{% account_text "E-Mail" %}</label>
+              <label for="{{ form.email.id_for_label }}">{% include "partials/login_icon.html" with name="mail" %}{% account_text "E-Mail" %}</label>
               {{ form.email }}
               <small id="{{ form.email.auto_id }}_helptext" class="form-help">{{ form.email.help_text }}</small>
               {% if form.email.errors %}
@@ -41,22 +58,7 @@
           </div>
           <div class="template-panel--span-6">
             <div class="form-field">
-              <label for="{{ form.image.id_for_label }}">{% account_text "Profilbild (optional)" %}</label>
-              <div class="file-inline">
-                {{ form.image }}
-                <label class="file-inline__button" for="{{ form.image.id_for_label }}">{% account_text "Datei wählen" %}</label>
-                <span class="file-inline__name" data-file-name-target="profile" data-empty-label="{% account_text "Keine Datei ausgewählt" %}">{% account_text "Keine Datei ausgewählt" %}</span>
-                <span class="file-inline__preview" data-file-preview="profile" aria-hidden="true"></span>
-              </div>
-              {% if form.image.errors %}
-                <div class="form-error" role="alert">{{ form.image.errors }}</div>
-              {% endif %}
-              <small id="{{ form.image.auto_id }}_helptext" class="form-help">{{ form.image.help_text }}</small>
-            </div>
-          </div>
-          <div class="template-panel--span-6">
-            <div class="form-field">
-              <label for="{{ form.password1.id_for_label }}">{% account_text "Passwort" %}</label>
+              <label for="{{ form.password1.id_for_label }}">{% include "partials/login_icon.html" with name="lock" %}{% account_text "Passwort" %}</label>
               <div class="form-input-row">
                 {{ form.password1 }}
                 <button
@@ -66,7 +68,7 @@
                   aria-controls="{{ form.password1.id_for_label }}"
                   aria-label="{% account_text "Passwort anzeigen" %}"
                 >
-                  <span aria-hidden="true">👁</span>
+                  {% include "partials/login_icon.html" with name="eye" %}
                   <span class="visually-hidden" data-password-toggle-text>{% account_text "Passwort anzeigen" %}</span>
                 </button>
               </div>
@@ -80,7 +82,7 @@
           </div>
           <div class="template-panel--span-6">
             <div class="form-field">
-              <label for="{{ form.password2.id_for_label }}">{% account_text "Passwort wiederholen" %}</label>
+              <label for="{{ form.password2.id_for_label }}">{% include "partials/login_icon.html" with name="lock" %}{% account_text "Passwort wiederholen" %}</label>
               <div class="form-input-row">
                 {{ form.password2 }}
                 <button
@@ -90,7 +92,7 @@
                   aria-controls="{{ form.password2.id_for_label }}"
                   aria-label="{% account_text "Passwort anzeigen" %}"
                 >
-                  <span aria-hidden="true">👁</span>
+                  {% include "partials/login_icon.html" with name="eye" %}
                   <span class="visually-hidden" data-password-toggle-text>{% account_text "Passwort anzeigen" %}</span>
                 </button>
               </div>
@@ -102,11 +104,22 @@
               {% endif %}
             </div>
           </div>
+          <div class="register-field--wide register-profile">
+            <div class="form-field">
+              <label for="{{ form.image.id_for_label }}">{% include "partials/login_icon.html" with name="image" %}{% account_text "Profilbild (optional)" %}</label>
+              <div class="file-inline">
+                {{ form.image }}
+                <label class="file-inline__button" for="{{ form.image.id_for_label }}">{% include "partials/login_icon.html" with name="image" %}{% account_text "Datei wählen" %}</label>
+                <span class="file-inline__name" data-file-name-target="profile" data-empty-label="{% account_text "Keine Datei ausgewählt" %}">{% account_text "Keine Datei ausgewählt" %}</span>
+                <span class="file-inline__preview" data-file-preview="profile" aria-hidden="true"></span>
+              </div>
+              {% if form.image.errors %}
+                <div class="form-error" role="alert">{{ form.image.errors }}</div>
+              {% endif %}
+              <small id="{{ form.image.auto_id }}_helptext" class="form-help">{{ form.image.help_text }}</small>
+            </div>
+          </div>
         </div>
-        <p class="template-inline-note template-inline-note--stack">
-          <strong>{% account_text "Ablauf:" %}</strong>
-          <span>{% if local_activation_available %}{% account_text "Konto speichern, /examplemail im selben Browser öffnen und den Aktivierungscode auf der Anmeldeseite eingeben. Danach melden Sie sich mit E-Mail-Adresse und Passwort an." %}{% else %}{% account_text "Nach dem Absenden erhalten Sie eine Bestätigungs-E-Mail. Erst nach dem Klick auf den Link ist Ihr Konto aktiv." %}{% endif %}</span>
-        </p>
         <div class="template-consent">
           {{ form.privacy_consent }}
           <label for="{{ form.privacy_consent.id_for_label }}">
@@ -120,17 +133,19 @@
         {% endif %}
         <button type="submit" class="btn-primary" data-loading-label="{% account_text "Registrierung läuft..." %}">
           {% if local_activation_available %}{% account_text "Konto speichern und Aktivierungscode abrufen" %}{% else %}{% account_text "Konto anlegen und E-Mail bestätigen" %}{% endif %}
+          {% include "partials/login_icon.html" with name="arrow" %}
         </button>
       </form>
-      <p class="template-empty">
-        {% account_text "Bereits registriert?" %}
-        <a href="{% url 'pages:login' %}{% if registration_next %}?next={{ registration_next|urlencode }}{% endif %}">{% account_text "Zum Login" %}</a>
-      </p>
+      <div class="login-register">
+        <span>{% account_text "Bereits registriert?" %}</span>
+        <a class="btn-secondary" href="{% url 'pages:login' %}{% if registration_next %}?next={{ registration_next|urlencode }}{% endif %}">{% include "partials/login_icon.html" with name="arrow" %}{% account_text "Zum Login" %}</a>
+      </div>
       <p class="template-empty">
         {% if local_activation_available %}{% account_text "Aktivierungscode abgelaufen?" %}{% else %}{% account_text "Bestätigungslink abgelaufen oder keine E-Mail erhalten?" %}{% endif %}
         <a href="{% url 'pages:verification_resend' %}{% if registration_next %}?next={{ registration_next|urlencode }}{% endif %}">{% if local_activation_available %}{% account_text "Neuen Aktivierungscode anfordern" %}{% else %}{% account_text "Bestätigungs-E-Mail erneut senden" %}{% endif %}</a>
       </p>
     </section>
+    </div>
   </main>
 {% endblock %}
 

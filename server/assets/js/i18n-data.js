@@ -4,7 +4,7 @@ const cleanContactNote = (note) => {
 };
 
 const contactDefaults = Object.freeze({
-  email: "kontakt@beirit.digital",
+  email: "eugenbeirit22@gmail.com",
   phone: "Nur nach Login sichtbar",
   landline: "",
   region: "Nach Login sichtbar",
@@ -509,7 +509,7 @@ const TRANSLATIONS = {
       region_value: contactDefaults.region,
       quickactions: {
         email_label: "E-Mail",
-        gmail: "kontakt@beirit.digital",
+        gmail: "eugenbeirit22@gmail.com",
         proton: "",
         whatsapp: "WhatsApp Business",
         landline_label: "",

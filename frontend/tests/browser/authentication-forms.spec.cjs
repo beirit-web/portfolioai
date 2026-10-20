@@ -47,6 +47,18 @@ test("portfolio login leads to registration with visible errors and back to pass
   await expect(page).toHaveURL(/\/login\/$/);
   await expect(page.locator("#id_username")).toBeVisible();
   await expect(page.locator("#id_password")).toBeVisible();
+  const password = page.locator("#id_password");
+  await password.fill("Fictional-preview-password-42!");
+  const reveal = page.getByRole("button", { name: "Passwort anzeigen", exact: true });
+  await expect(reveal.locator("svg path").first()).toBeAttached();
+  await reveal.click();
+  await expect(password).toHaveAttribute("type", "text");
+  const hide = page.getByRole("button", { name: "Passwort verbergen", exact: true });
+  await expect(hide).toHaveAttribute("aria-pressed", "true");
+  await expect(hide.locator("svg path").first()).toBeAttached();
+  await hide.click();
+  await expect(password).toHaveAttribute("type", "password");
+  await expect(reveal).toHaveAttribute("aria-pressed", "false");
 
   await page.locator("main").getByRole("link", { name: "Registrieren", exact: true }).click();
   await expect(page).toHaveURL(/\/register\/$/);

@@ -5521,13 +5521,11 @@ body:has(.about-hero-grid),
   width: 100%;
   max-width: none;
   margin-inline: auto;
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.9)),
-    #ffffff;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   padding: 1.15rem;
-  box-shadow: 0 1.2rem 2.8rem rgba(15, 23, 42, 0.1);
+  box-shadow: none;
 }
 
 @media (min-width: 48rem) {

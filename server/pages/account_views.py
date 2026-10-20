@@ -20,6 +20,7 @@ class AccountPasswordResetForm(PasswordResetForm):
         widget=forms.EmailInput(attrs={
             "autocomplete": "email", "autocapitalize": "none",
             "spellcheck": "false", "class": "auth-input", "autofocus": True,
+            "placeholder": "name@example.com",
         }),
     )
 
@@ -30,6 +31,7 @@ class AccountSetPasswordForm(SetPasswordForm):
         for name in ("new_password1", "new_password2"):
             self.fields[name].widget.attrs.update({
                 "autocomplete": "new-password", "class": "auth-input",
+                "placeholder": account_copy("Neues Passwort" if name == "new_password1" else "Passwort wiederholen"),
             })
 
 

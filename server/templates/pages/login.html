@@ -1,4 +1,5 @@
-{% extends "registration/account_shell.html" %}
+{% extends "registration/account_visual_shell.html" %}
+{% load static %}
 
 {% block title %}{{ login_meta.title }}{% endblock %}
 {% block meta_robots %}{{ login_meta.robots }}{% endblock %}
@@ -10,14 +11,32 @@
 {% block twitter_title %}{{ login_meta.title }}{% endblock %}
 {% block twitter_description %}{{ login_meta.description }}{% endblock %}
 
-{% block body_attrs %} class="has-topnav login-page theme-light-locked backstube-account"{% endblock %}
+{% block body_attrs %} class="has-topnav login-page login-page--refined theme-light-locked backstube-account"{% endblock %}
 
 {% block extra_head %}<meta name="twitter:url" content="{{ login_meta.canonical }}" />{% endblock %}
 
+
 {% block content %}
   <main class="backstube-account-page">
+    <div class="login-layout">
+    <aside class="login-intro" aria-labelledby="login-intro-title">
+      <span class="login-eyebrow">BEIRIT WEB</span>
+      <h2 id="login-intro-title">{% account_text "Willkommen zurück." %}</h2>
+      <p>{% account_text "Melden Sie sich an, um Ihr Profil und Ihre gespeicherten Inhalte zu öffnen." %}</p>
+      <img class="login-illustration" src="{% static 'images/account-access.svg' %}" alt="" width="320" height="264" aria-hidden="true" />
+      <div class="login-session-note">
+        {% include "partials/login_icon.html" with name="shield" %}
+        <p class="form-help">{% account_text "Aus Sicherheitsgründen erfolgt bei Inaktivität nach 10 Minuten eine automatische Abmeldung." %}</p>
+      </div>
+    </aside>
     <section class="template-panel template-form-card login-form-card" aria-labelledby="login-form-title">
-      <h1 id="login-form-title" class="template-panel__kicker">{% account_text "Anmeldedaten" %}</h1>
+      <header class="login-card-heading">
+        <span class="login-card-heading__icon">{% include "partials/login_icon.html" with name="lock" %}</span>
+        <div>
+          <h1 id="login-form-title" class="template-panel__kicker">{% account_text "Anmeldedaten" %}</h1>
+          <p>{% account_text "Mit E-Mail-Adresse und Passwort anmelden." %}</p>
+        </div>
+      </header>
       {% include "partials/auth_messages.html" %}
       {% if local_activation_pending %}
         <p class="template-inline-note">{% account_text "Ihr Konto ist gespeichert. Öffnen Sie das" %} <a href="{% url 'pages:example_mail' %}" target="_blank" rel="noopener">{% account_text "lokale Beispielpostfach /examplemail" %}</a> {% account_text "im selben Browser. Geben Sie den dort angezeigten Code hier ein. Er ist eine Minute gültig; danach können Sie einen neuen anfordern." %}</p>
@@ -34,7 +53,7 @@
           </div>
           <button type="submit" class="btn-primary">{% account_text "Konto aktivieren" %}</button>
         </form>
-      {% elif account_mail_is_console %}<p class="template-inline-note">{% account_text "Lokale Demo:" %} {% if local_activation_available %}{% account_text "Den Aktivierungscode nach einer Registrierung finden Sie unter" %} <a href="{% url 'pages:example_mail' %}">/examplemail</a>. {% endif %}{% account_text "Wiederherstellungs-E-Mails werden in der Serverkonsole ausgegeben." %}</p>{% endif %}
+      {% endif %}
       {% if form.non_field_errors %}
         <div class="form-error" role="alert">{{ form.non_field_errors }}</div>
       {% endif %}
@@ -46,7 +65,7 @@
         <fieldset class="local-login-fields" {% if local_activation_pending %}disabled aria-describedby="activation-login-hint"{% endif %}>
         <legend class="visually-hidden">{% account_text "Anmeldedaten" %}</legend>
         <div class="form-field">
-          <label for="{{ form.username.id_for_label }}">{% account_text "E-Mail-Adresse" %}</label>
+          <label for="{{ form.username.id_for_label }}">{% include "partials/login_icon.html" with name="mail" %}{% account_text "E-Mail-Adresse" %}</label>
           {{ form.username }}
           <small id="{{ form.username.auto_id }}_helptext" class="form-help">
             {{ form.username.help_text }}
@@ -56,7 +75,7 @@
           {% endif %}
         </div>
         <div class="form-field">
-          <label for="{{ form.password.id_for_label }}">{% account_text "Passwort" %}</label>
+          <label for="{{ form.password.id_for_label }}">{% include "partials/login_icon.html" with name="lock" %}{% account_text "Passwort" %}</label>
           <div class="form-input-row">
             {{ form.password }}
             <button
@@ -66,17 +85,13 @@
               aria-controls="{{ form.password.id_for_label }}"
               aria-label="{% account_text "Passwort anzeigen" %}"
             >
-              <span data-password-toggle-text>{% account_text "Passwort anzeigen" %}</span>
+              {% include "partials/login_icon.html" with name="eye" %}
+              <span class="visually-hidden" data-password-toggle-text>{% account_text "Passwort anzeigen" %}</span>
             </button>
           </div>
           {% if form.password.errors %}
             <div class="form-error" role="alert">{{ form.password.errors }}</div>
           {% endif %}
-        </div>
-        <div class="template-inline-note login-session-note">
-          <p class="form-help">
-            {% account_text "Aus Sicherheitsgründen erfolgt bei Inaktivität nach 10 Minuten eine automatische Abmeldung." %}
-          </p>
         </div>
         <button
           type="submit"
@@ -84,6 +99,7 @@
           data-loading-label="{% account_text "Anmeldung läuft..." %}"
         >
           {% account_text "Anmelden" %}
+          {% include "partials/login_icon.html" with name="arrow" %}
         </button>
         </fieldset>
       </form>
@@ -96,11 +112,21 @@
         </form>
       {% endif %}
       <div class="template-actions login-actions" aria-label="{% account_text "Weitere Aktionen" %}">
-        <a class="btn-secondary" href="{% url 'pages:register' %}{% if login_next %}?next={{ login_next|urlencode }}{% endif %}">{% account_text "Registrieren" %}</a>
-        <a class="btn-ghost cta-highlight" href="{% url 'password_reset' %}">{% account_text "Passwort zurücksetzen" %}</a>
-        <a class="btn-ghost" href="{% url 'pages:home' %}">{% account_text "Abbrechen" %}</a>
+        <a class="btn-ghost cta-highlight" href="{% url 'password_reset' %}">{% include "partials/login_icon.html" with name="key" %}{% account_text "Passwort zurücksetzen" %}</a>
+        <a class="btn-ghost" href="{% url 'pages:home' %}">{% include "partials/login_icon.html" with name="back" %}{% account_text "Abbrechen" %}</a>
+      </div>
+      <div class="login-register">
+        <span>{% account_text "Noch kein Konto?" %}</span>
+        <a class="btn-secondary" href="{% url 'pages:register' %}{% if login_next %}?next={{ login_next|urlencode }}{% endif %}">{% include "partials/login_icon.html" with name="user" %}{% account_text "Registrieren" %}</a>
       </div>
       <p class="template-empty"><a href="{% url 'pages:verification_resend' %}{% if login_next %}?next={{ login_next|urlencode }}{% endif %}">{% if local_activation_available %}{% account_text "Neuen Aktivierungscode anfordern" %}{% else %}{% account_text "Bestätigungs-E-Mail erneut senden" %}{% endif %}</a></p>
+      {% if account_mail_is_console and not local_activation_pending %}
+        <div class="login-demo-note">
+          {% include "partials/login_icon.html" with name="info" %}
+          <p>{% account_text "Lokale Demo:" %} {% if local_activation_available %}{% account_text "Den Aktivierungscode nach einer Registrierung finden Sie unter" %} <a href="{% url 'pages:example_mail' %}">/examplemail</a>. {% endif %}{% account_text "Wiederherstellungs-E-Mails werden in der Serverkonsole ausgegeben." %}</p>
+        </div>
+      {% endif %}
     </section>
+    </div>
   </main>
 {% endblock %}

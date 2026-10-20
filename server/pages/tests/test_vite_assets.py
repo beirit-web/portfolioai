@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 
 from django.test import SimpleTestCase, TestCase, override_settings
 
-from pages.templatetags.vite_assets import vite_react_assets
+from pages.templatetags.vite_assets import vite_modulepreload_assets, vite_react_assets
 from django.urls import reverse
 
 
@@ -36,6 +36,8 @@ class HomeViteAssetsTests(TestCase):
         self.assertContains(response, "/static/portfolio-dist/assets/mobile-pages-")
         self.assertContains(response, "data-vite-inline='src/components/contact/ContactForm.jsx'")
         self.assertContains(response, 'rel="modulepreload" href="/static/portfolio-dist/assets/ContactForm-')
+        self.assertContains(response, 'rel="modulepreload" href="/static/portfolio-dist/assets/ContactDetails-')
+        self.assertContains(response, 'rel="modulepreload" href="/static/portfolio-dist/assets/ContactIcon-')
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_skills_use_viewport_css_without_loading_the_contact_form(self):
@@ -54,6 +56,11 @@ class HomeViteAssetsTests(TestCase):
         self.assertContains(response, "data-vite-inline='src/about-shell.css'")
         self.assertContains(response, "data-vite-inline='src/about-page.css'")
         self.assertContains(response, "/static/portfolio-dist/assets/about-")
+        content = response.content.decode()
+        self.assertLess(
+            content.index('rel="modulepreload" href="/static/portfolio-dist/assets/about-'),
+            content.index("data-vite-inline='src/about-shell.css'"),
+        )
         self.assertNotContains(response, 'rel="stylesheet"')
         self.assertNotContains(response, "/static/portfolio-dist/assets/main-")
         self.assertNotContains(response, "/static/portfolio-dist/assets/useI18n-")
@@ -75,6 +82,27 @@ class HomeViteAssetsTests(TestCase):
 
 
 class ViteModulePreloadTests(SimpleTestCase):
+    def test_route_preloads_include_shared_static_imports_once_and_skip_lazy_imports(self):
+        manifest = {
+            "form": {"file": "assets/form.js", "imports": ["icons"], "dynamicImports": ["lazy"]},
+            "details": {"file": "assets/details.js", "imports": ["icons"]},
+            "icons": {"file": "assets/icons.js", "imports": ["form"]},
+            "alias": {"file": "assets/icons.js"},
+            "styles": {"file": "assets/styles.css"},
+            "lazy": {"file": "assets/lazy.js"},
+        }
+        with TemporaryDirectory(prefix="beirit-vite-") as directory:
+            folder = Path(directory) / "assets" / "portfolio-dist" / ".vite"
+            folder.mkdir(parents=True)
+            (folder / "manifest.json").write_text(json.dumps(manifest))
+            with override_settings(SERVER_DIR=Path(directory)):
+                assets = str(vite_modulepreload_assets("form", "details", "alias", "styles", "missing"))
+        for module in ("form", "details", "icons"):
+            self.assertEqual(assets.count(f'href="/static/portfolio-dist/assets/{module}.js"'), 1)
+        self.assertNotIn("lazy.js", assets)
+        self.assertNotIn("styles.css", assets)
+        self.assertNotIn("<script", assets)
+
     def test_nested_static_imports_are_preloaded_once_without_dynamic_modules(self):
         manifest = {
             "src/projects.jsx": {"file": "assets/projects.js", "imports": ["shell", "vendor"], "dynamicImports": ["animation"]},

@@ -40,8 +40,11 @@
     <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
     <link rel="shortcut icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
     {% if react_route_path == '/ueber-mich' %}
+      {% vite_modulepreload_assets 'src/about.jsx' %}
       <link rel="preload" as="image" href="{% static 'images/about-forest-background.webp' %}" fetchpriority="high" />
       <link rel="preload" as="image" href="{% static 'images/eugenbeirit-360.webp' %}" imagesrcset="{% static 'images/eugenbeirit-360.webp' %} 360w, {% static 'images/eugenbeirit-540.webp' %} 540w" imagesizes="(min-width: 48rem) 22rem, calc(100vw - 2px)" />
+    {% elif react_route_path == '/kontakt' %}
+      {% vite_modulepreload_assets 'src/components/contact/ContactForm.jsx' 'src/components/contact/ContactDetails.jsx' %}
     {% endif %}
     {% if react_project_image_preload %}
       <link rel="preload" as="image" href="{{ react_project_image_preload.src }}"{% if react_project_image_preload.srcset %} imagesrcset="{{ react_project_image_preload.srcset }}" imagesizes="{{ react_project_image_preload.sizes }}"{% endif %}{% if react_project_image_preload.media %} media="{{ react_project_image_preload.media }}"{% endif %} fetchpriority="high" />
@@ -108,7 +111,6 @@
     </script>
     {% if react_route_path == '/kontakt' %}
       {% vite_inline_css_assets 'src/components/contact/ContactForm.jsx' %}
-      {% vite_modulepreload_assets 'src/components/contact/ContactForm.jsx' %}
     {% endif %}
     {% if react_route_path == '/projekte' %}
       {% vite_react_assets 'src/projects.js' fetchpriority='low' %}

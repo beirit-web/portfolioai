@@ -21,7 +21,7 @@ test("Ukrainian visitors can reach projects, read a report and contact the owner
   await expect(page.locator(".portfolio-card__implementation")).toContainText("Django");
   await page.goto("/kontakt?project=Demo");
   await expect(page.locator("#subject")).toHaveValue("Питання про Demo");
-  await expect(page.getByRole("link", { name: "kontakt@beirit.digital", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "eugenbeirit22@gmail.com", exact: true })).toBeVisible();
   await page.goto("/ueber-mich");
   await expect(page.locator("h1")).toBeVisible();
   expect(errors).toEqual([]);

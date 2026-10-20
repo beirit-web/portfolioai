@@ -97,7 +97,7 @@ class LocalActivationForm(forms.Form):
         error_messages={"invalid": account_copy("Bitte geben Sie den sechsstelligen Aktivierungscode ein.")},
         widget=forms.TextInput(attrs={
             "autocomplete": "one-time-code", "inputmode": "numeric",
-            "pattern": "[0-9]{6}", "autofocus": True,
+            "pattern": "[0-9]{6}", "autofocus": True, "placeholder": "123456",
         }),
     )
 

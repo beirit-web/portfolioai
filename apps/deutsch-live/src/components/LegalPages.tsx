@@ -99,7 +99,7 @@ export function KontaktPage() {
         <LegalBlock title="Beirit Digital">
           Eugen Beirit
           <br />
-          E-Mail: kontakt@beirit.digital
+          E-Mail: eugenbeirit22@gmail.com
         </LegalBlock>
         <LegalBlock title="Support und Feedback">
           Für Fragen zur Lernplattform, Hinweise zu Fehlern oder Feedback zur Nutzung bitte die Kontaktadresse oder das

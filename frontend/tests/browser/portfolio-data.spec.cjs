@@ -10,14 +10,14 @@ test("contact keeps the form, public owner details and attribution, and the impr
   await expect(page.locator("main form")).toBeVisible();
   await expect(page.locator("main address")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Direkter Kontakt", exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "kontakt@beirit.digital", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "eugenbeirit22@gmail.com", exact: true })).toBeVisible();
   await expect(page.locator('a[href="tel:+4953515989191"]')).toBeVisible();
   await expect(page.locator(".site-footer__brand-main")).toContainText("© 2026 Beirit Web - Eugen Beirit");
   await page.goto("/impressum/");
   await expect(page.locator("main")).toContainText("Musterstraße 1");
   await expect(page.locator("main")).toContainText("Fiktive Musterangaben");
   await expect(page.locator("main")).not.toContainText("Großer Katthagen 13");
-  await expect(page.locator("main")).not.toContainText("kontakt@beirit.digital");
+  await expect(page.locator("main")).not.toContainText("eugenbeirit22@gmail.com");
   await expect(page.locator('a[href="tel:+4953515989191"]')).toHaveCount(0);
 });
 
@@ -49,6 +49,6 @@ test("portfolio navigation has no donation links and contact stays neutral", asy
   await expect(page.locator("#message")).toHaveValue("");
   await expect(page.locator("main form")).toBeVisible();
   await expect(page.locator("main address")).toBeVisible();
-  await expect(page.getByRole("link", { name: "kontakt@beirit.digital", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "eugenbeirit22@gmail.com", exact: true })).toBeVisible();
   await expect(page.locator(".site-footer__brand-main")).toContainText("Eugen Beirit");
 });

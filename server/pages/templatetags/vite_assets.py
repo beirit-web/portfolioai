@@ -14,6 +14,33 @@ def _static_url(path: str) -> str:
     return f"{static_url.rstrip('/')}/{path.lstrip('/')}"
 
 
+def _modulepreload_tags(manifest, entries, *, priority_attribute="", exclude=()):
+    """Preload static dependencies once, leaving dynamic route imports lazy."""
+    tags = []
+    seen_entries = set(exclude)
+    seen_files = set()
+
+    def visit(entry):
+        if entry in seen_entries:
+            return
+        seen_entries.add(entry)
+        chunk = manifest.get(entry, {})
+        module_file = chunk.get("file", "")
+        if module_file.endswith(".js") and module_file not in seen_files:
+            seen_files.add(module_file)
+            tags.append(format_html(
+                '<link rel="modulepreload" href="{}"{}>',
+                _static_url(f"portfolio-dist/{module_file}"),
+                priority_attribute,
+            ))
+        for imported in chunk.get("imports", []):
+            visit(imported)
+
+    for entry in entries:
+        visit(entry)
+    return tags
+
+
 @register.simple_tag
 def vite_react_assets(entry: str, fetchpriority=None) -> str:
     manifest_path = (
@@ -32,37 +59,17 @@ def vite_react_assets(entry: str, fetchpriority=None) -> str:
     if not chunk:
         return mark_safe(f"<!-- React entry missing: {entry} -->")
 
-    tags = []
     priority_attribute = (
         format_html(' fetchpriority="{}"', fetchpriority)
         if fetchpriority in {"high", "low", "auto"}
         else ""
     )
-    # Only preload the entry's static imports. Dynamic imports are intentionally
-    # left lazy so heavy non-critical chunks such as Three.js do not enter the
-    # initial critical request chain.
-    seen = {entry}
-
-    def preload_imports(module):
-        for imported in module.get("imports", []):
-            if imported in seen:
-                continue
-            seen.add(imported)
-            imported_chunk = manifest.get(imported, {})
-            imported_file = imported_chunk.get("file")
-            if imported_file:
-                tags.append(
-                    format_html(
-                        '<link rel="modulepreload" href="{}"{}>',
-                        _static_url(f"portfolio-dist/{imported_file}"),
-                        priority_attribute,
-                    )
-                )
-            preload_imports(imported_chunk)
-
     # Discover nested static dependencies in the HTML too, rather than waiting
     # for the browser to fetch and parse each parent module in turn.
-    preload_imports(chunk)
+    tags = _modulepreload_tags(
+        manifest, chunk.get("imports", []),
+        priority_attribute=priority_attribute, exclude={entry},
+    )
     tags.append(
         format_html(
             '<script type="module" crossorigin src="{}"{}></script>',
@@ -88,17 +95,7 @@ def vite_modulepreload_assets(*entries: str) -> str:
     except (OSError, json.JSONDecodeError):
         return mark_safe("")
 
-    tags = []
-    seen = set()
-    for entry in entries:
-        module_file = manifest.get(entry, {}).get("file", "")
-        if not module_file.endswith(".js") or module_file in seen:
-            continue
-        seen.add(module_file)
-        tags.append(format_html(
-            '<link rel="modulepreload" href="{}">',
-            _static_url(f"portfolio-dist/{module_file}"),
-        ))
+    tags = _modulepreload_tags(manifest, entries)
     return format_html_join("\n", "{}", ((tag,) for tag in tags))
 
 

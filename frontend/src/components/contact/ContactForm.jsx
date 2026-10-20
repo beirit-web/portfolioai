@@ -1,6 +1,7 @@
 import React from "react";
 import { homeConfig, publicPageUrl } from "../../lib/homeConfig";
 import { getCookie } from "../../lib/cookies";
+import ContactIcon from "./ContactIcon.jsx";
 import "./ContactForm.css";
 
 const fieldNames = ["name", "email", "subject", "message"];
@@ -103,15 +104,20 @@ export default function ContactForm({ selectedSubject = "", initialMessage = "",
       noValidate aria-labelledby="contact-form-title" aria-describedby="contact-form-instructions"
       aria-busy={status === "loading"} data-status={status}>
       <input type="text" name="company" className="contact-form__honeypot" tabIndex="-1" autoComplete="off" aria-hidden="true" />
-      <h2 id="contact-form-title">{t("forms.title")}</h2>
-      <p id="contact-form-instructions" className="portfolio-contact-form__instructions">{t("forms.requiredHint")}</p>
+      <header className="portfolio-contact-form__heading">
+        <span className="portfolio-contact-form__heading-icon"><ContactIcon name="message" /></span>
+        <div>
+          <h2 id="contact-form-title">{t("forms.title")}</h2>
+          <p id="contact-form-instructions" className="portfolio-contact-form__instructions">{t("forms.requiredHint")}</p>
+        </div>
+      </header>
       <fieldset className="portfolio-contact-form__body" disabled={status === "loading"}>
         <div className="portfolio-contact-form__fields">
           {fieldNames.map(name => {
             const Control = name === "message" ? "textarea" : "input";
             return (
               <div className={`portfolio-contact-form__field portfolio-contact-form__field--${name}`} key={name}>
-                <label htmlFor={name}>{t(`forms.fields.${name}`)}</label>
+                <label htmlFor={name}><ContactIcon name={name} />{t(`forms.fields.${name}`)}</label>
                 <Control id={name} name={name} type={name === "message" ? undefined : name === "email" ? "email" : "text"}
                   rows={name === "message" ? 6 : undefined}
                   autoComplete={name === "name" || name === "email" ? name : undefined}
@@ -132,7 +138,7 @@ export default function ContactForm({ selectedSubject = "", initialMessage = "",
               aria-describedby={errors.privacy_consent ? "privacy_consent-error" : undefined} />
             <span>{t("forms.privacy.text")}</span>
           </label>
-          <a href={publicPageUrl("/datenschutz/")}>{t("forms.privacy.link")}</a>
+          <a href={publicPageUrl("/datenschutz/")}><ContactIcon name="shield" />{t("forms.privacy.link")}</a>
           {errors.privacy_consent ? <p id="privacy_consent-error" className="portfolio-contact-form__error">{errors.privacy_consent}</p> : null}
         </div>
       </fieldset>
@@ -144,7 +150,7 @@ export default function ContactForm({ selectedSubject = "", initialMessage = "",
           {message ? <span>{message}</span> : null}
           {status === "success" && sentEmail ? <span>{t("forms.replyTo", { email: sentEmail })}</span> : null}
         </div>
-        <button type="submit" disabled={status === "loading"}>{t(status === "loading" ? "forms.submitting" : "forms.submit")}</button>
+        <button type="submit" disabled={status === "loading"}>{t(status === "loading" ? "forms.submitting" : "forms.submit")}<ContactIcon name="send" /></button>
       </div>
     </form>
   );

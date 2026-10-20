@@ -1,7 +1,6 @@
 import React from "react";
-import { ArrowLeft, ArrowRight, CheckCircle2, Pause, Play } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Database, Pause, Play } from "lucide-react";
 import AboutFactIcon from "./AboutFactIcon.jsx";
-import { featureIconFor } from "../home/portfolio/PortfolioFeatureList";
 import TechnologyIcon from "../shared/TechnologyIcon";
 
 const aboutPortraitUrl = "/static/images/eugenbeirit-360.webp";
@@ -27,7 +26,6 @@ function AboutTechCarousel({ items, language }) {
   const [isInView, setIsInView] = React.useState(false);
   const labels = carouselLabels[language] || carouselLabels.de;
   const activeItem = items[activeIndex] || items[0];
-  const ActiveIcon = featureIconFor(activeItem);
   const hasMultipleItems = items.length > 1;
   const isRotating = hasMultipleItems && !isPaused && !reducedMotion && !isHovered && !hasFocus && isInView;
 
@@ -90,16 +88,15 @@ function AboutTechCarousel({ items, language }) {
       }}
     >
       <div className="about-tech-carousel__stage" aria-live={isRotating ? "off" : "polite"} key={activeItem}>
-        <TechnologyIcon label={activeItem} fallback={ActiveIcon} className="about-tech-carousel__icon" />
+        <TechnologyIcon label={activeItem} fallback={Database} className="about-tech-carousel__icon" />
         <strong>{activeItem}</strong>
         <span>{activeIndex + 1} / {items.length}</span>
       </div>
       <div className="about-tech-carousel__rail" aria-hidden="true">
         {items.map((item, index) => {
-          const Icon = featureIconFor(item);
           return (
             <div key={item} className={`about-tech-carousel__item${index === activeIndex ? " is-active" : ""}`}>
-              <TechnologyIcon label={item} fallback={Icon} className="about-tech-carousel__item-icon" />
+              <TechnologyIcon label={item} fallback={Database} className="about-tech-carousel__item-icon" />
               <strong>{item}</strong>
             </div>
           );

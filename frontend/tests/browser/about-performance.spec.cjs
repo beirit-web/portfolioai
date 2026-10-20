@@ -38,7 +38,7 @@ test("about loads its own entry, starts portrait loading early and avoids projec
   expect(requests.filter(request => new URL(request.url()).pathname === "/api/projects/")).toEqual([]);
   const scripts = requests.filter(request => request.resourceType() === "script").map(request => request.url());
   expect(scripts.some(url => /\/about-[^/]+\.js$/.test(url))).toBe(true);
-  expect(scripts.filter(url => /\/(?:main-|useI18n-|three-vendor|ContactForm-|WaveGridHero-)/.test(url))).toEqual([]);
+  expect(scripts.filter(url => /\/(?:main-|useI18n-|three-vendor|ContactForm-|WaveGridHero-|PortfolioFeatureList-)/.test(url))).toEqual([]);
   expect(errors).toEqual([]);
 });
 

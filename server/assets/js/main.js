@@ -408,7 +408,7 @@ function initAuthFormEnhancements() {
       button.setAttribute("aria-label", label);
       button.setAttribute("aria-pressed", visible ? "true" : "false");
       if (textTarget) textTarget.textContent = label;
-      if (icon) icon.textContent = visible ? "🙈" : "👁";
+      if (icon && icon.localName !== "svg") icon.textContent = visible ? "🙈" : "👁";
     };
 
     button.addEventListener("click", () => {

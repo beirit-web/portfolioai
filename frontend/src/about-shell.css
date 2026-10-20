@@ -276,6 +276,10 @@ video {
   font-weight: 900;
 }
 
+.site-footer__meta-separator {
+  display: none;
+}
+
 .site-footer__links {
   display: flex;
   flex-wrap: wrap;

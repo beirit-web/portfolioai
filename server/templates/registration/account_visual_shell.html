@@ -1,0 +1,26 @@
+{% extends "registration/account_shell.html" %}
+{% load static %}
+
+{% block topnav %}
+  <nav class="topnav login-topnav" aria-label="{% account_text 'Hauptnavigation' %}">
+    <a class="brand" href="/">
+      <img src="{% static 'images/beirit-digital-logo-160.webp' %}" alt="" width="44" height="44" />
+      <span>Beirit Web</span>
+    </a>
+    <div class="login-topnav__links">
+      <a href="/">{% include "partials/login_icon.html" with name="back" %}{% account_text "Startseite" %}</a>
+      <a href="/kontakt">{% account_text "Kontakt" %}</a>
+    </div>
+  </nav>
+{% endblock %}
+
+{% block footer %}
+  <footer class="site-footer login-footer">
+    <p>© 2026 Beirit Web · Eugen Beirit</p>
+    <div>
+      <a class="footer-link" href="/kontakt">{% account_text "Kontakt" %}</a>
+      <a class="footer-link" href="{% url 'pages:imprint' %}">{% account_text "Impressum" %}</a>
+      <a class="footer-link" href="{% url 'pages:privacy' %}">{% account_text "Datenschutz" %}</a>
+    </div>
+  </footer>
+{% endblock %}
