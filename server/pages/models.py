@@ -514,6 +514,14 @@ class HousingTokenRevocation(models.Model):
   expires_at = models.DateTimeField()
 
 
+class HousingApiBudget(models.Model):
+  """Shared Somantic request counts only; no API keys or listing data."""
+
+  month = models.DateField(unique=True)
+  requests = models.PositiveIntegerField(default=0)
+  next_request_at = models.DateTimeField()
+
+
 class LoginAttemptBucket(models.Model):
   """Shared, short-lived authentication budget; identifiers are hashed."""
 

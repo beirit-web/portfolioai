@@ -224,7 +224,9 @@ def housing_spa(_request, section=None):
         raise Http404("Wohnungssuche page not found.")
     if not HOUSING_SPA_INDEX.exists():
         raise Http404("Wohnungssuche build not found.")
-    return FileResponse(HOUSING_SPA_INDEX.open("rb"), content_type="text/html")
+    response = FileResponse(HOUSING_SPA_INDEX.open("rb"), content_type="text/html")
+    response["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+    return response
 
 
 def build_absolute_site_url(path: str = "") -> str:
@@ -377,7 +379,11 @@ def housing_register_api(request):
         return JsonResponse({"errors": {"detail": exc.messages}}, status=503)
     return JsonResponse(
         {
-            "detail": "Bitte bestätige deine E-Mail-Adresse über den Link in der Bestätigungs-E-Mail. Erst danach ist dein Konto aktiv.",
+            "detail": (
+                "Dein Konto wurde gespeichert. In dieser lokalen Demo wird keine E-Mail versendet. Öffne /examplemail im selben Browser und gib den dort angezeigten Aktivierungscode auf der Anmeldeseite ein."
+                if local_activation_enabled(request) else
+                "Bitte bestätige deine E-Mail-Adresse über den Link in der Bestätigungs-E-Mail. Erst danach ist dein Konto aktiv."
+            ),
             "email": user.email,
             "emailVerificationRequired": True,
             "emailDelivery": account_email_delivery_mode(request),
@@ -399,15 +405,45 @@ def housing_token_auth_api(request):
         return JsonResponse({"errors": {"detail": ["Nutzername und Passwort sind erforderlich."]}}, status=400)
     user = authenticate(request, username=data["username"], password=data["password"])
     if not user:
-        if pending_account_for_credentials(data["username"], data["password"]):
+        pending_user = pending_account_for_credentials(data["username"], data["password"])
+        if pending_user:
+            local_payload = {}
+            explanation = "Bitte bestätige zuerst deine E-Mail-Adresse über den Link in der Bestätigungs-E-Mail."
+            if local_activation_enabled(request):
+                issue_local_activation(request, pending_user, next_url="/wohnungssuche/dashboard")
+                local_payload = {
+                    "emailDelivery": "local",
+                    **local_registration_payload(request, pending_user, next_url="/wohnungssuche/dashboard"),
+                }
+                explanation = "Dein Konto ist noch nicht aktiviert. In dieser lokalen Demo wird keine E-Mail versendet. Nutze den Aktivierungscode aus /examplemail im selben Browser."
             return JsonResponse({
-                "errors": {"detail": ["Bitte bestätige zuerst deine E-Mail-Adresse über den Link in der Bestätigungs-E-Mail."]},
+                "errors": {"detail": [explanation]},
                 "code": "email_verification_required",
+                **local_payload,
             }, status=403)
         return JsonResponse({"errors": {"detail": ["Nutzername oder Passwort wurden nicht akzeptiert."]}}, status=400)
     clear_login_attempts(request)
     token = make_housing_auth_token(user)
     return JsonResponse({"token": token, "user_id": user.pk, "username": user.username})
+
+
+@never_cache
+@require_GET
+def housing_auth_config(request):
+    local = local_activation_enabled(request)
+    pending = pending_local_activation(request) if local else None
+    response = JsonResponse({
+        "emailDelivery": account_email_delivery_mode(request),
+        "localActivationAvailable": local,
+        "exampleMailUrl": reverse("pages:example_mail") if local else None,
+        "passwordResetUrl": f"{reverse('password_reset')}?{urlencode({'next': '/wohnungssuche/login'})}",
+        "verificationResendUrl": f"{reverse('pages:verification_resend')}?{urlencode({'next': '/wohnungssuche/dashboard'})}",
+        "activationUrl": local_activation_login_url(request, pending[0], next_url="/wohnungssuche/dashboard") if pending else None,
+    })
+    response["Cache-Control"] = "private, no-store, max-age=0"
+    response["X-Robots-Tag"] = "noindex, nofollow"
+    response["Vary"] = "Cookie"
+    return response
 
 
 @never_cache

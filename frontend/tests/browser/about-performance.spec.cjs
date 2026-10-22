@@ -91,6 +91,8 @@ test("technology autoplay can stay paused and reacts to motion preference change
   const activeTechnology = page.locator(isMobile ? ".about-tech-carousel__stage strong" : ".about-tech-carousel__item.is-active strong");
   await carousel.scrollIntoViewIfNeeded();
   await expect(carousel.getByRole("button", { name: "Automatischen Wechsel pausieren", exact: true })).toBeVisible();
+  // Visibility tracking is asynchronous; settle it before freezing browser time.
+  await expect(page.locator(".about-tech-carousel__stage")).toHaveAttribute("aria-live", "off");
   await page.clock.pauseAt(new Date("2026-10-16T13:00:00Z"));
   await carousel.getByRole("button", { name: "Automatischen Wechsel pausieren", exact: true }).click();
   const pausedTechnology = await activeTechnology.textContent();

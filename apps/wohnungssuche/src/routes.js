@@ -7,25 +7,28 @@ const routes = {
 };
 
 export function routeFromLocation() {
-  const hash = window.location.hash.replace(/^#\/?/, "");
-  const path = window.location.pathname.replace(/^\/wohnungssuche\/?/, "").replace(/^\//, "").replace(/\/$/, "");
+  const hash = location.hash.replace(/^#\/?/, "");
+  const path = location.pathname.replace(/^\/wohnungssuche\/?/, "").replace(/^\//, "").replace(/\/$/, "");
   return routes[hash || path] || "dashboard";
 }
 
 export function navigateTo(path) {
-  window.history.pushState({}, "", `/wohnungssuche/${path.replace(/^\//, "") || "dashboard"}`);
-  window.dispatchEvent(new PopStateEvent("popstate"));
+  const url = new URL(location.href);
+  url.pathname = `/wohnungssuche/${path.replace(/^\//, "") || "dashboard"}`;
+  url.hash = "";
+  history.pushState({}, "", url);
+  dispatchEvent(new PopStateEvent("popstate"));
 }
 
 export function useRoute() {
   const [route, setRoute] = useState(routeFromLocation);
   useEffect(() => {
     const update = () => setRoute(routeFromLocation());
-    window.addEventListener("popstate", update);
-    window.addEventListener("hashchange", update);
+    addEventListener("popstate", update);
+    addEventListener("hashchange", update);
     return () => {
-      window.removeEventListener("popstate", update);
-      window.removeEventListener("hashchange", update);
+      removeEventListener("popstate", update);
+      removeEventListener("hashchange", update);
     };
   }, []);
   return route;

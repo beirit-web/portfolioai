@@ -387,7 +387,7 @@
       <script>
         (function () {
           const supportedLanguages = new Set(["de", "ru"]);
-          const queryLang = new URLSearchParams(window.location.search).get("lang");
+          const queryLang = new URLSearchParams(location.search).get("lang");
           const cookieLang =
             document.cookie
               .split(";")
@@ -640,7 +640,7 @@
           if (!elements.length) return;
 
           const revealNow = (element) => element.classList.add("is-revealed");
-          const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
           if (reduceMotion || !("IntersectionObserver" in window)) {
             elements.forEach(revealNow);
@@ -678,12 +678,12 @@
 
           scrollTopLink.addEventListener("click", function (event) {
             event.preventDefault();
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            scrollTo({ top: 0, behavior: "smooth" });
           });
 
           updateScrollTopLink();
-          window.addEventListener("scroll", updateScrollTopLink, { passive: true });
-          window.addEventListener("resize", updateScrollTopLink);
+          addEventListener("scroll", updateScrollTopLink, { passive: true });
+          addEventListener("resize", updateScrollTopLink);
         })();
       </script>
     </main>

@@ -264,7 +264,7 @@ async function mobileWorkflow(browser) {
   await page.keyboard.press("Home");
   await expect(page.locator("#formPane")).toBeVisible();
 
-  await page.evaluate(() => { window.print = () => { window.contractPrinted = true; }; });
+  await page.evaluate(() => { print = () => { window.contractPrinted = true; }; });
   await menuAction(page, "exportMenu", "printButton");
   await expect.poll(() => page.evaluate(() => window.contractPrinted)).toBe(true);
   await page.emulateMedia({ media: "print" });

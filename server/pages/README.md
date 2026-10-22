@@ -115,9 +115,24 @@ email and password on `/login/`. The activation input then appears. A separate
 browser cannot view or use another browser's example code. Disabled accounts
 that were already confirmed cannot be reactivated with this flow.
 
-Password recovery still writes its mail to the server console. Outside the local
-activation mode, account mail goes to the console by default as well; tokens
-are not included in those page responses or API registration responses.
+Password recovery uses the same explicit local-mode gate. The normal reset form
+creates a ten-minute, browser-bound message on the existing reset-done page.
+It sends no mail, including console mail. A CSRF-protected button transfers the
+token into Django's confirmation form; the generated URL contains only the
+`set-password` placeholder. The token uses Django's password-bound algorithm in a
+separate local namespace, preventing use in the normal emailed reset flow.
+Changing the password consumes it. Expiry, account deactivation or leaving the
+local mode prevents use, including when the password form was already open.
+Unknown, inactive and unusable accounts receive a neutral message. A housing
+recovery returns to `/wohnungssuche/login`; the shared login remains `/login/`.
+
+Housing login and registration obtain these mode-specific explanations and
+configured account URLs from `/wohnungssuche-api/auth/config/`. That response is
+private, uncached and contains no activation or reset code. Correct pending
+housing credentials can open the same local activation flow as `/login/`.
+
+Outside the local activation mode, account mail goes to the console by default;
+tokens are not included in those page responses or API registration responses.
 Actual delivery requires the explicit process setting
 `ACCOUNT_EMAIL_DELIVERY_ENABLED=true`, `EMAIL_BACKEND` set to
 `django.core.mail.backends.smtp.EmailBackend`, and the SMTP host, port, login,

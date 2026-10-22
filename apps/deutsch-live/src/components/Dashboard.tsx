@@ -105,12 +105,12 @@ function AccountDashboard({ user, refreshToken, onSettingsSaved }: Omit<Dashboar
     const payload = await exportUserData();
     if (!active.current) return;
     const blob = new Blob([JSON.stringify(payload.export, null, 2)], { type: "application/json" });
-    const url = window.URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
     link.download = "deutsch-live-export.json";
     link.click();
-    window.URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
     setMessage(ui.dashboard.exportReady);
     });
   }

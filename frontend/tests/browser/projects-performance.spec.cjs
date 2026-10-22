@@ -1,6 +1,19 @@
 const { test, expect } = require("@playwright/test");
 const { blockExternalRequests } = require("./helpers/network.cjs");
 
+test("home includes its sections and footer as soon as the headline renders", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator(".hero-stage__headline")).toBeVisible();
+  // No pointer, keyboard or scroll input should be needed to create the page.
+  const content = await page.evaluate(() => ({
+    problems: document.querySelectorAll(".problems-grid .problem-card").length,
+    services: document.querySelectorAll("#kompetenzen .service-card").length,
+    projects: document.querySelectorAll("#referenzen .portfolio-card").length,
+    footer: Boolean(document.querySelector(".site-footer")),
+  }));
+  expect(content).toEqual({ problems: 6, services: 3, projects: 6, footer: true });
+});
+
 test("home does not download components for separate about and project pages", async ({ page }) => {
   const unrelatedScripts = [];
   page.on("request", request => {

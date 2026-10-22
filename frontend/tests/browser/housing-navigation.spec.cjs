@@ -6,7 +6,7 @@ test.beforeEach(async ({ context, page, baseURL }) => {
   page.errors = [];
   page.on("pageerror", error => page.errors.push(error.message));
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/static/portfolio/wohnungssuche/index.html");
+  await page.goto("/wohnungssuche/");
 });
 
 test.afterEach(async ({ page }) => {
@@ -89,13 +89,13 @@ test("Login and registration never leave a stale open menu when returning to the
 });
 
 test("scroll position is restored and switching to desktop releases the mobile menu", async ({ page }) => {
-  await page.evaluate(() => window.scrollTo(0, 600));
-  const before = await page.evaluate(() => window.scrollY);
+  await page.evaluate(() => scrollTo(0, 600));
+  const before = await page.evaluate(() => scrollY);
   expect(before).toBeGreaterThan(0);
   await openMenu(page);
   await page.keyboard.press("Escape");
   await expectClosed(page);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(before);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(before);
   await openMenu(page);
   await page.setViewportSize({ width: 1440, height: 900 });
   await expect(page.locator(".sidebar")).toBeVisible();
@@ -123,7 +123,7 @@ test("the menu and account pages return to the housing project page on phones an
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     for (const route of ["dashboard", "login", "register"]) {
-      await page.goto(`/static/portfolio/wohnungssuche/index.html#${route}`);
+      await page.goto(`/wohnungssuche/#${route}`);
       if (route === "dashboard" && width <= 980) await openMenu(page);
       const container = route === "dashboard" ? page.locator(".sidebar") : page.locator(".login-panel");
       const home = container.getByRole("link", { name: "Zur Startseite der Wohnungssuche Bodensee", exact: true });
@@ -155,8 +155,17 @@ test("dashboard links directly to the housing project page and its demo can be r
     await home.click();
     await expect(page).toHaveURL(new URL("/projekte/wohnungssuche-bodensee", baseURL).href);
     await expect(page.getByRole("heading", { name: "Wohnungssuche Bodensee", exact: true })).toBeVisible();
-    await page.locator('.portfolio-project-hero--wohnungssuche-bodensee a[href="/static/portfolio/wohnungssuche/index.html"]').click();
-    await expect(page).toHaveURL(new URL("/static/portfolio/wohnungssuche/index.html", baseURL).href);
+    await page.locator('.portfolio-project-hero--wohnungssuche-bodensee a[href="/wohnungssuche/"]').click();
+    await expect(page).toHaveURL(new URL("/wohnungssuche/", baseURL).href);
     await expect(page.getByRole("heading", { name: "Dashboard", exact: true })).toBeVisible();
+  }
+});
+
+// These URLs may be handled by Django or directly by the static-file server.
+test("legacy static entry URLs keep query and hash when opening the Django app", async ({ page }) => {
+  for (const entry of ["/static/portfolio/wohnungssuche", "/static/portfolio/wohnungssuche/", "/static/portfolio/wohnungssuche/index.html"]) {
+    await page.goto(`${entry}?source=portfolio#login`);
+    await expect(page).toHaveURL(/\/wohnungssuche\/\?source=portfolio#login$/);
+    await expect(page.locator(".login-panel")).toBeVisible();
   }
 });

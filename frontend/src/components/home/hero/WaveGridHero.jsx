@@ -191,6 +191,12 @@ function createWaveGridExperience(canvas) {
   let pointerY = 0;
   let targetPointerX = 0;
   let targetPointerY = 0;
+  let pointerClientX = 0;
+  let pointerClientY = 0;
+  let hasPendingPointer = false;
+  let renderWidth = 0;
+  let renderHeight = 0;
+  let renderPixelRatio = renderer.getPixelRatio();
 
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
@@ -245,9 +251,19 @@ function createWaveGridExperience(canvas) {
     const rect = canvas.getBoundingClientRect();
     const nextWidth = Math.max(1, rect.width);
     const nextHeight = Math.max(1, rect.height);
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, useLightweightGrid ? 1 : 1.25);
+    const pixelRatio = Math.min(devicePixelRatio || 1, useLightweightGrid ? 1 : 1.25);
+    const sizeChanged = nextWidth !== renderWidth || nextHeight !== renderHeight;
+    const pixelRatioChanged = pixelRatio !== renderPixelRatio;
+    if (!sizeChanged && !pixelRatioChanged) return;
+
+    if (pixelRatioChanged) {
+      renderer.setPixelRatio(pixelRatio);
+      renderPixelRatio = pixelRatio;
+    }
+    if (!sizeChanged) return;
     renderer.setSize(nextWidth, nextHeight, false);
-    renderer.setPixelRatio(pixelRatio);
+    renderWidth = nextWidth;
+    renderHeight = nextHeight;
     camera.aspect = nextWidth / nextHeight;
     camera.updateProjectionMatrix();
   }
@@ -265,10 +281,19 @@ function createWaveGridExperience(canvas) {
   }
 
   function onPointerMove(event) {
+    if (!isVisible || document.hidden) return;
+    pointerClientX = event.clientX;
+    pointerClientY = event.clientY;
+    hasPendingPointer = true;
+  }
+
+  function updatePointer() {
+    if (!hasPendingPointer) return;
+    hasPendingPointer = false;
     const rect = canvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
-    targetPointerX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    targetPointerY = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    targetPointerX = ((pointerClientX - rect.left) / rect.width) * 2 - 1;
+    targetPointerY = -((pointerClientY - rect.top) / rect.height) * 2 + 1;
 
     pointer.set(targetPointerX, targetPointerY);
     raycaster.setFromCamera(pointer, camera);
@@ -285,6 +310,7 @@ function createWaveGridExperience(canvas) {
     if (!isVisible || document.hidden) return;
     const delta = Math.min((now - lastTime) / 1000, 0.05);
     lastTime = now;
+    updatePointer();
     pointerX += (targetPointerX - pointerX) * 0.045;
     pointerY += (targetPointerY - pointerY) * 0.045;
 
@@ -298,7 +324,7 @@ function createWaveGridExperience(canvas) {
     updateCamera();
     syncTrailTexture(delta);
     renderer.render(scene, camera);
-    rafId = window.requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
   }
 
   resize();
@@ -306,11 +332,12 @@ function createWaveGridExperience(canvas) {
   for (let i = 0; i < 7; i += 1) addRandomPoint();
 
   function syncAnimation() {
-    window.cancelAnimationFrame(rafId);
+    cancelAnimationFrame(rafId);
     rafId = 0;
+    hasPendingPointer = false;
     if (isVisible && !document.hidden) {
       lastTime = performance.now();
-      rafId = window.requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     }
   }
 
@@ -322,13 +349,13 @@ function createWaveGridExperience(canvas) {
   document.addEventListener("visibilitychange", syncAnimation);
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(canvas);
-  window.addEventListener("pointermove", onPointerMove, { passive: true });
-  rafId = window.requestAnimationFrame(animate);
+  addEventListener("pointermove", onPointerMove, { passive: true });
+  rafId = requestAnimationFrame(animate);
 
   return {
     destroy() {
-      window.cancelAnimationFrame(rafId);
-      window.removeEventListener("pointermove", onPointerMove);
+      cancelAnimationFrame(rafId);
+      removeEventListener("pointermove", onPointerMove);
       resizeObserver.disconnect();
       visibilityObserver.disconnect();
       document.removeEventListener("visibilitychange", syncAnimation);
@@ -354,14 +381,14 @@ export default function WaveGridHero() {
 
     try {
       experience = createWaveGridExperience(canvasRef.current);
-      readyFrame = window.requestAnimationFrame(() => setIsReady(true));
+      readyFrame = requestAnimationFrame(() => setIsReady(true));
     } catch (error) {
       canvasRef.current.dataset.waveGridError = "true";
       return undefined;
     }
 
     return () => {
-      window.cancelAnimationFrame(readyFrame);
+      cancelAnimationFrame(readyFrame);
       experience?.destroy();
     };
   }, []);

@@ -20,7 +20,7 @@ document.querySelectorAll("form[method=post]").forEach(form => {
   });
 });
 
-window.addEventListener("pageshow", () => {
+addEventListener("pageshow", () => {
   document.querySelectorAll("form[data-submitting]").forEach(form => {
     delete form.dataset.submitting;
     form.removeAttribute("aria-busy");

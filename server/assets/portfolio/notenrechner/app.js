@@ -41,7 +41,7 @@ function setStep(step) {
     3: elements.gradeInputs.querySelector("input"),
   }[step];
 
-  window.requestAnimationFrame(() => targetInput?.focus());
+  requestAnimationFrame(() => targetInput?.focus());
 }
 
 function setButtonLoading(button, isLoading) {
@@ -250,17 +250,17 @@ function stopAudio() {
 }
 
 function startCelebration() {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
     return;
   }
 
   const canvas = elements.canvas;
   const context = canvas.getContext("2d");
-  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  const pixelRatio = Math.min(devicePixelRatio || 1, 2);
   const colors = ["#0f8b6f", "#f9c74f", "#f94144", "#277da1", "#ffffff"];
   const particles = Array.from({ length: 90 }, () => ({
-    x: Math.random() * window.innerWidth,
-    y: -20 - Math.random() * window.innerHeight * 0.35,
+    x: Math.random() * innerWidth,
+    y: -20 - Math.random() * innerHeight * 0.35,
     size: 4 + Math.random() * 7,
     speed: 2 + Math.random() * 4,
     drift: -1.4 + Math.random() * 2.8,
@@ -269,14 +269,14 @@ function startCelebration() {
   }));
   const endTime = Date.now() + 2600;
 
-  canvas.width = Math.floor(window.innerWidth * pixelRatio);
-  canvas.height = Math.floor(window.innerHeight * pixelRatio);
-  canvas.style.width = `${window.innerWidth}px`;
-  canvas.style.height = `${window.innerHeight}px`;
+  canvas.width = Math.floor(innerWidth * pixelRatio);
+  canvas.height = Math.floor(innerHeight * pixelRatio);
+  canvas.style.width = `${innerWidth}px`;
+  canvas.style.height = `${innerHeight}px`;
   context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
   function draw() {
-    context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    context.clearRect(0, 0, innerWidth, innerHeight);
 
     particles.forEach((particle) => {
       particle.x += particle.drift;
@@ -292,7 +292,7 @@ function startCelebration() {
     });
 
     if (Date.now() < endTime) {
-      animationFrame = window.requestAnimationFrame(draw);
+      animationFrame = requestAnimationFrame(draw);
     } else {
       stopCelebration();
     }
@@ -303,7 +303,7 @@ function startCelebration() {
 
 function stopCelebration() {
   if (animationFrame) {
-    window.cancelAnimationFrame(animationFrame);
+    cancelAnimationFrame(animationFrame);
     animationFrame = null;
   }
 

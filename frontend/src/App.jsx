@@ -25,7 +25,7 @@ const ProjectsOverviewPage = React.lazy(() => import("./components/projects/Proj
 const AboutPage = React.lazy(() => import("./components/about/AboutPage.jsx"));
 function WeatherRedirect() {
   React.useEffect(() => {
-    window.location.replace(publicPageUrl("/botanic/wetter/"));
+    location.replace(publicPageUrl("/botanic/wetter/"));
   }, []);
   return <a href={publicPageUrl("/botanic/wetter/")}>Wetter in ENBT Botanic öffnen</a>;
 }
@@ -87,7 +87,7 @@ function useScrollReveal(rootSelector = ".site-shell") {
 }
 
 function revealProps(reveal = "up", delay = 0, duration = 760, distance = "1rem") {
-  if (typeof window !== "undefined" && window.location.pathname === "/") {
+  if (typeof window !== "undefined" && location.pathname === "/") {
     return {};
   }
 
@@ -99,59 +99,7 @@ function revealProps(reveal = "up", delay = 0, duration = 760, distance = "1rem"
   };
 }
 
-function useDeferredHomeSections() {
-  const [showSections, setShowSections] = React.useState(() => (
-    typeof window !== "undefined"
-      && window.location.hash
-      && window.location.hash !== "#top"
-  ));
-  const loadingPromiseRef = React.useRef(null);
-
-  const revealNow = React.useCallback(() => {
-    setShowSections(true);
-    if (loadingPromiseRef.current) return loadingPromiseRef.current;
-
-    const deferredCssLoader = typeof window !== "undefined"
-      ? window.BEIRIT_LOAD_DEFERRED_CSS
-      : null;
-
-    loadingPromiseRef.current = (typeof deferredCssLoader === "function"
-      ? deferredCssLoader()
-      : Promise.resolve()).finally(() => {
-      loadingPromiseRef.current = null;
-    });
-
-    return loadingPromiseRef.current;
-  }, []);
-
-  React.useEffect(() => {
-    if (typeof window === "undefined") return undefined;
-
-    const handleHashChange = () => {
-      if (window.location.hash && window.location.hash !== "#top") revealNow();
-    };
-    const handleScrollOrInteraction = () => revealNow();
-    const timeoutId = setTimeout(revealNow, 8000);
-
-    window.addEventListener("hashchange", handleHashChange);
-    window.addEventListener("scroll", handleScrollOrInteraction, { passive: true, once: true });
-    window.addEventListener("pointerdown", handleScrollOrInteraction, { passive: true, once: true });
-    window.addEventListener("keydown", handleScrollOrInteraction, { once: true });
-
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener("hashchange", handleHashChange);
-      window.removeEventListener("scroll", handleScrollOrInteraction);
-      window.removeEventListener("pointerdown", handleScrollOrInteraction);
-      window.removeEventListener("keydown", handleScrollOrInteraction);
-    };
-  }, [revealNow]);
-
-  return [showSections, revealNow];
-}
-
-
-function ProblemsSection({ t, preview = false }) {
+function ProblemsSection({ t }) {
   const problems = t("home.problems.items");
 
   return (
@@ -161,28 +109,24 @@ function ProblemsSection({ t, preview = false }) {
           <h2 className="home-section-title mt-3 font-display text-3xl leading-tight sm:text-4xl">{t("home.problems.title")}</h2>
           <p className="mt-4 text-base leading-8 text-stone-700">{t("home.problems.intro")}</p>
         </header>
-        {!preview ? (
-          <>
-            <ul className="problems-grid">
-              {problems.map(({ icon, title, text, projectHref, projectLabel }, index) => {
-                const Icon = iconFor(icon);
-                return (
-                  <li key={title} className="problem-card" {...revealProps("up", 130 + index * 45, 680, "0.75rem")}>
-                    <CardIllustration name={icon} kind="problem" fallback={Icon} />
-                    <span className="problem-card__body">
-                      <strong>{title}</strong>
-                      {text ? <span>{text}</span> : null}
-                      {projectHref ? <a className="problem-card__project-link" href={projectHref}>{projectLabel}<ArrowRight className="h-4 w-4" aria-hidden="true" /></a> : null}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-            <div className="problems-solution" {...revealProps("up", 250, 720, "0.8rem")}>
-              <p>{t("home.problems.solution")}</p>
-            </div>
-          </>
-        ) : null}
+        <ul className="problems-grid">
+          {problems.map(({ icon, title, text, projectHref, projectLabel }, index) => {
+            const Icon = iconFor(icon);
+            return (
+              <li key={title} className="problem-card" {...revealProps("up", 130 + index * 45, 680, "0.75rem")}>
+                <CardIllustration name={icon} kind="problem" fallback={Icon} />
+                <span className="problem-card__body">
+                  <strong>{title}</strong>
+                  {text ? <span>{text}</span> : null}
+                  {projectHref ? <a className="problem-card__project-link" href={projectHref}>{projectLabel}<ArrowRight className="h-4 w-4" aria-hidden="true" /></a> : null}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+        <div className="problems-solution" {...revealProps("up", 250, 720, "0.8rem")}>
+          <p>{t("home.problems.solution")}</p>
+        </div>
       </div>
     </section>
   );
@@ -317,7 +261,7 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate, contac
   if (routeKey === "contact") {
     const ContactForm = contactComponents?.Form || LazyContactForm;
     const ContactDetails = contactComponents?.Details || LazyContactDetails;
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const selectedProject = params.get("project") || "";
     const subjectPrefix = { de: "Frage zu", ru: "Вопрос о", uk: "Питання про" }[language] || "Frage zu";
     const selectedSubject = selectedProject ? `${subjectPrefix} ${selectedProject}` : "";
@@ -430,7 +374,7 @@ function usePortfolioCarousel(itemCount, initialIndex = 0) {
 
   React.useEffect(() => () => {
     if (portfolioDragFrameRef.current !== null) {
-      window.cancelAnimationFrame(portfolioDragFrameRef.current);
+      cancelAnimationFrame(portfolioDragFrameRef.current);
     }
     clearTimeout(portfolioSettleTimerRef.current);
     clearTimeout(portfolioClickTimerRef.current);
@@ -440,7 +384,7 @@ function usePortfolioCarousel(itemCount, initialIndex = 0) {
     portfolioDragOffsetRef.current = offset;
     if (portfolioDragFrameRef.current !== null) return;
 
-    portfolioDragFrameRef.current = window.requestAnimationFrame(() => {
+    portfolioDragFrameRef.current = requestAnimationFrame(() => {
       portfolioTrackRef.current?.style.setProperty(
         "--portfolio-drag-offset",
         `${portfolioDragOffsetRef.current}px`,
@@ -762,9 +706,8 @@ function HomePage({ onNavigate }) {
   const { t, language } = useI18n();
   useScrollReveal();
   const [activeNavHref, setActiveNavHref] = React.useState(() => (
-    window.location.hash === "#referenzen" ? "/#referenzen" : "/"
+    location.hash === "#referenzen" ? "/#referenzen" : "/"
   ));
-  const [showHomeSections, revealHomeSections] = useDeferredHomeSections();
   const services = t("home.services.items");
   const servicesTitle = t("home.services.title");
   const servicesTitleSegments = [servicesTitle];
@@ -785,54 +728,35 @@ function HomePage({ onNavigate }) {
       referencesLink: "Більше проєктів",
     },
   }[language];
-  const navigateFromHome = React.useCallback((nextPath) => {
-    const pathText = String(nextPath || "");
-    if (pathText.includes("#") && !pathText.endsWith("#top")) {
-      revealHomeSections().finally(() => {
-        setTimeout(() => onNavigate?.(nextPath), 0);
-      });
-      return;
-    }
-    onNavigate?.(nextPath);
-  }, [onNavigate, revealHomeSections]);
   const navigateHomeHeader = React.useCallback((nextPath) => {
     setActiveNavHref(nextPath);
-    navigateFromHome(nextPath);
-  }, [navigateFromHome]);
+    onNavigate?.(nextPath);
+  }, [onNavigate]);
 
   const handleAnchorNavigate = React.useCallback((event, href) => {
     if (!isPlainLinkClick(event) || !href?.startsWith("#") || href === "#top") return;
     event.preventDefault();
-    revealHomeSections().finally(() => {
-      setTimeout(() => scrollToHashTarget(href), 0);
-    });
-  }, [revealHomeSections]);
+    scrollToHashTarget(href);
+  }, []);
 
   React.useEffect(() => {
     const updateActiveHashNav = () => {
-      setActiveNavHref(window.location.hash === "#referenzen" ? "/#referenzen" : "/");
+      setActiveNavHref(location.hash === "#referenzen" ? "/#referenzen" : "/");
     };
 
     updateActiveHashNav();
-    window.addEventListener("hashchange", updateActiveHashNav);
-    window.addEventListener("popstate", updateActiveHashNav);
+    addEventListener("hashchange", updateActiveHashNav);
+    addEventListener("popstate", updateActiveHashNav);
 
     return () => {
-      window.removeEventListener("hashchange", updateActiveHashNav);
-      window.removeEventListener("popstate", updateActiveHashNav);
+      removeEventListener("hashchange", updateActiveHashNav);
+      removeEventListener("popstate", updateActiveHashNav);
     };
   }, []);
 
   React.useEffect(() => {
-    if (window.location.hash && window.location.hash !== "#top") {
-      revealHomeSections().finally(() => {
-        scrollToHashTarget(window.location.hash);
-      });
-      return;
-    }
-
-    scrollToHashTarget(window.location.hash);
-  }, [revealHomeSections]);
+    scrollToHashTarget(location.hash);
+  }, []);
 
   return (
     <div className="site-shell site-shell--home min-h-screen bg-[#f3f4f6] text-stone-950">
@@ -840,13 +764,10 @@ function HomePage({ onNavigate }) {
 
       <main id="top" className="home-main">
         <React.Suspense fallback={<div className="hero-stage-fallback" aria-hidden="true" />}>
-          <Hero t={t} onAnchorNavigate={handleAnchorNavigate} onRouteNavigate={navigateFromHome} />
+          <Hero t={t} onAnchorNavigate={handleAnchorNavigate} onRouteNavigate={onNavigate} />
         </React.Suspense>
 
-        <ProblemsSection t={t} preview={!showHomeSections} />
-
-        {showHomeSections ? (
-          <>
+        <ProblemsSection t={t} />
         <section id="kompetenzen" className="home-services-section" {...revealProps("left", 0, 760, "1.25rem")}>
           <header className="home-services-heading" {...revealProps("up", 90, 760, "0.95rem")}>
             <h2 className="home-services-heading__title">
@@ -905,11 +826,9 @@ function HomePage({ onNavigate }) {
           onNavigate={onNavigate}
         />
 
-          </>
-        ) : null}
       </main>
 
-      {showHomeSections ? <PageFooter t={t} onNavigate={onNavigate} /> : null}
+      <PageFooter t={t} onNavigate={onNavigate} />
     </div>
   );
 }

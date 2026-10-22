@@ -31,18 +31,18 @@ export function usePlatformSession(user: CurrentUser | null, onUserChange: (user
     if (platformIntegration && user) fetch("/deutschlive/api/auth/csrf/", { credentials: "same-origin" })
       .then(response => response.json()).then(response => { if (active) csrfToken = response.csrfToken; }).catch(() => {});
     function onVisibility() { if (document.visibilityState === "visible") void refresh(); }
-    const timer = window.setInterval(() => { if (document.visibilityState === "visible") void refresh(); }, 30000);
-    window.addEventListener("focus", refresh);
+    const timer = setInterval(() => { if (document.visibilityState === "visible") void refresh(); }, 30000);
+    addEventListener("focus", refresh);
     document.addEventListener("visibilitychange", onVisibility);
-    window.addEventListener("pointerdown", activity);
-    window.addEventListener("keydown", activity);
+    addEventListener("pointerdown", activity);
+    addEventListener("keydown", activity);
     return () => {
       active = false;
-      window.clearInterval(timer);
-      window.removeEventListener("focus", refresh);
+      clearInterval(timer);
+      removeEventListener("focus", refresh);
       document.removeEventListener("visibilitychange", onVisibility);
-      window.removeEventListener("pointerdown", activity);
-      window.removeEventListener("keydown", activity);
+      removeEventListener("pointerdown", activity);
+      removeEventListener("keydown", activity);
     };
   }, [user?.id, onUserChange]);
 }

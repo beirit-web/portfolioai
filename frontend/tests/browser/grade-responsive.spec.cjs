@@ -65,11 +65,11 @@ async function expectGeometry(page, variant, label) {
       const style = getComputedStyle(element), box = element.getBoundingClientRect();
       return style.visibility !== "hidden" && style.display !== "none" && box.width > 0 && box.height > 0;
     };
-    if (document.documentElement.scrollWidth > window.innerWidth + tolerance) problems.push("document overflows horizontally");
+    if (document.documentElement.scrollWidth > innerWidth + tolerance) problems.push("document overflows horizontally");
     for (const element of [root, ...root.querySelectorAll("*")]) {
       if (!visible(element) || element instanceof SVGElement || element.tagName === "CANVAS") continue;
       const box = element.getBoundingClientRect();
-      if (box.left < -tolerance || box.right > window.innerWidth + tolerance) problems.push(`${describe(element)} extends outside the viewport`);
+      if (box.left < -tolerance || box.right > innerWidth + tolerance) problems.push(`${describe(element)} extends outside the viewport`);
       if (!(element instanceof HTMLInputElement) && element.clientWidth > 0 && element.scrollWidth > element.clientWidth + tolerance) {
         problems.push(`${describe(element)} has horizontal content overflow`);
       }
@@ -84,7 +84,7 @@ async function expectGeometry(page, variant, label) {
       if (!node.textContent.trim() || !visible(element) || element.closest(gridSelector) || element instanceof SVGElement) continue;
       const range = document.createRange(); range.selectNodeContents(node);
       for (const textBox of range.getClientRects()) {
-        if (textBox.width && (textBox.left < -tolerance || textBox.right > window.innerWidth + tolerance)) {
+        if (textBox.width && (textBox.left < -tolerance || textBox.right > innerWidth + tolerance)) {
           problems.push(`${describe(element)} has text outside the viewport`);
         }
         for (let ancestor = element; ancestor && root.contains(ancestor); ancestor = ancestor.parentElement) {
@@ -115,7 +115,7 @@ async function expectReachable(control) {
   await expect(control).toBeVisible();
   const problem = await control.evaluate(element => {
     const box = element.getBoundingClientRect(), tolerance = 2;
-    if (box.left < -tolerance || box.right > window.innerWidth + tolerance || box.top < -tolerance || box.bottom > window.innerHeight + tolerance) {
+    if (box.left < -tolerance || box.right > innerWidth + tolerance || box.top < -tolerance || box.bottom > innerHeight + tolerance) {
       return "control cannot be fully scrolled into the viewport";
     }
     for (let ancestor = element.parentElement; ancestor; ancestor = ancestor.parentElement) {

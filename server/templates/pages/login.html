@@ -123,7 +123,7 @@
       {% if account_mail_is_console and not local_activation_pending %}
         <div class="login-demo-note">
           {% include "partials/login_icon.html" with name="info" %}
-          <p>{% account_text "Lokale Demo:" %} {% if local_activation_available %}{% account_text "Den Aktivierungscode nach einer Registrierung finden Sie unter" %} <a href="{% url 'pages:example_mail' %}">/examplemail</a>. {% endif %}{% account_text "Wiederherstellungs-E-Mails werden in der Serverkonsole ausgegeben." %}</p>
+          <p>{% account_text "Lokale Demo:" %} {% if local_activation_available %}{% account_text "Den Aktivierungscode nach einer Registrierung finden Sie unter" %} <a href="{% url 'pages:example_mail' %}">/examplemail</a>. {% account_text "Beim Zurücksetzen Ihres Passworts erscheint der Wiederherstellungstoken direkt im Browser. Es wird keine E-Mail verschickt." %}{% else %}{% account_text "Wiederherstellungs-E-Mails werden in der Serverkonsole ausgegeben." %}{% endif %}</p>
         </div>
       {% endif %}
     </section>

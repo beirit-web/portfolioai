@@ -4,7 +4,7 @@
   if (!nav) return;
   const toggle = nav.querySelector(".imprint-nav__toggle");
   const links = document.getElementById(toggle.getAttribute("aria-controls"));
-  const mobile = window.matchMedia("(max-width: 47.99rem)");
+  const mobile = matchMedia("(max-width: 47.99rem)");
 
   function setOpen(open, restoreFocus = false) {
     toggle.setAttribute("aria-expanded", String(open));
@@ -38,6 +38,6 @@
     if (event.target.closest("a")) setOpen(false);
   });
   mobile.addEventListener("change", resize);
-  window.addEventListener("pageshow", resize);
+  addEventListener("pageshow", resize);
   resize();
 })();

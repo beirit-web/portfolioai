@@ -64,7 +64,7 @@ async function sampleTransition(page, action, fraction = 0.5) {
     const observer = new MutationObserver(sample);
     observer.observe(panel, { attributes: true, attributeFilter: ["class"] });
     if (action === "escape") {
-      window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+      dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
     } else {
       toggle.click();
     }

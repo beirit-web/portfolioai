@@ -765,7 +765,7 @@
           ],
           "note": "Portfolio-Demo mit fiktiven Angeboten und vereinfachtem API-Adapter. Die Demo-Endpunkte für Suchprofile und Orte speichern Änderungen nicht dauerhaft; die nutzerbezogene Verwaltung ist im separaten Django-Quellprojekt dokumentiert.",
           "cta": "Demo öffnen",
-          "href": "/static/portfolio/wohnungssuche/index.html",
+          "href": "/wohnungssuche/",
           "technologies": [
             "Python",
             "JavaScript",

@@ -23,7 +23,7 @@ export function useDocumentMeta(route) {
     updateMeta("name", "description", description);
     updateMeta("name", "keywords", keywords);
     let canonical = document.querySelector('link[rel="canonical"]');
-    const canonicalUrl = pageMeta.canonical || route.canonical || canonical?.href || `${window.location.origin}${normalizeAppPath()}`;
+    const canonicalUrl = pageMeta.canonical || route.canonical || canonical?.href || `${location.origin}${normalizeAppPath()}`;
     if (!canonical) {
       canonical = document.createElement("link");
       canonical.setAttribute("rel", "canonical");

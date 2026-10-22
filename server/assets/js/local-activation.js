@@ -10,6 +10,6 @@
     return true;
   };
   if (expire()) return;
-  const timer = window.setInterval(() => { if (expire()) window.clearInterval(timer); }, 500);
-  window.addEventListener('pageshow', expire);
+  const timer = setInterval(() => { if (expire()) clearInterval(timer); }, 500);
+  addEventListener('pageshow', expire);
 })();

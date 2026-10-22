@@ -89,10 +89,10 @@ function closeMenus() {
 }
 
 function showToast(text) {
-  window.clearTimeout(toastTimer);
+  clearTimeout(toastTimer);
   elements.actionToast.textContent = text;
   elements.actionToast.hidden = false;
-  toastTimer = window.setTimeout(() => { elements.actionToast.hidden = true; }, 2600);
+  toastTimer = setTimeout(() => { elements.actionToast.hidden = true; }, 2600);
 }
 
 function setView(view) {
@@ -103,7 +103,7 @@ function setView(view) {
     tab.setAttribute("aria-selected", String(active));
     tab.tabIndex = active ? 0 : -1;
   });
-  if (!window.matchMedia("(min-width: 1024px)").matches) window.scrollTo(0, 0);
+  if (!matchMedia("(min-width: 1024px)").matches) scrollTo(0, 0);
   scheduleDocumentZoom();
 }
 
@@ -130,8 +130,8 @@ function selectSection(key, scroll = false) {
   elements.nextSectionButton.querySelector("svg").replaceWith(icon(last ? "eye" : "chevron-right"));
   if (scroll) {
     elements.formPane.scrollTop = 0;
-    if (!window.matchMedia("(min-width: 1024px)").matches) {
-      window.scrollTo(0, 0);
+    if (!matchMedia("(min-width: 1024px)").matches) {
+      scrollTo(0, 0);
       elements.stepList.querySelector("[aria-current=step]").scrollIntoView({ block: "nearest", inline: "nearest" });
     }
   }
@@ -139,7 +139,7 @@ function selectSection(key, scroll = false) {
 
 function scheduleDocumentZoom() {
   if (documentZoomFrame) return;
-  documentZoomFrame = window.requestAnimationFrame(() => {
+  documentZoomFrame = requestAnimationFrame(() => {
     documentZoomFrame = 0;
     updateDocumentZoom();
   });
@@ -229,7 +229,7 @@ function setLogoState(data) {
 
 function readDraft() {
   try {
-    return JSON.parse(window.localStorage.getItem(storageKey()) || "null");
+    return JSON.parse(localStorage.getItem(storageKey()) || "null");
   } catch {
     return null;
   }
@@ -237,7 +237,7 @@ function readDraft() {
 
 function readLogo() {
   try {
-    return JSON.parse(window.localStorage.getItem(LOGO_STORAGE_KEY) || "null");
+    return JSON.parse(localStorage.getItem(LOGO_STORAGE_KEY) || "null");
   } catch {
     return null;
   }
@@ -245,7 +245,7 @@ function readLogo() {
 
 function readFontSize() {
   try {
-    return window.localStorage.getItem(FONT_SIZE_STORAGE_KEY) || "normal";
+    return localStorage.getItem(FONT_SIZE_STORAGE_KEY) || "normal";
   } catch {
     return "normal";
   }
@@ -259,10 +259,10 @@ function applyData(data) {
 }
 
 function saveDraft() {
-  window.clearTimeout(storageTimer);
+  clearTimeout(storageTimer);
   storageTimer = 0;
   try {
-    window.localStorage.setItem(storageKey(), JSON.stringify(getData()));
+    localStorage.setItem(storageKey(), JSON.stringify(getData()));
     setStorageBadge("Gespeichert", "saved");
   } catch {
     setStorageBadge("Speichern blockiert", "warning");
@@ -272,10 +272,10 @@ function saveDraft() {
 function saveLogo(data) {
   try {
     if (data) {
-      window.localStorage.setItem(LOGO_STORAGE_KEY, JSON.stringify(normalizeLogoData(data)));
+      localStorage.setItem(LOGO_STORAGE_KEY, JSON.stringify(normalizeLogoData(data)));
       setStorageBadge("Logo gespeichert", "saved");
     } else {
-      window.localStorage.removeItem(LOGO_STORAGE_KEY);
+      localStorage.removeItem(LOGO_STORAGE_KEY);
       setStorageBadge("Logo entfernt", "warning");
     }
   } catch {
@@ -285,7 +285,7 @@ function saveLogo(data) {
 
 function saveFontSize(size) {
   try {
-    window.localStorage.setItem(FONT_SIZE_STORAGE_KEY, size);
+    localStorage.setItem(FONT_SIZE_STORAGE_KEY, size);
   } catch {
     setStorageBadge("Schriftgröße nicht gespeichert", "warning");
   }
@@ -305,14 +305,14 @@ function applyFontSize(size) {
 }
 
 function scheduleSave() {
-  window.clearTimeout(storageTimer);
+  clearTimeout(storageTimer);
   setStorageBadge("Speichert...", "pending");
-  storageTimer = window.setTimeout(saveDraft, 220);
+  storageTimer = setTimeout(saveDraft, 220);
 }
 
 function clearDraft() {
   try {
-    window.localStorage.removeItem(storageKey());
+    localStorage.removeItem(storageKey());
     setStorageBadge("Geleert", "warning");
   } catch {
     setStorageBadge("Speichern blockiert", "warning");
@@ -387,7 +387,7 @@ function activateTemplateOption(index) {
 function fitTemplatePicker() {
   if (elements.templateListbox.hidden) return;
   const top = elements.templateListbox.getBoundingClientRect().top;
-  elements.templateListbox.style.maxHeight = `${Math.max(0, Math.min(260, window.innerHeight - top - 8))}px`;
+  elements.templateListbox.style.maxHeight = `${Math.max(0, Math.min(260, innerHeight - top - 8))}px`;
 }
 
 function openTemplatePicker() {
@@ -430,9 +430,9 @@ function handleTemplateKey(event) {
 function selectTemplate(key, force = false) {
   if (!TEMPLATES[key] || (!force && elements.templateSelect.value === key)) return;
   if (storageTimer) {
-    window.clearTimeout(storageTimer);
+    clearTimeout(storageTimer);
     try {
-      window.localStorage.setItem(`${STORAGE_PREFIX}${activeTemplateKey}`, JSON.stringify(getData(TEMPLATES[activeTemplateKey])));
+      localStorage.setItem(`${STORAGE_PREFIX}${activeTemplateKey}`, JSON.stringify(getData(TEMPLATES[activeTemplateKey])));
     } catch {
       setStorageBadge("Speichern blockiert", "warning");
     }
@@ -630,7 +630,7 @@ function focusField(field) {
   closeMenus();
   setView("form");
   selectSection(field.closest(".field-group").dataset.group, true);
-  window.requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
     field.focus({ preventScroll: true });
     field.scrollIntoView({ block: "center", behavior: "instant" });
   });
@@ -851,16 +851,16 @@ async function refreshDocument() {
 }
 
 function updatePreview() {
-  window.clearTimeout(previewTimer);
+  clearTimeout(previewTimer);
   ++previewVersion;
   previewController?.abort();
   validateFields();
   setExportPending(true);
-  previewTimer = window.setTimeout(refreshDocument, 180);
+  previewTimer = setTimeout(refreshDocument, 180);
 }
 
 async function currentDocument() {
-  window.clearTimeout(previewTimer);
+  clearTimeout(previewTimer);
   const result = documentCache?.key === documentKey() ? documentCache : await refreshDocument();
   if (!result) return null;
   if (result.invalidFields.length) {
@@ -897,7 +897,7 @@ async function downloadText() {
     link.download = filename;
     link.click();
     showToast("Text heruntergeladen");
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   } catch {
     elements.exportHint.textContent = "Download nicht möglich. Bitte versuche es erneut.";
   }
@@ -911,7 +911,7 @@ async function copyText() {
     await navigator.clipboard.writeText(result.text);
     elements.copyButton.querySelector("span").textContent = "Kopiert";
     showToast("Text in die Zwischenablage kopiert");
-    window.setTimeout(() => {
+    setTimeout(() => {
       elements.copyButton.querySelector("span").textContent = "Text kopieren";
     }, 1400);
   } catch {
@@ -974,7 +974,7 @@ elements.templateTrigger.addEventListener("click", () => {
   else closeTemplatePicker();
 });
 elements.templateTrigger.addEventListener("keydown", handleTemplateKey);
-window.addEventListener("resize", fitTemplatePicker);
+addEventListener("resize", fitTemplatePicker);
 elements.templateField.addEventListener("focusout", (event) => {
   if (!elements.templateField.contains(event.relatedTarget)) closeTemplatePicker();
 });
@@ -990,7 +990,7 @@ elements.form.addEventListener("submit", (event) => {
 elements.fillSample.addEventListener("click", fillSample);
 elements.resetForm.addEventListener("click", () => {
   closeMenus();
-  window.clearTimeout(storageTimer);
+  clearTimeout(storageTimer);
   storageTimer = 0;
   elements.form.reset();
   clearDraft();
@@ -1015,15 +1015,15 @@ elements.printButton.addEventListener("click", async () => {
     document.title = previousTitle;
   };
   document.title = `${todayStamp()} ${getTemplate().label}`;
-  window.addEventListener("afterprint", restoreTitle, { once: true });
-  window.print();
-  window.setTimeout(restoreTitle, 1200);
+  addEventListener("afterprint", restoreTitle, { once: true });
+  print();
+  setTimeout(restoreTitle, 1200);
 });
 elements.copyButton.addEventListener("click", copyText);
 elements.focusMissingButton.addEventListener("click", () => {
   if (firstMissingField) focusField(firstMissingField);
 });
-window.addEventListener("pagehide", () => {
+addEventListener("pagehide", () => {
   if (storageTimer) saveDraft();
 });
 
@@ -1048,7 +1048,7 @@ elements.nextSectionButton.addEventListener("click", () => {
   const index = groups.findIndex(([key]) => key === selectedSection);
   if (index === groups.length - 1) {
     setView("document");
-    if (!window.matchMedia("(min-width: 1024px)").matches) document.querySelector("#documentTab").focus({ preventScroll: true });
+    if (!matchMedia("(min-width: 1024px)").matches) document.querySelector("#documentTab").focus({ preventScroll: true });
   } else selectSection(groups[index + 1][0], true);
 });
 document.querySelector("#showPreviewButton").addEventListener("click", () => {

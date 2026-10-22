@@ -17,6 +17,11 @@ ASSET_RENAMES = {
 }
 OLD_GRADE_PREFIX = "/static/portfolio/test-main/"
 GRADE_PREFIX = "/static/portfolio/notenrechner/"
+HOUSING_ENTRY_PATHS = (
+    "/static/portfolio/wohnungssuche",
+    "/static/portfolio/wohnungssuche/",
+    "/static/portfolio/wohnungssuche/index.html",
+)
 
 
 def canonical_portfolio_url(value):
@@ -24,7 +29,9 @@ def canonical_portfolio_url(value):
     if not value or not value.startswith("/static/"):
         return value
     pathname = value.split("?", 1)[0].split("#", 1)[0]
-    if pathname.startswith(OLD_GRADE_PREFIX):
+    if pathname in HOUSING_ENTRY_PATHS:
+        canonical_path = "/wohnungssuche/"
+    elif pathname.startswith(OLD_GRADE_PREFIX):
         canonical_path = GRADE_PREFIX + pathname[len(OLD_GRADE_PREFIX):]
     else:
         renamed = ASSET_RENAMES.get(pathname[len("/static/"):])
@@ -42,6 +49,13 @@ class _GradeAssetRedirectView(RedirectView):
 
 
 urlpatterns = [
+    *[
+        path(
+            entry.lstrip("/"),
+            RedirectView.as_view(url="/wohnungssuche/", permanent=True, query_string=True),
+        )
+        for entry in HOUSING_ENTRY_PATHS
+    ],
     path(
         "static/portfolio/test-main/<path:asset_path>",
         _GradeAssetRedirectView.as_view(

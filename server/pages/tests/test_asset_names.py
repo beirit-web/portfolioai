@@ -14,6 +14,16 @@ class PortfolioAssetNameTests(SimpleTestCase):
                 self.assertEqual(response["Location"], f"/static/portfolio/notenrechner/{filename}?v=2")
                 self.assertIsNotNone(finders.find(f"portfolio/notenrechner/{filename}"))
 
+    def test_legacy_housing_entries_redirect_and_normalize_without_changing_assets(self):
+        for path in ("/static/portfolio/wohnungssuche", "/static/portfolio/wohnungssuche/", "/static/portfolio/wohnungssuche/index.html"):
+            with self.subTest(path=path):
+                response = self.client.get(path + "?source=portfolio")
+                self.assertEqual(response.status_code, 301)
+                self.assertEqual(response["Location"], "/wohnungssuche/?source=portfolio")
+                self.assertEqual(canonical_portfolio_url(path + "?source=portfolio#login"), "/wohnungssuche/?source=portfolio#login")
+        asset = "/static/portfolio/wohnungssuche/navigation.js"
+        self.assertEqual(canonical_portfolio_url(asset), asset)
+
     def test_renamed_images_keep_legacy_links(self):
         for old, new in ASSET_RENAMES.items():
             with self.subTest(old=old):

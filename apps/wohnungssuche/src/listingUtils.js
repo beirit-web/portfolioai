@@ -17,7 +17,7 @@ export function quantity(value, suffix, absent) {
 export function safeUrl(value) {
   if (!value) return "";
   try {
-    const url = new URL(value, window.location.origin);
+    const url = new URL(value, location.origin);
     return ["http:", "https:"].includes(url.protocol) ? url.href : "";
   } catch { return ""; }
 }

@@ -32,7 +32,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function readInitialLocale(): Locale {
   if (typeof window === "undefined") return "ru";
-  const storedLocale = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+  const storedLocale = localStorage.getItem(LOCALE_STORAGE_KEY);
   return isLocale(storedLocale) ? storedLocale : "ru";
 }
 
@@ -51,7 +51,7 @@ export function getLocale() {
 export function setLocale(locale: Locale) {
   currentLocale = locale;
   currentUi = getUi(locale);
-  if (typeof window !== "undefined") window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  if (typeof window !== "undefined") localStorage.setItem(LOCALE_STORAGE_KEY, locale);
   listeners.forEach((listener) => listener(locale));
 }
 

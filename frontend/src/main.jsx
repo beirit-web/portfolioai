@@ -3,7 +3,7 @@ import { mountSiteApp } from "./lib/mountSiteApp.jsx";
 
 async function mount() {
   // A direct contact visit should paint the full form with its footer position.
-  const contactComponents = window.location.pathname.replace(/\/+$/, "") === "/kontakt"
+  const contactComponents = location.pathname.replace(/\/+$/, "") === "/kontakt"
     ? await Promise.all([
       import("./components/contact/ContactForm.jsx"),
       import("./components/contact/ContactDetails.jsx"),

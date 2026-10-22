@@ -28,14 +28,14 @@ export function createI18nHook(i18n) {
       };
       const onVisibility = () => { if (document.visibilityState === "visible") load(); };
       load();
-      window.addEventListener("online", load);
-      window.addEventListener("focus", load);
+      addEventListener("online", load);
+      addEventListener("focus", load);
       document.addEventListener("visibilitychange", onVisibility);
       return () => {
         active = false;
         clearTimeout(retryTimer);
-        window.removeEventListener("online", load);
-        window.removeEventListener("focus", load);
+        removeEventListener("online", load);
+        removeEventListener("focus", load);
         document.removeEventListener("visibilitychange", onVisibility);
       };
     }, [language]);

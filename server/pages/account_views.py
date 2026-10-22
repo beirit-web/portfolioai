@@ -2,16 +2,45 @@
 
 from .account_i18n import account_text_lazy as account_copy
 
-from urllib.parse import urlsplit
+from datetime import datetime, timezone as datetime_timezone
+from urllib.parse import urlencode, urlsplit
 
 from django import forms
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseNotAllowed, HttpResponseRedirect
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
+
+from .local_activation import local_activation_enabled
+from .local_password_reset import (
+    clear_local_password_reset, issue_local_password_reset,
+    local_password_reset_user, local_token_generator, pending_local_password_reset,
+)
+
+
+RETURN_SESSION_KEY = "password_reset_return_to"
+
+
+def password_reset_return_to(request, *, from_session=True):
+    candidate = request.POST.get("next") or request.GET.get("next")
+    if not candidate and from_session:
+        candidate = request.session.get(RETURN_SESSION_KEY)
+    # Recovery ends at a login screen; accepting only these relative routes also
+    # rules out absolute, protocol-relative and encoded redirect destinations.
+    if candidate in {"/wohnungssuche/login", "/wohnungssuche/login/"}:
+        return "/wohnungssuche/login"
+    return reverse("pages:login")
+
+
+def password_reset_request_url(login_url):
+    url = reverse("password_reset")
+    if login_url != reverse("pages:login"):
+        url += "?" + urlencode({"next": login_url})
+    return url
 
 
 class AccountPasswordResetForm(PasswordResetForm):
@@ -42,9 +71,12 @@ class AccountContextMixin:
         context = super().get_context_data(**kwargs)
         context.update(build_base_context(self.request))
         context["account_mail_is_console"] = settings.EMAIL_BACKEND == "django.core.mail.backends.console.EmailBackend"
-        from .local_activation import local_activation_enabled
-
         context["local_activation_available"] = local_activation_enabled(self.request)
+        context["local_password_reset_available"] = context["local_activation_available"]
+        context["account_login_url"] = password_reset_return_to(
+            self.request, from_session=not isinstance(self, AccountPasswordResetView),
+        )
+        context["account_password_reset_url"] = password_reset_request_url(context["account_login_url"])
         return context
 
     def render_to_response(self, context, **response_kwargs):
@@ -58,6 +90,12 @@ class AccountPasswordResetView(AccountContextMixin, auth_views.PasswordResetView
     form_class = AccountPasswordResetForm
 
     def form_valid(self, form):
+        self.request.session[RETURN_SESSION_KEY] = password_reset_return_to(self.request, from_session=False)
+        if local_activation_enabled(self.request):
+            # Do not send even a console email: this browser owns its example
+            # message, and no recovery token is written to server-wide logs.
+            issue_local_password_reset(self.request, form)
+            return HttpResponseRedirect(self.get_success_url())
         use_https = settings.PASSWORD_RESET_USE_HTTPS
         form.save(
             use_https=self.request.is_secure() if use_https is None else use_https,
@@ -73,11 +111,69 @@ class AccountPasswordResetView(AccountContextMixin, auth_views.PasswordResetView
 
 @method_decorator(never_cache, name="dispatch")
 class AccountPasswordResetDoneView(AccountContextMixin, auth_views.PasswordResetDoneView):
-    pass
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        challenge = pending_local_password_reset(self.request)
+        if challenge:
+            context.update({
+                "local_password_reset_token": challenge["token"],
+                "local_password_reset_expires_at": datetime.fromtimestamp(
+                    challenge["expires_at"], tz=datetime_timezone.utc,
+                ),
+            })
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if not local_activation_enabled(request):
+            return HttpResponseNotAllowed(["GET"])
+        challenge = pending_local_password_reset(request)
+        if local_password_reset_user(challenge) is None:
+            return HttpResponseRedirect(reverse("password_reset_invalid"))
+        # Django's confirmation view already understands the token held in the
+        # session. Never place the real token in a URL or an access log.
+        request.session[auth_views.INTERNAL_RESET_SESSION_TOKEN] = challenge["token"]
+        return HttpResponseRedirect(reverse("password_reset_confirm", kwargs={
+            "uidb64": challenge["uidb64"], "token": auth_views.PasswordResetConfirmView.reset_url_token,
+        }))
 
 
 class AccountPasswordResetConfirmView(AccountContextMixin, auth_views.PasswordResetConfirmView):
     form_class = AccountSetPasswordForm
+
+    def get_success_url(self):
+        url = super().get_success_url()
+        login_url = password_reset_return_to(self.request)
+        if login_url != reverse("pages:login"):
+            # Password changes invalidate an existing authenticated session on
+            # the next request. Carry this allowlisted destination explicitly so
+            # the completion page still links to the originating login screen.
+            separator = "&" if "?" in url else "?"
+            url += separator + urlencode({"next": login_url})
+        return url
+
+    def dispatch(self, request, *args, **kwargs):
+        self.local_reset_challenge = None
+        challenge = pending_local_password_reset(request)
+        if (
+            challenge and challenge["uidb64"] == kwargs.get("uidb64")
+            and local_password_reset_user(challenge) is not None
+            and (
+                kwargs.get("token") == challenge["token"]
+                or (
+                    kwargs.get("token") == self.reset_url_token
+                    and request.session.get(auth_views.INTERNAL_RESET_SESSION_TOKEN) == challenge["token"]
+                )
+            )
+        ):
+            self.token_generator = local_token_generator
+            self.local_reset_challenge = challenge
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if self.local_reset_challenge:
+            clear_local_password_reset(self.request)
+        return response
 
 
 @method_decorator(never_cache, name="dispatch")

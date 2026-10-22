@@ -8,6 +8,7 @@ from . import views
 from .verification import AccountVerificationResendView
 from .local_activation import example_mail
 from .housing_api import housing_account_session_api
+from .housing_live import housing_live_search, housing_live_status
 
 app_name = "pages"
 
@@ -89,10 +90,13 @@ urlpatterns = [
   path("spenden", views.donate, name="donate_no_slash"),
   path("spenden/", views.donate, name="donate"),
   path("wohnungssuche-api/register/", views.housing_register_api, name="housing_register_api"),
+  path("wohnungssuche-api/auth/config/", views.housing_auth_config, name="housing_auth_config"),
   path("wohnungssuche-api/token-auth/", views.housing_token_auth_api, name="housing_token_auth_api"),
   path("wohnungssuche-api/account-session/", housing_account_session_api, name="housing_account_session_api"),
   path("wohnungssuche-api/logout/", views.housing_logout_api, name="housing_logout_api"),
   path("wohnungssuche-api/listings/", views.housing_listings_api, name="housing_listings_api"),
+  path("wohnungssuche-api/live-search/status/", housing_live_status, name="housing_live_status"),
+  path("wohnungssuche-api/live-search/", housing_live_search, name="housing_live_search"),
   path("wohnungssuche-api/search-profiles/", views.housing_search_profiles_api, name="housing_search_profiles_api"),
   path("wohnungssuche-api/search-profiles/<int:profile_id>/", views.housing_search_profile_detail_api, name="housing_search_profile_detail_api"),
   path("wohnungssuche-api/search-locations/", views.housing_search_locations_api, name="housing_search_locations_api"),

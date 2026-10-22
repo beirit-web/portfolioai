@@ -22,7 +22,7 @@ function setupLangSwitcher(btn) {
   let closeTimer = null;
 
   const openMenu = () => {
-    if (closeTimer) window.clearTimeout(closeTimer);
+    if (closeTimer) clearTimeout(closeTimer);
     menu.style.display = "flex";
     menu.classList.remove("is-closing");
     menu.classList.add("is-open");
@@ -33,11 +33,11 @@ function setupLangSwitcher(btn) {
       btn.setAttribute("aria-expanded", "false");
       return;
     }
-    if (closeTimer) window.clearTimeout(closeTimer);
+    if (closeTimer) clearTimeout(closeTimer);
     menu.classList.remove("is-open");
     menu.classList.add("is-closing");
     btn.setAttribute("aria-expanded", "false");
-    closeTimer = window.setTimeout(() => {
+    closeTimer = setTimeout(() => {
       menu.classList.remove("is-closing");
       menu.style.display = "none";
       closeTimer = null;
@@ -98,13 +98,13 @@ scrollTopLinks.forEach((link) => {
 });
 
 function shouldShowScrollTopLinks() {
-  return window.scrollY > SCROLL_TOP_REVEAL_Y;
+  return scrollY > SCROLL_TOP_REVEAL_Y;
 }
 
 function updateScrollTopLinksVisibility() {
   const isVisible = shouldShowScrollTopLinks();
   const footerOverlap = siteFooter instanceof Element
-    ? Math.max(0, window.innerHeight - siteFooter.getBoundingClientRect().top)
+    ? Math.max(0, innerHeight - siteFooter.getBoundingClientRect().top)
     : 0;
   const footerOffset = footerOverlap > 0 ? `${footerOverlap}px` : "0px";
 
@@ -118,7 +118,7 @@ let scrollTopVisibilityFrame = 0;
 function requestScrollTopLinksVisibilityUpdate() {
   if (scrollTopVisibilityFrame) return;
 
-  scrollTopVisibilityFrame = window.requestAnimationFrame(() => {
+  scrollTopVisibilityFrame = requestAnimationFrame(() => {
     scrollTopVisibilityFrame = 0;
     updateScrollTopLinksVisibility();
   });
@@ -127,11 +127,11 @@ function requestScrollTopLinksVisibilityUpdate() {
 function scheduleInitialScrollTopLinksVisibility() {
   const run = () => requestScrollTopLinksVisibilityUpdate();
   if ("requestIdleCallback" in window) {
-    window.requestIdleCallback(run, { timeout: 1200 });
+    requestIdleCallback(run, { timeout: 1200 });
     return;
   }
 
-  window.setTimeout(run, 240);
+  setTimeout(run, 240);
 }
 
 document.addEventListener("click", (e) => {
@@ -141,15 +141,15 @@ document.addEventListener("click", (e) => {
   if (!target) return;
 
   e.preventDefault();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  scrollTo({ top: 0, behavior: "smooth" });
 });
 
 if (scrollTopLinks.length > 0) {
   scheduleInitialScrollTopLinksVisibility();
-  window.addEventListener("scroll", requestScrollTopLinksVisibilityUpdate, {
+  addEventListener("scroll", requestScrollTopLinksVisibilityUpdate, {
     passive: true,
   });
-  window.addEventListener("resize", requestScrollTopLinksVisibilityUpdate);
+  addEventListener("resize", requestScrollTopLinksVisibilityUpdate);
 }
 
 function initTheme() {
@@ -215,8 +215,8 @@ async function parseJsonSafely(response) {
 function buildFallbackAuthRedirectUrl(config, reason = "idle") {
   const isIdleTimeout = reason === "idle_timeout";
   const url = isIdleTimeout
-    ? new URL("/", window.location.origin)
-    : new URL(config.loginUrl, window.location.origin);
+    ? new URL("/", location.origin)
+    : new URL(config.loginUrl, location.origin);
   const loginReason = reason === "idle_timeout" ? "idle" : reason;
 
   if (loginReason) {
@@ -225,8 +225,8 @@ function buildFallbackAuthRedirectUrl(config, reason = "idle") {
 
   if (!isIdleTimeout) {
     const currentPath =
-      `${window.location.pathname}${window.location.search}${window.location.hash}`;
-    if (url.pathname !== window.location.pathname || url.search) {
+      `${location.pathname}${location.search}${location.hash}`;
+    if (url.pathname !== location.pathname || url.search) {
       url.searchParams.set("next", currentPath);
     }
   }
@@ -239,10 +239,10 @@ function redirectToExpiredLogin(config, payload) {
   authSessionState.redirecting = true;
 
   const target = payload?.loginUrl
-    ? new URL(payload.loginUrl, window.location.origin).toString()
+    ? new URL(payload.loginUrl, location.origin).toString()
     : buildFallbackAuthRedirectUrl(config, payload?.reason || "idle");
 
-  window.location.assign(target);
+  location.assign(target);
 }
 
 async function checkAuthSessionStatus(config) {
@@ -325,10 +325,10 @@ async function sendAuthActivity(config, { force = false } = {}) {
 
 function resetAuthIdleTimer(config) {
   if (authSessionState.idleTimerId) {
-    window.clearTimeout(authSessionState.idleTimerId);
+    clearTimeout(authSessionState.idleTimerId);
   }
 
-  authSessionState.idleTimerId = window.setTimeout(() => {
+  authSessionState.idleTimerId = setTimeout(() => {
     void checkAuthSessionStatus(config);
   }, config.idleTimeoutMs);
 }
@@ -350,7 +350,7 @@ function initAuthSessionTimeout() {
   registerAuthActivity(config, { forcePing: true });
   void checkAuthSessionStatus(config);
 
-  authSessionState.statusTimerId = window.setInterval(() => {
+  authSessionState.statusTimerId = setInterval(() => {
     void checkAuthSessionStatus(config);
   }, config.statusPollMs);
 
@@ -368,7 +368,7 @@ function initAuthSessionTimeout() {
     void checkAuthSessionStatus(config);
   });
 
-  window.addEventListener("focus", () => {
+  addEventListener("focus", () => {
     registerAuthActivity(config, { forcePing: true });
     void checkAuthSessionStatus(config);
   });
@@ -806,7 +806,7 @@ function initPreferredLanguage() {
     return;
   }
 
-  window.requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
     void setLanguage(targetLang);
   });
 }
@@ -829,7 +829,7 @@ async function setLanguage(lang) {
   applyTranslations(targetLang);
   refreshFoldLabels();
   try {
-    window.dispatchEvent(
+    dispatchEvent(
       new CustomEvent("preferred_lang_changed", { detail: targetLang })
     );
   } catch (err) {
@@ -949,7 +949,7 @@ function initFoldSections() {
 }
 
 function initFooterAppLinks() {
-  const isAndroid = /Android/i.test(window.navigator.userAgent || "");
+  const isAndroid = /Android/i.test(navigator.userAgent || "");
   if (!isAndroid) return;
 
   document.querySelectorAll(".footer-app-link[data-android-intent]").forEach((link) => {
@@ -968,12 +968,12 @@ function initFooterAppLinks() {
 
       const cleanup = () => {
         if (fallbackTimer) {
-          window.clearTimeout(fallbackTimer);
+          clearTimeout(fallbackTimer);
           fallbackTimer = null;
         }
         document.removeEventListener("visibilitychange", handleVisibilityChange);
-        window.removeEventListener("pagehide", handlePageHide);
-        window.removeEventListener("blur", handleBlur);
+        removeEventListener("pagehide", handlePageHide);
+        removeEventListener("blur", handleBlur);
       };
 
       const handleVisibilityChange = () => {
@@ -994,17 +994,17 @@ function initFooterAppLinks() {
       };
 
       document.addEventListener("visibilitychange", handleVisibilityChange);
-      window.addEventListener("pagehide", handlePageHide, { once: true });
-      window.addEventListener("blur", handleBlur, { once: true });
+      addEventListener("pagehide", handlePageHide, { once: true });
+      addEventListener("blur", handleBlur, { once: true });
 
-      fallbackTimer = window.setTimeout(() => {
+      fallbackTimer = setTimeout(() => {
         cleanup();
         if (!handedOff) {
-          window.open(storeUrl, "_blank", "noopener,noreferrer");
+          open(storeUrl, "_blank", "noopener,noreferrer");
         }
       }, 900);
 
-      window.location.href = intentUrl;
+      location.href = intentUrl;
     });
   });
 }
@@ -1029,7 +1029,7 @@ function initManualNavigation() {
     link.querySelector(".manual-nav__title")?.textContent.trim() ||
     link.textContent.trim();
   const getInitialId = () => {
-    const hashId = window.location.hash.replace(/^#/, "");
+    const hashId = location.hash.replace(/^#/, "");
     if (hashId && links.some((link) => link.getAttribute("href") === `#${hashId}`)) {
       return hashId;
     }
@@ -1079,7 +1079,7 @@ function initManualNavigation() {
     const fallbackId = activeId || getInitialId();
     if (fallbackId) setActive(fallbackId, true);
   });
-  window.addEventListener("hashchange", () => {
+  addEventListener("hashchange", () => {
     const nextId = getInitialId();
     if (nextId) setActive(nextId, true);
   });
@@ -1120,7 +1120,7 @@ function initManualSectionToggles() {
     });
   });
 
-  const initialId = window.location.hash.replace(/^#/, "");
+  const initialId = location.hash.replace(/^#/, "");
   if (initialId) revealManualSection(initialId);
 }
 
@@ -1138,7 +1138,7 @@ function cleanupManualBodyTransition(body) {
 
 function setManualSectionCollapsed(section, toggle, body, collapsed, options = {}) {
   const { immediate = false } = options;
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const isCurrentlyCollapsed =
     section.classList.contains("is-collapsed") || toggle.getAttribute("aria-expanded") === "false";
 
@@ -1208,14 +1208,14 @@ function setManualSectionCollapsed(section, toggle, body, collapsed, options = {
 }
 
 const runIdle = window.requestIdleCallback
-  ? (fn) => window.requestIdleCallback(fn, { timeout: 500 })
+  ? (fn) => requestIdleCallback(fn, { timeout: 500 })
   : (fn) => setTimeout(fn, 1);
 
 function initLoadAnimations() {
   if (document.documentElement.classList.contains("page-is-loaded")) return;
 
   const markLoaded = () => {
-    window.setTimeout(() => {
+    setTimeout(() => {
       document.documentElement.classList.add("page-is-loaded");
     }, 220);
   };
@@ -1225,7 +1225,7 @@ function initLoadAnimations() {
     return;
   }
 
-  window.addEventListener("load", markLoaded, { once: true });
+  addEventListener("load", markLoaded, { once: true });
 }
 
 function initTemplateScrollRevealTargets() {
@@ -1433,7 +1433,7 @@ function initScrollReveal() {
   const revealNow = (element) => {
     element.classList.add("is-revealed");
   };
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (reduceMotion || !("IntersectionObserver" in window)) {
     revealElements.forEach(revealNow);

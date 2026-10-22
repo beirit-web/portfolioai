@@ -22,7 +22,7 @@ function AboutTechCarousel({ items, language }) {
   const [isPaused, setIsPaused] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
   const [hasFocus, setHasFocus] = React.useState(false);
-  const [reducedMotion, setReducedMotion] = React.useState(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const [reducedMotion, setReducedMotion] = React.useState(() => matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [isInView, setIsInView] = React.useState(false);
   const labels = carouselLabels[language] || carouselLabels.de;
   const activeItem = items[activeIndex] || items[0];
@@ -56,7 +56,7 @@ function AboutTechCarousel({ items, language }) {
   }, []);
 
   React.useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const media = matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReducedMotion(media.matches);
     update();
     media.addEventListener("change", update);

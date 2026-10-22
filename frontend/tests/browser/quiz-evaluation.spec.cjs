@@ -286,7 +286,7 @@ async function completeRealQuiz(page, { refreshGuest = false } = {}) {
   await page.getByRole("button", { name: "Quiz starten", exact: true }).click();
   if (refreshGuest) {
     const sessionResponse = page.waitForResponse("**/deutschlive/api/auth/me/");
-    await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    await page.evaluate(() => dispatchEvent(new Event("focus")));
     const session = await (await sessionResponse).json();
     expect(session.user).toBeNull();
     await expect(page.locator(".quiz-shell")).toHaveAttribute("data-state", "question");
@@ -312,7 +312,7 @@ async function completeRealQuiz(page, { refreshGuest = false } = {}) {
   expect(result.attempt.score).toBe(result.feedback.filter(item => item.correct).length + 1);
   await expect(page.locator(".quiz-result-card h3")).toHaveText(`Ergebnis: ${result.attempt.score} / ${result.attempt.total}`);
   await expect(page.locator(".quiz-review-item")).toHaveCount(topic.quiz.length);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   return { result, request };
 }
 
@@ -385,7 +385,7 @@ for (const nextUser of [null, { ...quizUser, id: 84, username: "anderes-konto@ex
       await expect(page.locator(".quiz-shell")).toHaveAttribute("data-state", "saving");
       mocked.changeUser(nextUser);
       const accountResponse = page.waitForResponse("**/deutschlive/api/auth/me/");
-      await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+      await page.evaluate(() => dispatchEvent(new Event("focus")));
       await (await accountResponse).finished();
       await expect(page.locator(".quiz-shell")).toHaveAttribute("data-state", "ready");
       const oldResponse = page.waitForResponse(attemptsUrl);

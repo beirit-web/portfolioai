@@ -111,7 +111,7 @@ test("the real quiz loads only its compact topic and required route assets", asy
   await expect(page.locator('main')).toHaveCount(1);
   await expect(page.locator('h1')).toHaveCount(1);
   await expect(page.locator('a[href="/deutschlive/quiz"][aria-current="page"]')).toHaveCount(1);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
 });
 
 test("route navigation exposes destinations and works with the keyboard and browser history", async ({ page }) => {

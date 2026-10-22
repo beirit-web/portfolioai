@@ -174,7 +174,7 @@ export default function GradeCalculator() {
 
   function stopCelebration() {
     if (animationRef.current) {
-      window.cancelAnimationFrame(animationRef.current);
+      cancelAnimationFrame(animationRef.current);
       animationRef.current = null;
     }
 
@@ -202,14 +202,14 @@ export default function GradeCalculator() {
 
   function startCelebration() {
     stopCelebration();
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
 
     const rect = canvas.getBoundingClientRect();
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const pixelRatio = Math.min(devicePixelRatio || 1, 2);
     canvas.width = Math.floor(rect.width * pixelRatio);
     canvas.height = Math.floor(rect.height * pixelRatio);
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
@@ -241,7 +241,7 @@ export default function GradeCalculator() {
       });
 
       if (Date.now() < endTime) {
-        animationRef.current = window.requestAnimationFrame(draw);
+        animationRef.current = requestAnimationFrame(draw);
       } else {
         stopCelebration();
       }

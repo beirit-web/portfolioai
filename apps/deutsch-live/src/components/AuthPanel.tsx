@@ -26,10 +26,10 @@ const secondaryClass = "inline-flex items-center gap-2 rounded-2xl border border
 
 export default function AuthPanel(props: AuthPanelProps) {
   const [message, setMessage] = useState(() => {
-    const confirmed = new URLSearchParams(window.location.search).get("emailConfirmed");
+    const confirmed = new URLSearchParams(location.search).get("emailConfirmed");
     return confirmed === "1" ? ui.account.emailConfirmed : confirmed === "invalid" ? ui.account.emailConfirmInvalid : "";
   });
-  const [hasError, setHasError] = useState(() => new URLSearchParams(window.location.search).get("emailConfirmed") === "invalid");
+  const [hasError, setHasError] = useState(() => new URLSearchParams(location.search).get("emailConfirmed") === "invalid");
   return <AuthSession key={props.user?.id ?? "guest"} {...props}
     message={message} setMessage={setMessage} hasError={hasError} setHasError={setHasError} />;
 }
@@ -97,7 +97,7 @@ function AuthSession({ user, onUserChange, onDashboardRefresh, message, setMessa
         const response = await registerUser({ username: username.trim(), email: email.trim(), password });
         if (!active.current) return;
         if (response.emailDelivery === "local" && response.activationUrl) {
-          window.location.assign(response.activationUrl);
+          location.assign(response.activationUrl);
           return;
         }
         setMode("login"); setEmail(""); setPassword(""); setConfirmation("");
@@ -136,7 +136,7 @@ function AuthSession({ user, onUserChange, onDashboardRefresh, message, setMessa
   function generatePassword() {
     const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_";
     const values = new Uint32Array(18);
-    window.crypto.getRandomValues(values);
+    crypto.getRandomValues(values);
     const generated = Array.from(values, value => alphabet[value % alphabet.length]).join("");
     setPassword(generated); setConfirmation(generated); setConfirmationError(false);
     setHasError(false); setMessage(ui.account.passwordGenerated);

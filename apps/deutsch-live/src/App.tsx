@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ComponentType, type MouseEvent } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState, type ComponentType, type MouseEvent } from "react";
 import type { AuthPanelProps } from "./components/AuthPanel";
 import {
   BookOpen,
@@ -15,50 +15,19 @@ import {
   X
 } from "lucide-react";
 import { fetchMe, updateSettings, type CurrentUser } from "./api";
-import QuizMode from "./components/QuizMode";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import { PageSkeleton } from "./components/UiPrimitives";
 import { getLocale, setLocale as persistLocale, subscribeLocale, type Locale, ui } from "./i18n";
 import { usePlatformSession } from "./lib/usePlatformSession";
-
-const AuthPanel = lazy(() => import.meta.env.VITE_PLATFORM_INTEGRATION === "true"
-  ? import("./components/PlatformAccount")
-  : import("./components/AuthPanel"));
-const LandingPage = lazy(() => import("./components/LandingPage"));
-const BotTutor = lazy(() => import("./components/BotTutor"));
-const Dashboard = lazy(() => import("./components/Dashboard"));
-const GradeCalculator = lazy(() => import("./components/GradeCalculator"));
-const RecordingPlayer = lazy(() => import("./components/RecordingPlayer"));
-const ImpressumPage = lazy(() => import("./components/ImpressumPage"));
-const ManualPage = lazy(() => import("./components/ManualPage"));
-const SceneLearning = lazy(() => import("./components/SceneLearning"));
-const DatenschutzPage = lazy(() => import("./components/LegalPages").then((module) => ({ default: module.DatenschutzPage })));
-const KontaktPage = lazy(() => import("./components/LegalPages").then((module) => ({ default: module.KontaktPage })));
-const NutzungsbedingungenPage = lazy(() => import("./components/LegalPages").then((module) => ({ default: module.NutzungsbedingungenPage })));
-
-const APP_BASE = normalizeBase(import.meta.env.VITE_APP_BASE ?? "");
-
-function normalizeBase(value: string) {
-  const trimmed = value.trim().replace(/\/+$/, "");
-  if (!trimmed || trimmed === "/") return "";
-  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-}
-
-function stripBase(pathname: string) {
-  if (!APP_BASE) return pathname || "/";
-  if (pathname === APP_BASE) return "/";
-  if (pathname.startsWith(`${APP_BASE}/`)) return pathname.slice(APP_BASE.length) || "/";
-  return pathname || "/";
-}
-
-function withBase(pathname: string) {
-  if (!APP_BASE) return pathname;
-  return pathname === "/" ? `${APP_BASE}/` : `${APP_BASE}${pathname}`;
-}
+import {
+  AuthPanel, BotTutor, Dashboard, DatenschutzPage, GradeCalculator, ImpressumPage,
+  KontaktPage, LandingPage, ManualPage, NutzungsbedingungenPage, QuizMode,
+  RecordingPlayer, SceneLearning, stripBase, withBase
+} from "./routes";
 
 export default function App({ initialAccountPanel }: { initialAccountPanel?: ComponentType<AuthPanelProps> } = {}) {
   const AccountPanel = initialAccountPanel || AuthPanel;
-  const [path, setPath] = useState(stripBase(window.location.pathname));
+  const [path, setPath] = useState(stripBase(location.pathname));
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [accountLoaded, setAccountLoaded] = useState(false);
   const [dashboardRefresh, setDashboardRefresh] = useState(0);
@@ -90,9 +59,9 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
   }, [path]);
 
   useEffect(() => {
-    const onPopState = () => setPath(stripBase(window.location.pathname));
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
+    const onPopState = () => setPath(stripBase(location.pathname));
+    addEventListener("popstate", onPopState);
+    return () => removeEventListener("popstate", onPopState);
   }, []);
 
   useEffect(() => {
@@ -103,18 +72,18 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
       }
     }
     document.body.classList.toggle("menu-open", isMenuOpen);
-    window.addEventListener("keydown", onKeyDown);
+    addEventListener("keydown", onKeyDown);
     return () => {
       document.body.classList.remove("menu-open");
-      window.removeEventListener("keydown", onKeyDown);
+      removeEventListener("keydown", onKeyDown);
     };
   }, [isMenuOpen]);
 
   function navigate(nextPath: string) {
-    window.history.pushState({}, "", withBase(nextPath));
+    history.pushState({}, "", withBase(nextPath));
     setPath(nextPath);
     setIsMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function navigateFromFooter(event: MouseEvent<HTMLAnchorElement>, nextPath: string) {

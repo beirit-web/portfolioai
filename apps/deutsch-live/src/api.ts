@@ -203,7 +203,7 @@ function normalizeApiBase(value: string) {
 
 function getApiBase() {
   if (CONFIGURED_API_BASE) return CONFIGURED_API_BASE;
-  if (typeof window !== "undefined" && window.location.pathname.startsWith("/deutschlive")) {
+  if (typeof window !== "undefined" && location.pathname.startsWith("/deutschlive")) {
     return "/deutschlive";
   }
   return "";
@@ -211,8 +211,8 @@ function getApiBase() {
 
 export function getWebSocketUrl(path: string) {
   if (typeof window === "undefined") return "";
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  return `${protocol}//${window.location.host}${getApiBase()}${path}`;
+  const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+  return `${protocol}//${location.host}${getApiBase()}${path}`;
 }
 
 async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {

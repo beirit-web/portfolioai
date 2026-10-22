@@ -6,7 +6,6 @@ export function mountSiteApp(App) {
   if (!rootElement) return;
   let hasMounted = false;
   let deferredCssPromise = null;
-  let deferredCssScheduled = false;
   const introLoader = document.querySelector("[data-intro-loader]");
   const introStartedAt = introLoader ? performance.now() : 0;
   const introMinDuration = 350;
@@ -61,33 +60,6 @@ export function mountSiteApp(App) {
 
   window.BEIRIT_LOAD_DEFERRED_CSS = loadDeferredCss;
 
-  const scheduleDeferredCssLoad = () => {
-    if (deferredCssScheduled) return;
-    deferredCssScheduled = true;
-    const isHomePath = window.location.pathname === "/" || window.location.pathname === "";
-
-    if (!isHomePath) {
-      loadDeferredCss();
-      return;
-    }
-
-    const loadWhenIdle = () => {
-      if ("requestIdleCallback" in window) {
-        window.requestIdleCallback(loadDeferredCss, { timeout: 2200 });
-        return;
-      }
-
-      setTimeout(loadDeferredCss, 900);
-    };
-
-    if (document.readyState === "complete") {
-      loadWhenIdle();
-      return;
-    }
-
-    window.addEventListener("load", loadWhenIdle, { once: true });
-  };
-
   const renderApp = () => {
     if (hasMounted) return;
     hasMounted = true;
@@ -100,12 +72,9 @@ export function mountSiteApp(App) {
       </React.StrictMode>,
     );
     hideIntroLoader();
-    scheduleDeferredCssLoad();
   };
 
-  if (window.BEIRIT_CRITICAL_CSS_READY) {
-    window.BEIRIT_CRITICAL_CSS_READY.then(renderApp);
-  } else {
-    renderApp();
-  }
+  // All home sections are present in the first render, including in Vite dev
+  // where the additional component styles are supplied as separate files.
+  Promise.all([window.BEIRIT_CRITICAL_CSS_READY, loadDeferredCss()]).then(renderApp);
 }

@@ -25,10 +25,10 @@ export default memo(function QuizCountdown({ startedAt, limit, pausedAt, label, 
     };
     tick();
     if (pausedAt !== null) return;
-    const timer = window.setInterval(tick, 1000);
+    const timer = setInterval(tick, 1000);
     document.addEventListener("visibilitychange", tick);
     return () => {
-      window.clearInterval(timer);
+      clearInterval(timer);
       document.removeEventListener("visibilitychange", tick);
     };
   }, [deadline, limit, pausedAt, onExpire]);

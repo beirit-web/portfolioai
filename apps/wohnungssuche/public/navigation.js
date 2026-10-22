@@ -1,5 +1,10 @@
 (() => {
 "use strict";
+// Also canonicalize entry URLs when a static server bypasses Django's redirects.
+if (["/static/portfolio/wohnungssuche", "/static/portfolio/wohnungssuche/", "/static/portfolio/wohnungssuche/index.html"].includes(location.pathname)) {
+  location.replace(`/wohnungssuche/${location.search}${location.hash}`);
+  return;
+}
 // Keep the existing React menu state as the source of truth.
 const mobile = matchMedia("(max-width: 980px)");
 const backdrop = document.createElement("div");
@@ -22,7 +27,7 @@ function focusableItems() {
 }
 
 function lockPage() {
-  scrollPosition = window.scrollY;
+  scrollPosition = scrollY;
   previousBodyStyle = {
     position: document.body.style.position,
     top: document.body.style.top,
@@ -44,7 +49,7 @@ function unlockPage() {
   if (previousBodyStyle) {
     Object.assign(document.body.style, previousBodyStyle);
     previousBodyStyle = null;
-    window.scrollTo(0, scrollPosition);
+    scrollTo(0, scrollPosition);
   }
   if (background && backgroundState) {
     background.inert = backgroundState.inert;
@@ -154,11 +159,11 @@ function onRouteChange() {
       heading.tabIndex = -1;
       heading.focus({ preventScroll: true });
     }
-    window.scrollTo(0, 0);
+    scrollTo(0, 0);
   });
 }
-window.addEventListener("popstate", onRouteChange);
-window.addEventListener("hashchange", onRouteChange);
+addEventListener("popstate", onRouteChange);
+addEventListener("hashchange", onRouteChange);
 mobile.addEventListener("change", () => { if (!mobile.matches) closeMenu(false); });
 
 const observer = new MutationObserver(synchronize);

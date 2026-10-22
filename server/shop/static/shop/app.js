@@ -9,7 +9,7 @@ if (projectHomeNav) {
   if ("ResizeObserver" in window) {
     new ResizeObserver(updateNavigationHeight).observe(projectHomeNav);
   } else {
-    window.addEventListener("resize", updateNavigationHeight);
+    addEventListener("resize", updateNavigationHeight);
   }
 }
 
@@ -195,7 +195,7 @@ if (productCards.length) {
     if (visibilityObserver) visibilityObserver.observe(card);
     else setActive(card, true);
   }
-  if (!tabletopObserver) window.addEventListener("resize", () => productCards.forEach(refreshTabletop));
+  if (!tabletopObserver) addEventListener("resize", () => productCards.forEach(refreshTabletop));
 }
 
 document.querySelectorAll(".quantity-form").forEach(form => {
@@ -240,7 +240,7 @@ document.querySelectorAll("form[method=post]").forEach(form => {
     form.setAttribute("aria-busy", "true");
   });
 });
-window.addEventListener("pageshow", () => document.querySelectorAll("form[data-submitting]").forEach(form => {
+addEventListener("pageshow", () => document.querySelectorAll("form[data-submitting]").forEach(form => {
   delete form.dataset.submitting;
   form.removeAttribute("aria-busy");
 }));

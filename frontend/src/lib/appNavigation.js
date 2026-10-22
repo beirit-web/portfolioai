@@ -1,7 +1,7 @@
 import React from "react";
 import { homeConfig as config, publicPageBaseUrl, publicPageUrl } from "./homeConfig.js";
 
-const isLocalAppHost = ["localhost", "127.0.0.1", "0.0.0.0"].includes(window.location.hostname);
+const isLocalAppHost = ["localhost", "127.0.0.1", "0.0.0.0"].includes(location.hostname);
 const useLocalPortfolioLinks = config.useLocalPortfolioLinks === true && isLocalAppHost;
 export const appRoutes = {
   "/": { key: "home", title: "Beirit Web | Portfolio für Web- und Softwareentwicklung", description: "Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python." },
@@ -38,7 +38,7 @@ export function publicSiteHref(href) {
   if (!value || isExternalUrl(value) || value.startsWith("#") || !publicPageBaseUrl) return value;
   if (!value.startsWith("/")) return value;
 
-  const target = new URL(value, window.location.origin);
+  const target = new URL(value, location.origin);
   if (isAppHandledPath(target.pathname)) return value;
 
   return publicPageUrl(`${target.pathname}${target.search}${target.hash}`);
@@ -59,7 +59,7 @@ export function projectActionHref(item) {
   return publicSiteHref(item.href || "");
 }
 
-export function normalizeAppPath(pathname = window.location.pathname) {
+export function normalizeAppPath(pathname = location.pathname) {
   const path = pathname.replace(/\/+$/, "") || "/";
   return routeAliases[path] || path;
 }
@@ -69,45 +69,45 @@ export function useBrowserPath() {
 
   React.useEffect(() => {
     const handlePopState = () => setPath(normalizeAppPath());
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+    addEventListener("popstate", handlePopState);
+    return () => removeEventListener("popstate", handlePopState);
   }, []);
 
   return [path, setPath];
 }
 
 export function navigateToAppPath(path, setPath) {
-  const target = new URL(String(path || "/"), window.location.origin);
+  const target = new URL(String(path || "/"), location.origin);
   const normalizedPath = normalizeAppPath(target.pathname || "/");
   const targetHash = target.hash || "";
   const targetUrl = `${normalizedPath}${target.search}${targetHash}`;
-  const currentUrl = `${normalizeAppPath()}${window.location.search}${window.location.hash}`;
+  const currentUrl = `${normalizeAppPath()}${location.search}${location.hash}`;
   const currentPath = normalizeAppPath();
   if (targetUrl === currentUrl) {
     if (targetHash) {
       scrollToHashTarget(targetHash);
     } else {
-      window.scrollTo({ top: 0, behavior: getScrollBehavior() });
+      scrollTo({ top: 0, behavior: getScrollBehavior() });
     }
     return;
   }
 
   if (normalizedPath !== currentPath) {
-    window.location.assign(targetUrl);
+    location.assign(targetUrl);
     return;
   }
 
-  window.history.pushState({}, "", targetUrl);
+  history.pushState({}, "", targetUrl);
   setPath(normalizedPath);
   if (targetHash) {
     setTimeout(() => scrollToHashTarget(targetHash), 50);
   } else {
-    window.scrollTo({ top: 0, behavior: "auto" });
+    scrollTo({ top: 0, behavior: "auto" });
   }
 }
 export function getScrollBehavior() {
   if (typeof window === "undefined" || !window.matchMedia) return "smooth";
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  return matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 }
 export function scrollToHashTarget(hash) {
   if (!hash || hash === "#top") return;
@@ -115,7 +115,7 @@ export function scrollToHashTarget(hash) {
     const target = document.getElementById(hash.slice(1));
     if (!target) return;
     const headerOffset = 92;
-    const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
-    window.scrollTo({ top: Math.max(0, top), behavior: getScrollBehavior() });
+    const top = target.getBoundingClientRect().top + scrollY - headerOffset;
+    scrollTo({ top: Math.max(0, top), behavior: getScrollBehavior() });
   }, 0);
 }

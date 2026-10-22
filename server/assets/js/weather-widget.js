@@ -1639,7 +1639,7 @@
       });
     }
 
-    window.addEventListener("preferred_lang_changed", () => {
+    addEventListener("preferred_lang_changed", () => {
       applyStaticTranslations();
     });
 

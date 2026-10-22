@@ -51,6 +51,21 @@ class ProjectPortfolioTests(TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEqual(response["Location"], project.live_url)
 
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_housing_project_links_use_django_before_and_after_migration(self):
+        housing = self.create_project(slug="wohnungssuche-bodensee", live_url="/static/portfolio/wohnungssuche/index.html")
+        custom = self.create_project(slug="custom-housing", live_url="https://demo.example.invalid/housing/")
+        projects = self.client.get(reverse("pages:projects_api")).json()["projects"]
+        self.assertEqual(next(p for p in projects if p["slug"] == housing.slug)["liveUrl"], "/wohnungssuche/")
+        migration = import_module("pages.migrations.0055_housing_django_url")
+        editor = SimpleNamespace(connection=connection)
+        migration.forwards(apps, editor)
+        migration.forwards(apps, editor)
+        housing.refresh_from_db()
+        custom.refresh_from_db()
+        self.assertEqual(housing.live_url, "/wohnungssuche/")
+        self.assertEqual(custom.live_url, "https://demo.example.invalid/housing/")
+
     def test_asset_renaming_preserves_custom_project_metadata(self):
         migration = import_module("pages.migrations.0051_rename_portfolio_assets")
         legacy = self.create_project(

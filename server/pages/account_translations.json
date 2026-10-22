@@ -666,5 +666,57 @@
   "Link zur Wiederherstellung anfordern.": {
     "ru": "Запросите ссылку для восстановления.",
     "uk": "Запросіть посилання для відновлення."
+  },
+  "Geben Sie Ihre registrierte E-Mail-Adresse ein. Den Wiederherstellungstoken zeigen wir Ihnen hier im Browser.": {
+    "ru": "Введите адрес электронной почты, указанный при регистрации. Токен восстановления появится здесь, в браузере.",
+    "uk": "Введіть електронну адресу, вказану під час реєстрації. Токен відновлення з’явиться тут, у браузері."
+  },
+  "Lokalen Token erstellen": {
+    "ru": "Создать локальный токен",
+    "uk": "Створити локальний токен"
+  },
+  "Lokalen Wiederherstellungstoken anfordern.": {
+    "ru": "Запросите локальный токен восстановления.",
+    "uk": "Запросіть локальний токен відновлення."
+  },
+  "Lokale Demo: Es wird keine E-Mail verschickt. Der Token erscheint nur in diesem Browser, gilt zehn Minuten und kann einmal verwendet werden.": {
+    "ru": "Локальная демонстрация: письмо не отправляется. Токен виден только в этом браузере, действует десять минут и может быть использован один раз.",
+    "uk": "Локальна демонстрація: лист не надсилається. Токен видно лише в цьому браузері, він діє десять хвилин і може бути використаний один раз."
+  },
+  "Wenn ein aktives Konto mit dieser E-Mail existiert, können Sie sein Passwort mit dem lokalen Token zurücksetzen.": {
+    "ru": "Если активный аккаунт с этим адресом электронной почты существует, вы сможете сбросить его пароль с помощью локального токена.",
+    "uk": "Якщо активний обліковий запис із цією електронною адресою існує, ви зможете скинути його пароль за допомогою локального токена."
+  },
+  "Ihr Wiederherstellungstoken:": {
+    "ru": "Ваш токен восстановления:",
+    "uk": "Ваш токен відновлення:"
+  },
+  "Wiederherstellungstoken": {
+    "ru": "Токен восстановления",
+    "uk": "Токен відновлення"
+  },
+  "Zehn Minuten gültig. Ablaufzeit:": {
+    "ru": "Действителен десять минут. Время истечения:",
+    "uk": "Діє десять хвилин. Час завершення дії:"
+  },
+  "Lokalen Wiederherstellungstoken verwenden": {
+    "ru": "Использовать локальный токен восстановления",
+    "uk": "Використати локальний токен відновлення"
+  },
+  "Mit dem folgenden Button verwenden Sie den Token direkt. Kopieren oder eine echte E-Mail ist dafür nicht erforderlich.": {
+    "ru": "Следующая кнопка сразу применит токен. Копировать его или получать настоящее письмо не требуется.",
+    "uk": "Наступна кнопка відразу застосує токен. Копіювати його чи отримувати справжній лист не потрібно."
+  },
+  "Token verwenden und Passwort setzen": {
+    "ru": "Применить токен и задать пароль",
+    "uk": "Застосувати токен і встановити пароль"
+  },
+  "Für diesen Browser liegt kein gültiger Wiederherstellungstoken vor. Bitte fordern Sie einen neuen an.": {
+    "ru": "В этом браузере нет действительного токена восстановления. Запросите новый.",
+    "uk": "У цьому браузері немає дійсного токена відновлення. Запросіть новий."
+  },
+  "Beim Zurücksetzen Ihres Passworts erscheint der Wiederherstellungstoken direkt im Browser. Es wird keine E-Mail verschickt.": {
+    "ru": "При сбросе пароля токен восстановления появляется прямо в браузере. Письмо не отправляется.",
+    "uk": "Під час скидання пароля токен відновлення з’являється прямо в браузері. Лист не надсилається."
   }
 }

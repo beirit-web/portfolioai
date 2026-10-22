@@ -61,15 +61,21 @@ function DeferredWaveGridHero() {
     const activateAnimation = (event) => {
       if (!event.isTrusted) return;
       hasInteracted.current = true;
+      removeInteractionListeners();
       updateAnimation();
+    };
+    const removeInteractionListeners = () => {
+      interactionEvents.forEach(type => removeEventListener(type, activateAnimation));
     };
 
     updateAnimation();
-    interactionEvents.forEach(type => window.addEventListener(type, activateAnimation, { passive: true }));
+    if (!hasInteracted.current) {
+      interactionEvents.forEach(type => addEventListener(type, activateAnimation, { passive: true }));
+    }
     connection?.addEventListener?.("change", updateAnimation);
 
     return () => {
-      interactionEvents.forEach(type => window.removeEventListener(type, activateAnimation));
+      removeInteractionListeners();
       connection?.removeEventListener?.("change", updateAnimation);
     };
   }, [prefersReducedMotion]);

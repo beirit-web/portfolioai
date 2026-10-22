@@ -25,7 +25,7 @@ const projects = [
   { slug: "online-shop", route: "/shop/" },
   { slug: "vertragsgenerator", route: "/vertragsgenerator/" },
   { slug: "enbt-botanic", route: "/botanic/" },
-  { slug: "wohnungssuche-bodensee", route: "/static/portfolio/wohnungssuche/index.html" },
+  { slug: "wohnungssuche-bodensee", route: "/wohnungssuche/" },
   { slug: "notenrechner", route: "/static/portfolio/notenrechner/index.html" },
   { slug: "sprachdienstleistungen", route: "/deutschlive/" },
 ];
@@ -51,7 +51,7 @@ async function prepareDemo(page, slug) {
     // Show a real product below the sticky quick navigation.
     await page.locator(".product-card").first().evaluate(element => {
       const navigation = document.querySelector(".project-home-nav--shop").getBoundingClientRect().height;
-      window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - navigation - 12);
+      scrollTo(0, scrollY + element.getBoundingClientRect().top - navigation - 12);
     });
   }
   if (slug === "vertragsgenerator") {
@@ -71,7 +71,7 @@ async function prepareDemo(page, slug) {
     if (page.viewportSize().width < 768) {
       await page.locator(".calculator-card").evaluate(element => element.scrollIntoView({ block: "start" }));
     } else {
-      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.evaluate(() => scrollTo(0, 0));
     }
   }
   if (slug === "wohnungssuche-bodensee" && page.viewportSize().width < 768) {
@@ -79,7 +79,7 @@ async function prepareDemo(page, slug) {
     await page.locator('nav[aria-label="Hauptnavigation"]').getByRole("button", { name: "Angebote", exact: true }).click();
     await page.locator(".listing-card").first().waitFor();
     await page.locator(".controls").evaluate(element => {
-      window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - 60);
+      scrollTo(0, scrollY + element.getBoundingClientRect().top - 60);
     });
   }
   if (slug === "sprachdienstleistungen") {

@@ -57,7 +57,7 @@ test("hero renders moving cubes on desktop and touch devices", async ({ page }, 
   await expect.poll(frameCount, { timeout: 20000 }).toBeGreaterThan(initialFrame);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
   await expect.poll(() => canvas.evaluate(element => {
     return element.getBoundingClientRect().bottom <= 0;
   })).toBe(true);
@@ -65,7 +65,7 @@ test("hero renders moving cubes on desktop and touch devices", async ({ page }, 
   const pausedFrame = await frameCount();
   await page.waitForTimeout(300);
   expect(await frameCount()).toBe(pausedFrame);
-  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.evaluate(() => scrollTo(0, 0));
   await expect.poll(frameCount, { timeout: 20000 }).toBeGreaterThan(pausedFrame);
 });
 

@@ -20,7 +20,7 @@ const difficultyConfig: Record<Difficulty, { choiceSeconds: number; writingSecon
 };
 const emptyRun = (): Run => ({ started: false, finished: false, index: 0, selected: null, freeAnswer: "", answers: [], durations: [], expired: false, startedAt: 0, pausedAt: null });
 function readSelection(): Selection {
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   const difficulty = params.get("difficulty");
   return { topic: params.get("topic") || "baeckerei", difficulty: difficulty && Object.prototype.hasOwnProperty.call(difficultyConfig, difficulty) ? difficulty as Difficulty : "easy" };
 }
@@ -100,8 +100,8 @@ export default function QuizMode({ user, accountLoaded = true, onAttemptSaved }:
   useEffect(() => {
     reset();
     const changed = () => { reset(); setSelection(readSelection()); setTopicReload(value => value + 1); };
-    window.addEventListener("popstate", changed);
-    return () => window.removeEventListener("popstate", changed);
+    addEventListener("popstate", changed);
+    return () => removeEventListener("popstate", changed);
   }, [reset]);
   useEffect(() => { reset(); setTemporaryTotal(0); }, [user?.id, reset]);
   useEffect(() => () => { revision.current += 1; }, []);
@@ -115,9 +115,9 @@ export default function QuizMode({ user, accountLoaded = true, onAttemptSaved }:
   function configure(next: Selection) {
     if (submitting.current) return;
     reset(); setSelection(next); setTopicReload(value => value + 1);
-    const url = new URL(window.location.href);
+    const url = new URL(location.href);
     url.searchParams.set("topic", next.topic); url.searchParams.set("difficulty", next.difficulty);
-    window.history.pushState({}, "", url);
+    history.pushState({}, "", url);
   }
 
   const expire = useCallback(() => {

@@ -11,7 +11,7 @@ async function expectNoOverflow(page) {
 }
 
 test("housing controls can be found by their accessible names", async ({ page }) => {
-  await page.goto("/static/portfolio/wohnungssuche/index.html");
+  await page.goto("/wohnungssuche/");
   const city = page.getByRole("combobox", { name: "Ort", exact: true });
   const sort = page.getByRole("combobox", { name: "Sortierung", exact: true });
   await city.selectOption({ label: "Konstanz" });
@@ -39,7 +39,7 @@ test("housing controls can be found by their accessible names", async ({ page })
 });
 
 test("housing search fits phones, tablets and desktop screens", async ({ page }, testInfo) => {
-  await page.goto("/static/portfolio/wohnungssuche/index.html");
+  await page.goto("/wohnungssuche/");
   await expect(page.locator(".controls")).toBeVisible();
   for (const width of [320, 390, 768, 980, 981, 1024, 1280, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
@@ -58,7 +58,7 @@ test("housing search fits phones, tablets and desktop screens", async ({ page },
 });
 
 test("filters and mobile navigation remain usable, including landscape", async ({ page }) => {
-  await page.goto("/static/portfolio/wohnungssuche/index.html");
+  await page.goto("/wohnungssuche/");
   await expect(page.locator(".listing-card")).toHaveCount(3);
   await page.locator('.searchbox input').fill("Radolfzell");
   await page.getByRole("button", { name: "Suchen", exact: true }).click();
@@ -103,8 +103,9 @@ test("saved profile layouts, long names and account forms fit small screens", as
     balcony: false, fitted_kitchen: false, ground_floor_or_elevator: false,
   };
   await context.route("**/wohnungssuche-api/**", async route => {
-    expect(route.request().headers().authorization).toBe(`Token ${token}`);
     const endpoint = new URL(route.request().url()).pathname;
+    if (endpoint.endsWith("/auth/config/")) return route.fulfill({ json: { emailDelivery: "console", localActivationAvailable: false } });
+    expect(route.request().headers().authorization).toBe(`Token ${token}`);
     if (endpoint.endsWith("/logout/") && route.request().method() === "POST") return route.fulfill({ status: 204 });
     const results = endpoint.endsWith("/search-profiles/") ? [profile]
       : endpoint.endsWith("/search-locations/") ? [location] : [];

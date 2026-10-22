@@ -40,15 +40,15 @@ export function PageFooter({ t, onNavigate }) {
 
   React.useEffect(() => {
     const updateVisibility = () => {
-      setIsScrollTopVisible(window.scrollY > 480);
+      setIsScrollTopVisible(scrollY > 480);
     };
 
     let idleHandle;
     let timeoutHandle;
     const checkRestoredPosition = () => {
       if ("requestIdleCallback" in window) {
-        window.cancelIdleCallback(idleHandle);
-        idleHandle = window.requestIdleCallback(updateVisibility, { timeout: 1500 });
+        cancelIdleCallback(idleHandle);
+        idleHandle = requestIdleCallback(updateVisibility, { timeout: 1500 });
       } else {
         clearTimeout(timeoutHandle);
         timeoutHandle = setTimeout(updateVisibility, 0);
@@ -59,20 +59,20 @@ export function PageFooter({ t, onNavigate }) {
     // check after load also handles restored scroll positions without forcing
     // the first page layout from the mounting effect.
     if (document.readyState === "complete") checkRestoredPosition();
-    else window.addEventListener("load", checkRestoredPosition, { once: true });
-    window.addEventListener("pageshow", checkRestoredPosition);
-    window.addEventListener("scroll", updateVisibility, { passive: true });
+    else addEventListener("load", checkRestoredPosition, { once: true });
+    addEventListener("pageshow", checkRestoredPosition);
+    addEventListener("scroll", updateVisibility, { passive: true });
     return () => {
-      if ("cancelIdleCallback" in window) window.cancelIdleCallback(idleHandle);
+      if ("cancelIdleCallback" in window) cancelIdleCallback(idleHandle);
       clearTimeout(timeoutHandle);
-      window.removeEventListener("load", checkRestoredPosition);
-      window.removeEventListener("pageshow", checkRestoredPosition);
-      window.removeEventListener("scroll", updateVisibility);
+      removeEventListener("load", checkRestoredPosition);
+      removeEventListener("pageshow", checkRestoredPosition);
+      removeEventListener("scroll", updateVisibility);
     };
   }, []);
 
   const handleScrollTop = () => {
-    window.scrollTo({ top: 0, behavior: getScrollBehavior() });
+    scrollTo({ top: 0, behavior: getScrollBehavior() });
   };
 
   return (
@@ -179,8 +179,8 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
         event.preventDefault();
       }
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    addEventListener("keydown", handleKeyDown);
+    return () => removeEventListener("keydown", handleKeyDown);
   }, [closeMobileMenu, isMobileMenuOpen]);
 
   React.useEffect(() => {
@@ -194,7 +194,7 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
 
   React.useEffect(() => {
     if (!isMobileMenuOpen) return undefined;
-    const desktopNavigation = window.matchMedia("(min-width: 48rem)");
+    const desktopNavigation = matchMedia("(min-width: 48rem)");
     const handleNavigationResize = () => {
       if (desktopNavigation.matches) closeMobileMenu();
     };

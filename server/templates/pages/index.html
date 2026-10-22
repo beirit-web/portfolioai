@@ -77,7 +77,7 @@
       <script>
         {
           const anchor = document.currentScript;
-          const desktop = window.matchMedia("(min-width: 48rem)");
+          const desktop = matchMedia("(min-width: 48rem)");
           const desktopCss = {% vite_css_asset_urls 'src/site.css' %};
           const mobileCss = {% vite_css_asset_urls 'src/mobile-pages.css' %};
           const loaded = new Map();

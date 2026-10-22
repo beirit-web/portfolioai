@@ -3,7 +3,7 @@ import React from "react";
 export function useMediaQuery(query) {
   const getMatches = React.useCallback(() => {
     if (typeof window === "undefined" || !window.matchMedia) return false;
-    return window.matchMedia(query).matches;
+    return matchMedia(query).matches;
   }, [query]);
 
   const [matches, setMatches] = React.useState(getMatches);
@@ -11,7 +11,7 @@ export function useMediaQuery(query) {
   React.useEffect(() => {
     if (typeof window === "undefined" || !window.matchMedia) return undefined;
 
-    const mediaQuery = window.matchMedia(query);
+    const mediaQuery = matchMedia(query);
     const handleChange = () => setMatches(mediaQuery.matches);
     handleChange();
 

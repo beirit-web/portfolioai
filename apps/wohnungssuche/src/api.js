@@ -5,6 +5,11 @@ export const PASSWORD_RESET_URL = configuredPasswordResetUrl.startsWith("/")
   ? configuredPasswordResetUrl : "/auth/password_reset/";
 export const EMAIL_VERIFICATION_RESEND_URL = "/email-bestaetigung/";
 
+export function localAccountUrl(value) {
+  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//") && !/[\\\s]/.test(value)
+    ? value : "";
+}
+
 export async function apiRequest(endpoint, { token = "", method = "GET", body, signal } = {}) {
   let response;
   try {
@@ -31,6 +36,10 @@ export async function apiRequest(endpoint, { token = "", method = "GET", body, s
       : fields || data?.detail || "Die Anfrage konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.";
     const error = new Error(message);
     error.status = response.status;
+    error.code = data?.code;
+    error.remaining = data?.remaining;
+    error.emailDelivery = data?.emailDelivery;
+    error.activationUrl = localAccountUrl(data?.activationUrl);
     throw error;
   }
   if (response.status !== 204 && (!data || typeof data !== "object")) {

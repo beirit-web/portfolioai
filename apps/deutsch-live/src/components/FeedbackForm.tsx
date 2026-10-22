@@ -23,7 +23,7 @@ export default function FeedbackForm() {
         category,
         message,
         contactEmail: contactEmail.trim() || undefined,
-        pagePath: window.location.pathname
+        pagePath: location.pathname
       });
       setMessage("");
       setContactEmail("");

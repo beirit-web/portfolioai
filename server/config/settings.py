@@ -187,6 +187,11 @@ DATABASES = {
     }
 }
 
+# Opt-in only. The hard ceiling stays within the provider's documented free tier.
+HOUSING_SOMANTIC_ENABLED = env_bool("HOUSING_SOMANTIC_ENABLED", False)
+HOUSING_SOMANTIC_API_KEY = env("HOUSING_SOMANTIC_API_KEY", "").strip()
+HOUSING_SOMANTIC_MONTHLY_LIMIT = max(0, min(50, env_int("HOUSING_SOMANTIC_MONTHLY_LIMIT", 45)))
+
 CACHES = {
     "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
     "botanic": {

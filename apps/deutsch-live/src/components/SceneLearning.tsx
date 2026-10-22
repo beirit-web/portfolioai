@@ -7,18 +7,18 @@ import { SkeletonPanel } from "./UiPrimitives";
 type LearningSelection = { topicId: string; sceneId: string };
 
 function readSelection(): LearningSelection {
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   return { topicId: params.get("topic") || "baeckerei", sceneId: params.get("scene") || "" };
 }
 
 function writeSelection(selection: LearningSelection, mode: "push" | "replace") {
-  const url = new URL(window.location.href);
+  const url = new URL(location.href);
   url.searchParams.set("topic", selection.topicId);
   if (selection.sceneId) url.searchParams.set("scene", selection.sceneId);
   else url.searchParams.delete("scene");
-  if (url.href === window.location.href) return;
-  if (mode === "push") window.history.pushState(window.history.state, "", url);
-  else window.history.replaceState(window.history.state, "", url);
+  if (url.href === location.href) return;
+  if (mode === "push") history.pushState(history.state, "", url);
+  else history.replaceState(history.state, "", url);
 }
 
 function contentLanguage(text: string) {
@@ -80,11 +80,11 @@ export default function SceneLearning({ user, onProgressSaved }: { user: Current
   useEffect(() => {
     mountedRef.current = true;
     const onPopState = () => select(readSelection());
-    window.addEventListener("popstate", onPopState);
+    addEventListener("popstate", onPopState);
     return () => {
       mountedRef.current = false;
       saveRequestRef.current += 1;
-      window.removeEventListener("popstate", onPopState);
+      removeEventListener("popstate", onPopState);
     };
   }, []);
 
