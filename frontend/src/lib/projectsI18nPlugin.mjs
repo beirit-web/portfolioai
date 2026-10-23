@@ -1,4 +1,5 @@
 import * as lucideIcons from "lucide-react";
+import { headlineSegments } from "../components/home/hero/headlineSegments.mjs";
 import { featureIconRules, featureIllustrations } from "../components/home/portfolio/featurePresentation.mjs";
 import { illustrationImageSrc } from "../components/shared/cardIllustrations.mjs";
 import { readFile } from "node:fs/promises";
@@ -68,6 +69,7 @@ export function createProjectsPresentationCatalog(locales) {
         nav: subset.nav,
         footer: subset.footer,
         brand: subset.home.hero.eyebrow,
+        hero: { ...locale.home.hero, headlineSegments: headlineSegments(locale.home.hero.headline) },
         copy: PROJECTS_OVERVIEW_COPY[language],
         items: subset.home.portfolio.items,
         detail: {

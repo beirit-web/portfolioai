@@ -1,4 +1,8 @@
 <footer class="site-footer" style="display: block; padding: 2rem 1rem; text-align: center; background: #f8fafc; color: #334155;">
   <p style="color: inherit;">© 2026 Beirit Web · Eugen Beirit</p>
-  <a class="footer-link" style="display: inline-flex; align-items: center; min-height: 2.75rem; margin: 0 .5rem;" href="/kontakt">{% account_text "Kontakt" %}</a> · <a class="footer-link" style="display: inline-flex; align-items: center; min-height: 2.75rem; margin: 0 .5rem;" href="{% url 'pages:imprint' %}">{% account_text "Impressum" %}</a> · <a class="footer-link" style="display: inline-flex; align-items: center; min-height: 2.75rem; margin: 0 .5rem;" href="{% url 'pages:privacy' %}">{% account_text "Datenschutz" %}</a>
+  <a class="footer-link" style="display: inline-flex; align-items: center; min-height: 2.75rem; margin: 0 .5rem;" href="{% url 'pages:home' %}">{% account_text "Startseite" %}</a> ·
+  <a class="footer-link" style="display: inline-flex; align-items: center; min-height: 2.75rem; margin: 0 .5rem;" href="{% url 'pages:contact_no_slash' %}">{% account_text "Kontakt" %}</a> ·
+  <a class="footer-link" style="display: inline-flex; align-items: center; min-height: 2.75rem; margin: 0 .5rem;" href="{% url 'pages:imprint' %}">{% account_text "Impressum" %}</a> ·
+  <a class="footer-link" style="display: inline-flex; align-items: center; min-height: 2.75rem; margin: 0 .5rem;" href="{% url 'pages:privacy' %}">{% account_text "Datenschutz" %}</a> ·
+  <a class="footer-link" style="display: inline-flex; align-items: center; min-height: 2.75rem; margin: 0 .5rem;" href="{% url 'pages:legal' %}"{% if request.resolver_match.url_name == 'legal' %} aria-current="page"{% endif %}>{% account_text "Nutzungsbedingungen" %}</a>
 </footer>

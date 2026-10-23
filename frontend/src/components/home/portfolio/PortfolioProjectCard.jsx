@@ -53,8 +53,8 @@ export default React.memo(function PortfolioProjectCard({
           <PortfolioImage
             image={thumbnail}
             title={item.title}
-            loading={isActive ? "eager" : "lazy"}
-            fetchPriority={isActive ? "high" : "low"}
+            loading="lazy"
+            fetchPriority="low"
             draggable="false"
           />
         </figure>

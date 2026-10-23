@@ -9,17 +9,28 @@
 {% block og_title %}{{ imprint_meta.title }}{% endblock %}
 {% block og_description %}{{ imprint_meta.description }}{% endblock %}
 {% block og_url %}{{ imprint_meta.canonical }}{% endblock %}
+{% block og_image_url %}{{ imprint_meta.share_image }}{% endblock %}
+{% block og_image_alt %}{{ imprint_meta.image_alt }}{% endblock %}
 {% block twitter_title %}{{ imprint_meta.title }}{% endblock %}
 {% block twitter_description %}{{ imprint_meta.description }}{% endblock %}
+{% block twitter_image_url %}{{ imprint_meta.share_image }}{% endblock %}
+{% block twitter_image_alt_tag %}<meta name="twitter:image:alt" content="{{ imprint_meta.image_alt }}" />{% endblock %}
 
 {% block base_styles %}
   <style>{% inline_asset 'css/impressum.css' %}</style>
   <style>{% inline_asset 'css/impressum-nav.css' %}</style>
 {% endblock %}
+{% block page_bootstrap %}{% endblock %}
+{% block footer_link_styles %}<style>{% inline_asset 'css/footer-links.css' %}</style>{% endblock %}
+{% block extra_head %}
+  <meta name="twitter:url" content="{{ imprint_meta.canonical }}" />
+  {% include "partials/legal_navigation_bootstrap.html" %}
+{% endblock %}
 
 {% block body_attrs %} class="imprint-body"{% endblock %}
 
 {% block topnav %}
+  <a class="imprint-skip-link" href="#top">{{ imprint_meta.skip_to_content }}</a>
   {% include "partials/public_navigation.html" with nav_meta=imprint_meta %}
 {% endblock %}
 
@@ -32,10 +43,10 @@
 {% endblock %}
 
 {% block content %}
-  <main id="top" class="imprint-page">
+  <main id="top" class="imprint-page" aria-labelledby="imprint-title" tabindex="-1">
     <header class="imprint-header">
       <div class="imprint-header__copy">
-        <h1>{{ imprint_meta.heading }}</h1>
+        <h1 id="imprint-title">{{ imprint_meta.heading }}</h1>
       </div>
     </header>
 

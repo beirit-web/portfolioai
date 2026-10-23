@@ -239,10 +239,14 @@ class PortfolioSeoTests(TestCase):
         self.assertEqual(len(schema_scripts), 1)
         self.assertNotIn("</script>", schema_scripts[0]["content"].lower())
 
-    def test_sample_legal_pages_are_noindexed_and_have_no_business_schema(self):
-        for route_name in ("pages:imprint", "pages:privacy", "pages:legal"):
+    def test_legal_pages_have_explicit_indexing_policy_and_no_business_schema(self):
+        for route_name, robots in (
+            ("pages:imprint", "index, follow"),
+            ("pages:privacy", "index, follow"),
+            ("pages:legal", "index, follow"),
+        ):
             with self.subTest(route_name=route_name):
                 document = self.document(reverse(route_name))
-                self.assertEqual(document.metadata["robots"], "noindex, follow")
+                self.assertEqual(document.metadata["robots"], robots)
                 self.assertIn("Muster-", document.title)
                 self.assertFalse(any(script["attrs"].get("type") == "application/ld+json" for script in document.scripts))

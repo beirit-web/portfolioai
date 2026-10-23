@@ -64,7 +64,7 @@ function createWaveVertexShader(vertexShader) {
     );
 }
 
-function createWaveGridExperience(canvas) {
+export function createWaveGridExperience(canvas) {
   const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   if (prefersReducedMotion) return { destroy: () => {} };
 

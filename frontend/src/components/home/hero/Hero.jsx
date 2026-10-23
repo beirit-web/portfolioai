@@ -2,20 +2,12 @@ import React from "react";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import { useMediaQuery } from "../../../hooks/useMediaQuery";
 import { isPlainLinkClick } from "../../shared/cardActivation.js";
+import { headlineSegments as splitHeadline } from "./headlineSegments.mjs";
 
 const LazyWaveGridHero = React.lazy(() => import("./WaveGridHero.jsx"));
 
 function AnimatedHeadline({ text }) {
-  const headlineSegments = React.useMemo(() => {
-    if (text === "Webentwicklung · Softwareentwicklung · Digitale Projekte") {
-      return ["Webentwicklung", "Softwareentwicklung", "Digitale Projekte"];
-    }
-    if (text === "Webentwicklung & digitale Lösungen") {
-      return ["Webentwicklung & digitale", "Lösungen"];
-    }
-
-    return [text];
-  }, [text]);
+  const headlineSegments = React.useMemo(() => splitHeadline(text), [text]);
 
   return (
     <>

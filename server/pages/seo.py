@@ -1,6 +1,7 @@
 """Metadata for the public portfolio and its project case studies."""
 
 import json
+from django.templatetags.static import static
 
 
 PORTFOLIO_KEYWORDS = (
@@ -72,25 +73,28 @@ def imprint_page_metadata(language, absolute_url):
         "de": {
             "heading": "Impressum",
             "title": "Muster-Impressum | Beirit Web Portfolio",
-            "description": "Muster-Impressum mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.",
+            "description": "Muster-Impressum des Beirit Web Portfolios mit fiktiven Anbieterangaben, Kontaktformular und Hinweisen zu Haftung und Urheberrecht.",
+            "image_alt": "Logo des Beirit Web Portfolios",
             "locale": "de_DE", "navigation": "Hauptnavigation", "home_label": "Beirit Web Startseite",
-            "menu": "Menü", "menu_open": "Menü öffnen", "menu_close": "Menü schließen",
+            "menu": "Menü", "menu_open": "Menü öffnen", "menu_close": "Menü schließen", "skip_to_content": "Zum Inhalt",
             "links": ("Startseite", "Projekte", "Kompetenzen", "Über mich", "Kontakt"),
         },
         "ru": {
             "heading": "Импрессум",
             "title": "Пример импрессума | Портфолио Beirit Web",
-            "description": "Пример импрессума с вымышленными данными для демонстрации портфолио Beirit Web.",
+            "description": "Пример импрессума портфолио Beirit Web: вымышленные сведения о владельце, контактная форма, ответственность и авторское право.",
+            "image_alt": "Логотип портфолио Beirit Web",
             "locale": "ru_RU", "navigation": "Основная навигация", "home_label": "Beirit Web Главная",
-            "menu": "Меню", "menu_open": "Открыть меню", "menu_close": "Закрыть меню",
+            "menu": "Меню", "menu_open": "Открыть меню", "menu_close": "Закрыть меню", "skip_to_content": "Перейти к содержанию",
             "links": ("Главная", "Проекты", "Компетенции", "Обо мне", "Контакт"),
         },
         "uk": {
             "heading": "Імпресум",
             "title": "Зразок імпресуму | Портфоліо Beirit Web",
-            "description": "Зразок імпресуму з вигаданими даними для демонстрації портфоліо Beirit Web.",
+            "description": "Зразок імпресуму портфоліо Beirit Web: вигадані відомості про власника, контактна форма, відповідальність та авторське право.",
+            "image_alt": "Логотип портфоліо Beirit Web",
             "locale": "uk_UA", "navigation": "Основна навігація", "home_label": "Beirit Web Головна",
-            "menu": "Меню", "menu_open": "Відкрити меню", "menu_close": "Закрити меню",
+            "menu": "Меню", "menu_open": "Відкрити меню", "menu_close": "Закрити меню", "skip_to_content": "Перейти до вмісту",
             "links": ("Головна", "Проєкти", "Компетенції", "Про мене", "Контакт"),
         },
     }.get(language)
@@ -99,7 +103,9 @@ def imprint_page_metadata(language, absolute_url):
     routes = ("home", "projects_page_no_slash", "skills_page_no_slash", "about_page_no_slash", "contact_no_slash")
     return {
         **copy,
-        "robots": "noindex, follow",
+        "language": language,
+        "share_image": absolute_url(static("images/beirit-digital-logo.png")),
+        "robots": "index, follow",
         "canonical": absolute_url("/impressum"),
         "links": [{"label": label, "route": f"pages:{route}"} for label, route in zip(copy["links"], routes)],
     }
@@ -111,18 +117,39 @@ def privacy_page_metadata(language, absolute_url):
     copy = {
         "de": {
             "title": "Muster-Datenschutz | Beirit Web Portfolio",
-            "description": "Muster-Datenschutzerklärung mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.",
+            "description": "Muster-Datenschutzerklärung des Beirit Web Portfolios: Kontaktformular, Konten, Cookies, Speicherdauer und Ihre Rechte im Überblick.",
         },
         "ru": {
             "title": "Пример политики конфиденциальности | Beirit Web Portfolio",
-            "description": "Пример политики конфиденциальности с вымышленными данными для демонстрации портфолио Beirit Web.",
+            "description": "Пример политики конфиденциальности портфолио Beirit Web: контактная форма, аккаунты, cookies, сроки хранения и ваши права.",
         },
     }[language]
     return {
         **imprint_page_metadata(language, absolute_url),
         **copy,
         "language": language,
+        "robots": "index, follow",
         "canonical": absolute_url("/datenschutz/"),
+    }
+
+
+def legal_page_metadata(language, absolute_url):
+    # The project terms are maintained in German and Russian.
+    language = "ru" if language == "ru" else "de"
+    copy = {
+        "de": {
+            "title": "Muster-Projektbedingungen | Beirit Web Portfolio",
+            "description": "Muster-Projektbedingungen des Beirit Web Portfolios: Projektablauf, Mitwirkung, Lieferung, Nutzungsrechte und Haftung im Überblick.",
+        },
+        "ru": {
+            "title": "Пример условий проекта | Beirit Web Portfolio",
+            "description": "Пример условий проектов портфолио Beirit Web: порядок работы, содействие, передача результатов, права использования и ответственность.",
+        },
+    }[language]
+    return {
+        **imprint_page_metadata(language, absolute_url),
+        **copy,
+        "canonical": absolute_url("/rechtliches/"),
     }
 
 

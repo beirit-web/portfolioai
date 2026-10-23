@@ -27,8 +27,8 @@
         content="{% block og_description %}Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.{% endblock %}"
       />
       <meta property="og:url" content="{% block og_url %}{{ site_url }}{{ request.path }}{% endblock %}" />
-      <meta property="og:image" content="{{ site_url }}{% static 'images/beirit-digital-logo.png' %}" />
-      <meta property="og:image:alt" content="Beirit Web Portfolio Logo" />
+      <meta property="og:image" content="{% block og_image_url %}{{ site_url }}{% static 'images/beirit-digital-logo.png' %}{% endblock %}" />
+      <meta property="og:image:alt" content="{% block og_image_alt %}Beirit Web Portfolio Logo{% endblock %}" />
       <meta property="og:image:width" content="1254" />
       <meta property="og:image:height" content="1254" />
       <meta name="twitter:card" content="summary_large_image" />
@@ -37,8 +37,10 @@
         name="twitter:description"
         content="{% block twitter_description %}Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.{% endblock %}"
       />
-      <meta name="twitter:image" content="{{ site_url }}{% static 'images/beirit-digital-logo.png' %}" />
+      <meta name="twitter:image" content="{% block twitter_image_url %}{{ site_url }}{% static 'images/beirit-digital-logo.png' %}{% endblock %}" />
+      {% block twitter_image_alt_tag %}{% endblock %}
     {% endblock %}
+    {% block page_bootstrap %}
     {{ auth_session_js_config|json_script:"auth-session-config-data" }}
     <script>
       window.PREFERRED_LANG = "{{ initial_lang|default:'de'|escapejs }}";
@@ -48,6 +50,7 @@
         document.getElementById("auth-session-config-data").textContent
       );
     </script>
+    {% endblock %}
     <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
     <link rel="apple-touch-icon" href="{% static 'images/beirit-digital-logo-180.png' %}" />
     <link rel="shortcut icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
@@ -58,7 +61,7 @@
       <link rel="stylesheet" href="{% asset_url 'css/flash.css' %}" />
     {% endblock %}
     {% block extra_head %}{% endblock %}
-    <link rel="stylesheet" href="{% asset_url 'css/footer-links.css' %}" />
+    {% block footer_link_styles %}<link rel="stylesheet" href="{% asset_url 'css/footer-links.css' %}" />{% endblock %}
   </head>
   <body{% block body_attrs %} class="has-topnav"{% endblock %}>
     {% block topnav %}

@@ -200,6 +200,7 @@ def build_projects_overview(projects, language="de", config=None, catalog=None):
             {"href": "/kontakt", "label": locale["footer"]["links"]["contact"]},
             {"href": f"{public_base}/impressum", "label": locale["footer"]["links"]["imprint"]},
             {"href": f"{public_base}/datenschutz/", "label": locale["footer"]["links"]["privacy"]},
+            {"href": f"{public_base}/rechtliches/", "label": locale["footer"]["links"]["terms"]},
         ] + [account_link] + ([] if authenticated else [{
             "href": f"{public_base}{config.get('registerUrl') or '/register/'}",
             "label": locale["nav"].get("register", "Registrieren"),

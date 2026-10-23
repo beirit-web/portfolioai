@@ -19,6 +19,7 @@ const footerLinkItems = [
   { href: "/kontakt", appPath: "/kontakt", labelKey: "footer.links.contact" },
   { href: publicPageUrl("/impressum"), labelKey: "footer.links.imprint" },
   { href: publicPageUrl("/datenschutz/"), labelKey: "footer.links.privacy" },
+  { href: publicPageUrl("/rechtliches/"), labelKey: "footer.links.terms" },
 ];
 
 function accountLinks() {

@@ -1,5 +1,5 @@
 import React from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 
 export function mountSiteApp(App) {
   const rootElement = document.getElementById("beirit-root");
@@ -66,11 +66,13 @@ export function mountSiteApp(App) {
     // Reserve the final scrollbar space before the first app layout.
     document.documentElement.classList.add("page-is-loaded");
 
-    createRoot(rootElement).render(
+    const app = (
       <React.StrictMode>
         <App />
-      </React.StrictMode>,
+      </React.StrictMode>
     );
+    if (rootElement.dataset.prerenderedLanguage) hydrateRoot(rootElement, app);
+    else createRoot(rootElement).render(app);
     hideIntroLoader();
   };
 

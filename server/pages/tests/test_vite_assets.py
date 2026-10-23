@@ -1,4 +1,5 @@
 import json
+from unittest.mock import patch
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -16,17 +17,44 @@ class HomeViteAssetsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "window.BEIRIT_DEFERRED_CSS = []")
-        self.assertContains(response, "data-vite-inline='src/homepage-layout.css'")
-        self.assertContains(response, "data-vite-inline='src/components/home/hero/Hero.css'")
-        self.assertContains(response, "data-vite-inline='src/components/home/HomePage.css'")
+        self.assertContains(response, "data-vite-inline='src/home-rendering.css'")
         self.assertNotIn("/static/portfolio-dist/assets/styles-", content)
         self.assertNotIn("/static/portfolio-dist/assets/homepage-custom-", content)
         self.assertNotIn("/static/portfolio-dist/assets/responsive-overrides-", content)
         self.assertNotIn('rel="stylesheet" href="/static/portfolio-dist/assets/styles-', content)
         self.assertNotIn('rel="stylesheet" href="/static/portfolio-dist/assets/homepage-custom-', content)
         self.assertNotIn('rel="stylesheet" href="/static/portfolio-dist/assets/responsive-overrides-', content)
-        self.assertContains(response, "/static/portfolio-dist/assets/main-")
+        self.assertContains(response, "/static/portfolio-dist/assets/home-")
+        self.assertNotContains(response, "/static/portfolio-dist/assets/main-")
+        self.assertNotContains(response, "/static/portfolio-dist/assets/preact-vendor-")
+        self.assertNotContains(response, "/static/portfolio-dist/assets/TechnicalLabel-")
+        self.assertNotContains(response, "/static/portfolio-dist/assets/TechnologyTags-")
         self.assertNotIn('rel="modulepreload" href="/static/portfolio-dist/assets/ContactForm-', content)
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_home_renders_localized_hero_without_javascript(self):
+        from pages.projects_overview import projects_presentation_catalog
+
+        catalog = projects_presentation_catalog()
+        for language in ("de", "ru", "uk"):
+            with self.subTest(language=language):
+                response = self.client.get("/", HTTP_ACCEPT_LANGUAGE=language)
+                hero = catalog["locales"][language]["hero"]
+                self.assertContains(response, f'data-prerendered-language="{language}"')
+                self.assertContains(response, hero["tagline"])
+                self.assertContains(response, hero["projectsCta"])
+                self.assertContains(response, hero["contactCta"])
+                self.assertContains(response, '<h1 ', count=1)
+                self.assertNotContains(response, "Bitte aktivieren Sie JavaScript")
+                self.assertContains(response, 'data-home-rendered="true"')
+                self.assertContains(response, 'class="portfolio-carousel__track"')
+
+    @override_settings(LOGIN_REQUIRED=False)
+    @patch("pages.views.rendered_home", return_value=None)
+    def test_missing_home_build_keeps_react_fallback(self, rendered):
+        response = self.client.get("/")
+        self.assertContains(response, "/static/portfolio-dist/assets/main-")
+        self.assertNotContains(response, 'data-home-rendered="true"')
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_contact_loads_viewport_css_and_preloads_its_form(self):

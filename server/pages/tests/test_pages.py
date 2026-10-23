@@ -34,6 +34,18 @@ from .test_portfolio_seo import PortfolioDocument
 
 
 class ImprintPageTests(TestCase):
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_imprint_is_self_contained_and_contact_actions_are_unambiguous(self):
+        response = self.client.get("/impressum")
+        self.assertContains(response, 'aria-labelledby="imprint-title"')
+        self.assertContains(response, 'aria-label="Inhaltsverzeichnis"')
+        self.assertContains(response, 'href="/kontakt">Kontaktformular öffnen</a>')
+        self.assertNotContains(response, 'href="tel:')
+        self.assertNotContains(response, 'href="https://example.com/kontakt"')
+        self.assertNotContains(response, 'rel="stylesheet"')
+        self.assertNotContains(response, "auth-session-config-data")
+        self.assertContains(response, 'classList.add("legal-nav-enhanced")')
+
     @override_settings(LOGIN_REQUIRED=False, SITE_URL="https://portfolio.example.invalid/")
     def test_metadata_is_localized_and_canonical_without_query_parameters(self):
         for lang, title, locale in (
@@ -50,9 +62,21 @@ class ImprintPageTests(TestCase):
                 self.assertEqual(document.metadata["description"], document.metadata["og:description"])
                 self.assertEqual(document.metadata["description"], document.metadata["twitter:description"])
                 self.assertEqual(document.metadata["og:locale"], locale)
-                self.assertEqual(document.metadata["robots"], "noindex, follow")
+                self.assertEqual(document.metadata["robots"], "index, follow")
+                self.assertEqual(response["X-Robots-Tag"], document.metadata["robots"])
+                self.assertEqual(response["Content-Language"], lang)
+                self.assertIn("accept-language", response["Vary"].lower())
+                self.assertContains(response, f'<html lang="{lang}"')
                 self.assertEqual(document.canonical, "https://portfolio.example.invalid/impressum")
                 self.assertEqual(document.metadata["og:url"], document.canonical)
+                self.assertEqual(document.metadata["twitter:url"], document.canonical)
+                self.assertEqual(document.metadata["og:image"], document.metadata["twitter:image"])
+                image = urlparse(document.metadata["og:image"])
+                self.assertEqual(image.netloc, "portfolio.example.invalid")
+                self.assertTrue(image.path.startswith("/static/"))
+                self.assertNotIn("//", image.path)
+                self.assertEqual(document.metadata["og:image:alt"], document.metadata["twitter:image:alt"])
+                self.assertTrue(document.metadata["og:image:alt"])
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_navigation_links_to_standalone_pages_and_has_a_disclosure_control(self):
@@ -73,7 +97,7 @@ class ImprintPageTests(TestCase):
         self.assertContains(response, "Musterstraße 1")
         self.assertContains(response, "12345 Musterstadt")
         self.assertContains(response, "Es werden keine Leistungen verkauft oder Zahlungen angeboten.")
-        self.assertContains(response, 'href="/kontakt/"')
+        self.assertContains(response, 'href="/kontakt"')
         self.assertContains(response, 'href="/datenschutz/"')
 
     @override_settings(
@@ -125,9 +149,49 @@ class ImprintPageTests(TestCase):
                 self.assertEqual(document.metadata["description"], document.metadata["og:description"])
                 self.assertEqual(document.metadata["description"], document.metadata["twitter:description"])
                 self.assertEqual(document.metadata["og:locale"], locale)
-                self.assertEqual(document.metadata["robots"], "noindex, follow")
+                self.assertEqual(document.metadata["robots"], "index, follow")
                 self.assertEqual(document.canonical, "https://portfolio.example.invalid/datenschutz/")
                 self.assertEqual(document.metadata["og:url"], document.canonical)
+                self.assertEqual(document.metadata["twitter:url"], document.canonical)
+                self.assertEqual(response["X-Robots-Tag"], document.metadata["robots"])
+                self.assertEqual(response["Content-Language"], rendered_language)
+                self.assertIn("accept-language", response["Vary"].lower())
+                self.assertEqual(document.metadata["og:image"], document.metadata["twitter:image"])
+                self.assertTrue(document.metadata["og:image"].startswith("https://portfolio.example.invalid/static/"))
+                self.assertNotIn("//", urlparse(document.metadata["og:image"]).path)
+                self.assertEqual(document.metadata["og:image:alt"], document.metadata["twitter:image:alt"])
+
+    @override_settings(LOGIN_REQUIRED=False, SITE_URL="https://portfolio.example.invalid/")
+    def test_legal_metadata_matches_the_rendered_language_and_clean_canonical(self):
+        for language, rendered_language, title, locale in (
+            ("de", "de", "Muster-Projektbedingungen | Beirit Web Portfolio", "de_DE"),
+            ("ru", "ru", "Пример условий проекта | Beirit Web Portfolio", "ru_RU"),
+            ("uk", "de", "Muster-Projektbedingungen | Beirit Web Portfolio", "de_DE"),
+        ):
+            with self.subTest(language=language):
+                response = self.client.get("/rechtliches/?utm_source=preview", HTTP_ACCEPT_LANGUAGE=language)
+                document = PortfolioDocument(response)
+                self.assertContains(response, f'<html lang="{rendered_language}"')
+                self.assertEqual(document.title, title)
+                self.assertEqual(document.metadata["og:title"], title)
+                self.assertEqual(document.metadata["twitter:title"], title)
+                self.assertEqual(document.metadata["description"], document.metadata["og:description"])
+                self.assertEqual(document.metadata["description"], document.metadata["twitter:description"])
+                self.assertEqual(document.metadata["og:locale"], locale)
+                self.assertEqual(document.metadata["robots"], "index, follow")
+                self.assertEqual(document.canonical, "https://portfolio.example.invalid/rechtliches/")
+                self.assertEqual(document.metadata["og:url"], document.canonical)
+                self.assertEqual(document.metadata["twitter:url"], document.canonical)
+                self.assertEqual(response["X-Robots-Tag"], document.metadata["robots"])
+                self.assertEqual(response["Content-Language"], rendered_language)
+                self.assertIn("accept-language", response["Vary"].lower())
+                self.assertEqual(document.metadata["og:image"], document.metadata["twitter:image"])
+                self.assertTrue(document.metadata["og:image"].startswith("https://portfolio.example.invalid/static/"))
+                self.assertNotIn("//", urlparse(document.metadata["og:image"]).path)
+                self.assertEqual(document.metadata["og:image:alt"], document.metadata["twitter:image:alt"])
+
+                self.assertContains(response, "Условия проектов" if rendered_language == "ru" else "Projektbedingungen")
+                self.assertContains(response, "PayPal и реальные платежи в этом портфолио отключены." if rendered_language == "ru" else "PayPal und echte Zahlungen sind in diesem Portfolio deaktiviert.")
 
     @override_settings(LOGIN_REQUIRED=False)
     def test_privacy_is_server_rendered_without_app_styles_and_translation_bundles(self):
@@ -138,6 +202,18 @@ class ImprintPageTests(TestCase):
         self.assertNotContains(response, "/static/css/main.css")
         self.assertNotContains(response, "/static/js/main.js")
         self.assertNotContains(response, "/static/js/i18n-data.js")
+
+    @override_settings(LOGIN_REQUIRED=False)
+    def test_project_terms_need_only_inline_styles_and_navigation_script(self):
+        response = self.client.get("/rechtliches/")
+        self.assertContains(response, 'class="terms-body"')
+        self.assertContains(response, 'aria-controls="imprint-navigation-links"')
+        self.assertContains(response, 'classList.add("legal-nav-enhanced")')
+        self.assertContains(response, 'href="/kontakt"')
+        self.assertNotContains(response, '<link rel="stylesheet"')
+        self.assertNotContains(response, '<script src=')
+        self.assertNotContains(response, "AUTH_SESSION_CONFIG")
+        self.assertNotContains(response, "data-i18n=")
 
     def test_legacy_project_terms_route_redirects_to_portfolio(self):
         response = self.client.get(reverse("pages:project_terms"))

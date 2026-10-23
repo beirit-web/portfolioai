@@ -9,14 +9,22 @@
 {% block og_title %}{{ privacy_meta.title }}{% endblock %}
 {% block og_description %}{{ privacy_meta.description }}{% endblock %}
 {% block og_url %}{{ privacy_meta.canonical }}{% endblock %}
+{% block og_image_url %}{{ privacy_meta.share_image }}{% endblock %}
+{% block og_image_alt %}{{ privacy_meta.image_alt }}{% endblock %}
 {% block twitter_title %}{{ privacy_meta.title }}{% endblock %}
 {% block twitter_description %}{{ privacy_meta.description }}{% endblock %}
+{% block twitter_image_url %}{{ privacy_meta.share_image }}{% endblock %}
+{% block twitter_image_alt_tag %}<meta name="twitter:image:alt" content="{{ privacy_meta.image_alt }}" />{% endblock %}
 
 {% block base_styles %}
   <style>{% inline_asset 'css/privacy.css' %}</style>
   <style>{% inline_asset 'css/impressum-nav.css' %}</style>
 {% endblock %}
 {% block body_attrs %} class="privacy-body"{% endblock %}
+{% block extra_head %}
+  <meta name="twitter:url" content="{{ privacy_meta.canonical }}" />
+  {% include "partials/legal_navigation_bootstrap.html" %}
+{% endblock %}
 {% block topnav %}
   {% include "partials/public_navigation.html" with nav_meta=privacy_meta %}
 {% endblock %}

@@ -1,6 +1,6 @@
 {% load static vite_assets %}
 <!doctype html>
-<html lang="{{ initial_lang|default:'de' }}" data-theme="light"{% if projects_overview or project_detail %} class="page-is-loaded"{% endif %}>
+<html lang="{{ initial_lang|default:'de' }}" data-theme="light"{% if projects_overview or project_detail or home_main_html %} class="page-is-loaded"{% endif %}>
   <head>
     <title>{{ react_page_meta.title|default:"Beirit Web | Portfolio für Web- und Softwareentwicklung" }}</title>
     <meta charset="UTF-8" />
@@ -64,7 +64,11 @@
     </script>
     <script type="application/ld+json">{{ portfolio_structured_data_json|safe }}</script>
     {% if react_is_home_route %}
+      {% if home_main_html %}
+      {% vite_inline_css_assets 'src/home-rendering.css' %}
+      {% else %}
       {% vite_inline_css_assets 'src/components/home/hero/Hero.css' 'src/components/home/HomePage.css' 'src/homepage-layout.css' 'src/header-nav.css' %}
+      {% endif %}
     {% elif react_route_path == '/projekte' %}
       {% vite_inline_css_assets 'src/projects-page.css' 'src/header-nav.css' %}
     {% elif react_is_project_detail %}
@@ -112,7 +116,9 @@
     {% if react_route_path == '/kontakt' %}
       {% vite_inline_css_assets 'src/components/contact/ContactForm.jsx' %}
     {% endif %}
-    {% if react_route_path == '/projekte' %}
+    {% if home_main_html %}
+      {% vite_react_assets 'src/home.js' fetchpriority='low' %}
+    {% elif react_route_path == '/projekte' %}
       {% vite_react_assets 'src/projects.js' fetchpriority='low' %}
     {% elif react_is_project_detail %}
       {% vite_react_assets 'src/project-detail.js' fetchpriority='low' %}
@@ -123,23 +129,33 @@
     {% endif %}
   </head>
   <body>
-    <div id="beirit-root">
+    <div id="beirit-root"{% if home_hero %} data-prerendered-language="{{ initial_lang|default:'de' }}"{% endif %}>
       {% if projects_overview %}
         {% include "pages/projects_overview.html" with overview=projects_overview only %}
       {% elif project_detail %}
         {% include "pages/project_detail.html" with detail=project_detail only %}
       {% elif react_is_home_route %}
         <div class="site-shell site-shell--home min-h-screen bg-[#f3f4f6] text-stone-950">
+          {% if home_main_html %}
+            {{ home_main_html|safe }}
+            {% include "pages/project_footer.html" with overview=home_chrome only %}
+          {% else %}
           <main id="top" class="home-main">
+            {% if home_hero %}
+              {% include "pages/home_hero.html" with hero=home_hero only %}
+            {% else %}
             <section class="hero-stage" aria-hidden="true">
               <div class="hero-stage__wave-grid" aria-hidden="true"></div>
               <div class="hero-stage__mesh" aria-hidden="true"></div>
             </section>
+            {% endif %}
           </main>
+          {% endif %}
         </div>
       {% endif %}
     </div>
-    {% if not projects_overview and not project_detail %}<noscript>
+    {% if home_main_html %}{% include "pages/project_header.html" with overview=home_chrome only %}{% endif %}
+    {% if not projects_overview and not project_detail and not home_hero %}<noscript>
       <main class="react-noscript-message">
         <h1>Beirit Web – Portfolio für Web- und Softwareentwicklung</h1>
         <p>Bitte aktivieren Sie JavaScript, um die React-Oberfläche und das Kontaktformular zu nutzen.</p>

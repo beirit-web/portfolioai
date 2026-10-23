@@ -31,6 +31,7 @@ from django.utils.http import (
     urlsafe_base64_decode,
 )
 from django.utils import timezone
+from django.utils.cache import patch_vary_headers
 from django.utils.translation import override
 
 from lessons.models import UserProfile as LearningUserProfile
@@ -61,6 +62,7 @@ from .models import ChatMessage, Profile, Project, WeatherSearch
 from .seo import (
     INTEGRATED_PROJECT_SLUGS,
     imprint_page_metadata,
+    legal_page_metadata,
     login_page_metadata,
     portfolio_page_metadata,
     privacy_page_metadata,
@@ -69,6 +71,7 @@ from .seo import (
 )
 from .project_detail import build_project_detail
 from .projects_overview import build_projects_overview, projects_presentation_catalog
+from .home_presentation import rendered_home
 from .housing_api import (
     housing_authenticated_user,
     make_housing_auth_token,
@@ -723,6 +726,17 @@ def home(request, project_slug=None):
         "logoutUrl": reverse("pages:logout"),
     }
     ctx["react_is_project_detail"] = bool(project_slug)
+    if route_path == "/":
+        catalog = projects_presentation_catalog()
+        if catalog:
+            locale = catalog["locales"].get(lang, catalog["locales"]["de"])
+            ctx["home_hero"] = locale.get("hero")
+            ctx["home_main_html"] = rendered_home(lang)
+            if ctx["home_main_html"]:
+                chrome = build_projects_overview([], lang, ctx["react_home_config"], catalog)
+                for item in chrome["nav"]:
+                    item["active"] = item["href"] == "/"
+                ctx["home_chrome"] = chrome
     if project_slug in PROJECT_COVER_SLUGS:
         ctx["react_project_image_preload"] = project_cover_image_preload(project_slug, detail=True)
     if project:
@@ -866,20 +880,36 @@ def weather_search_delete_api(request, search_id):
 
 
 def legal(request):
-    return render(request, "pages/rechtliches.html", build_base_context(request))
+    context = build_base_context(request)
+    context["legal_meta"] = legal_page_metadata(context["initial_lang"], build_absolute_site_url)
+    context["initial_lang"] = context["legal_meta"]["language"]
+    response = render(request, "pages/rechtliches.html", context)
+    response["Content-Language"] = context["initial_lang"]
+    response["X-Robots-Tag"] = context["legal_meta"]["robots"]
+    patch_vary_headers(response, ("Accept-Language",))
+    return response
 
 
 def privacy(request):
     context = build_base_context(request)
     context["privacy_meta"] = privacy_page_metadata(context["initial_lang"], build_absolute_site_url)
     context["initial_lang"] = context["privacy_meta"]["language"]
-    return render(request, "pages/datenschutz.html", context)
+    response = render(request, "pages/datenschutz.html", context)
+    response["Content-Language"] = context["initial_lang"]
+    response["X-Robots-Tag"] = context["privacy_meta"]["robots"]
+    patch_vary_headers(response, ("Accept-Language",))
+    return response
 
 
 def imprint(request):
     context = build_base_context(request)
     context["imprint_meta"] = imprint_page_metadata(context["initial_lang"], build_absolute_site_url)
-    return render(request, "pages/impressum.html", context)
+    context["initial_lang"] = context["imprint_meta"]["language"]
+    response = render(request, "pages/impressum.html", context)
+    response["Content-Language"] = context["initial_lang"]
+    response["X-Robots-Tag"] = context["imprint_meta"]["robots"]
+    patch_vary_headers(response, ("Accept-Language",))
+    return response
 
 
 def donate(request):

@@ -28,6 +28,8 @@ export default defineConfig(({ command }) => ({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "src/main.jsx"),
+        home: path.resolve(__dirname, "src/home.js"),
+        "home-rendering": path.resolve(__dirname, "src/home-rendering.css"),
         about: path.resolve(__dirname, "src/about.jsx"),
         projects: path.resolve(__dirname, "src/projects.js"),
         "project-detail": path.resolve(__dirname, "src/project-detail.js"),

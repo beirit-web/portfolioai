@@ -2,21 +2,21 @@
     <span class="brand">
       © 2026 Beirit Web – Eugen Beirit
     </span>
-    <div class="footer-meta">
+    <nav class="footer-meta" aria-label="{% if initial_lang|slice:':2' == 'ru' %}Правовая навигация{% elif initial_lang|slice:':2' == 'uk' %}Правова навігація{% else %}Rechtliche Navigation{% endif %}">
       <a href="{% url 'pages:home' %}" class="footer-link">
-        {% if initial_lang|slice:':2' == "ru" %}Главная{% else %}Startseite{% endif %}
+        {% if initial_lang|slice:':2' == "ru" %}Главная{% elif initial_lang|slice:':2' == "uk" %}Головна{% else %}Startseite{% endif %}
       </a>
-      <a href="{% url 'pages:contact' %}" class="footer-link">
-        {% if initial_lang|slice:':2' == "ru" %}Контакт{% else %}Kontakt{% endif %}
+      <a href="{% url 'pages:contact_no_slash' %}" class="footer-link">
+        {% if initial_lang|slice:':2' == "ru" %}Контакт{% elif initial_lang|slice:':2' == "uk" %}Контакт{% else %}Kontakt{% endif %}
       </a>
       <a href="{% url 'pages:imprint' %}" class="footer-link"{% if current_legal_page == "imprint" %} aria-current="page"{% endif %}>
-        {% if initial_lang|slice:':2' == "ru" %}Импрессум{% else %}Impressum{% endif %}
+        {% if initial_lang|slice:':2' == "ru" %}Импрессум{% elif initial_lang|slice:':2' == "uk" %}Імпресум{% else %}Impressum{% endif %}
       </a>
       <a href="{% url 'pages:privacy' %}" class="footer-link"{% if current_legal_page == "privacy" %} aria-current="page"{% endif %}>
-        {% if initial_lang|slice:':2' == "ru" %}Конфиденциальность{% else %}Datenschutz{% endif %}
+        {% if initial_lang|slice:':2' == "ru" %}Конфиденциальность{% elif initial_lang|slice:':2' == "uk" %}Захист даних{% else %}Datenschutz{% endif %}
       </a>
       <a href="{% url 'pages:legal' %}" class="footer-link">
-        {% if initial_lang|slice:':2' == "ru" %}Условия использования{% else %}Nutzungsbedingungen{% endif %}
+        {% if initial_lang|slice:':2' == "ru" %}Условия использования{% elif initial_lang|slice:':2' == "uk" %}Умови використання{% else %}Nutzungsbedingungen{% endif %}
       </a>
-    </div>
+    </nav>
   </footer>

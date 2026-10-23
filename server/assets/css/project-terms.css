@@ -1,0 +1,43 @@
+/* Project terms are server rendered; this page needs no application styles or motion setup. */
+:root { color-scheme: light; }
+.terms-body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; background: linear-gradient(145deg, #eef5f9, #edeced 55%); color: #0f172a; font: 1rem/1.6 "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+.terms-body *, .terms-body *::before, .terms-body *::after { box-sizing: border-box; }
+.terms-body .legal-page-shell { display: grid; gap: 1.25rem; width: min(100%, 80rem); margin: 3.15rem auto 0; padding: clamp(.7rem, 1.5vw, 1.35rem) clamp(1rem, 4vw, 3rem) clamp(2rem, 4vw, 3.6rem); }
+.terms-body .terms-hero { display: grid; gap: clamp(1rem, 1.7vw, 1.45rem); width: min(100%, 68rem); margin-inline: auto; padding: clamp(1.15rem, 1rem + 1.5vw, 2.35rem); border: 1px solid rgb(15 23 42 / 14%); border-radius: .5rem; background: radial-gradient(ellipse at 8% 0%, rgb(14 165 233 / 12%), transparent 42%), linear-gradient(#fffffffa, #f8fafcf5), #fff; }
+.terms-body .terms-hero__copy, .terms-body .terms-hero__facts { min-width: 0; }
+.terms-body .section-kicker { display: inline-flex; align-items: center; gap: .35rem; margin: 0 0 .65rem; padding: .38rem .68rem; border: 1px solid rgb(14 116 144 / 24%); border-radius: .5rem; background: rgb(14 165 233 / 12%); color: #047857; font: 850 .82rem/1.6 ui-sans-serif, system-ui, sans-serif; }
+.terms-body .section-kicker::before { content: "✦"; color: #38bdf8; }
+.terms-body .terms-hero h1 { margin: 0; font-size: clamp(1.85rem, 1.2rem + 4.6vw, 3.65rem); line-height: 1; overflow-wrap: anywhere; }
+.terms-body .section-intro { max-width: 52rem; margin: .8rem 0 0; color: #334155; font-size: clamp(1rem, .92rem + .25vw, 1.15rem); line-height: 1.62; }
+.terms-body .legal-authoritative-note { margin: 0; color: #334155; }
+.terms-body .terms-hero__facts { display: grid; align-content: start; gap: clamp(.55rem, 1.2vw, .9rem); }
+.terms-body .terms-hero__facts span { display: flex; align-items: center; padding: .35rem 0 .35rem .78rem; border-left: 2px solid rgb(5 150 105 / 62%); color: #1e293b; font-size: clamp(.88rem, .82rem + .18vw, .98rem); font-weight: 800; line-height: 1.35; }
+.terms-body .legal-page { display: flex; flex-direction: column; align-items: center; gap: clamp(.9rem, 1.5vw, 1.35rem); width: min(100%, 68rem); min-width: 0; margin-inline: auto; }
+.terms-body .legal-callout { margin: .15rem 0 0; padding: .9rem 1rem; border: 1px solid rgb(14 165 233 / 18%); border-radius: .5rem; background: linear-gradient(#e0f2fefa, #f0f9fffa), #fff; }
+.terms-body .legal-section { display: grid; gap: .85rem; width: 100%; min-width: 0; padding: 1.4rem clamp(1.15rem, 2vw, 1.65rem) clamp(1.15rem, 2vw, 1.65rem); border-radius: .5rem; background: linear-gradient(#ffffffe6, #f8fafce0); scroll-margin-top: 6rem; }
+.terms-body .legal-section h2 { margin: 0; font-size: clamp(1.3rem, 1.08rem + .58vw, 1.7rem); line-height: 1.16; }
+.terms-body .legal-section p { margin: 0; color: #334155; line-height: 1.65; }
+.terms-body .legal-section ul { display: grid; gap: .42rem; margin: .65rem 0 0; padding: 0; list-style: none; }
+.terms-body .legal-section li { position: relative; margin: 0; padding: .38rem 0 .38rem 1.35rem; color: #334155; line-height: 1.62; }
+.terms-body .legal-section li::before { content: ""; position: absolute; left: 0; top: .98rem; width: .45rem; height: .45rem; border-radius: 50%; background: #059669; }
+.terms-body .legal-section a { color: #075985; font-weight: 800; overflow-wrap: anywhere; text-underline-offset: .2em; }
+.terms-body a:focus-visible { outline: 2px solid #075985; outline-offset: 3px; }
+.terms-body footer.site-footer { width: 100%; margin-top: auto; border-top: 1px solid #d6e5e1; font-size: .85rem; }
+.terms-body .site-footer p { margin: 0 0 .75rem; }
+@media (min-width: 64rem) {
+  .terms-body .terms-hero { grid-template-columns: minmax(0, 1fr) minmax(16rem, 25rem); }
+}
+@media (max-width: 47.99rem) {
+  .terms-body .legal-page-shell { margin-top: 0; padding: .7rem 4vw 2rem; }
+  .terms-body .terms-hero { padding: 1rem; }
+  .terms-body .terms-hero h1 { font-size: clamp(1.2rem, 5vw, 2rem); line-height: 1.12; }
+  .terms-body .legal-callout, .terms-body .legal-section li { font-size: .94rem; }
+  .terms-body .legal-callout { padding: .78rem .85rem; line-height: 1.55; }
+}
+@media print {
+  .terms-body { display: block; background: #fff; color: #111; }
+  .terms-body .imprint-site-header, .terms-body footer { display: none; }
+  .terms-body .legal-page-shell { width: 100%; margin: 0; padding: 0; }
+  .terms-body .terms-hero, .terms-body .legal-section { background: #fff; }
+  .terms-body h2 { break-after: avoid; }
+}

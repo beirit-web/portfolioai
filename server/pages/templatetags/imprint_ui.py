@@ -10,6 +10,15 @@ from django.conf import settings
 register = template.Library()
 
 
+@register.simple_tag
+@lru_cache(maxsize=2)
+def project_terms_copy(language):
+    source_language = "ru" if language == "ru" else "de"
+    path = settings.SERVER_DIR / "assets" / "locales" / f"{source_language}.json"
+    copy = json.loads(path.read_text(encoding="utf-8"))
+    return {"page": copy["projectTermsPage"], "authoritative_note": copy["legal"]["authoritative_note"]}
+
+
 @lru_cache(maxsize=3)
 def imprint_copy(language):
     # Reuse the existing maintained legal translations, only the required subtree.
@@ -42,6 +51,14 @@ def imprint_copy(language):
     else:
         copy["notice"] = "Fiktive Musterangaben für die Portfolio-Demonstration."
         copy["tax"]["text_secondary"] = "Es werden keine Leistungen verkauft oder Zahlungen angeboten."
+    navigation = {
+        "de": ("Inhaltsverzeichnis", "Kontaktformular öffnen", "Telefon und WhatsApp sind in diesem Muster nicht als Kontaktwege eingerichtet."),
+        "ru": ("Содержание", "Открыть контактную форму", "Телефон и WhatsApp в этом примере не настроены как способы связи."),
+        "uk": ("Зміст", "Відкрити контактну форму", "Телефон і WhatsApp у цьому прикладі не налаштовані як способи зв'язку."),
+    }.get(language)
+    copy["contents_label"], copy["form_link"], copy["contact_example_note"] = navigation or (
+        "Inhaltsverzeichnis", "Kontaktformular öffnen", "Telefon und WhatsApp sind in diesem Muster nicht als Kontaktwege eingerichtet."
+    )
     return copy
 
 

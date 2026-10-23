@@ -1,146 +1,122 @@
 {% extends "base_public.html" %}
-{% load static %}
+{% load static imprint_ui %}
 
-{% block title %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта{% else %}Muster-Projektbedingungen{% endif %} | Beirit Web Portfolio{% endblock %}
-{% block meta_robots %}noindex, follow{% endblock %}
-{% block meta_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Beispielhafte Projektbedingungen mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
-{% block og_title %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта{% else %}Muster-Projektbedingungen{% endif %} | Beirit Web Portfolio{% endblock %}
-{% block og_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Beispielhafte Projektbedingungen mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
-{% block twitter_title %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта{% else %}Muster-Projektbedingungen{% endif %} | Beirit Web Portfolio{% endblock %}
-{% block twitter_description %}{% if initial_lang|slice:':2' == 'ru' %}Пример условий проекта с вымышленными данными для демонстрации портфолио Beirit Web.{% else %}Beispielhafte Projektbedingungen mit fiktiven Angaben für die Portfolio-Demonstration von Beirit Web.{% endif %}{% endblock %}
-
-{% block body_attrs %} class="has-topnav legal-body legal-body--terms template-body"{% endblock %}
-
+{% block title %}{{ legal_meta.title }}{% endblock %}
+{% block meta_robots %}{{ legal_meta.robots }}{% endblock %}
+{% block meta_description %}{{ legal_meta.description }}{% endblock %}
+{% block canonical_url %}{{ legal_meta.canonical }}{% endblock %}
+{% block og_locale %}{{ legal_meta.locale }}{% endblock %}
+{% block og_title %}{{ legal_meta.title }}{% endblock %}
+{% block og_description %}{{ legal_meta.description }}{% endblock %}
+{% block og_url %}{{ legal_meta.canonical }}{% endblock %}
+{% block og_image_url %}{{ legal_meta.share_image }}{% endblock %}
+{% block og_image_alt %}{{ legal_meta.image_alt }}{% endblock %}
+{% block twitter_title %}{{ legal_meta.title }}{% endblock %}
+{% block twitter_description %}{{ legal_meta.description }}{% endblock %}
+{% block twitter_image_url %}{{ legal_meta.share_image }}{% endblock %}
+{% block twitter_image_alt_tag %}<meta name="twitter:image:alt" content="{{ legal_meta.image_alt }}" />{% endblock %}
+{% block page_bootstrap %}{% endblock %}
+{% block base_styles %}
+  <style>{% inline_asset 'css/project-terms.css' %}</style>
+  <style>{% inline_asset 'css/impressum-nav.css' %}</style>
+{% endblock %}
+{% block footer_link_styles %}<style>{% inline_asset 'css/footer-links.css' %}</style>{% endblock %}
+{% block extra_head %}
+  <meta name="twitter:url" content="{{ legal_meta.canonical }}" />
+  {% include "partials/legal_navigation_bootstrap.html" %}
+{% endblock %}
+{% block body_attrs %} class="terms-body"{% endblock %}
 {% block topnav %}
-  <div class="topnav" id="mainTopnav">
-    <a
-      class="nav-cube-link"
-      href="{% url 'pages:home' %}#top"
-      aria-label="{% if initial_lang|slice:':2' == 'ru' %}Beirit Digital Главная{% else %}Beirit Digital Startseite{% endif %}"
-    >
-      <img
-        src="{% static 'images/beirit-digital-logo-160.webp' %}"
-        sizes="56px"
-        alt="Beirit Digital"
-        class="legal-topnav-logo"
-        width="80"
-        height="80"
-        decoding="async"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </a>
-    <a href="{% url 'pages:home' %}#top" class="nav-link nav-link--home" data-i18n="nav.home">{% if initial_lang|slice:':2' == 'ru' %}Главная{% else %}Start{% endif %}</a>
-    <a href="{% url 'pages:skills_page_no_slash' %}" class="nav-link" data-i18n="nav.interpreters">{% if initial_lang|slice:':2' == 'ru' %}Услуги{% else %}Leistungen{% endif %}</a>
-    <a href="{% url 'pages:home' %}#preise" class="nav-link" data-i18n="nav.prices">{% if initial_lang|slice:':2' == 'ru' %}Цены{% else %}Preise{% endif %}</a>
-    <a href="{% url 'pages:home' %}#profil" class="nav-link" data-i18n="nav.about">{% if initial_lang|slice:':2' == 'ru' %}Обо мне{% else %}Über{% endif %}</a>
-    <a href="{% url 'pages:home' %}#kontakt" class="nav-link nav-link--contact" data-i18n="nav.contact">{% if initial_lang|slice:':2' == 'ru' %}Контакты{% else %}Kontakt{% endif %}</a>
-  </div>
+  {% include "partials/public_navigation.html" with nav_meta=legal_meta %}
+{% endblock %}
+{% block base_scripts %}
+  <script>{% inline_asset 'js/impressum-nav.js' %}</script>
 {% endblock %}
 
 {% block content %}
-  <main class="page-shell has-topnav template-page template-page--wide legal-page-shell legal-page-shell--terms">
+  {% project_terms_copy initial_lang as terms %}
+  <main aria-labelledby="terms-title" class="page-shell has-topnav template-page template-page--wide legal-page-shell legal-page-shell--terms">
     <header class="terms-hero" aria-labelledby="terms-title">
       <div class="terms-hero__copy">
-        <p class="section-kicker" data-i18n="projectTermsPage.kicker">Rechtliches</p>
-        <h1 id="terms-title" data-i18n="projectTermsPage.title">Projektbedingungen</h1>
-        <p class="section-intro" data-i18n="projectTermsPage.lead">
-          Rahmenbedingungen für digitale Leistungen, Webprojekte, Angebote und
-          Zusammenarbeit mit Beirit Digital.
-        </p>
-        <p class="legal-authoritative-note" data-i18n="legal.authoritative_note">
-          Die deutsche Fassung ist maßgeblich.
-        </p>
+        <p class="section-kicker">{{ terms.page.kicker }}</p>
+        <h1 id="terms-title">{{ terms.page.title }}</h1>
+        <p class="section-intro">{{ terms.page.lead }}</p>
+        <p class="legal-authoritative-note">{{ terms.authoritative_note }}</p>
       </div>
-      <div class="terms-hero__facts" aria-label="Kurzüberblick" data-i18n-aria-label="projectTermsPage.facts_aria">
-        <span data-i18n="projectTermsPage.facts.0">Angebot vor Umsetzung</span>
-        <span data-i18n="projectTermsPage.facts.1">Projektvereinbarung möglich</span>
-        <span data-i18n="projectTermsPage.facts.2">PDF-Rechnung</span>
-        <span data-i18n="projectTermsPage.facts.3">Nutzungsrechte nach Vereinbarung</span>
+      <div class="terms-hero__facts" aria-label="{{ terms.page.facts_aria }}">
+        <span>{{ terms.page.facts.0 }}</span>
+        <span>{{ terms.page.facts.1 }}</span>
+        <span>{{ terms.page.facts.2 }}</span>
+        <span>{{ terms.page.facts.3 }}</span>
       </div>
     </header>
 
     <div class="legal-page">
       <p class="legal-callout">{% if initial_lang|slice:':2' == 'ru' %}Вымышленные примерные данные для демонстрации портфолио.{% else %}Fiktive Musterangaben für die Portfolio-Demonstration.{% endif %}</p>
       <section class="template-panel legal-section" id="geltung">
-        <h2 data-i18n="projectTermsPage.sections.scope.title">Geltungsbereich</h2>
-        <p data-i18n="projectTermsPage.sections.scope.text">
-          Diese Projektbedingungen gelten für digitale Leistungen von Beirit Digital,
-          insbesondere Webentwicklung, Webseiten-Anpassungen, Reparaturen, Lokalisierung
-          und digitale Inhalte.
-        </p>
+        <h2>{{ terms.page.sections.scope.title }}</h2>
+        <p>{{ terms.page.sections.scope.text }}</p>
       </section>
 
       <section class="template-panel legal-section" id="kontakt">
-        <h2 data-i18n="projectTermsPage.sections.request.title">Anfrage & Angebot</h2>
-        <p data-i18n="projectTermsPage.sections.request.text">
-          Anfragen können über das Kontaktformular oder die angegebenen Kontaktwege erfolgen.
-          Eine erste Einschätzung dient der Orientierung und stellt noch keine verbindliche
-          Beauftragung dar.
-        </p>
-        <ul>
-          <li data-i18n="projectTermsPage.sections.request.items.0">Kleinere Änderungen sind nach Absprache möglich.</li>
-          <li data-i18n="projectTermsPage.sections.request.items.1">Größere Projekte erfolgen auf Basis eines Angebots.</li>
-          <li data-i18n="projectTermsPage.sections.request.items.2">Umfang und Preis richten sich nach Aufwand und Vereinbarung.</li>
-          <li data-i18n="projectTermsPage.sections.request.items.3">Änderungen am Umfang können Zeit und Preis beeinflussen.</li>
+        <h2>{{ terms.page.sections.request.title }}</h2>
+        <p>{{ terms.page.sections.request.text }}</p>
+        <ul role="list">
+          <li>{{ terms.page.sections.request.items.0 }}</li>
+          <li>{{ terms.page.sections.request.items.1 }}</li>
+          <li>{{ terms.page.sections.request.items.2 }}</li>
+          <li>{{ terms.page.sections.request.items.3 }}</li>
         </ul>
       </section>
 
       <section class="template-panel legal-section" id="projektvereinbarung">
-        <h2 data-i18n="projectTermsPage.sections.agreement.title">Projektvereinbarung</h2>
-        <p data-i18n="projectTermsPage.sections.agreement.text">
-          Bei größeren Projekten können Umfang, Lieferung, Nutzungsrechte,
-          Zahlungsbedingungen und Kommunikation schriftlich festgehalten werden.
-        </p>
+        <h2>{{ terms.page.sections.agreement.title }}</h2>
+        <p>{{ terms.page.sections.agreement.text }}</p>
       </section>
 
       <section class="template-panel legal-section" id="mitwirkung">
-        <h2 data-i18n="projectTermsPage.sections.material.title">Mitwirkung und Material</h2>
-        <ul>
-          <li data-i18n="projectTermsPage.sections.material.items.0">Für die Umsetzung benötigte Inhalte, Zugangsdaten oder Materialien sollten rechtzeitig bereitgestellt werden.</li>
-          <li data-i18n="projectTermsPage.sections.material.items.1">Verzögerungen können den Projektzeitraum beeinflussen.</li>
+        <h2>{{ terms.page.sections.material.title }}</h2>
+        <ul role="list">
+          <li>{{ terms.page.sections.material.items.0 }}</li>
+          <li>{{ terms.page.sections.material.items.1 }}</li>
         </ul>
       </section>
 
       <section class="template-panel legal-section" id="lieferung">
-        <h2 data-i18n="projectTermsPage.sections.delivery.title">Lieferung und Abnahme</h2>
-        <ul>
-          <li data-i18n="projectTermsPage.sections.delivery.items.0">Die Lieferung erfolgt digital, beispielsweise als Datei, Deployment, Repository oder dokumentierte Änderung.</li>
-          <li data-i18n="projectTermsPage.sections.delivery.items.1">Korrekturen innerhalb des vereinbarten Umfangs werden nachvollziehbar abgestimmt.</li>
+        <h2>{{ terms.page.sections.delivery.title }}</h2>
+        <ul role="list">
+          <li>{{ terms.page.sections.delivery.items.0 }}</li>
+          <li>{{ terms.page.sections.delivery.items.1 }}</li>
         </ul>
       </section>
 
       <section class="template-panel legal-section" id="zahlung">
-        <h2 data-i18n="projectTermsPage.sections.payment.title">Rechnung und Zahlung</h2>
-        <ul>
-          <li data-i18n="projectTermsPage.sections.payment.items.0">Die dargestellten Rechnungen sind fiktive Beispiele.</li>
-          <li data-i18n="projectTermsPage.sections.payment.items.1">PayPal und echte Zahlungen sind in diesem Portfolio deaktiviert.</li>
-          <li data-i18n="projectTermsPage.sections.payment.items.2">Es werden keine Zahlungsdienste geöffnet oder Bestellungen ausgeführt.</li>
-          <li data-i18n="projectTermsPage.sections.payment.items.3">Angezeigte Beträge und Zahlungsstatus sind ausschließlich Musterdaten.</li>
-          <li data-i18n="projectTermsPage.sections.payment.items.4">Die Anbieter- und Steuerangaben sind fiktive Musterangaben.</li>
-          <li data-i18n="projectTermsPage.sections.payment.items.5">Das Portfolio bietet über diese Demonstration keine Leistungen zum Verkauf an.</li>
-          <li data-i18n="projectTermsPage.sections.payment.items.6">Spenden sind in dieser Portfolio-Demonstration deaktiviert.</li>
+        <h2>{{ terms.page.sections.payment.title }}</h2>
+        <ul role="list">
+          <li>{{ terms.page.sections.payment.items.0 }}</li>
+          <li>{{ terms.page.sections.payment.items.1 }}</li>
+          <li>{{ terms.page.sections.payment.items.2 }}</li>
+          <li>{{ terms.page.sections.payment.items.3 }}</li>
+          <li>{{ terms.page.sections.payment.items.4 }}</li>
+          <li>{{ terms.page.sections.payment.items.5 }}</li>
+          <li>{{ terms.page.sections.payment.items.6 }}</li>
         </ul>
       </section>
 
       <section class="template-panel legal-section" id="rechte">
-        <h2 data-i18n="projectTermsPage.sections.rights.title">Nutzungsrechte</h2>
-        <ul>
-          <li data-i18n="projectTermsPage.sections.rights.items.0">Nutzungsrechte werden projektbezogen und im vereinbarten Umfang eingeräumt.</li>
-          <li data-i18n="projectTermsPage.sections.rights.items.1">Ohne ausdrückliche Vereinbarung verbleiben Quellcode, Konzepte, Entwürfe, Texte und sonstige Arbeitsergebnisse bei den jeweiligen Rechteinhabern.</li>
-          <li data-i18n="projectTermsPage.sections.rights.items.2">Verwendete Open-Source-Bestandteile unterliegen ihren jeweiligen Lizenzen.</li>
-          <li data-i18n="projectTermsPage.sections.rights.items.3">Bereitgestellte Inhalte wie Texte, Bilder oder Dateien dürfen für das vereinbarte Projekt verwendet werden.</li>
-          <li data-i18n="projectTermsPage.sections.rights.items.4">Für Rechte an bereitgestellten Materialien bleibt die bereitstellende Person verantwortlich.</li>
+        <h2>{{ terms.page.sections.rights.title }}</h2>
+        <ul role="list">
+          <li>{{ terms.page.sections.rights.items.0 }}</li>
+          <li>{{ terms.page.sections.rights.items.1 }}</li>
+          <li>{{ terms.page.sections.rights.items.2 }}</li>
+          <li>{{ terms.page.sections.rights.items.3 }}</li>
+          <li>{{ terms.page.sections.rights.items.4 }}</li>
         </ul>
       </section>
 
       <section class="template-panel legal-section" id="haftung">
-        <h2 data-i18n="projectTermsPage.sections.liability.title">Haftung und externe Dienste</h2>
-        <p data-i18n="projectTermsPage.sections.liability.text">
-          Für externe Dienste, Hosting, APIs oder Drittanbieter gelten die Bedingungen
-          der jeweiligen Anbieter. Allgemeine Informationen auf dieser Website ersetzen
-          keine Rechts-, Steuer- oder Fachberatung.
-        </p>
+        <h2>{{ terms.page.sections.liability.title }}</h2>
+        <p>{{ terms.page.sections.liability.text }}</p>
       </section>
 
       <section class="template-panel legal-section" id="deutschlive-aufnahmen">
@@ -158,10 +134,10 @@
       </section>
 
       <section class="template-panel legal-section" id="datenschutz-hinweis">
-        <h2 data-i18n="projectTermsPage.sections.privacy.title">Datenschutz</h2>
+        <h2>{{ terms.page.sections.privacy.title }}</h2>
         <p>
-          <span data-i18n="projectTermsPage.sections.privacy.text_before">Informationen zur Verarbeitung personenbezogener Daten stehen in der</span>
-          <a href="{% url 'pages:privacy' %}" data-i18n="projectTermsPage.sections.privacy.link">Datenschutzerklärung</a>.
+          <span>{{ terms.page.sections.privacy.text_before }}</span>
+          <a href="{% url 'pages:privacy' %}">{{ terms.page.sections.privacy.link }}</a>.
         </p>
       </section>
     </div>

@@ -1,0 +1,1 @@
+import{p as e}from"./TechnologyTags-kJ_6SckW.js";function t(o,r){return e(o)!=="sprachdienstleistungen"?o:{...o,status:{de:"Portfolio-Fallstudie",ru:"Портфолио-кейс",uk:"Кейс портфоліо"}[r]||"Portfolio-Fallstudie",href:"/deutschlive/",liveUrl:"",localHref:"",showPrimaryAction:!1,showContactCta:!1}}export{t as l};

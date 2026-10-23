@@ -63,15 +63,15 @@ function isRouteClass(value, detail) {
     || value.startsWith("lucide-");
 }
 
-function keepSelector(selector, detail = false) {
+function keepSelector(selector, isAllowedClass, ids) {
   for (const node of selector.nodes) {
-    if (node.type === "class" && !isRouteClass(node.value, detail)) return false;
-    if (node.type === "id" && !routeIds.has(node.value)) return false;
+    if (node.type === "class" && !isAllowedClass(node.value)) return false;
+    if (node.type === "id" && !ids.has(node.value)) return false;
     if (node.type !== "pseudo" || !node.nodes || !positiveSelectorPseudos.has(node.value)) continue;
 
     const possibleBranches = node.nodes
       .map((branch) => branch.clone())
-      .filter(branch => keepSelector(branch, detail));
+      .filter(branch => keepSelector(branch, isAllowedClass, ids));
     if (!possibleBranches.length) return false;
 
     // :where() has zero specificity, so removing impossible branches preserves
@@ -87,13 +87,17 @@ function keepSelector(selector, detail = false) {
   return true;
 }
 
-export function filterProjectsSelector(selector, detail = false) {
+export function filterRouteSelector(selector, isAllowedClass, ids) {
   const processor = selectorParser((root) => {
     root.nodes.slice().forEach((branch) => {
-      if (!keepSelector(branch, detail)) branch.remove();
+      if (!keepSelector(branch, isAllowedClass, ids)) branch.remove();
     });
   });
   return processor.processSync(selector);
+}
+
+export function filterProjectsSelector(selector, detail = false) {
+  return filterRouteSelector(selector, value => isRouteClass(value, detail), routeIds);
 }
 
 export default function projectsCssFilter() {

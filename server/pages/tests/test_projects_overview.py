@@ -11,7 +11,7 @@ from pages.projects_overview import build_projects_overview, projects_presentati
 
 def sample_catalog():
     nav = dict(home="Home", portfolio="Projects", skills="Skills", aboutLink="About", contact="Contact", menu="Menu", menuOpen="Open menu", menuClose="Close menu")
-    footer = dict(business="Example portfolio", location="Online", scrollTop="Back to top", links=dict(contact="Contact", imprint="Imprint", privacy="Privacy"))
+    footer = dict(business="Example portfolio", location="Online", scrollTop="Back to top", links=dict(contact="Contact", imprint="Imprint", privacy="Privacy", terms="Terms"))
     copy = dict(title="Projects", intro="Example projects", details="Details", live="View", technologies="Technologies", empty="No projects")
     return {
         "schemaVersion": 1,
