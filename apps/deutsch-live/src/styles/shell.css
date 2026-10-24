@@ -1,0 +1,178 @@
+.app-shell .app-shell__header {
+  position: sticky;
+  top: -2.75rem;
+  z-index: 10000;
+  margin-bottom: 1rem;
+  background: #020617;
+}
+
+.app-shell .app-shell__header:has(.app-project-link:focus) {
+  top: 0;
+}
+
+.app-shell .app-project-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
+.app-shell .app-project-link svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.app-shell .app-shell__header .app-nav {
+  position: relative;
+  top: auto;
+  margin-bottom: 0;
+  padding: 0.65rem 1rem;
+  border: 0;
+  border-bottom: 1px solid #26324b;
+  border-radius: 0;
+  background: #090f21;
+  box-shadow: 0 8px 24px rgb(2 6 23 / 0.12);
+}
+
+.app-shell .app-nav__brand {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 2.75rem;
+  text-decoration: none;
+}
+
+.app-shell .app-nav__brand-mark {
+  position: relative;
+  display: grid;
+  flex: 0 0 2rem;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #b6a0ff;
+  border-radius: 0.65rem;
+  background: #8060d9;
+  color: #fff;
+}
+
+.app-shell .app-nav__brand-mark::after {
+  position: absolute;
+  right: -0.2rem;
+  bottom: -0.15rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 2px solid #090f21;
+  border-radius: 50%;
+  background: #8ce5c7;
+  content: "";
+}
+
+.app-shell .app-nav__brand-mark svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  stroke-width: 1.8;
+}
+
+.app-shell .app-nav__brand-title {
+  min-width: 0;
+  overflow: hidden;
+  color: #f8fafc;
+  font-size: 1.1rem;
+  font-weight: 780;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-shell .app-nav__menu-button {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid #42506b;
+  border-radius: 0.8rem;
+  background: #172137;
+  color: #f8fafc;
+  box-shadow: none;
+}
+
+.app-shell .app-nav__account-button {
+  min-height: 2.75rem;
+  text-decoration: none;
+}
+
+.app-shell .mobile-menu.is-visible {
+  max-height: min(34rem, calc(100dvh - 8rem));
+}
+
+.app-shell .app-shell__content:focus {
+  outline: none;
+}
+
+.app-shell .app-shell__footer {
+  width: min(calc(100% - 2rem), 80rem);
+  margin-inline: auto;
+}
+
+.app-shell .app-skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 10002;
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  max-width: calc(100% - 1rem);
+  padding: 0.6rem 1rem;
+  transform: translateY(calc(-100% - 1rem));
+  border: 1px solid #c4b5fd;
+  border-radius: 0.7rem;
+  background: #1e1b4b;
+  color: #fff;
+  font-weight: 700;
+}
+
+.app-shell .app-skip-link:focus {
+  transform: translateY(0);
+}
+
+#deutschlive-main {
+  scroll-margin-top: 5rem;
+}
+
+@media (min-width: 640px) {
+  .app-shell .app-shell__header {
+    margin-bottom: 1.5rem;
+  }
+
+  .app-shell .app-shell__header .app-nav {
+    padding-inline: 1.5rem;
+  }
+
+  .app-shell .app-project-link {
+    padding-inline: 1.5rem;
+  }
+
+  .app-shell .app-shell__footer {
+    width: min(calc(100% - 3rem), 80rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-shell .app-nav__brand-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 2200px) {
+  .app-shell .app-shell__footer {
+    width: min(calc(100% - 3rem), 108rem);
+  }
+}

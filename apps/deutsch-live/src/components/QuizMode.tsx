@@ -1,3 +1,4 @@
+import "../styles/quiz.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CheckCircle2, Circle, PencilLine, Trophy, XCircle } from "lucide-react";
 import { ApiError, fetchQuizTopic, fetchTopics, saveQuizAttempt, type CurrentUser, type QuizEvaluation, type QuizTopic, type TopicSummary } from "../api";

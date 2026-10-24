@@ -17,6 +17,15 @@ export default defineConfig(({ command }) => {
   return {
     base: staticBase,
     plugins: [react()],
+    resolve: {
+      alias: [
+        { find: "react-dom/client", replacement: "preact/compat/client" },
+        { find: "react-dom", replacement: "preact/compat" },
+        { find: "react/jsx-runtime", replacement: "preact/jsx-runtime" },
+        { find: "react/jsx-dev-runtime", replacement: "preact/jsx-dev-runtime" },
+        { find: "react", replacement: "preact/compat" }
+      ]
+    },
     define: {
       "import.meta.env.VITE_APP_BASE": JSON.stringify(appBase)
     },

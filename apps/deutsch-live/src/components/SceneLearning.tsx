@@ -1,7 +1,9 @@
+import "../styles/scene-learning.css";
 import { useEffect, useRef, useState } from "react";
 import { BookOpenCheck, ChevronRight, FileText, Folder, FolderOpen, ListChecks, MessageCircle, Mic2, Play, Volume2 } from "lucide-react";
 import { ApiError, fetchLearningTopic, fetchTopics, saveProgress, saveVocabulary, type CurrentUser, type Topic, type TopicSummary } from "../api";
-import { learning, ui } from "../i18n";
+import { ui } from "../i18n";
+import { learning } from "../i18n/learning";
 import { SkeletonPanel } from "./UiPrimitives";
 
 type LearningSelection = { topicId: string; sceneId: string };

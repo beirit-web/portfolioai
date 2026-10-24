@@ -34,174 +34,61 @@
     "projectHome": "Zur Projektstartseite"
   },
   "landing": {
-    "eyebrow": "Deutsch für den Alltag in Deutschland",
-    "headline": "Lernen Sie sicher Deutsch für den Alltag in Deutschland.",
-    "description": "Lernen Sie Deutsch mit realen Situationen: Geschäft, Arzt, Arbeit, Dokumente und alltägliche Gespräche in Deutschland.",
-    "moduleScenes": "Szenen lernen",
-    "moduleScenesText": "Dialoge, Übersetzungen, Aussprache, Erklärungen und kleine Übungen ohne Quiz.",
-    "moduleQuiz": "Quiz-Modus",
-    "moduleQuizText": "Festigen Sie Wissen mit Quizfragen, Punkten und kurzen Erklärungen nach der Antwort.",
-    "moduleWriting": "Schreibtraining",
-    "moduleWritingText": "Schreiben Sie eigene deutsche Sätze und erhalten Sie verständliche Korrekturen ohne unnötige Theorie.",
-    "accountOptional": "Account optional",
-    "accountOptionalText": "Starten Sie direkt ohne Registrierung.",
-    "heroText": "DeutschLive trainiert keine abstrakten Wörter, sondern genau den Moment, in dem man in der Bäckerei, beim Arzt, im Jobcenter oder bei der Arbeit sprechen muss.",
-    "heroSituationLabel": "Beispiele für Situationen",
-    "heroSituations": [
-      "In der Bäckerei bestellen",
-      "Eine kurze Antwort verstehen",
-      "Ohne Panik nachfragen"
-    ],
-    "proofAvailable": "Erste Szene ist verfügbar",
-    "proofAccount": "Account und Fortschritt",
-    "proofModes": "Szenen + Quiz",
-    "learningFlowLabel": "Lernstruktur",
-    "learningFlow": [
-      "Dialog",
-      "Übersetzung",
-      "Übung",
-      "Prüfung"
-    ],
-    "learningPreviewLabel": "Lernbeispiel",
-    "scenePreviewLabel": "Szene 01",
-    "firstBakeryOrder": "Erste Bestellung in der Bäckerei",
-    "learnerLabel": "Sie",
-    "todayLabel": "Heute",
-    "todayValue": "18 Min.",
-    "todaySummary": "2 Szenen + 1 Quiz",
-    "progressLabel": "Fortschritt",
-    "journeyKicker": "Lernweg",
-    "journeyTitle": "Kurze Struktur statt Durcheinander",
+    "eyebrow": "Deutsch für Ihren Alltag",
+    "headline": "Deutsch sprechen.",
+    "headlineAccent": "Im Alltag ankommen.",
+    "heroText": "Üben Sie echte Alltagsgespräche – mit Dialogen, Übersetzung und kleinen Übungen.",
+    "startScene": "Bäckerei-Szene ausprobieren",
+    "startNote": "Kostenlos · Ohne Registrierung",
+    "howItWorks": "So funktioniert’s",
+    "scenePreviewLabel": "Ein kleiner Einblick · In der Bäckerei",
+    "seller": "Verkäuferin",
+    "learner": "Sie",
+    "dialogueTranslation": "Я хотел(а) бы две булочки и кофе.",
+    "journeyKicker": "Ihr Lernweg",
+    "journeyTitle": "Aus einem Satz wird ein gutes Gespräch.",
+    "journeyText": "Erst verstehen. Dann selbst ausprobieren. Und mit jeder Übung ein Stück sicherer werden.",
     "journeySteps": [
       {
-        "title": "Szene",
-        "text": "Lebendiger Dialog mit Übersetzung und klarem Sinn."
+        "title": "Im Gespräch ankommen",
+        "text": "Lesen und hören Sie einen Alltagsdialog. Die Übersetzung hilft beim Verstehen."
       },
       {
-        "title": "Festigung",
-        "text": "Sätze, Wörter und eine kurze Übung direkt nach der Szene."
+        "title": "Wörter zu Sätzen machen",
+        "text": "Entdecken Sie wichtige Wörter und üben Sie passende Antworten für die Situation."
       },
       {
-        "title": "Prüfung",
-        "text": "Das Quiz zeigt, was schon funktioniert."
-      },
-      {
-        "title": "Schreiben",
-        "text": "Eine freie Antwort trainiert Sicherheit."
+        "title": "Wissen ausprobieren",
+        "text": "Festigen Sie das Gelernte im Quiz oder schreiben Sie eigene Sätze im Schreibtraining."
       }
     ],
-    "sceneTopicsKicker": "Lernszenen",
-    "sceneTopicsTitle": "Themen, die man in Deutschland täglich braucht",
-    "sceneTopicsText": "Beispiele für nächste Situationen: Arzt, Bank, Jobcenter, Agentur für Arbeit, Wohnung, Polizei, Bahnhof, Bus, Arbeit, Supermarkt und DHL.",
-    "sceneCards": [
-      {
-        "title": "Bäckerei",
-        "text": "Bestellen, nachfragen, bezahlen und das Gespräch ruhig abschließen.",
-        "status": "Erste Szene verfügbar"
-      },
-      {
-        "title": "Supermarkt",
-        "text": "Produkte finden, Preise erfragen, bezahlen und ein Problem mit Ware klären.",
-        "status": "Bald"
-      },
-      {
-        "title": "Arzt",
-        "text": "Einen Termin vereinbaren, Symptome beschreiben und Fragen des Arztes verstehen.",
-        "status": "Kommt bald"
-      },
-      {
-        "title": "Apotheke",
-        "text": "Medikamente, Dosierung, Rezept und Fragen zur Einnahme verständlich klären.",
-        "status": "Bald"
-      },
-      {
-        "title": "Jobcenter und Agentur für Arbeit",
-        "text": "Bürgergeld, ALG I, Unterlagen, Briefe und klare Fragen ohne Panik.",
-        "status": "Bald"
-      },
-      {
-        "title": "Behörden",
-        "text": "Bürgeramt, Formulare, Bescheinigungen, Gebühren und ruhige Fragen an Mitarbeitende.",
-        "status": "Bald"
-      },
-      {
-        "title": "Wohnung",
-        "text": "Besichtigung, Vertrag, Nachbarn, Reparaturen und Alltag in der Wohnung.",
-        "status": "Bald"
-      },
-      {
-        "title": "Arbeit",
-        "text": "Vorstellungsgespräch, Arbeitstag, Kollegen und verständliche Antworten.",
-        "status": "Bald"
-      },
-      {
-        "title": "Schule und Kindergarten",
-        "text": "Krankheit des Kindes, Elternabend, Abholen und kurze Nachrichten verstehen.",
-        "status": "Bald"
-      },
-      {
-        "title": "Bank",
-        "text": "Konto, Karte, Termin, Überweisung und wichtige Fragen ohne Stress.",
-        "status": "Bald"
-      },
-      {
-        "title": "Öffentlicher Verkehr",
-        "text": "Ticket, Richtung, Haltestelle, Umsteigen und Verspätung in Bus oder Bahn.",
-        "status": "Bald"
-      },
-      {
-        "title": "DHL",
-        "text": "Paket, Benachrichtigung, Adresse, Abholung und Versand.",
-        "status": "Bald"
-      }
+    "topicsKicker": "Mitten im Leben",
+    "topicsTitle": "Ihr erster Halt: die Bäckerei.",
+    "topicsText": "Zwei Brötchen, ein Kaffee und ein guter Start. Üben Sie ein Gespräch, das Sie schon morgen gebrauchen können.",
+    "available": "Jetzt verfügbar",
+    "bakeryTitle": "In der Bäckerei",
+    "bakeryText": "Bestellen, nachfragen und bezahlen. In Ihrem Tempo, mit Übersetzung.",
+    "upcomingTitle": "Weitere Alltagsthemen entdecken",
+    "upcomingNote": "Diese Themen sind geplant und noch nicht als Lernszene verfügbar.",
+    "upcomingTopics": [
+      "Supermarkt",
+      "Arzt",
+      "Apotheke",
+      "Jobcenter & Agentur für Arbeit",
+      "Behörden",
+      "Wohnung",
+      "Arbeit",
+      "Schule & Kindergarten",
+      "Bank",
+      "Bus & Bahn",
+      "Paket & Post"
     ],
-    "dashboardKicker": "Dashboard",
-    "dashboardTitle": "Ihr persönliches Dashboard",
-    "dashboardText": "Nach der Registrierung sehen Lernende den nächsten Schritt, das Tagesergebnis, letzte Antworten, Wörter und Empfehlungen.",
-    "nextStepLabel": "Nächster Schritt",
-    "nextStepTitle": "Szene: Kaffee bestellen",
-    "nextStepText": "Das Muster „Ich hätte gern ...“ wiederholen und eine kurze Prüfung machen.",
-    "xpGain": "+50 XP",
-    "newWords": "+4 neue Wörter",
-    "nextSceneUnlocked": "Nächste Szene freigeschaltet",
-    "streakLabel": "Serie",
-    "streakValue": "4 Tage",
-    "pointsLabel": "Punkte",
-    "pointsValue": "240",
-    "wordsLabel": "Wörter",
-    "wordsValue": "26",
-    "practiceKicker": "Praxis",
-    "practiceTitle": "Festigen Sie Wissen mit Quiz und Schreibtraining.",
-    "practiceText": "Sie lesen nicht nur Text. Sie wählen Antworten, schreiben eigene Sätze, erhalten Erklärungen und kehren zu Themen zurück, die Wiederholung brauchen.",
-    "whyKicker": "Warum diese Plattform",
-    "whyTitle": "Reale Szenen sind wirksamer, wenn man sprechen muss und nicht nur Lektionen durchklickt.",
-    "whyItems": [
-      {
-        "title": "Keine zufällige Wortliste",
-        "text": "Jeder Satz ist mit einer Situation verbunden und lässt sich deshalb im echten Gespräch leichter abrufen."
-      },
-      {
-        "title": "Keine trockene Theorie",
-        "text": "Zuerst kommen Dialog und Handlung, danach Erklärung, Training und eine kurze Prüfung."
-      },
-      {
-        "title": "Nicht nur ein Spiel",
-        "text": "Punkte und Fortschritt motivieren, aber das Ziel bleibt: sicher in Deutschland sprechen."
-      }
-    ],
-    "dailyWordsKicker": "Wörter des Tages",
-    "dailyWordsTitle": "Heute lernen Sie Wörter aus der ersten Szene",
-    "trustKicker": "Vertrauen",
-    "trustTitle": "Ein Service für echte Nutzung",
-    "trustItems": [
-      "Oberfläche vollständig auf Deutsch oder Russisch",
-      "Deutsch erscheint dort, wo es beim Lernen hilft",
-      "Reale Alltagsszenarien in Deutschland",
-      "Fortschritt, Wörter und Antworten werden im Account gespeichert"
-    ],
-    "registrationKicker": "Registrierung",
-    "registrationText": "Sie können sofort starten. Ein Account ist nur nötig, um Fortschritt, Wörter, Ergebnisse und persönliche Einstellungen zu speichern.",
-    "faqTitle": "Kurze Antworten vor dem Start",
+    "reassuranceLabel": "Sprache und Lernkonto",
+    "languageNote": "Ihre Oberfläche: Deutsch oder Russisch. Die deutschen Beispielsätze begleiten Sie in beiden Sprachen.",
+    "accountNote": "Probieren Sie die Szene direkt aus. Mit einem Konto können Sie Ihren Lernfortschritt speichern.",
+    "accountLink": "Mehr zum Lernkonto",
+    "faqKicker": "Gut zu wissen",
+    "faqTitle": "Noch eine kleine Frage?",
     "faqItems": [
       [
         "Muss ich schon Deutsch können?",
@@ -209,17 +96,20 @@
       ],
       [
         "Kann ich kostenlos starten?",
-        "Ja. Der Start ist kostenlos; ein Account ist nur für Fortschritt und Verlauf nötig."
+        "Ja. Sie können die erste Szene kostenlos und ohne Registrierung ausprobieren."
       ],
       [
         "Wie viele Szenen sind verfügbar?",
-        "Die erste Szene ist bereits verfügbar. Weitere Alltagsthemen werden schrittweise ergänzt."
+        "Die Bäckerei ist als erstes Thema verfügbar. Weitere Alltagsthemen werden schrittweise ergänzt."
       ],
       [
         "Brauche ich einen Account?",
-        "Nein. Lernen ist sofort möglich. Ein Account speichert Punkte, Wörter, Ergebnisse und Einstellungen."
+        "Für die erste Szene brauchen Sie keinen Account. Mit einem Konto können Sie Ihren Fortschritt und Ihre Ergebnisse speichern."
       ]
-    ]
+    ],
+    "finalKicker": "Ihr erster Satz wartet schon",
+    "finalTitle": "Ein „Guten Morgen“ ist ein Anfang.",
+    "finalText": "Starten Sie mit einem kleinen Gespräch. Den nächsten Schritt gehen wir zusammen."
   },
   "dashboard": {
     "interfaceLanguage": "Sprache der Oberfläche",

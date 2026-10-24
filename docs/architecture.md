@@ -12,7 +12,7 @@ Portfolio-Oberfläche, von DeutschLive und der Wohnungssuche.
 | Ordner | Aufgabe |
 | --- | --- |
 | [frontend/](../frontend/) | Portfolio-Oberfläche, gemeinsame Build-Werkzeuge, Node- und Browsertests |
-| [apps/deutsch-live/](../apps/deutsch-live/) | TypeScript-/React-Oberfläche für Sprachlernen, Quiz, Notenrechner und Audioplayer |
+| [apps/deutsch-live/](../apps/deutsch-live/) | TypeScript-Oberfläche mit React-API und Preact-Laufzeit für Sprachlernen, Quiz, Notenrechner und Audioplayer |
 | [apps/wohnungssuche/](../apps/wohnungssuche/) | React/Preact-Oberfläche für Angebote, Suchprofile und Suchorte |
 | [server/](../server/) | Django-Konfiguration, Datenmodelle, APIs, Templates und statische Dateien |
 | [scripts/](../scripts/) | Zentraler Prüflauf für lokale Entwicklung und CI sowie Daten- und Browserhelfer |
@@ -23,8 +23,8 @@ Portfolio-Oberfläche, von DeutschLive und der Wohnungssuche.
 
 `apps/` ist der gemeinsame Oberordner der beiden App-Oberflächen. Die
 Wohnungssuche verwendet Vite, Preact und die Icons aus `frontend/node_modules/`.
-DeutschLive besitzt wegen seiner TypeScript-/React-Konfiguration eigene
-Node-Abhängigkeiten. Deshalb werden die Pakete in `frontend/` und
+DeutschLive verwendet ebenfalls `preact/compat`, besitzt wegen seiner
+TypeScript-/React-Konfiguration aber eigene Node-Abhängigkeiten. Deshalb werden die Pakete in `frontend/` und
 `apps/deutsch-live/` installiert.
 
 ## Vom Quellcode zur ausgelieferten Seite

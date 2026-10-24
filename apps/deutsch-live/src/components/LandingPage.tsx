@@ -1,297 +1,120 @@
-import {
-  ArrowRight,
-  BookOpen,
-  BriefcaseBusiness,
-  Building2,
-  Bus,
-  CheckCircle2,
-  ClipboardCheck,
-  HeartPulse,
-  Home,
-  Landmark,
-  MessageSquareText,
-  Package,
-  Pill,
-  School,
-  ShieldCheck,
-  ShoppingBag,
-  ShoppingCart,
-  Sparkles,
-  Trophy,
-  UserPlus,
-  WalletCards
-} from "lucide-react";
-import type { ReactNode } from "react";
-import { learning, ui } from "../i18n";
+import { ArrowDown, ArrowRight, Check, ChevronDown, Globe2, LockKeyhole, ShoppingBag } from "lucide-react";
+import type { MouseEvent } from "react";
+import { getLocale, ui } from "../i18n";
+import { withBase } from "../lib/paths";
+import { BakeryIllustration, LearningIllustration } from "./LearningIllustrations";
+import "./LandingPage.css";
 
-type LandingPageProps = {
-  navigate: (path: string) => void;
-};
-
-const sceneCards = [
-  { icon: ShoppingBag, progress: 82 },
-  { icon: ShoppingCart, progress: 12 },
-  { icon: HeartPulse, progress: 18 },
-  { icon: Pill, progress: 10 },
-  { icon: Building2, progress: 12 },
-  { icon: Landmark, progress: 8 },
-  { icon: Home, progress: 8 },
-  { icon: BriefcaseBusiness, progress: 6 },
-  { icon: School, progress: 5 },
-  { icon: WalletCards, progress: 4 },
-  { icon: Bus, progress: 6 },
-  { icon: Package, progress: 3 }
-];
-
-const dailyWords = ["Brötchen", "Brezel", "Kasse", "bezahlen"];
+type LandingPageProps = { navigate: (path: string) => void };
+const stepIllustrations = ["dialogue", "practice", "quiz"] as const;
 
 export default function LandingPage({ navigate }: LandingPageProps) {
+  const copy = ui.landing;
+  const isRussian = getLocale() === "ru";
+
+  function followRoute(event: MouseEvent<HTMLAnchorElement>, path: string) {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    navigate(path);
+  }
+
   return (
-    <>
-      <section className="premium-hero">
-        <div className="premium-hero__content">
-          <div className="premium-kicker">
-            <Sparkles className="h-4 w-4" />
-            {ui.landing.eyebrow}
-          </div>
-          <h2>{ui.landing.headline}</h2>
-          <p>{ui.landing.heroText}</p>
-          <p className="premium-hero__subcopy">{ui.landing.description}</p>
-          <div className="hero-situation-list" aria-label={ui.landing.heroSituationLabel}>
-            {ui.landing.heroSituations.map((situation) => (
-              <span key={situation}>{situation}</span>
-            ))}
-          </div>
-          <div className="premium-hero__actions">
-            <button className="premium-button premium-button--primary" onClick={() => navigate("/learn")} type="button">
-              {ui.common.startNow}
-              <ArrowRight className="h-5 w-5" />
-            </button>
-            <button className="premium-button premium-button--secondary" onClick={() => navigate("/learn")} type="button">
-              {ui.common.tryScene}
-            </button>
-          </div>
-          <div className="premium-proof">
-            <span><CheckCircle2 className="h-4 w-4" /> {ui.landing.proofAvailable}</span>
-            <span><ShieldCheck className="h-4 w-4" /> {ui.landing.proofAccount}</span>
-            <span><BookOpen className="h-4 w-4" /> {ui.landing.proofModes}</span>
-          </div>
-          <div className="hero-learning-flow" aria-label={ui.landing.learningFlowLabel}>
-            {ui.landing.learningFlow.map((outcome, index) => (
-              <span key={outcome}>
-                <strong>{index + 1}</strong>
-                {outcome}
-              </span>
-            ))}
-          </div>
+    <div className="dl-landing">
+      <section className="premium-hero dl-hero" aria-labelledby="landing-title">
+        <div className="dl-hero__copy">
+          <p className="dl-eyebrow"><span className="dl-live-dot" />{copy.eyebrow}</p>
+          <h1 id="landing-title">{copy.headline}{" "}<span>{copy.headlineAccent}</span></h1>
+          <p className="dl-hero__intro">{copy.heroText}</p>
+          <a className="dl-button dl-button--primary" href={withBase("/learn")} onClick={event => followRoute(event, "/learn")}>
+            {copy.startScene}<ArrowRight aria-hidden="true" size={19} />
+          </a>
+          <p className="dl-hero__note"><Check aria-hidden="true" size={16} />{copy.startNote}</p>
+          <a className="dl-text-link" href="#lernweg">{copy.howItWorks}<ArrowDown aria-hidden="true" size={16} /></a>
         </div>
 
-        <div className="hero-product-preview" aria-label={ui.landing.learningPreviewLabel}>
-          <div className="preview-card preview-card--scene">
-            <p className="preview-label">{ui.landing.scenePreviewLabel} · {learning.bakery.germanTitle}</p>
-            <h3>{ui.landing.firstBakeryOrder}</h3>
-            <div className="dialogue-preview">
-              <p className="dialogue-preview__seller"><strong>Verkäuferin</strong> Guten Morgen! Was darf es sein?</p>
-              <p className="dialogue-preview__learner"><strong>{ui.landing.learnerLabel}</strong> Ich hätte gern zwei Brötchen und einen Kaffee.</p>
-            </div>
-          </div>
-          <div className="preview-grid">
-            <div className="preview-card">
-              <p className="preview-label">{ui.landing.todayLabel}</p>
-              <h3>{ui.landing.todayValue}</h3>
-              <span>{ui.landing.todaySummary}</span>
-            </div>
-            <div className="preview-card">
-              <p className="preview-label">{ui.landing.progressLabel}</p>
-              <h3>82%</h3>
-              <div className="progress-track progress-track--hero"><span style={{ width: "82%" }} /></div>
-              <span>Bäckerei</span>
-            </div>
-          </div>
-        </div>
+        <figure className="dl-scene-preview">
+          <div className="dl-scene-preview__label"><span>01</span>{copy.scenePreviewLabel}</div>
+          <BakeryIllustration className="dl-bakery-art" />
+          <figcaption>
+            <span className="dl-dialogue__speaker">{copy.seller}</span>
+            <p className="dl-dialogue dl-dialogue--seller" lang="de">Guten Morgen! Was darf es sein?</p>
+            <span className="dl-dialogue__speaker dl-dialogue__speaker--learner">{copy.learner}</span>
+            <p className="dl-dialogue dl-dialogue--learner" lang="de">Ich hätte gern zwei Brötchen und einen Kaffee.</p>
+            {isRussian && <p className="dl-dialogue__translation" lang="ru">{copy.dialogueTranslation}</p>}
+          </figcaption>
+        </figure>
       </section>
 
-      <section className="premium-section premium-section--intro">
-        <div>
-          <p className="section-kicker">{ui.landing.journeyKicker}</p>
-          <h2>{ui.landing.journeyTitle}</h2>
+      <section className="dl-section dl-learning-path" id="lernweg" aria-labelledby="learning-path-title">
+        <div className="dl-section-heading">
+          <p className="dl-eyebrow">{copy.journeyKicker}</p>
+          <h2 id="learning-path-title">{copy.journeyTitle}</h2>
+          <p>{copy.journeyText}</p>
         </div>
-        <div className="journey-grid">
-          {ui.landing.journeySteps.map((step, index) => {
-            const icons = [<BookOpen />, <ClipboardCheck />, <Trophy />, <MessageSquareText />];
-            return <JourneyStep icon={icons[index]} key={step.title} title={step.title} text={step.text} />;
-          })}
-        </div>
-      </section>
-
-      <section className="premium-section">
-        <div className="section-heading">
-          <p className="section-kicker">{ui.landing.sceneTopicsKicker}</p>
-          <h2>{ui.landing.sceneTopicsTitle}</h2>
-          <p>{ui.landing.sceneTopicsText}</p>
-        </div>
-        <div className="scene-card-grid">
-          {sceneCards.map((scene, index) => (
-            <SceneCard key={ui.landing.sceneCards[index].title} {...scene} {...ui.landing.sceneCards[index]} />
+        <ol className="dl-steps">
+          {copy.journeySteps.map((step, index) => (
+            <li className="dl-step" key={step.title}>
+              <div className="dl-step__visual">
+                <span className="dl-step__number" aria-hidden="true">0{index + 1}</span>
+                <LearningIllustration kind={stepIllustrations[index]} className="dl-step__art" />
+              </div>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
-      <section className="premium-section product-dashboard-preview">
-        <div className="section-heading">
-          <p className="section-kicker">{ui.landing.dashboardKicker}</p>
-          <h2>{ui.landing.dashboardTitle}</h2>
-          <p>{ui.landing.dashboardText}</p>
+      <section className="dl-section dl-topics" aria-labelledby="topics-title">
+        <div className="dl-section-heading">
+          <p className="dl-eyebrow">{copy.topicsKicker}</p>
+          <h2 id="topics-title">{copy.topicsTitle}</h2>
+          <p>{copy.topicsText}</p>
         </div>
-        <div className="dashboard-preview-grid">
-          <div className="dashboard-preview-main">
-            <p className="preview-label">{ui.landing.nextStepLabel}</p>
-            <h3>{ui.landing.nextStepTitle}</h3>
-            <p>{ui.landing.nextStepText}</p>
-            <div className="progress-track"><span style={{ width: "64%" }} /></div>
-            <div className="achievement-preview">
-              <span>{ui.landing.xpGain}</span>
-              <span>{ui.landing.newWords}</span>
-              <span>{ui.landing.nextSceneUnlocked}</span>
-            </div>
+        <a className="dl-available-scene" href={withBase("/learn")} onClick={event => followRoute(event, "/learn")}>
+          <span className="dl-available-scene__icon"><ShoppingBag aria-hidden="true" size={30} /></span>
+          <div className="dl-available-scene__body">
+            <span className="dl-status"><span className="dl-live-dot" />{copy.available}</span>
+            <h3>{copy.bakeryTitle}</h3>
+            <span className="dl-available-scene__description">{copy.bakeryText}</span>
+            <span className="dl-available-scene__words" lang="de">Brötchen <span aria-hidden="true">·</span> Kaffee <span aria-hidden="true">·</span> bitte <span aria-hidden="true">·</span> danke</span>
           </div>
-          <MiniMetric label={ui.landing.streakLabel} value={ui.landing.streakValue} />
-          <MiniMetric label={ui.landing.pointsLabel} value={ui.landing.pointsValue} />
-          <MiniMetric label={ui.landing.wordsLabel} value={ui.landing.wordsValue} />
-        </div>
+          <ArrowRight className="dl-available-scene__arrow" aria-hidden="true" size={22} />
+        </a>
+        <details className="dl-upcoming">
+          <summary>{copy.upcomingTitle}<span className="dl-upcoming__count" aria-hidden="true">{copy.upcomingTopics.length}</span><ChevronDown aria-hidden="true" size={18} /></summary>
+          <div className="dl-upcoming__content">
+            <p>{copy.upcomingNote}</p>
+            <ul>{copy.upcomingTopics.map(topic => <li key={topic}>{topic}</li>)}</ul>
+          </div>
+        </details>
       </section>
 
-      <section className="premium-section feature-split">
-        <div>
-          <p className="section-kicker">{ui.landing.practiceKicker}</p>
-          <h2>{ui.landing.practiceTitle}</h2>
-          <p>{ui.landing.practiceText}</p>
-        </div>
-        <div className="feature-panel-grid">
-          <FeaturePanel icon={<Trophy />} title={ui.landing.moduleQuiz} text={ui.landing.moduleQuizText} />
-          <FeaturePanel icon={<MessageSquareText />} title={ui.landing.moduleWriting} text={ui.landing.moduleWritingText} />
-        </div>
-      </section>
+      <aside className="dl-reassurance" aria-label={copy.reassuranceLabel}>
+        <p><Globe2 aria-hidden="true" size={21} /><span>{copy.languageNote}</span></p>
+        <p><LockKeyhole aria-hidden="true" size={21} /><span>{copy.accountNote}<a href={withBase("/account")} onClick={event => followRoute(event, "/account")}>{copy.accountLink}<ArrowRight aria-hidden="true" size={15} /></a></span></p>
+      </aside>
 
-      <section className="premium-section feature-split">
-        <div>
-          <p className="section-kicker">{ui.landing.whyKicker}</p>
-          <h2>{ui.landing.whyTitle}</h2>
+      <section className="dl-section dl-faq" aria-labelledby="faq-title">
+        <div className="dl-section-heading">
+          <p className="dl-eyebrow">{copy.faqKicker}</p>
+          <h2 id="faq-title">{copy.faqTitle}</h2>
         </div>
-        <div className="feature-panel-grid">
-          {ui.landing.whyItems.map((item) => (
-            <FeaturePanel key={item.title} icon={<CheckCircle2 />} title={item.title} text={item.text} />
-          ))}
-        </div>
-      </section>
-
-      <section className="premium-section words-section">
-        <div>
-          <p className="section-kicker">{ui.landing.dailyWordsKicker}</p>
-          <h2>{ui.landing.dailyWordsTitle}</h2>
-        </div>
-        <div className="daily-word-grid">
-          {dailyWords.map((word) => (
-            <span key={word}>{word}</span>
-          ))}
-        </div>
-      </section>
-
-      <section className="premium-section trust-section">
-        <div>
-          <p className="section-kicker">{ui.landing.trustKicker}</p>
-          <h2>{ui.landing.trustTitle}</h2>
-        </div>
-        <div className="trust-grid">
-          {ui.landing.trustItems.map((item) => (
-            <p key={item}>
-              <ShieldCheck className="h-5 w-5" />
-              {item}
-            </p>
-          ))}
-        </div>
-      </section>
-
-      <section className="premium-register-band">
-        <div>
-          <p className="section-kicker">{ui.landing.registrationKicker}</p>
-          <h2>{ui.landing.accountOptionalText}</h2>
-          <p>{ui.landing.registrationText}</p>
-        </div>
-        <div className="register-actions">
-          <button className="premium-button premium-button--primary" onClick={() => navigate("/learn")} type="button">
-            {ui.common.tryScene}
-            <ArrowRight className="h-5 w-5" />
-          </button>
-          <button className="premium-button premium-button--secondary" onClick={() => navigate("/account")} type="button">
-            <UserPlus className="h-5 w-5" />
-            {ui.account.createAccount}
-          </button>
-        </div>
-      </section>
-
-      <section className="premium-section faq-section">
-        <div className="section-heading">
-          <p className="section-kicker">FAQ</p>
-          <h2>{ui.landing.faqTitle}</h2>
-        </div>
-        <div className="faq-grid">
-          {ui.landing.faqItems.map(([question, answer]) => (
-            <article className="faq-card" key={question}>
-              <h3>{question}</h3>
+        <div className="dl-faq__items">
+          {copy.faqItems.map(([question, answer]) => (
+            <details key={question}>
+              <summary>{question}<ChevronDown aria-hidden="true" size={19} /></summary>
               <p>{answer}</p>
-            </article>
+            </details>
           ))}
         </div>
       </section>
-    </>
-  );
-}
 
-function JourneyStep({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
-  return (
-    <article className="journey-step">
-      <div>{icon}</div>
-      <h3>{title}</h3>
-      <p>{text}</p>
-    </article>
-  );
-}
-
-function SceneCard({ icon: Icon, title, text, progress, status }: typeof sceneCards[number] & { title: string; text: string; status: string }) {
-  return (
-    <article className="scene-card">
-      <div className="scene-card__top">
-        <div className="scene-card__icon">
-          <Icon className="h-6 w-6" />
-        </div>
-        <span>{status}</span>
-      </div>
-      <h3>{title}</h3>
-      <p>{text}</p>
-      <div className="scene-card__progress">
-        <span style={{ width: `${progress}%` }} />
-      </div>
-      <strong>{progress}%</strong>
-    </article>
-  );
-}
-
-function MiniMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="mini-metric">
-      <p>{label}</p>
-      <strong>{value}</strong>
+      <section className="dl-start" aria-labelledby="start-title">
+        <span className="dl-start__decoration" aria-hidden="true">„</span>
+        <div><p className="dl-eyebrow">{copy.finalKicker}</p><h2 id="start-title">{copy.finalTitle}</h2><p>{copy.finalText}</p></div>
+        <a className="dl-button dl-button--primary" href={withBase("/learn")} onClick={event => followRoute(event, "/learn")}>{copy.startScene}<ArrowRight aria-hidden="true" size={19} /></a>
+      </section>
     </div>
-  );
-}
-
-function FeaturePanel({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
-  return (
-    <article className="feature-panel">
-      <div>{icon}</div>
-      <h3>{title}</h3>
-      <p>{text}</p>
-    </article>
   );
 }

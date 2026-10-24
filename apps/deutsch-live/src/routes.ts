@@ -1,5 +1,10 @@
 import { createElement, lazy, useState, type ComponentType } from "react";
 import type { AuthPanelProps } from "./components/AuthPanel";
+import { stripBase } from "./lib/paths";
+
+export { stripBase, withBase } from "./lib/paths";
+// The first screen shares the entry request; feature pages remain lazy.
+export { default as LandingPage } from "./components/LandingPage";
 
 function createPage<Props extends object>(importPage: () => Promise<{ default: ComponentType<Props> }>) {
   let loadedPage: ComponentType<Props> | undefined;
@@ -28,7 +33,6 @@ function createPage<Props extends object>(importPage: () => Promise<{ default: C
 export const AuthPanel = createPage<AuthPanelProps>(() => import.meta.env.VITE_PLATFORM_INTEGRATION === "true"
   ? import("./components/PlatformAccount")
   : import("./components/AuthPanel"));
-export const LandingPage = createPage(() => import("./components/LandingPage"));
 export const BotTutor = createPage(() => import("./components/BotTutor"));
 export const Dashboard = createPage(() => import("./components/Dashboard"));
 export const GradeCalculator = createPage(() => import("./components/GradeCalculator"));
@@ -40,26 +44,6 @@ export const QuizMode = createPage(() => import("./components/QuizMode"));
 export const DatenschutzPage = createPage<Record<string, never>>(() => import("./components/LegalPages").then((module) => ({ default: module.DatenschutzPage })));
 export const KontaktPage = createPage<Record<string, never>>(() => import("./components/LegalPages").then((module) => ({ default: module.KontaktPage })));
 export const NutzungsbedingungenPage = createPage<Record<string, never>>(() => import("./components/LegalPages").then((module) => ({ default: module.NutzungsbedingungenPage })));
-
-const APP_BASE = normalizeBase(import.meta.env.VITE_APP_BASE ?? "");
-
-function normalizeBase(value: string) {
-  const trimmed = value.trim().replace(/\/+$/, "");
-  if (!trimmed || trimmed === "/") return "";
-  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-}
-
-export function stripBase(pathname: string) {
-  if (!APP_BASE) return pathname || "/";
-  if (pathname === APP_BASE) return "/";
-  if (pathname.startsWith(`${APP_BASE}/`)) return pathname.slice(APP_BASE.length) || "/";
-  return pathname || "/";
-}
-
-export function withBase(pathname: string) {
-  if (!APP_BASE) return pathname;
-  return pathname === "/" ? `${APP_BASE}/` : `${APP_BASE}${pathname}`;
-}
 
 const preloadAccountDashboard = () => Promise.all([AuthPanel.preload(), Dashboard.preload()]);
 const initialRoutes: Record<string, () => Promise<unknown>> = {
@@ -85,5 +69,5 @@ const initialRoutes: Record<string, () => Promise<unknown>> = {
 export function preloadInitialRoute(pathname: string) {
   // Resolve the first page before mounting so a short skeleton and its footer
   // never become the initial layout. Other routes still load on navigation.
-  return (initialRoutes[stripBase(pathname)] ?? LandingPage.preload)();
+  return initialRoutes[stripBase(pathname)]?.() ?? Promise.resolve();
 }

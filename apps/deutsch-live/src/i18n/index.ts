@@ -1,10 +1,10 @@
 import de from "./de.json";
 import ru from "./ru.json";
-import learningContent from "./learningContent.json";
 
 export type Locale = "ru" | "de";
 
 const dictionaries = { ru, de } as const;
+const resolvedDictionaries: Partial<Record<Locale, typeof ru>> = { ru };
 const LOCALE_STORAGE_KEY = "deutsch-live-locale";
 let currentLocale: Locale = readInitialLocale();
 let currentUi = getUi(currentLocale);
@@ -41,7 +41,9 @@ function isLocale(value: unknown): value is Locale {
 }
 
 export function getUi(locale: Locale = "ru") {
-  return mergeWithFallback(ru, dictionaries[locale]);
+  // The fallback dictionary already contains every key. Resolve the other
+  // language once, instead of cloning the entire dictionary on every switch.
+  return resolvedDictionaries[locale] ?? (resolvedDictionaries[locale] = mergeWithFallback(ru, dictionaries[locale]));
 }
 
 export function getLocale() {
@@ -67,4 +69,3 @@ export const ui = new Proxy({} as ReturnType<typeof getUi>, {
     return currentUi[property];
   }
 });
-export const learning = learningContent.learning;

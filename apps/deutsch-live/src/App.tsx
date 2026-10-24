@@ -24,6 +24,7 @@ import {
   KontaktPage, LandingPage, ManualPage, NutzungsbedingungenPage, QuizMode,
   RecordingPlayer, SceneLearning, stripBase, withBase
 } from "./routes";
+import "./styles/shell.css";
 
 export default function App({ initialAccountPanel }: { initialAccountPanel?: ComponentType<AuthPanelProps> } = {}) {
   const AccountPanel = initialAccountPanel || AuthPanel;
@@ -33,6 +34,9 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
   const [dashboardRefresh, setDashboardRefresh] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuToggleRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
+  const previousPathRef = useRef(path);
   const [locale, setLocaleState] = useState<Locale>(getLocale());
   usePlatformSession(user, setUser);
 
@@ -65,6 +69,14 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
   }, []);
 
   useEffect(() => {
+    if (previousPathRef.current === path) return;
+    previousPathRef.current = path;
+    setIsMenuOpen(false);
+    const frame = requestAnimationFrame(() => mainRef.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(frame);
+  }, [path]);
+
+  useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape" && isMenuOpen) {
         setIsMenuOpen(false);
@@ -72,21 +84,39 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
       }
     }
     document.body.classList.toggle("menu-open", isMenuOpen);
+    const frame = isMenuOpen
+      ? requestAnimationFrame(() => mobileMenuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus())
+      : null;
     addEventListener("keydown", onKeyDown);
     return () => {
       document.body.classList.remove("menu-open");
       removeEventListener("keydown", onKeyDown);
+      if (frame !== null) cancelAnimationFrame(frame);
     };
   }, [isMenuOpen]);
+
+  useEffect(() => {
+    const desktop = matchMedia("(min-width: 1024px)");
+    const closeMenuOnDesktop = () => {
+      if (!desktop.matches) return;
+      if (mobileMenuRef.current?.contains(document.activeElement)) {
+        document.querySelector<HTMLSelectElement>(".app-nav__desktop-menu select")?.focus();
+      }
+      setIsMenuOpen(false);
+    };
+    desktop.addEventListener("change", closeMenuOnDesktop);
+    return () => desktop.removeEventListener("change", closeMenuOnDesktop);
+  }, []);
 
   function navigate(nextPath: string) {
     history.pushState({}, "", withBase(nextPath));
     setPath(nextPath);
     setIsMenuOpen(false);
-    scrollTo({ top: 0, behavior: "smooth" });
+    if (nextPath === path) mainRef.current?.focus({ preventScroll: true });
+    scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
   }
 
-  function navigateFromFooter(event: MouseEvent<HTMLAnchorElement>, nextPath: string) {
+  function navigateFromLink(event: MouseEvent<HTMLAnchorElement>, nextPath: string) {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     navigate(nextPath);
@@ -119,6 +149,28 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
     { path: "/manual", label: ui.nav.manual, icon: FileText },
     { path: "/settings", label: ui.nav.settings, icon: Settings }
   ] as const;
+
+  const routeTitle = navItems.find((item) => item.path === path)?.label ?? ({
+    "/handbuch": ui.nav.manual,
+    "/account": ui.nav.account,
+    "/recordings/": ui.nav.recordings,
+    "/recordings-archiv": ui.nav.recordings,
+    "/impressum": "Impressum",
+    "/datenschutz": "Datenschutz",
+    "/nutzungsbedingungen": "Nutzungsbedingungen",
+    "/kontakt": "Kontakt",
+    "/feedback": "Feedback"
+  } as Record<string, string>)[path];
+  const isLandingPage = path === "/" || !routeTitle;
+  const accessibility = locale === "ru"
+    ? { skip: "Перейти к содержимому", navigation: "Основная навигация", mobileNavigation: "Мобильная навигация" }
+    : { skip: "Zum Inhalt springen", navigation: "Hauptnavigation", mobileNavigation: "Mobile Hauptnavigation" };
+
+  useEffect(() => {
+    document.title = isLandingPage
+      ? `${ui.common.appName} · ${ui.landing.eyebrow}`
+      : `${routeTitle} · ${ui.common.appName}`;
+  }, [isLandingPage, routeTitle, locale]);
 
   const page = useMemo(() => {
     if (path === "/learn") return <SceneLearning onProgressSaved={refreshDashboard} user={user} />;
@@ -158,21 +210,24 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
   }, [path, user, dashboardRefresh, locale, accountLoaded, AccountPanel]);
 
   return (
-    <main className="app-shell">
-      <a
-        className="mb-3 inline-flex min-h-11 items-center gap-2 px-2 py-2 text-sm font-bold underline underline-offset-4"
-        href="/projekte/sprachdienstleistungen"
-      >
-        <Home aria-hidden="true" className="h-5 w-5 shrink-0" />
-        {ui.common.projectHome}
-      </a>
-      <nav className="glass app-nav">
+    <div className="app-shell">
+      <a className="app-skip-link" href="#deutschlive-main">{accessibility.skip}</a>
+      <header className="app-shell__header">
+        <a
+          className="app-project-link"
+          href="/projekte/sprachdienstleistungen"
+        >
+          <Home aria-hidden="true" className="h-5 w-5 shrink-0" />
+          {ui.common.projectHome}
+        </a>
+        <nav aria-label={accessibility.navigation} className="glass app-nav">
           <div className="app-nav__bar">
-            <button className="app-nav__brand" onClick={() => navigate("/")} type="button">
-              <h1 className="break-words text-base font-bold leading-snug sm:text-xl">
+            <a className="app-nav__brand" href={withBase("/")} onClick={(event) => navigateFromLink(event, "/")}>
+              <span aria-hidden="true" className="app-nav__brand-mark"><BookOpen /></span>
+              <span className="app-nav__brand-title">
                 {ui.common.appName}
-              </h1>
-            </button>
+              </span>
+            </a>
 
             <label className="app-nav__desktop-menu">
               <Menu aria-hidden="true" />
@@ -198,17 +253,6 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
                 <X className="h-5 w-5" />
                 <span className="hidden pl-2 text-sm font-bold xl:inline">{import.meta.env.VITE_PLATFORM_INTEGRATION === "true" ? ui.platformAccount.back : ui.common.closeProject}</span>
               </a>
-              <div className="hidden items-center gap-2 lg:flex">
-                <LanguageSwitcher locale={locale} onLocaleChange={changeLocale} />
-              </div>
-              <button
-                className="app-nav__account-button hidden lg:inline-flex"
-                onClick={() => navigate(user ? "/settings" : "/account")}
-                type="button"
-              >
-                <LogIn aria-hidden="true" />
-                <span>{user ? user.username : ui.common.login}</span>
-              </button>
               <button
                 aria-controls="deutschlive-mobile-menu"
                 aria-expanded={isMenuOpen}
@@ -220,96 +264,111 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
               >
                 {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
+              <LanguageSwitcher locale={locale} onLocaleChange={changeLocale} />
+              <a
+                className="app-nav__account-button hidden lg:inline-flex"
+                href={withBase(user ? "/settings" : "/account")}
+                onClick={(event) => navigateFromLink(event, user ? "/settings" : "/account")}
+              >
+                <LogIn aria-hidden="true" />
+                <span>{user ? user.username : ui.common.login}</span>
+              </a>
             </div>
           </div>
+        </nav>
+      </header>
+      <div
+        aria-hidden={!isMenuOpen}
+        className={`mobile-menu-backdrop ${isMenuOpen ? "is-visible" : ""}`}
+        hidden={!isMenuOpen}
+        onClick={() => {
+          setIsMenuOpen(false);
+          menuToggleRef.current?.focus();
+        }}
+      />
+
+      <nav
+        aria-hidden={!isMenuOpen}
+        aria-label={accessibility.mobileNavigation}
+        className={`mobile-menu ${isMenuOpen ? "is-visible" : "is-hidden"}`}
+        hidden={!isMenuOpen}
+        id="deutschlive-mobile-menu"
+        inert={!isMenuOpen}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget) && event.relatedTarget !== menuToggleRef.current) {
+            setIsMenuOpen(false);
+          }
+        }}
+        ref={mobileMenuRef}
+      >
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = path === item.path || (item.path === "/manual" && path === "/handbuch");
+          return (
+            <a
+              aria-current={isActive ? "page" : undefined}
+              className={`nav-tab ${isActive ? "is-active" : ""}`}
+              href={withBase(item.path)}
+              key={item.path}
+              onClick={(event) => navigateFromLink(event, item.path)}
+            >
+              <Icon aria-hidden="true" />
+              <span>{item.label}</span>
+            </a>
+          );
+        })}
+        <a
+          className="app-nav__account-button"
+          href={withBase(user ? "/settings" : "/account")}
+          onClick={(event) => navigateFromLink(event, user ? "/settings" : "/account")}
+        >
+          <LogIn aria-hidden="true" />
+          <span>{user ? user.username : ui.common.login}</span>
+        </a>
       </nav>
 
-      <section className="app-shell__content">
-        <div
-          aria-hidden={!isMenuOpen}
-          className={`mobile-menu-backdrop ${isMenuOpen ? "is-visible" : ""}`}
-          hidden={!isMenuOpen}
-          onClick={() => setIsMenuOpen(false)}
-        />
-
-        <div
-          aria-hidden={!isMenuOpen}
-          className={`mobile-menu ${isMenuOpen ? "is-visible" : "is-hidden"}`}
-          hidden={!isMenuOpen}
-          id="deutschlive-mobile-menu"
-          inert={!isMenuOpen}
-        >
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = path === item.path || (item.path === "/manual" && path === "/handbuch");
-            return (
-              <a
-                aria-current={isActive ? "page" : undefined}
-                className={`nav-tab ${isActive ? "is-active" : ""}`}
-                href={withBase(item.path)}
-                key={item.path}
-                onClick={(event) => {
-                  if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-                  event.preventDefault();
-                  navigate(item.path);
-                }}
-              >
-                <Icon aria-hidden="true" />
-                <span>{item.label}</span>
-              </a>
-            );
-          })}
-          <button
-            className="app-nav__account-button"
-            onClick={() => navigate(user ? "/settings" : "/account")}
-            type="button"
-          >
-            <LogIn aria-hidden="true" />
-            <span>{user ? user.username : ui.common.login}</span>
-          </button>
-          <LanguageSwitcher locale={locale} onLocaleChange={changeLocale} />
-        </div>
-
+      <main className="app-shell__content" id="deutschlive-main" ref={mainRef} tabIndex={-1}>
+        {!isLandingPage && <h1 className="sr-only">{routeTitle}</h1>}
         <Suspense fallback={<PageFallback />}>
           {page}
         </Suspense>
+      </main>
 
-        <footer className="app-footer site-footer">
-          <div className="app-footer__brand">
-            <p className="app-footer__product">{ui.common.appName}</p>
-            <p className="app-footer__meta">© 2026 Beirit Digital · {ui.common.madeInGermany}</p>
-          </div>
-          <nav className="app-footer__links" aria-label={ui.common.legalAndProductPages}>
-            {import.meta.env.VITE_PLATFORM_INTEGRATION === "true" && <>
-              <a className="app-footer__link footer-link" href="/vokabelbox/">Vokabelbox</a>
-              <a className="app-footer__link footer-link" href="/profil/">{ui.platformAccount.profile}</a>
-              <a className="app-footer__link footer-link" href="/#projekt">{ui.platformAccount.back}</a>
-            </>}
-            <a className="app-footer__link footer-link" href={withBase("/impressum")} onClick={(event) => navigateFromFooter(event, "/impressum")}>
-              Impressum
-            </a>
-            <a className="app-footer__link footer-link" href={withBase("/datenschutz")} onClick={(event) => navigateFromFooter(event, "/datenschutz")}>
-              Datenschutz
-            </a>
-            <a className="app-footer__link footer-link" href={withBase("/nutzungsbedingungen")} onClick={(event) => navigateFromFooter(event, "/nutzungsbedingungen")}>
-              Nutzungsbedingungen
-            </a>
-            <a className="app-footer__link footer-link" href={withBase("/kontakt")} onClick={(event) => navigateFromFooter(event, "/kontakt")}>
-              Kontakt
-            </a>
-            <a className="app-footer__link footer-link" href={withBase("/")} onClick={(event) => navigateFromFooter(event, "/")}>
-              {ui.common.aboutProject}
-            </a>
-            <a className="app-footer__link footer-link" href={withBase("/manual")} onClick={(event) => navigateFromFooter(event, "/manual")}>
-              Handbuch
-            </a>
-            <a className="app-footer__link footer-link" href={withBase("/feedback")} onClick={(event) => navigateFromFooter(event, "/feedback")}>
-              Feedback
-            </a>
-          </nav>
-        </footer>
-      </section>
-    </main>
+      <footer className="app-footer app-shell__footer site-footer">
+        <div className="app-footer__brand">
+          <p className="app-footer__product">{ui.common.appName}</p>
+          <p className="app-footer__meta">© 2026 Beirit Digital · {ui.common.madeInGermany}</p>
+        </div>
+        <nav className="app-footer__links" aria-label={ui.common.legalAndProductPages}>
+          {import.meta.env.VITE_PLATFORM_INTEGRATION === "true" && <>
+            <a className="app-footer__link footer-link" href="/vokabelbox/">Vokabelbox</a>
+            <a className="app-footer__link footer-link" href="/profil/">{ui.platformAccount.profile}</a>
+            <a className="app-footer__link footer-link" href="/#projekt">{ui.platformAccount.back}</a>
+          </>}
+          <a className="app-footer__link footer-link" href={withBase("/impressum")} onClick={(event) => navigateFromLink(event, "/impressum")}>
+            Impressum
+          </a>
+          <a className="app-footer__link footer-link" href={withBase("/datenschutz")} onClick={(event) => navigateFromLink(event, "/datenschutz")}>
+            Datenschutz
+          </a>
+          <a className="app-footer__link footer-link" href={withBase("/nutzungsbedingungen")} onClick={(event) => navigateFromLink(event, "/nutzungsbedingungen")}>
+            Nutzungsbedingungen
+          </a>
+          <a className="app-footer__link footer-link" href={withBase("/kontakt")} onClick={(event) => navigateFromLink(event, "/kontakt")}>
+            Kontakt
+          </a>
+          <a className="app-footer__link footer-link" href={withBase("/")} onClick={(event) => navigateFromLink(event, "/")}>
+            {ui.common.aboutProject}
+          </a>
+          <a className="app-footer__link footer-link" href={withBase("/manual")} onClick={(event) => navigateFromLink(event, "/manual")}>
+            Handbuch
+          </a>
+          <a className="app-footer__link footer-link" href={withBase("/feedback")} onClick={(event) => navigateFromLink(event, "/feedback")}>
+            Feedback
+          </a>
+        </nav>
+      </footer>
+    </div>
   );
 }
 

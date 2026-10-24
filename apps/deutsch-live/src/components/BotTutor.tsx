@@ -1,3 +1,4 @@
+import "../styles/writing.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { Bot, BookOpenText, History, MessageSquareText, Send, Sparkles, UserRound } from "lucide-react";

@@ -1,3 +1,4 @@
+import "../styles/dashboard.css";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { BarChart3, BookOpenCheck, Download, Flame, Lightbulb, Lock, PenLine, RotateCcw, Route, Settings, Sparkles, Target, Trash2, Trophy } from "lucide-react";

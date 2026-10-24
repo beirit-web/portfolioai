@@ -31,6 +31,7 @@ Font Awesome und Inter. Vorhandene Urheberhinweise und Quellkommentare der
 | Bestandteil                                  | Nachweis im Repository        |
 | -------------------------------------------- | ----------------------------- |
 | Wohnungssuche: Preact, Lucide und React      | [Drittlizenzen][wohnung]      |
+| DeutschLive: Preact                         | [Original-MIT][deutschlive-preact] |
 | Devicon-Technologielogos                     | [Lizenz][devicon]             |
 | Lucide-Symbole                               | [Lizenz][lucide]              |
 | iNaturalist                                  | [Lizenz][inaturalist]         |
@@ -58,6 +59,7 @@ und Lizenz-URL-Metadaten bleiben erhalten.
 [vokabelbox]: vokabelbox-LICENSE
 [wellenraster]: 3d-wave-grid-LICENSE
 [wohnung]: ../../apps/wohnungssuche/public/THIRD_PARTY_LICENSES.md
+[deutschlive-preact]: ../../apps/deutsch-live/public/preact-LICENSE.txt
 [devicon]: ../../server/assets/images/devicon-LICENSE.txt
 [lucide]: ../../server/assets/images/lucide-LICENSE.txt
 [inaturalist]: ../../server/assets/images/inaturalist-LICENSE.txt

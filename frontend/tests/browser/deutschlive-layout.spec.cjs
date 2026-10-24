@@ -3,7 +3,7 @@ const { gate } = require("./helpers/async.cjs");
 const { blockExternalRequests } = require("./helpers/network.cjs");
 
 for (const [route, chunk, content] of [
-  ["/deutschlive/", "LandingPage", ".premium-hero"],
+  ["/deutschlive/", "index", ".premium-hero"],
   ["/deutschlive/learn", "SceneLearning", ".scene-learning-shell"],
   ["/deutschlive/manual", "ManualPage", ".app-shell__content > section.glass"],
 ]) {
@@ -26,11 +26,12 @@ for (const [route, chunk, content] of [
       await route.continue();
     });
     try {
-      await page.goto(route, { waitUntil: "domcontentloaded" });
+      const navigation = page.goto(route, { waitUntil: "domcontentloaded" });
       await requested.ready;
       // Give the browser time to paint while the route module is unavailable.
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       response.release();
+      await navigation;
       await expect(page.locator(content).first()).toBeVisible();
       await page.waitForLoadState("networkidle");
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));

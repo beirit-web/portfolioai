@@ -18,7 +18,7 @@ test.afterEach(async ({ page }) => expect(page.errors).toEqual([]));
 
 async function openPlayer(page) {
   await page.goto("/deutschlive/recordings");
-  await expect(page.getByRole("heading", { name: "Meine Aufnahmen", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Meine Aufnahmen", exact: true })).toBeVisible();
   await expect(page.locator("#recording-files")).toBeEnabled();
 }
 
@@ -161,7 +161,7 @@ test.describe("Russian recordings", () => {
   test("Russian interface and old player URL open the integrated module", async ({ page }) => {
     await page.goto("/deutschLive/recordings");
     await expect(page).toHaveURL(/\/deutschlive\/recordings$/);
-    await expect(page.getByRole("heading", { name: "Мои записи", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "Мои записи", exact: true })).toBeVisible();
     await expect(page.getByText("Записи остаются в этом браузере", { exact: false })).toBeVisible();
   });
 });

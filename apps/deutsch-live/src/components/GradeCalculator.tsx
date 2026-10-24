@@ -1,3 +1,4 @@
+import "../styles/grades.css";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { Calculator, CheckCircle2, GraduationCap, RotateCcw, XCircle } from "lucide-react";

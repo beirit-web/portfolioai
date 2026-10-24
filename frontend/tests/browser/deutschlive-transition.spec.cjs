@@ -10,7 +10,7 @@ test("learning links stay local while earlier recordings remain downloadable", a
   expect(redirect.status()).toBe(200);
   expect(redirect.headers().location).toBeUndefined();
   await page.goto("/deutschlive/recordings-archiv");
-  await expect(page.getByRole("heading", { name: "Meine Aufnahmen", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Meine Aufnahmen", exact: true })).toBeVisible();
   await expect(page.locator("main")).toContainText("nicht automatisch übertragen");
   // Seed an earlier collection in its existing database, then reopen the archive.
   await page.evaluate(() => new Promise((resolve, reject) => {
