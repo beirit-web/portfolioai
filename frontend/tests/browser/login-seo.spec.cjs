@@ -17,7 +17,7 @@ test("public login metadata remains consistent and keeps the Botanic return link
   await expect(page.locator("#login-form-title")).toBeVisible();
   const live = await readMetadata(page);
   expect(live).toEqual(server);
-  expect(live.title).toBe("Anmelden | Beirit Digital");
+  expect(live.title).toBe("Anmelden | ENBT Botanic");
   expect(live.description).toEqual(expect.any(String));
   expect(live.description.trim().length).toBeGreaterThan(35);
   expect(live.canonical).toBe(`${baseURL}/login/`);

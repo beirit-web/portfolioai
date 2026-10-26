@@ -22,22 +22,8 @@ const footerLinkItems = [
   { href: publicPageUrl("/rechtliches/"), labelKey: "footer.links.terms" },
 ];
 
-function accountLinks() {
-  const authenticated = config.isAuthenticated ?? globalThis.AUTH_SESSION_CONFIG?.isAuthenticated ?? false;
-  return {
-    authenticated,
-    account: {
-      href: publicPageUrl(authenticated ? config.profileUrl || "/profil/" : config.loginUrl || "/login/"),
-      labelKey: authenticated ? "nav.profile" : "nav.login",
-    },
-    register: { href: publicPageUrl(config.registerUrl || "/register/"), labelKey: "nav.register" },
-  };
-}
-
 export function PageFooter({ t, onNavigate }) {
   const [isScrollTopVisible, setIsScrollTopVisible] = React.useState(false);
-  const account = accountLinks();
-  const links = [...footerLinkItems, account.account, ...(account.authenticated ? [] : [account.register])];
 
   React.useEffect(() => {
     const updateVisibility = () => {
@@ -88,7 +74,7 @@ export function PageFooter({ t, onNavigate }) {
           </div>
         </div>
         <div className="site-footer__links flex flex-wrap gap-x-5 gap-y-2">
-          {links.map((link) => (
+          {footerLinkItems.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -121,14 +107,12 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const mobileMenuToggleRef = React.useRef(null);
   const mobileMenuPanelRef = React.useRef(null);
-  const account = accountLinks().account;
   const navItems = [
     { href: "/", label: t("nav.home") },
     { href: "/projekte", label: t("nav.portfolio") },
     { href: "/kompetenzen", label: t("nav.skills") },
     { href: "/ueber-mich", label: t("nav.aboutLink") },
     { href: "/kontakt", label: t("nav.contact") },
-    { href: account.href, label: t(account.labelKey), native: true },
   ];
   const closeMobileMenu = React.useCallback((restoreFocus = false) => {
     setIsMobileMenuOpen(false);

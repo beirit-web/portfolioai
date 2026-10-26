@@ -127,6 +127,7 @@
   .app-shell {
     @apply min-h-dvh;
     overflow-x: clip;
+    overflow-wrap: anywhere;
   }
 
   .app-shell__content {
@@ -191,7 +192,7 @@
     grid-template-columns: minmax(0, 1fr) auto;
 
     @media (min-width: 1024px) {
-      grid-template-columns: minmax(10rem, 1fr) minmax(10rem, 14rem) auto;
+      grid-template-columns: minmax(0, 1fr) minmax(7rem, 14rem) auto;
     }
   }
 
@@ -267,7 +268,7 @@
   }
 
   .app-footer {
-    @apply mt-10 grid gap-5 border-t border-slate-200/70 px-3 pb-5 pt-6 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-400 sm:px-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,auto)] lg:items-center lg:px-0;
+    @apply mt-10 grid gap-5 border-t border-slate-200/70 px-3 pb-5 pt-6 text-sm text-slate-600 dark:border-slate-800 dark:text-slate-400 sm:px-4 lg:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)] lg:items-center lg:px-0;
   }
 
   .app-footer__brand {
@@ -289,7 +290,8 @@
   }
 
   .app-footer__links {
-    @apply grid min-w-0 grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-start lg:justify-end;
+    @apply grid min-w-0 gap-2 sm:flex sm:flex-wrap sm:justify-start lg:justify-end;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
   }
 
   .app-footer__link {
@@ -359,6 +361,10 @@
 
   .language-switcher__flag--de {
     background: linear-gradient(to bottom, #111111 0 33.333%, #dd0000 33.333% 66.666%, #ffce00 66.666% 100%);
+  }
+
+  .language-switcher__flag--uk {
+    background: linear-gradient(to bottom, #0057b7 0 50%, #ffd700 50% 100%);
   }
 
   .language-switcher__options {
@@ -894,11 +900,13 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1023px) {
   body.menu-open {
     overflow: hidden;
   }
+}
 
+@media (max-width: 640px) {
   .glass {
     border-radius: 0.875rem;
   }
@@ -922,10 +930,6 @@
 @media (max-width: 767px) {
   .app-shell__content {
     padding-inline: 0;
-  }
-
-  .app-shell :where(h1, h2, h3, h4, p, li, span, button, a, label, strong) {
-    overflow-wrap: anywhere;
   }
 
   .app-nav {

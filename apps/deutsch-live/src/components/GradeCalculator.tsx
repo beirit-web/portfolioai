@@ -76,6 +76,9 @@ export default function GradeCalculator() {
   const successAudioRef = useRef<HTMLAudioElement | null>(null);
   const failureAudioRef = useRef<HTMLAudioElement | null>(null);
   const animationRef = useRef<number | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const resultHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const initialStep = useRef(true);
 
   const subjectTotal = Number(subjectCount);
   const isValidSubjectCount = Number.isInteger(subjectTotal) && subjectTotal >= 1 && subjectTotal <= MAX_SUBJECTS;
@@ -95,6 +98,17 @@ export default function GradeCalculator() {
       stopResultAudio();
     };
   }, []);
+
+  useEffect(() => {
+    // Route navigation owns the initial focus. Later steps replace the active
+    // control, so continue at the first field of the newly displayed step.
+    if (initialStep.current) { initialStep.current = false; return; }
+    formRef.current?.querySelector<HTMLInputElement>("input")?.focus();
+  }, [step]);
+
+  useEffect(() => {
+    if (result) resultHeadingRef.current?.focus();
+  }, [result]);
 
   function updateStatus(message: string, type: "info" | "success" | "error" = "info") {
     setStatus(message);
@@ -123,6 +137,7 @@ export default function GradeCalculator() {
     if (!isValidSubjectCount) {
       setInvalidFields(new Set(["subjects"]));
       updateStatus(ui.gradeCalculator.subjectError.replace("{max}", String(MAX_SUBJECTS)), "error");
+      formRef.current?.querySelector<HTMLInputElement>("#grade-subjects")?.focus();
       return;
     }
 
@@ -132,8 +147,7 @@ export default function GradeCalculator() {
     setStep(3);
   }
 
-  function calculate(event: FormEvent) {
-    event.preventDefault();
+  function calculate() {
     resetResult();
     const nextInvalidFields = new Set<string>();
     const parsedGrades = grades.map((value, index) => {
@@ -152,6 +166,7 @@ export default function GradeCalculator() {
           .replace("{max}", String(MAX_GRADE)),
         "error"
       );
+      formRef.current?.querySelector<HTMLInputElement>(`#${nextInvalidFields.values().next().value}`)?.focus();
       return;
     }
 
@@ -161,6 +176,13 @@ export default function GradeCalculator() {
     updateStatus(nextResult.passed ? ui.gradeCalculator.passedStatus : ui.gradeCalculator.failedStatus, nextResult.passed ? "success" : "error");
     if (nextResult.passed) startCelebration();
     playResultAudio(nextResult.passed);
+  }
+
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    if (step === 1) goToSubjects();
+    else if (step === 2) prepareGrades();
+    else calculate();
   }
 
   function restart() {
@@ -280,23 +302,24 @@ export default function GradeCalculator() {
 
         <Panel className="grade-calculator__card">
           <span className="grade-calculator__step">{stepText}</span>
-          <p className={`grade-calculator__status grade-calculator__status--${statusType}`} role="status" aria-live="polite">
+          <p id="grade-status" className={`grade-calculator__status grade-calculator__status--${statusType}`} role="status" aria-live="polite">
             {status}
           </p>
 
-          <form className="grade-calculator__form" onSubmit={calculate} noValidate>
+          <form aria-label={ui.gradeCalculator.title} className="grade-calculator__form" onSubmit={submit} ref={formRef} noValidate>
             {step === 1 && (
               <div className="grade-calculator__step-panel">
                 <label htmlFor="grade-name">{ui.gradeCalculator.nameLabel}</label>
                 <input
                   autoComplete="name"
                   id="grade-name"
+                  name="name"
                   onChange={(event) => setName(event.target.value)}
                   placeholder={ui.gradeCalculator.namePlaceholder}
                   type="text"
                   value={name}
                 />
-                <AppButton onClick={goToSubjects}>{ui.common.next}</AppButton>
+                <AppButton type="submit">{ui.common.next}</AppButton>
               </div>
             )}
 
@@ -305,7 +328,9 @@ export default function GradeCalculator() {
                 <label htmlFor="grade-subjects">{ui.gradeCalculator.subjectsLabel}</label>
                 <input
                   aria-invalid={invalidFields.has("subjects")}
+                  aria-describedby={`grade-subjects-hint${invalidFields.has("subjects") ? " grade-status" : ""}`}
                   id="grade-subjects"
+                  name="subjects"
                   inputMode="numeric"
                   max={MAX_SUBJECTS}
                   min={1}
@@ -317,10 +342,10 @@ export default function GradeCalculator() {
                   type="number"
                   value={subjectCount}
                 />
-                <p className="grade-calculator__hint">{ui.gradeCalculator.subjectHint.replace("{max}", String(MAX_SUBJECTS))}</p>
+                <p className="grade-calculator__hint" id="grade-subjects-hint">{ui.gradeCalculator.subjectHint.replace("{max}", String(MAX_SUBJECTS))}</p>
                 <div className="grade-calculator__actions">
                   <AppButton onClick={() => setStep(1)} variant="secondary">{ui.gradeCalculator.back}</AppButton>
-                  <AppButton onClick={prepareGrades}>{ui.gradeCalculator.enterGradesButton}</AppButton>
+                  <AppButton type="submit">{ui.gradeCalculator.enterGradesButton}</AppButton>
                 </div>
               </div>
             )}
@@ -333,7 +358,9 @@ export default function GradeCalculator() {
                       <span>{ui.gradeCalculator.gradeLabel.replace("{index}", String(index + 1))}</span>
                       <input
                         aria-invalid={invalidFields.has(`grade-${index}`)}
+                        aria-describedby={invalidFields.has(`grade-${index}`) ? "grade-status" : undefined}
                         id={`grade-${index}`}
+                        name={`grade-${index}`}
                         inputMode="decimal"
                         max={MAX_GRADE}
                         min={MIN_GRADE}
@@ -386,7 +413,7 @@ export default function GradeCalculator() {
               <div className="grade-calculator__result-content">
                 <div className="grade-calculator__result-heading">
                   {result.passed ? <CheckCircle2 aria-hidden="true" /> : <XCircle aria-hidden="true" />}
-                  <h3>{ui.gradeCalculator.resultTitle}</h3>
+                  <h3 ref={resultHeadingRef} tabIndex={-1}>{ui.gradeCalculator.resultTitle}</h3>
                 </div>
                 <div className="grade-calculator__metrics">
                   <Metric label={ui.gradeCalculator.average} value={formatAverage(result.average)} />

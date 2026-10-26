@@ -48,7 +48,7 @@
     <div class="detail-login">
       <p>Für deine persönliche Sammlung anmelden.</p>
       <a class="button button--primary" href="{{ login_url }}">{% botanic_icon 'user' %}Anmelden & speichern</a>
-      <a class="text-link" href="{% url 'pages:register' %}">Konto erstellen</a>
+      <a class="text-link" href="{{ account_register_url }}">Konto erstellen</a>
     </div>
   {% endif %}
   {% if plant %}

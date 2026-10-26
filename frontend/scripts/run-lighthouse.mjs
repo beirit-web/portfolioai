@@ -341,7 +341,8 @@ export async function runLighthouse(args, {
     stopChild(chrome, chromeExit, { group: true, timeoutMs: cleanupTimeoutMs, killProcess }),
   ]);
   try {
-    if (profile) removeProfile(profile, { force: true, recursive: true });
+    // Chrome helpers can finish writing after the main browser has exited.
+    if (profile) removeProfile(profile, { force: true, recursive: true, maxRetries: 5, retryDelay: 200 });
   } catch (error) {
     cleanup.push({ status: "rejected", reason: error });
   } finally {

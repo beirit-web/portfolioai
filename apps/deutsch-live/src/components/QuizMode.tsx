@@ -243,9 +243,10 @@ export default function QuizMode({ user, accountLoaded = true, onAttemptSaved }:
       <div className="quiz-topic-list" aria-busy={topicsLoading}>
         {topicsLoading && Array.from({ length: 4 }, (_, index) => <div className="quiz-topic-button quiz-topic-placeholder" key={index} aria-hidden="true"><span className="skeleton-block h-5 w-3/4" /><small className="skeleton-block h-4 w-1/2" /></div>)}
         {topics.map(item => <button className={`quiz-topic-button choice-btn ${item.id === selection.topic ? "is-selected" : ""}`}
-          aria-pressed={item.id === selection.topic} aria-label={title(item)} data-topic-id={item.id}
+          aria-pressed={item.id === selection.topic} data-topic-id={item.id}
           key={item.id} onClick={() => configure({ ...selection, topic: item.id })} type="button">
-          <span>{item.icon} {item.ru}</span><small>{item.label}</small>
+          <span lang={getLocale() === "de" ? "de" : "ru"}><span aria-hidden="true">{item.icon} </span>{title(item)}</span>
+          <small lang={getLocale() === "de" ? "ru" : "de"}>{getLocale() === "de" ? item.ru : item.label}</small>
         </button>)}
       </div>
       {topicsError && <div className="quiz-load-error" role="alert"><p>{ui.quiz.topicsLoadError}</p><button type="button" className="quiz-retry" onClick={() => setListReload(value => value + 1)}>{ui.quiz.retry}</button></div>}

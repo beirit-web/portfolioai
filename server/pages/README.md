@@ -26,6 +26,18 @@ DeutschLive cookie always requires an authenticated Django session as well.
 
 ## Account forms
 
+The portfolio navigation has no login, registration or profile entry. Account
+entry points belong to the cake shop, ENBT Botanic, housing, the standalone grade
+calculator and DeutschLive. They use the same user database; existing credentials
+remain valid across projects. The grade calculator still works without signing in
+and does not store calculations in the account.
+
+`account_projects.py` derives project branding and return links from validated
+local project paths. Shared login, registration and profile pages retain that
+context. Password recovery accepts only known login destinations, including a
+shared login with a local project return path. Its emailed link also retains the
+destination when opened in another browser. External return URLs remain rejected.
+
 `/login/` and `/register/` provide the shared account forms. Login accepts the
 account email, including accounts created by DeutschLive or housing; their API
 logins also accept usernames. Email and username matching is case-insensitive;
@@ -124,7 +136,8 @@ separate local namespace, preventing use in the normal emailed reset flow.
 Changing the password consumes it. Expiry, account deactivation or leaving the
 local mode prevents use, including when the password form was already open.
 Unknown, inactive and unusable accounts receive a neutral message. A housing
-recovery returns to `/wohnungssuche/login`; the shared login remains `/login/`.
+recovery returns to `/wohnungssuche/login`, DeutschLive to `/deutschlive/account`,
+and the other projects to `/login/` with their preserved project return path.
 
 Housing login and registration obtain these mode-specific explanations and
 configured account URLs from `/wohnungssuche-api/auth/config/`. That response is

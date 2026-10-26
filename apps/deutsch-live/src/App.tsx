@@ -17,7 +17,7 @@ import {
 import { fetchMe, updateSettings, type CurrentUser } from "./api";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import { PageSkeleton } from "./components/UiPrimitives";
-import { getLocale, setLocale as persistLocale, subscribeLocale, type Locale, ui } from "./i18n";
+import { getLocale, isLocale, setLocale as persistLocale, subscribeLocale, type Locale, ui } from "./i18n";
 import { usePlatformSession } from "./lib/usePlatformSession";
 import {
   AuthPanel, BotTutor, Dashboard, DatenschutzPage, GradeCalculator, ImpressumPage,
@@ -25,6 +25,7 @@ import {
   RecordingPlayer, SceneLearning, stripBase, withBase
 } from "./routes";
 import "./styles/shell.css";
+import { notFoundCopy, routeMetadata, updateDocumentMetadata } from "./seo";
 
 export default function App({ initialAccountPanel }: { initialAccountPanel?: ComponentType<AuthPanelProps> } = {}) {
   const AccountPanel = initialAccountPanel || AuthPanel;
@@ -44,7 +45,7 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
     fetchMe().then((response) => {
       setUser(response.user);
       const profileLocale = response.user?.settings.interfaceLanguage;
-      if (profileLocale === "ru" || profileLocale === "de") {
+      if (isLocale(profileLocale)) {
         persistLocale(profileLocale);
         setLocaleState(profileLocale);
       }
@@ -52,10 +53,6 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
   }, []);
 
   useEffect(() => subscribeLocale(setLocaleState), []);
-
-  useEffect(() => {
-    document.documentElement.lang = locale;
-  }, [locale]);
 
   useEffect(() => {
     document.body.classList.toggle("scene-learning-page", path === "/learn");
@@ -134,7 +131,7 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
       : currentUser
     );
     if (user) {
-      updateSettings({ ...user.settings, interfaceLanguage: nextLocale }).catch(() => undefined);
+      updateSettings({ interfaceLanguage: nextLocale }).catch(() => undefined);
     }
   }
 
@@ -150,6 +147,7 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
     { path: "/settings", label: ui.nav.settings, icon: Settings }
   ] as const;
 
+  const metadata = routeMetadata(path, locale);
   const routeTitle = navItems.find((item) => item.path === path)?.label ?? ({
     "/handbuch": ui.nav.manual,
     "/account": ui.nav.account,
@@ -160,29 +158,29 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
     "/nutzungsbedingungen": "Nutzungsbedingungen",
     "/kontakt": "Kontakt",
     "/feedback": "Feedback"
-  } as Record<string, string>)[path];
-  const isLandingPage = path === "/" || !routeTitle;
-  const accessibility = locale === "ru"
-    ? { skip: "Перейти к содержимому", navigation: "Основная навигация", mobileNavigation: "Мобильная навигация" }
-    : { skip: "Zum Inhalt springen", navigation: "Hauptnavigation", mobileNavigation: "Mobile Hauptnavigation" };
+  } as Record<string, string>)[path] ?? metadata.heading;
+  const isLandingPage = path === "/";
+  const accessibility = {
+    ru: { skip: "Перейти к содержимому", navigation: "Основная навигация", mobileNavigation: "Мобильная навигация" },
+    de: { skip: "Zum Inhalt springen", navigation: "Hauptnavigation", mobileNavigation: "Mobile Hauptnavigation" },
+    uk: { skip: "Перейти до вмісту", navigation: "Основна навігація", mobileNavigation: "Мобільна навігація" }
+  }[locale];
 
   useEffect(() => {
-    document.title = isLandingPage
-      ? `${ui.common.appName} · ${ui.landing.eyebrow}`
-      : `${routeTitle} · ${ui.common.appName}`;
-  }, [isLandingPage, routeTitle, locale]);
+    updateDocumentMetadata(path, locale);
+  }, [path, locale]);
 
   const page = useMemo(() => {
     if (path === "/learn") return <SceneLearning onProgressSaved={refreshDashboard} user={user} />;
     if (path === "/quiz") return <QuizMode key={user?.id ?? "guest"} accountLoaded={accountLoaded} onAttemptSaved={refreshDashboard} user={user} />;
     if (path === "/grades") return <GradeCalculator />;
-    if (["/recordings", "/recordings/", "/recordings-archiv"].includes(path)) return accountLoaded ? <>
+    if (["/recordings", "/recordings/", "/recordings-archiv"].includes(path)) return <>
       {path === "/recordings-archiv" && <section className="glass mb-6 rounded-2xl p-6">
         <p>{ui.platformAccount.moveRecordings}</p>
         <a className="underline" href="/deutschlive/recordings">{ui.platformAccount.back}</a>
       </section>}
-      <RecordingPlayer user={user} />
-    </> : <PageSkeleton />;
+      <RecordingPlayer user={user} accountLoaded={accountLoaded} />
+    </>;
     if (path === "/writing") return <BotTutor user={user} />;
     if (path === "/dashboard") {
       return user ? (
@@ -206,7 +204,14 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
     if (path === "/account") {
       return <AccountPanel user={user} onDashboardRefresh={refreshDashboard} onUserChange={setUser} />;
     }
-    return <LandingPage navigate={navigate} />;
+    if (path === "/") return <LandingPage navigate={navigate} />;
+    const copy = notFoundCopy(locale);
+    return <section className="glass rounded-3xl p-6 sm:p-8">
+      <h2 className="text-3xl font-black">{copy.heading}</h2>
+      <p className="mt-4 leading-relaxed">{copy.description}</p>
+      <a className="mt-6 inline-flex min-h-11 items-center rounded-2xl bg-cyan-500 px-5 py-3 font-bold text-slate-950"
+        href={withBase("/")} onClick={(event) => navigateFromLink(event, "/")}>{copy.home}</a>
+    </section>;
   }, [path, user, dashboardRefresh, locale, accountLoaded, AccountPanel]);
 
   return (

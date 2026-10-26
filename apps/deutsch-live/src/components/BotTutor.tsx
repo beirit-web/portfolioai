@@ -177,6 +177,10 @@ const buildingBlocks = [
   "Muss ich umsteigen?"
 ];
 
+function contentLanguage(text: string) {
+  return /[\u0400-\u04ff]/.test(text) ? "ru" : "de";
+}
+
 export default function BotTutor({ user }: { user: CurrentUser | null }) {
   return <WritingSession key={user?.id ?? "guest"} user={user} />;
 }
@@ -192,11 +196,16 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
   const [liveStatus, setLiveStatus] = useState<"idle" | "connected" | "streaming" | "done">("idle");
   const active = useRef(false);
   const submitting = useRef(false);
+  const resultHeading = useRef<HTMLHeadingElement | null>(null);
 
   useEffect(() => {
     active.current = true;
     return () => { active.current = false; };
   }, []);
+
+  useEffect(() => {
+    if (latestExercise) resultHeading.current?.focus();
+  }, [latestExercise]);
 
   const selectedTask = useMemo(
     () => writingTasks.find((task) => task.id === selectedTaskId) ?? writingTasks[0],
@@ -265,7 +274,7 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
         setHistory((items) => [response.exercise, ...items.filter((item) => item.id !== response.exercise.id)].slice(0, 12));
       }
       setText("");
-      setMessage(response.saved ? "" : ui.writing.notSaved);
+      setMessage(response.saved ? `${ui.common.finished} · ${ui.writing.correction}` : ui.writing.notSaved);
     } catch (error) {
       if (active.current) setMessage(error instanceof Error ? error.message : ui.writing.saveFailed);
     } finally {
@@ -278,21 +287,21 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
   }
 
   return (
-    <section id="bot" className="writing-shell glass mt-10 rounded-xl p-3 sm:rounded-[2rem] sm:p-8">
+    <section id="bot" aria-labelledby="writing-title" className="writing-shell glass mt-10 rounded-xl p-3 sm:rounded-[2rem] sm:p-8">
       <p className="writing-kicker mb-3 text-sm font-bold uppercase tracking-[0.24em] text-cyan-600 dark:text-cyan-300">
         {ui.writing.title}
       </p>
       <div className="writing-layout">
         <div className="writing-task-panel">
-          <h2 className="view-title--compact flex items-center gap-3">
-            <MessageSquareText className="h-8 w-8" />
+          <h2 id="writing-title" className="view-title--compact flex items-center gap-3">
+            <MessageSquareText aria-hidden="true" className="h-8 w-8" />
             {ui.writing.subtitle}
           </h2>
           <p className="writing-intro-copy mt-4 text-slate-700 dark:text-slate-300">
             {ui.writing.description}
           </p>
 
-          <div className="writing-task-list">
+          <div className="writing-task-list" role="group" aria-label={ui.writing.title}>
             {writingTasks.map((task) => (
               <button
                 className={`writing-task-button rounded-xl border px-3 py-3 text-left transition sm:rounded-2xl ${
@@ -301,12 +310,14 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
                     : "border-slate-200 bg-white/70 dark:border-slate-700 dark:bg-slate-900/65"
                 }`}
                 key={task.id}
+                aria-pressed={selectedTask.id === task.id}
+                lang="de"
                 onClick={() => setSelectedTaskId(task.id)}
                 disabled={isSaving}
                 type="button"
               >
                 <span className="flex items-center gap-2 font-black">
-                  <BookOpenText className="h-4 w-4" />
+                  <BookOpenText aria-hidden="true" className="h-4 w-4" />
                   {task.title}
                 </span>
                 <span className="mt-1 block text-sm text-slate-600 dark:text-slate-300">{task.prompt}</span>
@@ -315,16 +326,16 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
           </div>
         </div>
 
-        <form className="writing-chat-panel writing-composer" onSubmit={submit}>
+        <form aria-label={ui.writing.subtitle} aria-describedby="writing-status" className="writing-chat-panel writing-composer" onSubmit={submit}>
           <label className="writing-input-label block text-sm font-bold" htmlFor="writing-answer">{ui.writing.inputLabel}</label>
           <div className="writing-chat-thread mt-3">
             <ChatBubble icon={<Bot />} tone="bot">
-              <p className="font-semibold">{selectedTask.prompt}</p>
-              <p className="mt-2 text-sm opacity-80">{ui.writing.exampleLabel}: {selectedTask.example}</p>
+              <p className="font-semibold" lang="de">{selectedTask.prompt}</p>
+              <p className="mt-2 text-sm opacity-80">{ui.writing.exampleLabel}: <span lang="de">{selectedTask.example}</span></p>
             </ChatBubble>
             {text.trim() && (
               <ChatBubble icon={<UserRound />} tone="user">
-                <p className="whitespace-pre-wrap">{text}</p>
+                <p className="whitespace-pre-wrap" lang={contentLanguage(text)}>{text}</p>
               </ChatBubble>
             )}
             {(isSaving || liveStatus === "streaming") && !liveCorrection && (
@@ -334,7 +345,7 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
             )}
           </div>
 
-          <div className="writing-block-list mt-3 flex flex-wrap gap-2">
+          <div className="writing-block-list mt-3 flex flex-wrap gap-2" lang="de">
             {buildingBlocks.map((block) => (
               <button
                 className="rounded-full border border-slate-200 bg-white/80 px-3 py-2 text-xs font-bold text-slate-700 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200"
@@ -351,6 +362,8 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
           <textarea
             className="writing-textarea mt-3 min-h-40 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950 outline-none focus:border-cyan-400 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
             id="writing-answer"
+            name="text"
+            lang="de"
             onChange={(event) => setText(event.target.value)}
             placeholder={ui.writing.placeholder}
             required
@@ -358,37 +371,37 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
             value={text}
           />
           <button className="writing-submit-button mt-4 inline-flex items-center gap-2 rounded-2xl bg-cyan-500 px-5 py-3 font-bold text-slate-950" disabled={isSaving} type="submit">
-            {isSaving ? <Sparkles className="h-4 w-4" /> : <Send className="h-4 w-4" />}
+            {isSaving ? <Sparkles aria-hidden="true" className="h-4 w-4" /> : <Send aria-hidden="true" className="h-4 w-4" />}
             {isSaving ? ui.writing.saving : ui.common.send}
           </button>
-          {message && <p role="status" className="mt-4 font-semibold text-amber-700 dark:text-amber-300">{message}</p>}
+          <p id="writing-status" role="status" aria-atomic="true" className="mt-4 font-semibold text-amber-700 dark:text-amber-300">{message}</p>
           {liveCorrection && (
             <ChatBubble className="mt-4" icon={<Bot />} tone="bot">
               <p className="text-kicker text-cyan-700 dark:text-cyan-200">
                 {liveStatus === "done" ? ui.writing.liveCorrection : ui.writing.liveCorrectionRunning}
               </p>
-              <p className="mt-2 whitespace-pre-wrap">{liveCorrection}</p>
+              <p className="mt-2 whitespace-pre-wrap" lang={contentLanguage(liveCorrection)}>{liveCorrection}</p>
             </ChatBubble>
           )}
         </form>
       </div>
 
       {latestExercise && (
-        <div className="writing-result-thread writing-result-panel">
+        <section className="writing-result-thread writing-result-panel" aria-labelledby="writing-result-title">
           <ChatBubble icon={<UserRound />} tone="user">
-            <p className="whitespace-pre-wrap">{latestExercise.userText}</p>
+            <p className="whitespace-pre-wrap" lang={contentLanguage(latestExercise.userText)}>{latestExercise.userText}</p>
           </ChatBubble>
           <ChatBubble icon={<Bot />} tone="bot">
-            <p className="text-kicker text-cyan-700 dark:text-cyan-200">{ui.writing.correction}</p>
-            <p className="mt-2 font-semibold">{latestExercise.correction}</p>
-            <p className="mt-2 text-sm opacity-80">{latestExercise.explanation}</p>
+            <h3 id="writing-result-title" ref={resultHeading} tabIndex={-1} className="text-kicker text-cyan-700 dark:text-cyan-200">{ui.writing.correction}</h3>
+            <p className="mt-2 font-semibold" lang={contentLanguage(latestExercise.correction)}>{latestExercise.correction}</p>
+            <p className="mt-2 text-sm opacity-80" lang={contentLanguage(latestExercise.explanation)}>{latestExercise.explanation}</p>
           </ChatBubble>
-        </div>
+        </section>
       )}
 
       <section className="writing-history-panel">
         <h3 className="panel-title--with-icon">
-          <History className="h-5 w-5" />
+          <History aria-hidden="true" className="h-5 w-5" />
           {ui.writing.history}
         </h3>
         {history.length === 0 ? (
@@ -397,10 +410,10 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {history.map((item) => (
               <article className="writing-history-item" key={item.id}>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">{item.topicLabel}</p>
-                <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">{item.prompt}</p>
-                <p className="writing-history-item__user">{item.userText}</p>
-                <p className="writing-history-item__correction">{item.correction}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500" lang={contentLanguage(item.topicLabel)}>{item.topicLabel}</p>
+                <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200" lang={contentLanguage(item.prompt)}>{item.prompt}</p>
+                <p className="writing-history-item__user" lang={contentLanguage(item.userText)}>{item.userText}</p>
+                <p className="writing-history-item__correction" lang={contentLanguage(item.correction)}>{item.correction}</p>
               </article>
             ))}
           </div>
@@ -413,7 +426,7 @@ function WritingSession({ user }: { user: CurrentUser | null }) {
 function ChatBubble({ children, className = "", icon, tone }: { children: ReactNode; className?: string; icon: ReactNode; tone: "bot" | "user" }) {
   return (
     <div className={`chat-bubble chat-bubble--${tone} ${className}`}>
-      <span className="chat-bubble__avatar">{icon}</span>
+      <span className="chat-bubble__avatar" aria-hidden="true">{icon}</span>
       <div className="chat-bubble__body">{children}</div>
     </div>
   );
@@ -421,10 +434,11 @@ function ChatBubble({ children, className = "", icon, tone }: { children: ReactN
 
 function TypingIndicator({ label }: { label: string }) {
   return (
-    <span className="typing-indicator" aria-label={label}>
-      <span />
-      <span />
-      <span />
+    <span className="typing-indicator" role="status">
+      <span aria-hidden="true" />
+      <span aria-hidden="true" />
+      <span aria-hidden="true" />
+      <small className="sr-only">{label}</small>
     </span>
   );
 }

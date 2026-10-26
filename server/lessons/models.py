@@ -22,6 +22,7 @@ class UserProfile(models.Model):
         ("de", "German"),
         ("en", "English"),
     ]
+    INTERFACE_LANGUAGE_CHOICES = [*LANGUAGE_CHOICES, ("uk", "Ukrainian")]
     LEVEL_CHOICES = [
         ("start", "Start"),
         ("a1", "A1"),
@@ -32,7 +33,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="learning_profile")
     role = models.CharField(max_length=32, choices=ROLE_CHOICES, default="learner")
     premium_status = models.CharField(max_length=16, choices=PREMIUM_STATUS_CHOICES, default="free")
-    interface_language = models.CharField(max_length=8, choices=LANGUAGE_CHOICES, default="ru")
+    interface_language = models.CharField(max_length=8, choices=INTERFACE_LANGUAGE_CHOICES, default="ru")
     explanation_language = models.CharField(max_length=8, choices=LANGUAGE_CHOICES, default="ru")
     email_verified = models.BooleanField(default=False)
     level = models.CharField(max_length=16, choices=LEVEL_CHOICES, default="start")

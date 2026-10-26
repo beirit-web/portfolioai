@@ -6,14 +6,14 @@ import { AppButton, Panel } from "./UiPrimitives";
 import { addLocalRecordings, listLocalRecordings, removeLocalRecording, type LocalRecording } from "../lib/localRecordings";
 import "./RecordingPlayer.css";
 
-export default function RecordingPlayer({ user }: { user: CurrentUser | null }) {
+export default function RecordingPlayer({ user, accountLoaded = true }: { user: CurrentUser | null; accountLoaded?: boolean }) {
   const ownerKey = user ? `user:${user.id}` : "guest";
   // Remount the library when the account changes, so old asynchronous work cannot
   // restore another account's selection or audio URL in the current interface.
-  return <RecordingLibrary key={ownerKey} ownerKey={ownerKey} />;
+  return <RecordingLibrary key={ownerKey} ownerKey={ownerKey} accountLoaded={accountLoaded} />;
 }
 
-function RecordingLibrary({ ownerKey }: { ownerKey: string }) {
+function RecordingLibrary({ ownerKey, accountLoaded }: { ownerKey: string; accountLoaded: boolean }) {
   const [recordings, setRecordings] = useState<LocalRecording[]>([]);
   const [selectedId, setSelectedId] = useState("");
   const [source, setSource] = useState("");
@@ -36,6 +36,9 @@ function RecordingLibrary({ ownerKey }: { ownerKey: string }) {
   const filtered = recordings.filter(recording => recording.name.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
 
   useEffect(() => {
+    // Render the stable page layout immediately, but wait for the account before
+    // reading any collection so guest recordings never flash during sign-in.
+    if (!accountLoaded) return;
     active.current = true;
     listLocalRecordings(ownerKey).then(items => {
       if (!active.current) return;
@@ -46,7 +49,7 @@ function RecordingLibrary({ ownerKey }: { ownerKey: string }) {
       if (active.current) { setStatus("storageError"); setError(true); }
     }).finally(() => { if (active.current) setLoading(false); });
     return () => { active.current = false; };
-  }, [ownerKey]);
+  }, [ownerKey, accountLoaded]);
 
   useEffect(() => {
     if (!selected) { setSource(""); return; }

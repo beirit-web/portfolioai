@@ -226,7 +226,39 @@ textarea:focus-visible {
 }
 
 .account-actions {
-  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.project-account-menu {
+  position: relative;
+  font-size: 0.85rem;
+}
+.project-account-menu summary {
+  cursor: pointer;
+  padding: 0.75rem;
+  min-height: 44px;
+}
+.project-account-menu > div {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  width: min(16rem, calc(100vw - 2rem));
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 24px #0002;
+}
+.project-account-menu a {
+  display: block;
+  padding: 0.75rem;
+  color: #16362f;
+  text-decoration: underline;
 }
 
 .account-link {

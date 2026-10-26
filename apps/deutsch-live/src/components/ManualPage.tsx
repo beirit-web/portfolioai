@@ -68,6 +68,7 @@ function ArticleHelp() {
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {articleHelpColumns.map((column) => (
           <article
+            lang="de"
             className={`overflow-hidden rounded-xl border bg-gradient-to-b shadow-lg shadow-slate-900/5 ${column.tone}`}
             key={column.key}
           >

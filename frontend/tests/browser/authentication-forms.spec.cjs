@@ -39,12 +39,15 @@ async function expectFieldDescriptions(field, error) {
   }
 }
 
-test("portfolio login leads to registration with visible errors and back to password recovery", async ({ page, isMobile }, testInfo) => {
-  await page.goto("/");
-  if (isMobile) await page.locator(".site-nav-toggle").click();
-  const navigation = page.locator(isMobile ? "#site-mobile-navigation" : "#site-navigation");
-  await navigation.getByRole("link", { name: "Anmelden", exact: true }).click();
-  await expect(page).toHaveURL(/\/login\/$/);
+test("project login leads to registration with visible errors and back to password recovery", async ({ page }, testInfo) => {
+  await page.goto("/botanic/?tab=plants");
+  await page.getByRole("link", { name: "Anmelden", exact: true }).first().click();
+  const target = new URL(page.url()).searchParams.get("next");
+  expect(target).toMatch(/^\/botanic\//);
+  const expectDestination = path => expect(page).toHaveURL(url =>
+    url.pathname === path && url.searchParams.get("next") === target
+  );
+  await expectDestination("/login/");
   await expect(page.locator("#id_username")).toBeVisible();
   await expect(page.locator("#id_password")).toBeVisible();
   const password = page.locator("#id_password");
@@ -61,7 +64,7 @@ test("portfolio login leads to registration with visible errors and back to pass
   await expect(reveal).toHaveAttribute("aria-pressed", "false");
 
   await page.locator("main").getByRole("link", { name: "Registrieren", exact: true }).click();
-  await expect(page).toHaveURL(/\/register\/$/);
+  await expectDestination("/register/");
   await expect(page.getByRole("heading", { name: "Registrierung", exact: true })).toBeVisible();
   for (const id of ["id_email", "id_image", "id_password1", "id_password2"]) {
     await expectFieldDescriptions(page.locator(`#${id}`));
@@ -85,9 +88,12 @@ test("portfolio login leads to registration with visible errors and back to pass
   await expect(page.locator('main form button[type="submit"]')).toBeEnabled();
 
   await page.locator("main").getByRole("link", { name: "Zum Login", exact: true }).click();
-  await expect(page).toHaveURL(/\/login\/$/);
+  await expectDestination("/login/");
   await page.locator("main").getByRole("link", { name: "Passwort zurücksetzen", exact: true }).click();
-  await expect(page).toHaveURL(/\/password-reset\/$/);
+  await expect(page).toHaveURL(url => url.pathname === "/password-reset/");
+  const loginTarget = new URL(new URL(page.url()).searchParams.get("next"), page.url());
+  expect(loginTarget.pathname).toBe("/login/");
+  expect(loginTarget.searchParams.get("next")).toBe(target);
   await expect(page.getByRole("form", { name: "Passwort wiederherstellen", exact: true })).toBeVisible();
 });
 
@@ -105,7 +111,7 @@ test("password recovery preserves invalid email input and returns a neutral succ
   expect((await submitForm(page, "/password-reset/")).status()).toBe(302);
   await expect(page).toHaveURL(/\/password-reset\/done\/$/);
   await expect(page.getByRole("heading", { name: "Wiederherstellungslink angefordert", exact: true })).toBeVisible();
-  await expect(page.locator("main").getByRole("status")).toContainText(/Wenn ein Konto mit dieser E-Mail existiert/);
+  await expect(page.locator('main p[role="status"]')).toContainText(/Wenn ein (?:aktives )?Konto mit dieser E-Mail existiert/);
   await page.locator("main").getByRole("link", { name: "Zurück zum Login", exact: true }).click();
   await expect(page).toHaveURL(/\/login\/$/);
   await expect(page.locator("#id_username")).toBeVisible();
@@ -120,7 +126,7 @@ test("an invalid recovery link offers a working way to request a new link", asyn
   await page.locator("main").getByRole("link", { name: "Neuen Link anfordern", exact: true }).click();
   await expect(page).toHaveURL(/\/password-reset\/$/);
   await expect(page.locator("#id_email")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Link senden", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /^(?:Link senden|Lokalen Token erstellen)$/ })).toBeEnabled();
 });
 
 test("login associates invalid email and missing password errors with their fields", async ({ page }) => {

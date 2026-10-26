@@ -53,8 +53,8 @@
     @apply rounded-2xl border border-white/60 bg-white/70 px-5 py-4 text-left font-bold dark:border-slate-700 dark:bg-slate-900/70;
   }
 
-  .quiz-topic-button span,
-  .quiz-topic-button small {
+  .quiz-topic-button > span,
+  .quiz-topic-button > small {
     @apply block min-w-0 truncate;
   }
 

@@ -10,7 +10,7 @@ const stepIllustrations = ["dialogue", "practice", "quiz"] as const;
 
 export default function LandingPage({ navigate }: LandingPageProps) {
   const copy = ui.landing;
-  const isRussian = getLocale() === "ru";
+  const locale = getLocale();
 
   function followRoute(event: MouseEvent<HTMLAnchorElement>, path: string) {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -40,7 +40,7 @@ export default function LandingPage({ navigate }: LandingPageProps) {
             <p className="dl-dialogue dl-dialogue--seller" lang="de">Guten Morgen! Was darf es sein?</p>
             <span className="dl-dialogue__speaker dl-dialogue__speaker--learner">{copy.learner}</span>
             <p className="dl-dialogue dl-dialogue--learner" lang="de">Ich hätte gern zwei Brötchen und einen Kaffee.</p>
-            {isRussian && <p className="dl-dialogue__translation" lang="ru">{copy.dialogueTranslation}</p>}
+            {locale !== "de" && <p className="dl-dialogue__translation" lang={locale}>{copy.dialogueTranslation}</p>}
           </figcaption>
         </figure>
       </section>
@@ -55,7 +55,6 @@ export default function LandingPage({ navigate }: LandingPageProps) {
           {copy.journeySteps.map((step, index) => (
             <li className="dl-step" key={step.title}>
               <div className="dl-step__visual">
-                <span className="dl-step__number" aria-hidden="true">0{index + 1}</span>
                 <LearningIllustration kind={stepIllustrations[index]} className="dl-step__art" />
               </div>
               <h3>{step.title}</h3>
@@ -82,7 +81,7 @@ export default function LandingPage({ navigate }: LandingPageProps) {
           <ArrowRight className="dl-available-scene__arrow" aria-hidden="true" size={22} />
         </a>
         <details className="dl-upcoming">
-          <summary>{copy.upcomingTitle}<span className="dl-upcoming__count" aria-hidden="true">{copy.upcomingTopics.length}</span><ChevronDown aria-hidden="true" size={18} /></summary>
+          <summary><span className="dl-summary-label">{copy.upcomingTitle}</span><span className="dl-upcoming__count" aria-hidden="true">{copy.upcomingTopics.length}</span><ChevronDown aria-hidden="true" size={18} /></summary>
           <div className="dl-upcoming__content">
             <p>{copy.upcomingNote}</p>
             <ul>{copy.upcomingTopics.map(topic => <li key={topic}>{topic}</li>)}</ul>
@@ -103,7 +102,7 @@ export default function LandingPage({ navigate }: LandingPageProps) {
         <div className="dl-faq__items">
           {copy.faqItems.map(([question, answer]) => (
             <details key={question}>
-              <summary>{question}<ChevronDown aria-hidden="true" size={19} /></summary>
+              <summary><span className="dl-summary-label">{question}</span><ChevronDown aria-hidden="true" size={19} /></summary>
               <p>{answer}</p>
             </details>
           ))}

@@ -9,6 +9,6 @@
   <form method="post" class="form">{% csrf_token %}<input type="hidden" name="image-remove_image" value="on" /><button type="submit" name="image_submit">{% account_text "Bild entfernen" %}</button></form>
   {% endif %}
   <form method="post" class="form">{% csrf_token %}{{ account_form.as_p }}<button class="btn" type="submit" name="account_submit">{% account_text "Speichern" %}</button></form>
-  <p><a href="/deutschlive/">DeutschLive</a> · <a href="/botanic/">Botanic</a> · <a href="/shop/">Shop</a></p>
+  <p><a href="/shop/">Torten- und Kuchen-Shop</a> · <a href="/botanic/">ENBT Botanic</a> · <a href="/wohnungssuche/">Wohnungssuche Bodensee</a> · <a href="/static/portfolio/notenrechner/index.html">Notenrechner</a> · <a href="/deutschlive/">DeutschLive</a></p>
   <p><a href="{% url 'pages:delete_account' %}">{% account_text "Konto löschen" %}</a></p>
 {% endblock %}

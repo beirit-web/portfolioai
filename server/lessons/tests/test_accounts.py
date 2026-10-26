@@ -46,6 +46,20 @@ class UserProfileModelTests(TestCase):
     SITE_URL="http://testserver",
 )
 class AccountFlowTests(TestCase):
+    def test_ukrainian_interface_preference_survives_a_new_login(self):
+        user = get_user_model().objects.create_user(
+            username="ukrainian-example", email="ukrainian@example.test", password="Example-Language-42!",
+        )
+        credentials = {"username": user.username, "password": "Example-Language-42!"}
+        self.assertEqual(self.client.post("/deutschlive/api/auth/login/", credentials, content_type="application/json").status_code, 200)
+        response = self.client.patch("/deutschlive/api/settings/", {"interfaceLanguage": "uk"}, content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["settings"]["interfaceLanguage"], "uk")
+        self.assertEqual(UserProfile.objects.get(user=user).interface_language, "uk")
+        other = Client()
+        other.post("/deutschlive/api/auth/login/", credentials, content_type="application/json")
+        self.assertEqual(other.get("/deutschlive/api/auth/me/").json()["user"]["settings"]["interfaceLanguage"], "uk")
+
     def assert_registration_requires_confirmation(self):
         response = self.client.post(
             "/deutschlive/api/auth/register/",
@@ -101,7 +115,10 @@ class AccountFlowTests(TestCase):
         self.assertFalse(user.profile.email_verification_pending)
         profile.refresh_from_db()
         self.assertTrue(profile.email_verified)
-        self.assertNotIn("learning_auth_token", self.client.cookies)
+        # Confirmation signs into the shared account and must also authenticate
+        # the DeutschLive destination, without requiring a second login.
+        self.assertIn("learning_auth_token", self.client.cookies)
+        self.assertEqual(self.client.get("/deutschlive/api/auth/me/").json()["user"]["id"], user.pk)
 
         logged_in = self.client.post(
             "/deutschlive/api/auth/login/",

@@ -78,8 +78,8 @@ class DeutschLiveRouteTests(SimpleTestCase):
         self.assertEqual(response.status_code, 301)
         self.assertEqual(response["Location"], f"/deutschlive/{path}?{self.query}")
 
-    def test_spa_and_named_archive_serve_the_same_uncached_app_html(self):
-        html = b"<!doctype html><title>Fictional DeutschLive route sample</title>"
+    def test_spa_and_named_archive_serve_uncached_app_html_with_route_metadata(self):
+        html = b'<!doctype html><html lang="ru"><head><title>Sample</title></head><body><div id="root"></div></body></html>'
         with TemporaryDirectory(prefix="beirit-config-routes-") as directory:
             index = Path(directory) / "assets" / "deutschlive-dist" / "index.html"
             index.parent.mkdir(parents=True)
@@ -90,14 +90,17 @@ class DeutschLiveRouteTests(SimpleTestCase):
                     with self.subTest(path=path):
                         response = self.client.get(path)
                         self.assertEqual(response.status_code, 200)
-                        self.assertEqual(response["Content-Type"], "text/html")
+                        self.assertEqual(response["Content-Type"], "text/html; charset=utf-8")
                         self.assertIn("no-store", response["Cache-Control"])
-                        self.assertEqual(b"".join(response.streaming_content), html)
+                        self.assertContains(response, '<div id="root"></div>')
+                        self.assertContains(response, '<link rel="canonical"')
+                        self.assertIn("X-Robots-Tag", response)
                         response.close()
+                get_response = self.client.get("/deutschlive/")
                 response = self.client.head("/deutschlive/")
                 self.assertEqual(response.status_code, 200)
-                self.assertEqual(response["Content-Length"], str(len(html)))
-                self.assertEqual(b"".join(response.streaming_content), b"")
+                self.assertEqual(response["Content-Length"], str(len(get_response.content)))
+                self.assertEqual(response.content, b"")
                 response.close()
 
     def test_missing_app_build_returns_404_for_spa_and_archive(self):

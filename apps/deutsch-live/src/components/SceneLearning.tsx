@@ -272,7 +272,7 @@ export default function SceneLearning({ user, onProgressSaved }: { user: Current
       </div>
 
       {isTopicReady && topic && (
-        <div className="scene-learning-path" aria-label={ui.sceneLearning.subtitle}>
+        <div className="scene-learning-path" role="group" aria-label={ui.sceneLearning.subtitle} tabIndex={0}>
           <span>{ui.sceneLearning.dialogTranslation}</span>
           <span>{ui.sceneLearning.phraseBank}</span>
           <span>{ui.sceneLearning.vocabulary}</span>

@@ -5,6 +5,7 @@ const headline = "Deutsch sprechen. Im Alltag ankommen.";
 const landingCopies = {
   de: require("../../../apps/deutsch-live/src/i18n/de.json").landing,
   ru: require("../../../apps/deutsch-live/src/i18n/ru.json").landing,
+  uk: require("../../../apps/deutsch-live/src/i18n/uk.json").landing,
 };
 
 test.beforeEach(async ({ page, context, baseURL }) => {
@@ -116,6 +117,7 @@ test.describe("mobile language selection stays within the screen", () => {
       await trigger.click();
       await expectOnscreen(russian);
       await expectOnscreen(page.getByRole("button", { name: "Deutsch", exact: true }));
+      await expectOnscreen(page.getByRole("button", { name: "Українська", exact: true }));
       await expect(menu).toHaveAttribute("aria-expanded", "false");
       expect(await page.evaluate(() => scrollY)).toBe(originalScroll);
       await page.keyboard.press("Escape");
@@ -143,6 +145,20 @@ test.describe("mobile language selection stays within the screen", () => {
       await expect(page.locator("html")).toHaveAttribute("lang", "ru");
       await expectOnscreen(russianTrigger);
       await russianTrigger.click();
+      const ukrainian = page.getByRole("button", { name: "Українська", exact: true });
+      await expectOnscreen(ukrainian);
+      await ukrainian.click();
+      await expect(page.locator("html")).toHaveAttribute("lang", "uk");
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText(`${landingCopies.uk.headline} ${landingCopies.uk.headlineAccent}`);
+      await expect(page.locator(".dl-dialogue__translation")).toHaveText(landingCopies.uk.dialogueTranslation);
+      await expect(page.locator(".dl-dialogue__translation")).toHaveAttribute("lang", "uk");
+      const ukrainianTrigger = header.getByLabel("Змінити мову. Поточна мова: Українська", { exact: true });
+      await expect(ukrainianTrigger).toBeFocused();
+      expect(await page.evaluate(() => localStorage.getItem("deutsch-live-locale"))).toBe("uk");
+      await page.reload();
+      await expect(page.locator("html")).toHaveAttribute("lang", "uk");
+      await expectOnscreen(ukrainianTrigger);
+      await ukrainianTrigger.click();
       const german = page.getByRole("button", { name: "Deutsch", exact: true });
       await expectOnscreen(german);
       await german.click();
@@ -220,7 +236,7 @@ test("the landing fits narrow phones through wide desktop screens", async ({ pag
   }
 });
 
-for (const locale of ["de", "ru"]) {
+for (const locale of ["de", "ru", "uk"]) {
   test(`the cold ${locale} accessibility tree includes offscreen learning content and closed FAQ controls`, async ({ context }) => {
     await context.addInitScript(language => localStorage.setItem("deutsch-live-locale", language), locale);
     const coldPage = await context.newPage();
@@ -270,7 +286,8 @@ for (const locale of ["de", "ru"]) {
 
     for (const width of [320, 390, 768]) {
       await page.setViewportSize({ width, height: 900 });
-      const problems = await page.locator("main").evaluate(root => {
+      // Wait for the resized native details and SVG bounds to settle.
+      const layoutProblems = () => page.locator("main").evaluate(root => {
         const issues = [], tolerance = 2;
         const visible = element => {
           const box = element.getBoundingClientRect(), style = getComputedStyle(element);
@@ -280,7 +297,7 @@ for (const locale of ["de", "ru"]) {
           if (!visible(element)) continue;
           const box = element.getBoundingClientRect();
           if (box.left < -tolerance || box.right > innerWidth + tolerance) issues.push(`${element.tagName}: extends outside viewport`);
-          if (!(element instanceof SVGElement) && element.scrollWidth > element.clientWidth + tolerance) issues.push(`${element.tagName}: content overflows its box`);
+          if (!(element instanceof SVGElement) && element.scrollWidth > element.clientWidth + tolerance) issues.push(`${element.tagName}: content overflows its box (${element.textContent.trim().slice(0, 60)})`);
         }
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
         while (walker.nextNode()) {
@@ -294,8 +311,8 @@ for (const locale of ["de", "ru"]) {
         }
         return [...new Set(issues)];
       });
-      expect(problems, `${locale}, 200% text at ${width}px`).toEqual([]);
-      const bakeryTitle = page.getByRole("heading", { level: 3, name: locale === "de" ? "In der Bäckerei" : "В пекарне", exact: true });
+      await expect.poll(layoutProblems, { message: `${locale}, 200% text at ${width}px` }).toEqual([]);
+      const bakeryTitle = page.getByRole("heading", { level: 3, name: landingCopies[locale].bakeryTitle, exact: true });
       const titleLines = await bakeryTitle.evaluate(element => element.getBoundingClientRect().height / parseFloat(getComputedStyle(element).lineHeight));
       expect(titleLines, `Bakery heading is squeezed at ${width}px`).toBeLessThanOrEqual(3.05);
       for (const control of await page.locator("main a,main summary").all()) {

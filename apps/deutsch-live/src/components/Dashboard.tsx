@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { BarChart3, BookOpenCheck, Download, Flame, Lightbulb, Lock, PenLine, RotateCcw, Route, Settings, Sparkles, Target, Trash2, Trophy } from "lucide-react";
 import { clearLearningProgress, exportUserData, fetchDashboard, updateSettings, type CurrentUser, type DashboardData, type UserSettings } from "../api";
-import { setLocale, ui, type Locale } from "../i18n";
+import { availableLocales, isLocale, languageNames, setLocale, ui } from "../i18n";
 import { EmptyState, Panel, PanelForm, SkeletonBlock, SkeletonPanel, SkeletonStatGrid, SurfaceItem } from "./UiPrimitives";
 
 type DashboardProps = {
@@ -94,8 +94,8 @@ function AccountDashboard({ user, refreshToken, onSettingsSaved }: Omit<Dashboar
       dirty.current = false;
       setSettings(response.settings);
       onSettingsSaved?.(response.settings);
-      if (response.settings.interfaceLanguage === "ru" || response.settings.interfaceLanguage === "de") {
-        setLocale(response.settings.interfaceLanguage as Locale);
+      if (isLocale(response.settings.interfaceLanguage)) {
+        setLocale(response.settings.interfaceLanguage);
       }
       setMessage(ui.dashboard.settingsSaved);
     });
@@ -245,8 +245,7 @@ function AccountDashboard({ user, refreshToken, onSettingsSaved }: Omit<Dashboar
 
           <label className="mt-4 block text-sm font-bold" htmlFor="interface-language">{ui.dashboard.interfaceLanguage}</label>
           <select className="mt-2 w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 text-slate-950" id="interface-language" onChange={(event) => editSettings({ ...settings, interfaceLanguage: event.target.value })} value={settings.interfaceLanguage}>
-            <option value="ru">Русский</option>
-            <option value="de">Deutsch</option>
+            {availableLocales.map(locale => <option key={locale} value={locale} lang={locale}>{languageNames[locale]}</option>)}
           </select>
 
           <label className="mt-4 block text-sm font-bold" htmlFor="explanation-language">{ui.dashboard.explanationLanguage}</label>

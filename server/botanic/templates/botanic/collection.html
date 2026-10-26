@@ -9,7 +9,7 @@
     <p>{% if tab == 'watering' %}Für deinen persönlichen Gießplan anmelden.{% else %}Für deine persönliche Pflanzensammlung anmelden.{% endif %}</p>
     <div class="empty-actions">
       <a class="button button--primary" href="{{ login_url }}">{% botanic_icon 'user' %}Anmelden</a>
-      <a class="button button--secondary" href="{% url 'pages:register' %}">Konto erstellen</a>
+      <a class="button button--secondary" href="{{ account_register_url }}">Konto erstellen</a>
     </div>
   </div>
 {% else %}

@@ -5,6 +5,16 @@ const MAX_SUBJECTS = 20;
 const DECIMAL_PATTERN = /^[1-6](?:[,.]\d{1,2})?$/;
 const GRADE_STEP = 0.1;
 
+// The calculator remains available to guests; the account belongs to all demos.
+fetch("/api/session/status/", { credentials: "same-origin", cache: "no-store" })
+  .then(response => response.ok ? response.json() : null)
+  .then(session => {
+    if (!session?.authenticated) return;
+    document.querySelectorAll("[data-account-guest]").forEach(link => { link.hidden = true; });
+    document.querySelectorAll("[data-account-member]").forEach(link => { link.hidden = false; });
+  })
+  .catch(() => {});
+
 const elements = {
   form: document.querySelector("#gradeForm"),
   stepIndicator: document.querySelector("#stepIndicator"),

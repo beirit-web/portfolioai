@@ -108,6 +108,15 @@
   text-decoration: none;
 }
 
+/* Long account names must leave room for navigation at tablet widths and zoom. */
+.app-shell .app-nav__actions .app-nav__account-button {
+  max-width: clamp(6rem, 18vw, 14rem);
+}
+
+.app-shell .app-nav__actions .app-nav__account-button span {
+  white-space: nowrap;
+}
+
 .app-shell .mobile-menu.is-visible {
   max-height: min(34rem, calc(100dvh - 8rem));
 }

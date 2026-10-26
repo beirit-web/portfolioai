@@ -527,6 +527,8 @@ class SeoSignalTests(TestCase):
 
     @override_settings(SITE_URL="https://portfolio.example.invalid", LOGIN_REQUIRED=False)
     def test_sitemap_xml_lists_public_pages_under_portfolio_domain(self):
+        from config.deutschlive_seo import ROUTES, app_path
+
         response = self.client.get(reverse("pages:sitemap_xml"))
 
         self.assertEqual(response.status_code, 200)
@@ -539,6 +541,13 @@ class SeoSignalTests(TestCase):
             response,
             "<loc>https://portfolio.example.invalid/dolmetscher/</loc>",
         )
+        for path, route in ROUTES.items():
+            location = f"<loc>https://portfolio.example.invalid{app_path(path)}</loc>"
+            with self.subTest(deutschlive_path=path):
+                if route["index"]:
+                    self.assertContains(response, location)
+                else:
+                    self.assertNotContains(response, location)
 
     @override_settings(SITE_URL="https://portfolio.example.invalid", LOGIN_REQUIRED=False)
     def test_homepage_exposes_portfolio_schema_without_business_or_faq_claims(self):

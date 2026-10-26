@@ -20,7 +20,7 @@
   <main class="backstube-account-page">
     <div class="login-layout">
     <aside class="login-intro" aria-labelledby="login-intro-title">
-      <span class="login-eyebrow">BEIRIT WEB</span>
+      <span class="login-eyebrow">{{ account_project.name|default:"BEIRIT WEB" }}</span>
       <h2 id="login-intro-title">{% account_text "Willkommen zurück." %}</h2>
       <p>{% account_text "Melden Sie sich an, um Ihr Profil und Ihre gespeicherten Inhalte zu öffnen." %}</p>
       <img class="login-illustration" src="{% static 'images/account-access.svg' %}" alt="" width="320" height="264" aria-hidden="true" />
@@ -108,12 +108,13 @@
         <form method="post" class="form" aria-label="{% account_text "Anderes Konto anmelden" %}">
           {% csrf_token %}
           <input type="hidden" name="action" value="cancel_local_activation" />
+          {% if login_next %}<input type="hidden" name="next" value="{{ login_next }}" />{% endif %}
           <button type="submit" class="btn-ghost">{% account_text "Anderes Konto anmelden" %}</button>
         </form>
       {% endif %}
       <div class="template-actions login-actions" aria-label="{% account_text "Weitere Aktionen" %}">
-        <a class="btn-ghost cta-highlight" href="{% url 'password_reset' %}">{% include "partials/login_icon.html" with name="key" %}{% account_text "Passwort zurücksetzen" %}</a>
-        <a class="btn-ghost" href="{% url 'pages:home' %}">{% include "partials/login_icon.html" with name="back" %}{% account_text "Abbrechen" %}</a>
+        <a class="btn-ghost cta-highlight" href="{{ account_password_reset_url }}">{% include "partials/login_icon.html" with name="key" %}{% account_text "Passwort zurücksetzen" %}</a>
+        <a class="btn-ghost" href="{{ account_home_url }}">{% include "partials/login_icon.html" with name="back" %}{% account_text "Abbrechen" %}</a>
       </div>
       <div class="login-register">
         <span>{% account_text "Noch kein Konto?" %}</span>

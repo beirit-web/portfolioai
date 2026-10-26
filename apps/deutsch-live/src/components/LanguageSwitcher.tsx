@@ -10,16 +10,19 @@ type LanguageSwitcherProps = {
 
 const languageFlagClasses: Record<Locale, string> = {
   de: "language-switcher__flag--de",
-  ru: "language-switcher__flag--ru"
+  ru: "language-switcher__flag--ru",
+  uk: "language-switcher__flag--uk"
 };
 
 export default function LanguageSwitcher({ compact = false, locale, onLocaleChange }: LanguageSwitcherProps) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
   const currentLanguage = languageNames[locale];
-  const labels = locale === "ru"
-    ? { change: "Изменить язык", current: "Текущий язык" }
-    : { change: "Sprache wechseln", current: "Aktuell" };
+  const labels = {
+    ru: { change: "Изменить язык", current: "Текущий язык" },
+    de: { change: "Sprache wechseln", current: "Aktuell" },
+    uk: { change: "Змінити мову", current: "Поточна мова" }
+  }[locale];
 
   useEffect(() => {
     function closeOnOutsidePress(event: PointerEvent) {

@@ -47,9 +47,10 @@
       </li>
       <li><a href="{% url 'storefront:catalog' %}?sort=leadTime" {% if request.resolver_match.url_name == 'catalog' and category == 'all' and not query and sort == 'leadTime' %}aria-current="page"{% endif %}>Kürzester Vorlauf</a></li>
       <li><a href="{% url 'storefront:orders' %}" {% if tab == 'orders' %}aria-current="page"{% endif %}>Meine Anfragen</a></li>
-      <li><a href="{% if request.user.is_authenticated %}{% url 'pages:profile' %}{% else %}{{ login_url }}{% endif %}">{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}</a></li>
+      <li><a href="{% if request.user.is_authenticated %}{{ account_profile_url }}{% else %}{{ login_url }}{% endif %}">{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}</a></li>
       {% if not request.user.is_authenticated %}
-      <li><a href="{% url 'pages:register' %}">Registrieren</a></li>
+      <li><a href="{{ account_register_url }}">Registrieren</a></li>
+      <li><a href="{{ account_password_reset_url }}">Passwort vergessen?</a></li>
       {% endif %}
       <li><a href="{% url 'storefront:cart' %}" {% if tab == 'cart' %}aria-current="page"{% endif %}>Warenkorb ({{ cart_count }})</a></li>
       <li><a href="{% url 'storefront:checkout' %}" {% if tab == 'checkout' %}aria-current="page"{% endif %}>Bestellanfrage</a></li>
@@ -60,7 +61,7 @@
   </nav>
   <header class="shop-header">
     {% include 'shop/brand.html' with brand_heading=True only %}
-    <div class="header-actions"><a class="icon-button" href="{% if request.user.is_authenticated %}{% url 'pages:profile' %}{% else %}{{ login_url }}{% endif %}" title="{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}" aria-label="{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}">{% shop_icon 'user' %}</a><a class="cart-link" href="{% url 'storefront:cart' %}" aria-label="Warenkorb, {{ cart_count }} Artikel">{% shop_icon 'bag' %}<span class="cart-count">{{ cart_count }}</span></a></div>
+    <div class="header-actions"><a class="icon-button" href="{% if request.user.is_authenticated %}{{ account_profile_url }}{% else %}{{ login_url }}{% endif %}" title="{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}" aria-label="{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}">{% shop_icon 'user' %}</a><a class="cart-link" href="{% url 'storefront:cart' %}" aria-label="Warenkorb, {{ cart_count }} Artikel">{% shop_icon 'bag' %}<span class="cart-count">{{ cart_count }}</span></a></div>
   </header>
   <nav class="shop-nav" aria-label="Shop"><div><a href="{% url 'storefront:catalog' %}" {% if tab == 'catalog' %}aria-current="page"{% endif %}>Sortiment</a><a href="{% url 'storefront:cart' %}" {% if tab == 'cart' %}aria-current="page"{% endif %}>Warenkorb{% if cart_count %}<small>{{ cart_count }}</small>{% endif %}</a><a href="{% url 'storefront:orders' %}" {% if tab == 'orders' %}aria-current="page"{% endif %}>Meine Anfragen</a></div></nav>
   <main id="main" tabindex="-1">

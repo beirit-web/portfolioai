@@ -854,7 +854,7 @@ def security_admin_summary(request):
 @json_input(
     level=text(16, choices=(value for value, _label in UserProfile.LEVEL_CHOICES)),
     mainGoal=text(160), preferredTopic=text(64), saveProgress=Field(kind=bool),
-    interfaceLanguage=text(8, choices=(value for value, _label in UserProfile.LANGUAGE_CHOICES)),
+    interfaceLanguage=text(8, choices=(value for value, _label in UserProfile.INTERFACE_LANGUAGE_CHOICES)),
     explanationLanguage=text(8, choices=(value for value, _label in UserProfile.LANGUAGE_CHOICES)),
 )
 def update_settings(request):

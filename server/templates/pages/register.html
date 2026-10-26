@@ -11,7 +11,7 @@
   <main class="backstube-account-page">
     <div class="login-layout register-layout">
     <aside class="login-intro register-intro" aria-labelledby="register-intro-title">
-      <span class="login-eyebrow">BEIRIT WEB</span>
+      <span class="login-eyebrow">{{ account_project.name|default:"BEIRIT WEB" }}</span>
       <h2 id="register-intro-title">{% account_text "Ihr persönlicher Bereich." %}</h2>
       <p>{% account_text "Erstellen Sie Ihr Konto. Ein Profilbild können Sie jetzt hinzufügen oder später ergänzen." %}</p>
       <img class="login-illustration" src="{% static 'images/account-access.svg' %}" alt="" width="320" height="264" aria-hidden="true" />

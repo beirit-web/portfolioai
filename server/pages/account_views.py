@@ -1,6 +1,7 @@
 """Shared password recovery forms for all portfolio accounts."""
 
 from .account_i18n import account_text_lazy as account_copy
+from .account_projects import project_account_context, recovery_login_url
 
 from datetime import datetime, timezone as datetime_timezone
 from urllib.parse import urlencode, urlsplit
@@ -29,11 +30,7 @@ def password_reset_return_to(request, *, from_session=True):
     candidate = request.POST.get("next") or request.GET.get("next")
     if not candidate and from_session:
         candidate = request.session.get(RETURN_SESSION_KEY)
-    # Recovery ends at a login screen; accepting only these relative routes also
-    # rules out absolute, protocol-relative and encoded redirect destinations.
-    if candidate in {"/wohnungssuche/login", "/wohnungssuche/login/"}:
-        return "/wohnungssuche/login"
-    return reverse("pages:login")
+    return recovery_login_url(candidate)
 
 
 def password_reset_request_url(login_url):
@@ -76,6 +73,7 @@ class AccountContextMixin:
         context["account_login_url"] = password_reset_return_to(
             self.request, from_session=not isinstance(self, AccountPasswordResetView),
         )
+        context.update(project_account_context(self.request, target=context["account_login_url"]))
         context["account_password_reset_url"] = password_reset_request_url(context["account_login_url"])
         return context
 
@@ -105,6 +103,7 @@ class AccountPasswordResetView(AccountContextMixin, auth_views.PasswordResetView
             email_template_name=settings.PASSWORD_RESET_EMAIL_TEMPLATE_NAME,
             subject_template_name=settings.PASSWORD_RESET_SUBJECT_TEMPLATE_NAME,
             request=self.request,
+            extra_email_context={"account_reset_return_to": self.request.session[RETURN_SESSION_KEY]},
         )
         return HttpResponseRedirect(self.get_success_url())
 
@@ -152,6 +151,8 @@ class AccountPasswordResetConfirmView(AccountContextMixin, auth_views.PasswordRe
         return url
 
     def dispatch(self, request, *args, **kwargs):
+        if "next" in request.GET:
+            request.session[RETURN_SESSION_KEY] = password_reset_return_to(request, from_session=False)
         self.local_reset_challenge = None
         challenge = pending_local_password_reset(request)
         if (

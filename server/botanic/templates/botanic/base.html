@@ -40,9 +40,16 @@
     <a class="brand" href="{% url 'botanic:index' %}"><span class="brand-mark">{% botanic_icon 'sprout' %}</span><span class="brand-name">ENBT <span>Botanic</span></span></a>
     <div class="account-actions">
       {% if request.user.is_authenticated %}
-        <a class="account-link" href="{% url 'pages:profile' %}" title="Mein Konto: {{ request.user.username }}">{% botanic_icon 'user' %}<span>{{ request.user.username }}</span></a>
+        <a class="account-link" href="{{ account_profile_url }}" title="Mein Konto: {{ request.user.username }}">{% botanic_icon 'user' %}<span>{{ request.user.username }}</span></a>
       {% else %}
         <a class="button button--quiet" href="{{ login_url }}">{% botanic_icon 'user' %}<span>Anmelden</span></a>
+        <details class="project-account-menu">
+          <summary>Kontooptionen</summary>
+          <div>
+            <a href="{{ account_register_url }}">Registrieren</a>
+            <a href="{{ account_password_reset_url }}">Passwort vergessen?</a>
+          </div>
+        </details>
       {% endif %}
     </div>
   </header>

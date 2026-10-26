@@ -98,8 +98,8 @@
       "_TechnologyTags-kJ_6SckW.js"
     ]
   },
-  "_mountSiteApp-DWhVoQ71.js": {
-    "file": "assets/mountSiteApp-DWhVoQ71.js",
+  "_mountSiteApp-O3PxoQ9I.js": {
+    "file": "assets/mountSiteApp-O3PxoQ9I.js",
     "name": "mountSiteApp",
     "imports": [
       "_preact-vendor-C31AVxSB.js",
@@ -118,8 +118,8 @@
     "file": "assets/three-vendor-BJgQQUs9.js",
     "name": "three-vendor"
   },
-  "_useI18n-CmRIb57a.js": {
-    "file": "assets/useI18n-CmRIb57a.js",
+  "_useI18n-B-URQ40V.js": {
+    "file": "assets/useI18n-B-URQ40V.js",
     "name": "useI18n",
     "imports": [
       "_preact-vendor-C31AVxSB.js",
@@ -127,7 +127,7 @@
       "_cardActivation-gYj4Slzq.js",
       "_database-BkCplw0v.js",
       "_index-0B-st6gY.js",
-      "_mountSiteApp-DWhVoQ71.js"
+      "_mountSiteApp-O3PxoQ9I.js"
     ]
   },
   "src/about-page.css": {
@@ -149,14 +149,14 @@
     ]
   },
   "src/about.jsx": {
-    "file": "assets/about-Cb8pLHdh.js",
+    "file": "assets/about-DXTVwSq-.js",
     "name": "about",
     "src": "src/about.jsx",
     "isEntry": true,
     "imports": [
       "_preact-vendor-C31AVxSB.js",
       "src/components/about/AboutPage.jsx",
-      "_mountSiteApp-DWhVoQ71.js",
+      "_mountSiteApp-O3PxoQ9I.js",
       "_preload-helper-DAqlcvze.js",
       "_cardActivation-gYj4Slzq.js",
       "_circle-check-BvGjWRvM.js",
@@ -254,7 +254,7 @@
     ]
   },
   "src/components/projects/PortfolioProjectPage.jsx": {
-    "file": "assets/PortfolioProjectPage-BvwsJQPp.js",
+    "file": "assets/PortfolioProjectPage-DsnRPDtU.js",
     "name": "PortfolioProjectPage",
     "src": "src/components/projects/PortfolioProjectPage.jsx",
     "isDynamicEntry": true,
@@ -263,16 +263,16 @@
       "_cardActivation-gYj4Slzq.js",
       "_languageServicesCaseStudy-BFlFjibs.js",
       "_TechnologyTags-kJ_6SckW.js",
-      "_useI18n-CmRIb57a.js",
+      "_useI18n-B-URQ40V.js",
       "_circle-check-BvGjWRvM.js",
       "_database-BkCplw0v.js",
       "_index-0B-st6gY.js",
       "_preload-helper-DAqlcvze.js",
-      "_mountSiteApp-DWhVoQ71.js"
+      "_mountSiteApp-O3PxoQ9I.js"
     ]
   },
   "src/components/projects/ProjectsOverviewPage.jsx": {
-    "file": "assets/ProjectsOverviewPage-DJsf3eRt.js",
+    "file": "assets/ProjectsOverviewPage-CJWJcODI.js",
     "name": "ProjectsOverviewPage",
     "src": "src/components/projects/ProjectsOverviewPage.jsx",
     "isDynamicEntry": true,
@@ -280,7 +280,7 @@
       "_preact-vendor-C31AVxSB.js",
       "_TechnologyTags-kJ_6SckW.js",
       "_TechnicalLabel-DWJVOxmP.js",
-      "_mountSiteApp-DWhVoQ71.js",
+      "_mountSiteApp-O3PxoQ9I.js",
       "_cardActivation-gYj4Slzq.js",
       "_file-text-CHcnSGj6.js",
       "_arrow-right-CeSEo-qc.js"
@@ -375,16 +375,16 @@
     "isDynamicEntry": true
   },
   "src/main.jsx": {
-    "file": "assets/main-Dw9BA2Wu.js",
+    "file": "assets/main-TUMbgByf.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
     "imports": [
       "_preload-helper-DAqlcvze.js",
       "_preact-vendor-C31AVxSB.js",
-      "_useI18n-CmRIb57a.js",
+      "_useI18n-B-URQ40V.js",
       "_cardActivation-gYj4Slzq.js",
-      "_mountSiteApp-DWhVoQ71.js",
+      "_mountSiteApp-O3PxoQ9I.js",
       "_TechnologyTags-kJ_6SckW.js",
       "_languageServicesCaseStudy-BFlFjibs.js",
       "_TechnicalLabel-DWJVOxmP.js",
@@ -434,7 +434,7 @@
     ]
   },
   "src/project-detail.js": {
-    "file": "assets/project-detail-CRkAjYBQ.js",
+    "file": "assets/project-detail-CWu6C-EP.js",
     "name": "project-detail",
     "src": "src/project-detail.js",
     "isEntry": true,
@@ -447,15 +447,15 @@
     ]
   },
   "src/project-detail.jsx": {
-    "file": "assets/project-detail-app-DYQs4NUG.js",
+    "file": "assets/project-detail-app-mM_d-3R9.js",
     "name": "project-detail-app",
     "src": "src/project-detail.jsx",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
       "_preact-vendor-C31AVxSB.js",
-      "_useI18n-CmRIb57a.js",
-      "_mountSiteApp-DWhVoQ71.js",
+      "_useI18n-B-URQ40V.js",
+      "_mountSiteApp-O3PxoQ9I.js",
       "_TechnologyTags-kJ_6SckW.js",
       "_cardActivation-gYj4Slzq.js",
       "src/components/projects/PortfolioProjectPage.jsx",
@@ -476,7 +476,7 @@
     ]
   },
   "src/projects.js": {
-    "file": "assets/projects-Cv6rpjYv.js",
+    "file": "assets/projects-CBrfKns8.js",
     "name": "projects",
     "src": "src/projects.js",
     "isEntry": true,
@@ -489,7 +489,7 @@
     ]
   },
   "src/projects.jsx": {
-    "file": "assets/projects-app-Rp_x-grv.js",
+    "file": "assets/projects-app-B2HebqG_.js",
     "name": "projects-app",
     "src": "src/projects.jsx",
     "isEntry": true,
@@ -498,7 +498,7 @@
       "_preact-vendor-C31AVxSB.js",
       "_preload-helper-DAqlcvze.js",
       "_cardActivation-gYj4Slzq.js",
-      "_mountSiteApp-DWhVoQ71.js",
+      "_mountSiteApp-O3PxoQ9I.js",
       "_TechnologyTags-kJ_6SckW.js",
       "src/components/projects/ProjectsOverviewPage.jsx",
       "_languageServicesCaseStudy-BFlFjibs.js",

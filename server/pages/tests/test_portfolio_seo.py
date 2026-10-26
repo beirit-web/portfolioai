@@ -220,6 +220,13 @@ class PortfolioSeoTests(TestCase):
             f"{self.site_url}/ueber-mich",
             f"{self.site_url}/kontakt",
             f"{self.site_url}/projekte/sichtbare-fallstudie",
+            *[
+                f"{self.site_url}/deutschlive{path}"
+                for path in (
+                    "/", "/learn", "/quiz", "/writing", "/manual",
+                    "/impressum", "/datenschutz", "/nutzungsbedingungen", "/kontakt",
+                )
+            ],
         ])
         self.assertEqual(len(locations), len(set(locations)))
         detail = next(entry for entry in entries if entry.findtext("s:loc", namespaces=namespace).endswith("/sichtbare-fallstudie"))

@@ -2,6 +2,7 @@ const { test: base, expect } = require("@playwright/test");
 const { blockExternalRequests } = require("./helpers/network.cjs");
 const fs = require("node:fs");
 const { wavFile } = require("./helpers/audio.cjs");
+const { gate } = require("./helpers/async.cjs");
 
 const test = base.extend({ recordingLocale: ["de", { option: true }] });
 
@@ -21,6 +22,33 @@ async function openPlayer(page) {
   await expect(page.getByRole("heading", { level: 2, name: "Meine Aufnahmen", exact: true })).toBeVisible();
   await expect(page.locator("#recording-files")).toBeEnabled();
 }
+
+test("the recording layout stays visible while account loading keeps guest files private", async ({ page }) => {
+  await openPlayer(page);
+  await page.locator("#recording-files").setInputFiles(wavFile("Guest-only.wav"));
+  await expect(page.locator(".recording-library__list li")).toHaveCount(1);
+  const account = gate();
+  await page.route("**/deutschlive/api/auth/me/", async route => {
+    await account.ready;
+    await route.fulfill({ json: { user: { id: 803, username: "Beispielkonto", settings: { interfaceLanguage: "de" } } } });
+  });
+  try {
+    await page.goto("/deutschlive/recordings-archiv");
+    const heading = page.getByRole("heading", { level: 2, name: "Meine Aufnahmen", exact: true });
+    await expect(heading).toBeVisible();
+    const before = await heading.boundingBox();
+    await expect(page.locator("#recording-files")).toBeDisabled();
+    await expect(page.locator(".recording-library__list li")).toHaveCount(0);
+    await expect(page.locator("audio")).toHaveCount(0);
+    account.release();
+    await expect(page.locator("#recording-files")).toBeEnabled();
+    await expect(page.locator(".recording-library__list li")).toHaveCount(0);
+    const after = await heading.boundingBox();
+    expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(1);
+  } finally {
+    account.release();
+  }
+});
 
 test("local audio persists, plays, changes speed and downloads without any upload", async ({ page }, testInfo) => {
   const writes = [];

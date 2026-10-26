@@ -34,6 +34,8 @@ from django.utils import timezone
 from django.utils.cache import patch_vary_headers
 from django.utils.translation import override
 
+from config.deutschlive_seo import ROUTE_DATA_PATH, ROUTES as DEUTSCHLIVE_ROUTES, app_path as deutschlive_app_path
+
 from lessons.models import UserProfile as LearningUserProfile
 from pages.modules.mail import send_notification_email
 from pages.modules.tokens import email_verification_token_generator
@@ -527,6 +529,16 @@ def build_sitemap_entries() -> list[dict[str, str]]:
                 "lastmod": lastmod,
             }
         )
+    deutschlive_lastmod = date.fromtimestamp(ROUTE_DATA_PATH.stat().st_mtime).isoformat()
+    entries.extend(
+        {
+            "loc": build_absolute_site_url(deutschlive_app_path(path)),
+            "changefreq": "monthly",
+            "priority": "0.6",
+            "lastmod": deutschlive_lastmod,
+        }
+        for path, route in DEUTSCHLIVE_ROUTES.items() if route["index"]
+    )
     for project in Project.objects.filter(published=True).exclude(
         slug__in=INTEGRATED_PROJECT_SLUGS
     ).order_by("sort_order", "title"):
@@ -993,7 +1005,12 @@ def verify_email(request, uidb64, token):
         request,
         account_copy("Ihre E-Mail-Adresse wurde bestätigt. Sie sind jetzt eingeloggt."),
     )
-    return redirect(next_url)
+    response = redirect(next_url)
+    if urlsplit(next_url).path.startswith("/deutschlive/"):
+        from lessons.views import _set_auth_token
+
+        _set_auth_token(response, user)
+    return response
 
 
 def build_session_response_payload(request, authenticated: bool, reason: str = "") -> dict:
@@ -1063,7 +1080,7 @@ def account_login_redirect(request, user):
         query["accountLogin"] = "1"
         target = urlunsplit(parsed._replace(query=urlencode(query)))
     response = redirect(target)
-    if local_activation_enabled(request) and urlsplit(target).path.startswith("/deutschlive/"):
+    if urlsplit(target).path.startswith("/deutschlive/"):
         from lessons.views import _set_auth_token
 
         _set_auth_token(response, user)
@@ -1126,8 +1143,9 @@ def login_view(request):
 
 
 def logout_view(request):
+    target = get_safe_login_redirect(request)
     logout(request)
-    return redirect("pages:home")
+    return redirect(target)
 
 
 @require_GET
@@ -1382,12 +1400,12 @@ def profile_page(request):
             profile.image_mime = ""
             profile.image_name = ""
             profile.save(update_fields=["image_data", "image_mime", "image_name"])
-            return redirect("pages:profile")
+            return redirect(request.get_full_path())
         form = UserAccountForm(request.POST, instance=request.user, prefix="account")
         if form.is_valid():
             form.save()
             messages.success(request, account_copy("Ihre Kontodaten wurden aktualisiert."))
-            return redirect("pages:profile")
+            return redirect(request.get_full_path())
     return render(request, "pages/profile.html", {
         **build_base_context(request), "profile": profile, "account_form": form,
     })

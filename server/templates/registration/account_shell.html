@@ -1,5 +1,8 @@
 {% extends "base_public.html" %}
 {% block color_scheme %}light dark{% endblock %}
+{% block topnav %}
+  {% include "registration/project_account_nav.html" %}
+{% endblock %}
 {% block base_styles %}
   <link rel="stylesheet" href="{% asset_url 'css/account-pages.min.css' %}">
 {% endblock %}

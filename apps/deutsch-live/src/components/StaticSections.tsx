@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchPageContent, type PageContent } from "../api";
-import { ui } from "../i18n";
+import { getLocale, ui, type Locale } from "../i18n";
 
 
 export function DemoSections() {
@@ -102,7 +102,7 @@ export function BakeryModule() {
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <InfoCard title={ui.manual.phraseLabel} heading="Ich hätte gern …" text={ui.manual.phraseText} />
-            <InfoCard title={ui.sceneLearning.pronunciation} heading={ui.manual.pronunciationExample} text={ui.manual.pronunciationExampleText} purple />
+            <InfoCard title={ui.sceneLearning.pronunciation} heading={ui.manual.pronunciationExample} headingLang={getLocale()} text={ui.manual.pronunciationExampleText} purple />
           </div>
         </div>
 
@@ -111,14 +111,14 @@ export function BakeryModule() {
             {ui.manual.exerciseEyebrow}
           </p>
           <h2 className="text-3xl font-black">{ui.manual.exerciseTitle}</h2>
-          <div className="mt-5 space-y-3">
+          <div className="mt-5 space-y-3" lang="de">
             {["🥐 zwei Brötchen", "☕ einen Kaffee", "🍰 ein Stück Kuchen", "🥖 ein Brot"].map((item) => (
               <p className="pill" key={item}>{item}</p>
             ))}
           </div>
           <div className="mt-6 rounded-xl bg-cyan-500/15 p-3 sm:rounded-3xl sm:p-5">
             <p className="font-bold">{ui.manual.templateLabel}</p>
-            <p className="mt-2 text-xl font-black">Ich hätte gern ________.</p>
+            <p className="mt-2 text-xl font-black" lang="de">Ich hätte gern ________.</p>
             <p className="mt-2 text-slate-600 dark:text-slate-300">{ui.manual.templateTask}</p>
           </div>
         </div>
@@ -150,19 +150,19 @@ function DialogLine({ speaker, de, ru, accent = false }: { speaker: string; de: 
   return (
     <div className={`rounded-xl p-3 sm:rounded-3xl sm:p-5 ${accent ? "bg-cyan-500/15" : "bg-white/75 dark:bg-slate-900/70"}`}>
       <p className="text-sm font-semibold text-slate-500">{speaker}</p>
-      <p className="mt-1 text-xl font-bold">🥨 {de}</p>
-      <p className="mt-2 text-slate-600 dark:text-slate-300">🪆 {ru}</p>
+      <p className="mt-1 text-xl font-bold" lang="de">🥨 {de}</p>
+      <p className="mt-2 text-slate-600 dark:text-slate-300" lang={getLocale()}>🪆 {ru}</p>
     </div>
   );
 }
 
-function InfoCard({ title, heading, text, purple = false }: { title: string; heading: string; text: string; purple?: boolean }) {
+function InfoCard({ title, heading, headingLang = "de", text, purple = false }: { title: string; heading: string; headingLang?: Locale; text: string; purple?: boolean }) {
   return (
     <div className="rounded-xl bg-white/75 p-3 sm:rounded-3xl sm:p-5 dark:bg-slate-900/70">
       <p className={`text-sm font-bold ${purple ? "text-purple-700 dark:text-purple-300" : "text-cyan-700 dark:text-cyan-300"}`}>
         {title}
       </p>
-      <p className="mt-2 text-xl font-black">{heading}</p>
+      <p className="mt-2 text-xl font-black" lang={headingLang}>{heading}</p>
       <p className="mt-2 text-slate-600 dark:text-slate-300">{text}</p>
     </div>
   );

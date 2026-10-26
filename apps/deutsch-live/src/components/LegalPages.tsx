@@ -1,6 +1,6 @@
 import FeedbackForm from "./FeedbackForm";
 import type { ReactNode } from "react";
-import { ui } from "../i18n";
+import { getLocale, ui, type Locale } from "../i18n";
 
 const provider = (
   <>
@@ -33,10 +33,10 @@ export function DatenschutzPage() {
         und Dashboard-Empfehlungen speichern. Zweck ist die persönliche Lernübersicht und die Fortsetzung begonnener
         Übungen.
       </LegalBlock>
-      <LegalBlock title={ui.recordingsLegal.privacyTitle} paragraphs={ui.recordingsLegal.privacy} />
-      <LegalBlock title={ui.recordingsLegal.retentionTitle} paragraphs={ui.recordingsLegal.retention} />
-      <LegalBlock title={ui.recordingsLegal.accessTitle} paragraphs={ui.recordingsLegal.access} />
-      <LegalBlock title={ui.recordingsLegal.storageTitle}>
+      <LegalBlock lang={getLocale()} title={ui.recordingsLegal.privacyTitle} paragraphs={ui.recordingsLegal.privacy} />
+      <LegalBlock lang={getLocale()} title={ui.recordingsLegal.retentionTitle} paragraphs={ui.recordingsLegal.retention} />
+      <LegalBlock lang={getLocale()} title={ui.recordingsLegal.accessTitle} paragraphs={ui.recordingsLegal.access} />
+      <LegalBlock lang={getLocale()} title={ui.recordingsLegal.storageTitle}>
         {ui.recordingsLegal.storage}{" "}
         <a className="underline" href="https://www.gesetze-im-internet.de/ttdsg/__25.html" target="_blank" rel="noreferrer">§ 25 Abs. 2 Nr. 2 TDDDG</a>.
       </LegalBlock>
@@ -78,8 +78,8 @@ export function NutzungsbedingungenPage() {
         Nutzer sind für die sichere Verwendung ihrer Zugangsdaten verantwortlich. Premium-Funktionen können später ergänzt
         werden und werden vor Aktivierung gesondert beschrieben.
       </LegalBlock>
-      <LegalBlock title={ui.recordingsLegal.useTitle} paragraphs={ui.recordingsLegal.use} />
-      <LegalBlock title={ui.recordingsLegal.backupTitle} paragraphs={ui.recordingsLegal.backup} />
+      <LegalBlock lang={getLocale()} title={ui.recordingsLegal.useTitle} paragraphs={ui.recordingsLegal.use} />
+      <LegalBlock lang={getLocale()} title={ui.recordingsLegal.backupTitle} paragraphs={ui.recordingsLegal.backup} />
       <LegalBlock title="Lerninhalte und Verfügbarkeit">
         Lerninhalte werden sorgfältig erstellt, können aber Fehler enthalten und jederzeit angepasst werden. Ein Anspruch
         auf dauerhaft unveränderte Inhalte oder unterbrechungsfreie Verfügbarkeit besteht nicht.
@@ -123,14 +123,14 @@ export function KontaktPage() {
 
 function LegalShell({ eyebrow, title, children }: { eyebrow: string; title: string; children: ReactNode }) {
   return (
-    <article className="glass legal-page rounded-xl px-3 py-5 sm:rounded-[2rem] sm:p-8 lg:p-10">
+    <article lang="de" className="glass legal-page rounded-xl px-3 py-5 sm:rounded-[2rem] sm:p-8 lg:p-10">
       <p className="text-sm font-bold uppercase tracking-[0.24em] text-indigo-600 dark:text-indigo-300">
         Beirit Digital
       </p>
       <div className="mt-4 max-w-3xl">
         <p className="font-bold text-slate-600 dark:text-slate-300">{eyebrow}</p>
         <h2 className="mt-2 text-3xl font-black leading-tight text-slate-950 dark:text-white sm:text-5xl">{title}</h2>
-        <p className="mt-4 text-lg leading-8 text-slate-700 dark:text-slate-300">
+        <p lang="ru" className="mt-4 text-lg leading-8 text-slate-700 dark:text-slate-300">
           Живой немецкий через реальные ситуации
         </p>
       </div>
@@ -139,9 +139,9 @@ function LegalShell({ eyebrow, title, children }: { eyebrow: string; title: stri
   );
 }
 
-function LegalBlock({ title, children, paragraphs }: { title: string; children?: ReactNode; paragraphs?: string[] }) {
+function LegalBlock({ title, children, paragraphs, lang = "de" }: { title: string; children?: ReactNode; paragraphs?: string[]; lang?: Locale }) {
   return (
-    <section className="rounded-xl bg-white/75 p-4 shadow-sm shadow-slate-900/5 dark:bg-slate-900/70">
+    <section lang={lang} className="rounded-xl bg-white/75 p-4 shadow-sm shadow-slate-900/5 dark:bg-slate-900/70">
       <h3 className="text-lg font-black text-slate-950 dark:text-white">{title}</h3>
       {children && <p className="mt-3 leading-7 text-slate-700 dark:text-slate-300">{children}</p>}
       {paragraphs?.map((paragraph) => <p key={paragraph} className="mt-3 leading-7 text-slate-700 dark:text-slate-300">{paragraph}</p>)}

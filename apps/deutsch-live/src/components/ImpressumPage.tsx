@@ -27,7 +27,7 @@ const sections = [
 
 export default function ImpressumPage() {
   return (
-    <article className="glass legal-page rounded-xl px-3 py-5 sm:rounded-[2rem] sm:p-8 lg:p-10">
+    <article lang="de" className="glass legal-page rounded-xl px-3 py-5 sm:rounded-[2rem] sm:p-8 lg:p-10">
       <p className="text-sm font-bold uppercase tracking-[0.24em] text-indigo-600 dark:text-indigo-300">
         Beirit Digital
       </p>

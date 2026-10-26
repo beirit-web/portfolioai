@@ -55,11 +55,13 @@ def portfolio_page_metadata(path, absolute_url, project=None, project_slug=None)
 
 def login_page_metadata(request, absolute_url):
     from .account_i18n import account_text
+    from .account_projects import project_account_context
 
     public_form = request.method == "GET" and not request.GET.get("email", "").strip()
+    project = project_account_context(request).get("account_project")
     return {
-        "title": account_text("Anmelden | Beirit Digital"),
-        "description": account_text(
+        "title": f'{account_text("Anmelden")} | {project["name"]}' if project else account_text("Anmelden | Beirit Digital"),
+        "description": account_text("Melden Sie sich an, um Ihr Profil und Ihre gespeicherten Inhalte zu öffnen.") if project else account_text(
             "Melde dich bei Beirit Digital an, um deine persönlichen Projekte wie "
             "ENBT Botanic zu nutzen. Mit E-Mail und Passwort einloggen oder den Zugang wiederherstellen."
         ),

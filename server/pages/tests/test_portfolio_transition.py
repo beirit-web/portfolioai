@@ -32,7 +32,10 @@ class PortfolioTransitionTests(TestCase):
         self.assertNotIn("priceRows", config)
         self.assertFalse(any(key.lower().startswith("paypal") for key in config))
 
-    def test_home_server_shell_does_not_duplicate_hero_content(self):
+    @patch("pages.views.projects_presentation_catalog", return_value=None)
+    def test_home_fallback_shell_does_not_duplicate_hero_content(self, catalog):
+        # The normal homepage is prerendered; this shell is only the fallback
+        # when its presentation catalogue is unavailable.
         response = self.client.get(reverse("pages:home"))
         html = response.content.decode()
         root_markup = html.split('<div id="beirit-root">', 1)[1].split("<noscript>", 1)[0]

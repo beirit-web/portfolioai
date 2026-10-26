@@ -192,8 +192,8 @@ const CONFIGURED_API_BASE = normalizeApiBase(import.meta.env.VITE_API_BASE ?? ""
 const configuredPasswordResetUrl = String(import.meta.env.VITE_PASSWORD_RESET_URL ?? "").trim();
 export const PASSWORD_RESET_URL = configuredPasswordResetUrl.startsWith("/")
   && !configuredPasswordResetUrl.startsWith("//") && !/[\\\s]/.test(configuredPasswordResetUrl)
-  ? configuredPasswordResetUrl : "/auth/password_reset/";
-export const EMAIL_VERIFICATION_RESEND_URL = "/email-bestaetigung/";
+  ? configuredPasswordResetUrl : "/auth/password_reset/?next=%2Fdeutschlive%2Faccount";
+export const EMAIL_VERIFICATION_RESEND_URL = "/email-bestaetigung/?next=%2Fdeutschlive%2Faccount";
 
 function normalizeApiBase(value: string) {
   const trimmed = value.trim().replace(/\/+$/, "");

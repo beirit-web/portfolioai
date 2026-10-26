@@ -1,6 +1,7 @@
 """Custom template context processors for shared data."""
 
 from django.urls import reverse
+from pages.account_projects import project_account_context
 
 from pages.auth_session import (
     get_session_activity_throttle_seconds,
@@ -26,6 +27,7 @@ def auth_session_config(_request):
     )
 
     return {
+        **project_account_context(_request),
         "auth_session_js_config": {
             "isAuthenticated": bool(getattr(getattr(_request, "user", None), "is_authenticated", False)),
             "activityUrl": reverse("pages:session_activity"),

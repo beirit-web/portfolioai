@@ -1,0 +1,107 @@
+{
+  "defaultLocale": "ru",
+  "aliases": { "/handbuch": "/manual", "/feedback": "/kontakt" },
+  "routes": {
+    "/": {
+      "index": true,
+      "de": { "heading": "Deutsch lernen im Alltag", "title": "DeutschLive | Deutsch lernen mit Alltagsszenen", "description": "Lerne Deutsch für den Alltag: Dialoge in der Bäckerei, interaktive Szenen, Quiz und Schreibübungen mit russischen Erklärungen in DeutschLive." },
+      "ru": { "heading": "Немецкий для повседневной жизни", "title": "DeutschLive | Немецкий через повседневные ситуации", "description": "Учите немецкий для жизни в Германии: диалоги в пекарне, интерактивные ситуации, тесты и письменные упражнения с объяснениями на русском." },
+      "uk": {"heading": "Німецька для повсякденного життя", "title": "DeutschLive | Німецька через повсякденні ситуації", "description": "Вивчайте німецьку для життя в Німеччині: діалоги в пекарні, інтерактивні ситуації, тести та письмові вправи з українським інтерфейсом."}
+    },
+    "/learn": {
+      "index": true,
+      "de": { "heading": "Alltagsszenen", "title": "Deutsch mit Alltagsszenen lernen | DeutschLive", "description": "Übe deutsche Dialoge für die Bäckerei und andere Alltagssituationen. Entdecke Wörter, russische Erklärungen und interaktive Lernschritte." },
+      "ru": { "heading": "Повседневные ситуации", "title": "Немецкий в повседневных ситуациях | DeutschLive", "description": "Тренируйте немецкие диалоги для пекарни и других повседневных ситуаций: полезные слова, объяснения на русском и интерактивные задания." },
+      "uk": {"heading": "Повсякденні ситуації", "title": "Німецька в повсякденних ситуаціях | DeutschLive", "description": "Практикуйте німецькі діалоги для пекарні та інших повсякденних ситуацій. Вивчайте корисні слова, переклади та інтерактивні завдання."}
+    },
+    "/quiz": {
+      "index": true,
+      "de": { "heading": "Deutsch-Quiz", "title": "Deutsch-Quiz für Alltagssituationen | DeutschLive", "description": "Teste dein Deutsch mit Fragen zu Alltagssituationen. Wähle ein Thema und eine Schwierigkeit und erhalte Erklärungen zu deinen Antworten." },
+      "ru": { "heading": "Тест по немецкому", "title": "Тесты по немецкому для повседневной жизни | DeutschLive", "description": "Проверьте немецкий в заданиях о повседневной жизни. Выберите тему и сложность и получите объяснения к своим ответам." },
+      "uk": {"heading": "Тест із німецької", "title": "Тести з німецької для повсякдення | DeutschLive", "description": "Перевірте німецьку в завданнях про повсякденне життя. Виберіть тему та складність і отримайте пояснення до своїх відповідей."}
+    },
+    "/writing": {
+      "index": true,
+      "de": { "heading": "Schreibtraining", "title": "Schreiben auf Deutsch üben | DeutschLive", "description": "Übe kurze Texte auf Deutsch für Alltagssituationen. Bearbeite Schreibaufgaben und nutze die Rückmeldungen, um Formulierungen zu verbessern." },
+      "ru": { "heading": "Письменная практика", "title": "Письменная практика на немецком | DeutschLive", "description": "Тренируйте короткие тексты на немецком для повседневных ситуаций. Выполняйте письменные задания и улучшайте формулировки с обратной связью." },
+      "uk": {"heading": "Письмова практика", "title": "Практика письма німецькою | DeutschLive", "description": "Практикуйте короткі тексти німецькою для повсякденних ситуацій. Виконуйте письмові завдання та поліпшуйте формулювання завдяки відгукам."}
+    },
+    "/manual": {
+      "index": true,
+      "de": { "heading": "Handbuch", "title": "Handbuch für Szenen, Quiz und Schreibtraining | DeutschLive", "description": "So nutzt du DeutschLive: Alltagsszenen, Quiz, Schreibtraining und Lernübersicht. Mit Antworten auf häufige Fragen und Beispielen zum Lernen." },
+      "ru": { "heading": "Руководство", "title": "Руководство по ситуациям, тестам и письму | DeutschLive", "description": "Как пользоваться DeutschLive: повседневные ситуации, тесты, письменная практика и обзор обучения. Ответы на частые вопросы и примеры." },
+      "uk": {"heading": "Посібник", "title": "Посібник із ситуацій, тестів і письма | DeutschLive", "description": "Як користуватися DeutschLive: повсякденні ситуації, тести, письмова практика та огляд навчання. Відповіді на часті запитання й приклади."}
+    },
+    "/impressum": {
+      "index": true,
+      "de": { "heading": "Impressum", "title": "Muster-Impressum | DeutschLive", "description": "Muster-Impressum der DeutschLive-Portfolio-Demonstration mit fiktiven Anbieterangaben und Hinweisen zu Verantwortung und Urheberrecht." },
+      "ru": { "heading": "Импрессум", "title": "Пример импрессума | DeutschLive", "description": "Пример импрессума демонстрационного проекта DeutschLive: вымышленные сведения о поставщике, ответственность и авторское право. Текст на немецком." },
+      "uk": {"heading": "Вихідні дані", "title": "Зразок вихідних даних | DeutschLive", "description": "Зразок вихідних даних демонстраційного проєкту DeutschLive: вигадані відомості про постачальника, відповідальність і авторське право. Текст німецькою."}
+    },
+    "/datenschutz": {
+      "index": true,
+      "de": { "heading": "Datenschutz", "title": "Muster-Datenschutzerklärung | DeutschLive", "description": "Muster-Datenschutzerklärung für DeutschLive: Konten, Lernfortschritt, lokale Aufnahmen, Feedback, Speicherung und Rechte der Nutzer im Überblick." },
+      "ru": { "heading": "Защита данных", "title": "Пример политики конфиденциальности | DeutschLive", "description": "Пример политики конфиденциальности DeutschLive: аккаунты, обучение, локальные записи, обратная связь, хранение и права пользователей. Текст на немецком." },
+      "uk": {"heading": "Захист даних", "title": "Зразок політики конфіденційності | DeutschLive", "description": "Зразок політики конфіденційності DeutschLive: облікові записи, навчання, локальні записи, відгуки, зберігання та права користувачів. Текст німецькою."}
+    },
+    "/nutzungsbedingungen": {
+      "index": true,
+      "de": { "heading": "Nutzungsbedingungen", "title": "Nutzungsbedingungen der Lernplattform | DeutschLive", "description": "Nutzungsbedingungen der DeutschLive-Portfolio-Demonstration: Konten, Lerninhalte, lokale Aufnahmen, Verfügbarkeit und verantwortliche Nutzung." },
+      "ru": { "heading": "Условия использования", "title": "Условия использования учебной платформы | DeutschLive", "description": "Условия использования демонстрационного проекта DeutschLive: аккаунты, учебные материалы, локальные записи и доступность. Текст на немецком." },
+      "uk": {"heading": "Умови використання", "title": "Умови використання навчальної платформи | DeutschLive", "description": "Умови використання демонстраційного проєкту DeutschLive: облікові записи, матеріали, локальні записи, доступність і відповідальне використання. Текст німецькою."}
+    },
+    "/kontakt": {
+      "index": true,
+      "de": { "heading": "Kontakt", "title": "Kontakt und Feedback zur Lernplattform | DeutschLive", "description": "Kontaktiere Eugen Beirit bei Fragen zu DeutschLive. Melde Fehler, schlage Lerninhalte vor oder sende Feedback zur Nutzung der Lernplattform." },
+      "ru": { "heading": "Контакт", "title": "Контакт и обратная связь | DeutschLive", "description": "Свяжитесь с Eugen Beirit по вопросам DeutschLive: сообщите об ошибках, предложите учебные материалы или оставьте отзыв о работе платформы." },
+      "uk": {"heading": "Контакт", "title": "Контакт і зворотний зв’язок | DeutschLive", "description": "Зв’яжіться з Eugen Beirit щодо DeutschLive: повідомте про помилки, запропонуйте навчальні матеріали або залиште відгук про платформу."}
+    },
+    "/account": {
+      "index": false,
+      "de": { "heading": "Konto", "title": "Dein Konto | DeutschLive", "description": "Melde dich an oder verwalte deinen Zugang zu DeutschLive, um deinen persönlichen Lernfortschritt und deine Einstellungen zu nutzen." },
+      "ru": { "heading": "Аккаунт", "title": "Ваш аккаунт | DeutschLive", "description": "Войдите в DeutschLive или управляйте доступом к своему аккаунту, чтобы пользоваться личным прогрессом обучения и настройками." },
+      "uk": {"heading": "Обліковий запис", "title": "Ваш обліковий запис | DeutschLive", "description": "Увійдіть у DeutschLive або керуйте доступом до свого облікового запису, щоб користуватися особистим навчальним прогресом і налаштуваннями."}
+    },
+    "/dashboard": {
+      "index": false,
+      "de": { "heading": "Lernübersicht", "title": "Deine Lernübersicht | DeutschLive", "description": "Deine persönliche DeutschLive-Lernübersicht mit Fortschritt, Quiz-Ergebnissen, gespeicherten Wörtern und nächsten Lernschritten." },
+      "ru": { "heading": "Обзор обучения", "title": "Ваш обзор обучения | DeutschLive", "description": "Ваш личный обзор обучения в DeutschLive: прогресс, результаты тестов, сохранённые слова и следующие шаги." },
+      "uk": {"heading": "Огляд навчання", "title": "Ваш огляд навчання | DeutschLive", "description": "Ваш особистий огляд навчання у DeutschLive: прогрес, результати тестів, збережені слова та наступні кроки."}
+    },
+    "/settings": {
+      "index": false,
+      "de": { "heading": "Einstellungen", "title": "Deine Einstellungen | DeutschLive", "description": "Verwalte deine persönlichen DeutschLive-Einstellungen, deine Sprache und die Speicherung deines Lernfortschritts." },
+      "ru": { "heading": "Настройки", "title": "Ваши настройки | DeutschLive", "description": "Управляйте личными настройками DeutschLive, языком интерфейса и сохранением прогресса обучения." },
+      "uk": {"heading": "Налаштування", "title": "Ваші налаштування | DeutschLive", "description": "Керуйте особистими налаштуваннями DeutschLive, мовою інтерфейсу та збереженням навчального прогресу."}
+    },
+    "/recordings": {
+      "index": false,
+      "de": { "heading": "Meine Aufnahmen", "title": "Deine lokalen Audioaufnahmen | DeutschLive", "description": "Importiere, höre und verwalte deine persönlichen Audioaufnahmen in DeutschLive. Die Dateien bleiben lokal in diesem Browser gespeichert." },
+      "ru": { "heading": "Мои записи", "title": "Ваши локальные аудиозаписи | DeutschLive", "description": "Добавляйте, слушайте и управляйте личными аудиозаписями в DeutschLive. Файлы сохраняются локально в этом браузере." },
+      "uk": {"heading": "Мої записи", "title": "Ваші локальні аудіозаписи | DeutschLive", "description": "Додавайте, слухайте та впорядковуйте особисті аудіозаписи у DeutschLive. Файли зберігаються локально в цьому браузері."}
+    },
+    "/recordings-archiv": {
+      "index": false,
+      "de": { "heading": "Aufnahmen-Archiv", "title": "Dein lokales Aufnahmen-Archiv | DeutschLive", "description": "Greife auf deine bisherigen lokal gespeicherten DeutschLive-Aufnahmen zu und lade sie zur Sicherung auf dein Gerät herunter." },
+      "ru": { "heading": "Архив записей", "title": "Ваш локальный архив записей | DeutschLive", "description": "Откройте ранее сохранённые локальные аудиозаписи DeutschLive и скачайте их на своё устройство для резервного копирования." },
+      "uk": {"heading": "Архів записів", "title": "Ваш локальний архів записів | DeutschLive", "description": "Відкрийте раніше збережені локальні аудіозаписи DeutschLive та завантажте їх на пристрій для резервного копіювання."}
+    },
+    "/grades": {
+      "index": false,
+      "canonical": "/static/portfolio/notenrechner/index.html",
+      "de": { "heading": "Notenrechner", "title": "Noten berechnen | DeutschLive", "description": "Berechne deinen Notendurchschnitt mit Eingabeprüfung und direkter Auswertung im Notenrechner der Portfolio-Demonstration." },
+      "ru": { "heading": "Калькулятор оценок", "title": "Рассчитать среднюю оценку | DeutschLive", "description": "Рассчитайте среднюю оценку с проверкой введённых данных и наглядным результатом в демонстрационном калькуляторе оценок." },
+      "uk": {"heading": "Калькулятор оцінок", "title": "Обчислити середню оцінку | DeutschLive", "description": "Обчисліть середню оцінку з перевіркою введених даних і зрозумілим результатом у демонстраційному калькуляторі оцінок."}
+    }
+  },
+  "notFound": {
+    "de": { "heading": "Seite nicht gefunden", "title": "Seite nicht gefunden | DeutschLive", "description": "Diese DeutschLive-Seite wurde nicht gefunden. Öffne die Startseite oder wähle eine Lernfunktion aus der Navigation.", "home": "Zur Startseite" },
+    "ru": { "heading": "Страница не найдена", "title": "Страница не найдена | DeutschLive", "description": "Эта страница DeutschLive не найдена. Откройте главную страницу или выберите учебный раздел в меню.", "home": "На главную" },
+    "uk": {"heading": "Сторінку не знайдено", "title": "Сторінку не знайдено | DeutschLive", "description": "Цю сторінку DeutschLive не знайдено. Відкрийте головну сторінку або виберіть навчальний розділ у меню.", "home": "На головну"}
+  },
+  "noScript": {
+    "de": { "heading": "DeutschLive ohne JavaScript", "description": "Die interaktiven Übungen benötigen JavaScript. Diese Seiten geben einen Überblick über die Lernplattform:", "navigation": "DeutschLive-Seiten" },
+    "ru": { "heading": "DeutschLive без JavaScript", "description": "Для интерактивных заданий нужен JavaScript. Эти страницы помогут познакомиться с учебной платформой:", "navigation": "Страницы DeutschLive" },
+    "uk": {"heading": "DeutschLive без JavaScript", "description": "Для інтерактивних вправ потрібен JavaScript. Ці сторінки допоможуть познайомитися з навчальною платформою:", "navigation": "Сторінки DeutschLive"}
+  }
+}
