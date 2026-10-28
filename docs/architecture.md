@@ -88,7 +88,51 @@ Berichtspfade stehen in der [Prüfanleitung](checks.md).
 Der statische Notenrechner wird direkt aus seinen gepflegten Dateien
 ausgeliefert. Die Vokabelbox ist ein Modul der Sprachlernplattform; sie verwendet
 ein [gemeinsames Template](../server/templates/modules/vokabelbox_content.html)
-und die Dateien unter `server/assets/vokabelbox/`.
+und die Dateien unter `server/assets/vokabelbox/`. Wortliste, Favoriten und
+Artikeltraining sind getrennte Ansichten. Wortdetails öffnen sich in einem
+nativen Dialog, auf kleinen Bildschirmen am unteren Rand. Die 30 Wörter enthalten
+russische und ukrainische Übersetzungen sowie deutsche Erklärungen; die Suche
+berücksichtigt auch die bisherigen englischen Begriffe. Wort-IDs und die
+Browser-Speicherschlüssel bleiben für bestehende Lernstände erhalten.
+
+Header, Lernbereich und Footer verwenden ein gemeinsames Raster, Systemschriften
+und eine zurückhaltende Farbpalette. Artikel bleiben ausgeschrieben und erhalten
+nur einen dezenten Farbakzent. Die Lernübersicht ist eine Definitionsliste.
+Die Hauptnavigation nutzt auf kleinen Bildschirmen ein natives `details`-Menü;
+es funktioniert ohne JavaScript und wird mit Escape, Fokusübergabe und Schließen
+bei Klick außerhalb ergänzt. Header- und Footer-Texte sind in DE/RU/UK vorhanden.
+Sprachwahl und Artikelfilter bleiben native `select`-Elemente. Browser mit
+`appearance: base-select` erhalten auch gestaltete Optionslisten; andere Browser
+und der Modus für erzwungene Systemfarben verwenden die native Auswahlliste.
+
+Wörter und UI-Texte stammen aus
+[`content.json`](../server/assets/vokabelbox/content.json). Django liefert die
+übersetzte Wortliste bereits als HTML aus; die GET-Suche funktioniert auch ohne
+JavaScript. Das Frontend übernimmt die vorhandenen Karten, verwendet sie beim
+Filtern erneut und berechnet Suchindex sowie Sortierung einmalig. Es lädt keine
+Schriftarten, Frameworks oder weiteren Datenanfragen. Die versionierten Assets
+nutzen den bestehenden Cache; das kontobezogene HTML bleibt `private, no-store`.
+
+Die Sprachfassungen sind unter `/vokabelbox/?lang=de`, `?lang=ru` und `?lang=uk`
+adressierbar und in der Sitemap enthalten. Titel, Beschreibung, Canonical,
+`hreflang`, Open Graph und JSON-LD beschreiben jeweils diese Sprachfassung.
+Suchfilter und Ansichten (`q`, `article`, `view`) werden in der URL gespeichert;
+ihre Canonical-URL verweist auf die ungefilterte Sprachfassung. Der explizite
+Sprachparameter hat Vorrang vor gespeicherten Vorlieben. Eine Auswahl im Browser
+wird zusätzlich als Sprach-Cookie gespeichert, damit der nächste HTML-Aufruf
+bereits in der passenden Sprache erscheint.
+
+Browser-Agenten verwenden dieselben semantischen Links, Suchfelder, Dialoge und
+Schaltflächen wie andere Nutzer. `aria-current`, `aria-pressed`, native
+`disabled`-Zustände und Statusmeldungen machen die aktuelle Ansicht und das
+Ergebnis einer Aktion erkennbar. Die Browsertests prüfen einen vollständigen
+Lernablauf nur über Rollen und zugängliche Namen, Navigation per Browser-Historie
+sowie die Wortliste bei blockierten Skripten. Ein Ladebudget begrenzt das Modul
+auf zwei Skripte und weniger als 60 kB unkomprimierte externe Ressourcen.
+
+Die SEO-Struktur orientiert sich an Googles Dokumentation zu
+[JavaScript und serverseitigem HTML](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics)
+und [Sprachvarianten](https://developers.google.com/search/docs/specialty/international/localized-versions).
 
 Die wichtigsten API-Einstiege sind `/api/projects/` für Projektdaten,
 `/api/contact/` für Kontaktanfragen, `/deutschlive/api/` für die Lernplattform,

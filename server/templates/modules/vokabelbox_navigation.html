@@ -1,0 +1,4 @@
+<a href="{% url 'pages:vokabelbox' %}?lang={{ initial_lang }}" aria-current="page" data-vocab-home>{% include "modules/vokabelbox_icon.html" with name="book" only %}<span>Vokabelbox</span></a>
+<a href="/deutschlive/">{% include "modules/vokabelbox_icon.html" with name="languages" only %}<span>DeutschLive</span></a>
+<a href="/projekte/sprachdienstleistungen/">{% include "modules/vokabelbox_icon.html" with name="projects" only %}<span data-i18n="vocab.project_link">{{ vocab_copy.project_link }}</span></a>
+<a href="{% url 'pages:contact_no_slash' %}">{% include "modules/vokabelbox_icon.html" with name="mail" only %}<span data-i18n="vocab.contact">{{ vocab_copy.contact }}</span></a>

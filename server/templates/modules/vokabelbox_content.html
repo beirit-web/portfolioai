@@ -1,90 +1,106 @@
-<main class="vocab-shell" data-storage-key="{{ vocab_storage_key }}">
-      <section class="vocab-hero" aria-labelledby="app-title">
-        <a class="vocab-back-link" href="{{ vocab_back_url|default:'/' }}" data-i18n="{% if vocab_project_module %}vocab.project_back{% else %}vocab.back{% endif %}">{% if vocab_project_module %}Zur Projektbeschreibung{% else %}Zur Sprachplattform{% endif %}</a>
-        <p class="eyebrow" data-i18n="vocab.module">Lernmodul der Sprachplattform</p>
-        <h1 id="app-title">Vokabelbox</h1>
-        <p data-i18n="vocab.intro">
-          Lerne deutsche Nomen mit Artikeln. Suche, filtere, markiere schwierige
-          Wörter und prüfe dein Wissen im schnellen Artikel-Quiz.
-        </p>
-      </section>
+{% load static %}
+<main id="vocab-main" tabindex="-1" class="vocab-shell" data-storage-key="{{ vocab_storage_key }}">
+  <section class="vocab-hero" aria-labelledby="app-title">
+    <a class="vocab-back-link" href="{{ vocab_back_url|default:'/' }}">{% include "modules/vokabelbox_icon.html" with name="arrow-left" only %}<span data-i18n="{% if vocab_project_module %}vocab.project_back{% else %}vocab.back{% endif %}">{{ vocab_copy.project_back }}</span></a>
+    <div class="vocab-intro-layout">
+      <div class="vocab-intro-copy">
+        <p class="eyebrow" data-i18n="vocab.module">{{ vocab_copy.module }}</p>
+        <div class="vocab-title-row"><img src="{% asset_url 'images/service-languages.svg' %}" alt="" width="64" height="64" /><h1 id="app-title">Vokabelbox</h1></div>
+        <p class="vocab-intro" data-i18n="vocab.intro">{{ vocab_copy.intro }}</p>
+      </div>
+      <dl class="vocab-dashboard" aria-label="{{ vocab_copy.overview }}" data-i18n-aria-label="vocab.overview">
+        <div class="vocab-stat--words"><dt data-i18n="vocab.words">{{ vocab_copy.words }}</dt><dd><span id="totalCount">30</span>{% include "modules/vokabelbox_icon.html" with name="book" only %}</dd></div>
+        <div class="vocab-stat--known"><dt data-i18n="vocab.known">{{ vocab_copy.known }}</dt><dd><span id="knownCount">0</span>{% include "modules/vokabelbox_icon.html" with name="check" only %}</dd></div>
+        <div class="vocab-stat--favorites"><dt data-i18n="vocab.favorites">{{ vocab_copy.favorites }}</dt><dd><span id="favoriteCount">0</span>{% include "modules/vokabelbox_icon.html" with name="star" only %}</dd></div>
+      </dl>
+    </div>
+  </section>
 
-      <section class="vocab-dashboard" aria-label="Lernübersicht" data-i18n-aria-label="vocab.overview">
-        <article>
-          <span id="totalCount">30</span>
-          <p data-i18n="vocab.words">Vokabeln</p>
-        </article>
-        <article>
-          <span id="knownCount">0</span>
-          <p data-i18n="vocab.known">gelernt</p>
-        </article>
-        <article>
-          <span id="favoriteCount">0</span>
-          <p data-i18n="vocab.favorites">Favoriten</p>
-        </article>
-      </section>
+  <nav class="vocab-view-switch" aria-label="{{ vocab_copy.choose_view }}" data-i18n-aria-label="vocab.choose_view">
+    <a href="?lang={{ initial_lang }}&amp;view=words" data-view="words" {% if vocab_view == "words" %}aria-current="page"{% endif %} aria-controls="catalogPanel">{% include "modules/vokabelbox_icon.html" with name="book" only %}<span data-i18n="vocab.word_list">{{ vocab_copy.word_list }}</span></a>
+    <a href="?lang={{ initial_lang }}&amp;view=training" data-view="training" {% if vocab_view == "training" %}aria-current="page"{% endif %} aria-controls="trainerPanel">{% include "modules/vokabelbox_icon.html" with name="practice" only %}<span data-i18n="vocab.practice">{{ vocab_copy.practice }}</span></a>
+    <a href="?lang={{ initial_lang }}&amp;view=favorites" data-view="favorites" {% if vocab_view == "favorites" %}aria-current="page"{% endif %} aria-controls="catalogPanel">{% include "modules/vokabelbox_icon.html" with name="star" only %}<span data-i18n="vocab.favorites">{{ vocab_copy.favorites }}</span></a>
+  </nav>
 
-      <section class="vocab-workspace">
-        <section class="vocab-panel catalog-panel" aria-labelledby="catalog-title">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow" data-i18n="vocab.word_list">Wortliste</p>
-              <h2 id="catalog-title" data-i18n="vocab.words">Vokabeln</h2>
-            </div>
-            <span id="visibleCount" role="status" aria-live="polite">30 Treffer</span>
-          </div>
+  <div class="vocab-workspace">
+    <section class="vocab-panel catalog-panel" id="catalogPanel" aria-labelledby="catalog-title"{% if vocab_view == "training" %} hidden{% endif %}>
+      <div class="section-heading">
+        <h2 id="catalog-title" tabindex="-1" data-i18n="vocab.{% if vocab_view == 'favorites' %}favorites{% else %}words{% endif %}">{% if vocab_view == "favorites" %}{{ vocab_copy.favorites }}{% else %}{{ vocab_copy.words }}{% endif %}</h2>
+        <span id="visibleCount" role="status" aria-live="polite">{{ vocab_count }}</span>
+      </div>
+      <form class="toolbar" id="vocabSearch" role="search" method="get" action="{% url 'pages:vokabelbox' %}">
+        <input type="hidden" name="lang" value="{{ initial_lang }}" />
+        <input type="hidden" name="view" value="{{ vocab_view }}" />
+        <label for="searchInput">
+          <span class="vocab-field-label">{% include "modules/vokabelbox_icon.html" with name="search" only %}<span data-i18n="vocab.search">{{ vocab_copy.search }}</span></span>
+          <input id="searchInput" type="search" name="q" maxlength="200" value="{{ vocab_query }}" aria-controls="wordGrid" placeholder="{{ vocab_copy.search_placeholder }}" autocomplete="off" data-i18n-placeholder="vocab.search_placeholder" />
+        </label>
+        <label for="articleFilter">
+          <span class="vocab-field-label">{% include "modules/vokabelbox_icon.html" with name="filter" only %}<span data-i18n="vocab.article">{{ vocab_copy.article }}</span></span>
+          <select id="articleFilter" name="article" aria-controls="wordGrid">
+            <option value="all"{% if vocab_article == "all" %} selected{% endif %} data-i18n="vocab.all">{{ vocab_copy.all }}</option>
+            <option value="der"{% if vocab_article == "der" %} selected{% endif %} lang="de">der</option>
+            <option value="die"{% if vocab_article == "die" %} selected{% endif %} lang="de">die</option>
+            <option value="das"{% if vocab_article == "das" %} selected{% endif %} lang="de">das</option>
+          </select>
+        </label>
+        <noscript><button type="submit" class="search-submit">{{ vocab_copy.submit_search }}</button></noscript>
+      </form>
+      <p class="catalog-hint" data-i18n="vocab.word_hint">{{ vocab_copy.word_hint }}</p>
 
-          <div class="toolbar">
-            <label for="searchInput">
-              <span data-i18n="vocab.search">Suche</span>
-              <input id="searchInput" type="search" placeholder="z. B. Apfel oder Schule" autocomplete="off" data-i18n-placeholder="vocab.search_placeholder" />
-            </label>
-            <label for="articleFilter">
-              <span data-i18n="vocab.article">Artikel</span>
-              <select id="articleFilter">
-                <option value="all" data-i18n="vocab.all">Alle</option>
-                <option value="der">der</option>
-                <option value="die">die</option>
-                <option value="das">das</option>
-              </select>
-            </label>
-          </div>
+      <ul class="word-grid" id="wordGrid" aria-labelledby="catalog-title">
+        {% for item in vocab_words %}
+        <li>
+          <button type="button" class="word-card" data-word-id="{{ item.id }}" data-article="{{ item.article }}" aria-haspopup="dialog" aria-controls="wordDetails" disabled>
+            <span class="article-pill" lang="de">{{ item.article }}</span>
+            <strong lang="de">{{ item.word }}</strong>
+            <small id="meaning-{{ item.id }}" lang="{{ initial_lang }}">{{ item.meaning }}</small>
+            <span class="word-card__statuses" id="status-{{ item.id }}"></span>
+          </button>
+        </li>
+        {% empty %}
+        <li class="word-empty-state">
+          <strong>{% if vocab_view == "favorites" %}{{ vocab_copy.empty_favorites }}{% else %}{{ vocab_copy.empty_title }}{% endif %}</strong>
+          <p>{% if vocab_view == "favorites" %}{{ vocab_copy.empty_favorites_hint }}{% else %}{{ vocab_copy.empty_hint }}{% endif %}</p>
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
 
-          <noscript><p>Bitte aktiviere JavaScript, um die Wortliste und das Quiz zu nutzen.</p></noscript>
-          <div class="word-grid" id="wordGrid"></div>
-        </section>
+    <section class="vocab-panel trainer-panel" id="trainerPanel" aria-labelledby="trainer-title"{% if vocab_view != "training" %} hidden{% endif %}>
+      <div class="section-heading">
+        <h2 id="trainer-title" data-i18n="vocab.quiz">{{ vocab_copy.quiz }}</h2>
+        <span id="quizScore" aria-label="{{ vocab_copy.score_label }}" data-i18n-aria-label="vocab.score_label">0/0</span>
+      </div>
+      <p class="training-hint" data-i18n="vocab.training_hint">{{ vocab_copy.training_hint }}</p>
+      <div class="quiz-card">
+        <p id="quizPrompt" data-i18n="vocab.question">{{ vocab_copy.question }}</p>
+        <strong id="quizWord" lang="de" aria-live="polite">-</strong>
+        <div class="quiz-options" role="group" aria-labelledby="quizPrompt quizWord" aria-label="{{ vocab_copy.answers }}" data-i18n-aria-label="vocab.answers" lang="de">
+          <button type="button" disabled data-answer="der">der</button>
+          <button type="button" disabled data-answer="die">die</button>
+          <button type="button" disabled data-answer="das">das</button>
+        </div>
+        <p class="quiz-feedback" id="quizFeedback" role="status" aria-live="polite"></p>
+        <button type="button" class="next-button" id="nextQuestion" disabled><span data-i18n="vocab.next">{{ vocab_copy.next }}</span>{% include "modules/vokabelbox_icon.html" with name="arrow-right" only %}</button>
+      </div>
+    </section>
+  </div>
 
-        <aside class="vocab-panel trainer-panel" aria-labelledby="trainer-title">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow" data-i18n="vocab.training">Training</p>
-              <h2 id="trainer-title" data-i18n="vocab.quiz">Artikel-Quiz</h2>
-            </div>
-            <span id="quizScore">0/0</span>
-          </div>
-
-          <div class="quiz-card">
-            <p data-i18n="vocab.question">Welcher Artikel passt?</p>
-            <strong id="quizWord">-</strong>
-            <div class="quiz-options" aria-label="Antworten" data-i18n-aria-label="vocab.answers">
-              <button type="button" data-answer="der">der</button>
-              <button type="button" data-answer="die">die</button>
-              <button type="button" data-answer="das">das</button>
-            </div>
-            <p class="quiz-feedback" id="quizFeedback" role="status" aria-live="polite"></p>
-            <button type="button" class="next-button" id="nextQuestion" data-i18n="vocab.next">Nächste Frage</button>
-          </div>
-
-          <section class="details-card" aria-labelledby="details-title">
-            <p class="eyebrow" data-i18n="vocab.selection">Auswahl</p>
-            <h3 id="details-title">Noch kein Wort gewählt</h3>
-            <p id="detailsTranslation">Wähle eine Vokabel aus der Liste.</p>
-            <div class="details-actions">
-              <button type="button" id="knownButton">Als gelernt markieren</button>
-              <button type="button" id="favoriteButton">Favorit</button>
-            </div>
-          </section>
-        </aside>
-      </section>
-      <p class="vocab-storage-note" data-i18n="vocab.storage">Lernstand und Favoriten werden in diesem Browser gespeichert.</p>
-    </main>
+  <dialog class="word-details" id="wordDetails" aria-labelledby="details-title" aria-describedby="detailsTranslation">
+    <section class="details-card">
+      <div class="details-heading">
+        <p class="eyebrow" data-i18n="vocab.selection">{{ vocab_copy.selection }}</p>
+        <button type="button" class="details-close" id="closeDetails" autofocus>{% include "modules/vokabelbox_icon.html" with name="close" only %}<span data-i18n="vocab.close">{{ vocab_copy.close }}</span></button>
+      </div>
+      <h2 id="details-title" lang="de"></h2>
+      <p id="detailsTranslation"></p>
+      <div class="details-actions">
+        <button type="button" id="knownButton" aria-pressed="false">{% include "modules/vokabelbox_icon.html" with name="check" only %}<span data-i18n="vocab.learned">{{ vocab_copy.learned }}</span></button>
+        <button type="button" id="favoriteButton" aria-pressed="false">{% include "modules/vokabelbox_icon.html" with name="star" only %}<span data-i18n="vocab.favorite_status">{{ vocab_copy.favorite_status }}</span></button>
+      </div>
+    </section>
+  </dialog>
+  <noscript><p class="vocab-storage-note">{{ vocab_copy.no_script }}</p></noscript>
+  <p class="vocab-storage-note" data-i18n="vocab.storage">{{ vocab_copy.storage }}</p>
+</main>

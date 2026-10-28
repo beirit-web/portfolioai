@@ -220,6 +220,7 @@ class PortfolioSeoTests(TestCase):
             f"{self.site_url}/ueber-mich",
             f"{self.site_url}/kontakt",
             f"{self.site_url}/projekte/sichtbare-fallstudie",
+            *[f"{self.site_url}/vokabelbox/?lang={language}" for language in ("de", "ru", "uk")],
             *[
                 f"{self.site_url}/deutschlive{path}"
                 for path in (

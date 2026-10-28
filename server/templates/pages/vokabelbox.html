@@ -5,27 +5,78 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
-    <meta name="robots" content="noindex, follow" />
-    <meta name="description" content="Deutsche Nomen und ihre Artikel lernen: Wortsuche, Favoriten und ein interaktives Quiz als Lernmodul der Sprachplattform." />
-    <link rel="canonical" href="{{ site_url }}{% url 'pages:vokabelbox' %}" />
-    <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
-    <title>Vokabelbox | Beirit Web Portfolio</title>
+    <meta name="robots" content="index, follow" />
+    <meta name="description" content="{{ vocab_copy.description }}" />
+    <link rel="canonical" href="{{ vocab_canonical }}" />
+    {% for alternate in vocab_alternates %}<link rel="alternate" hreflang="{{ alternate.lang }}" href="{{ alternate.url }}" />{% endfor %}
+    <link rel="alternate" hreflang="x-default" href="{{ vocab_default_url }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Beirit Web" />
+    <meta property="og:title" content="{{ vocab_copy.title }}" />
+    <meta property="og:description" content="{{ vocab_copy.description }}" />
+    <meta property="og:url" content="{{ vocab_canonical }}" />
+    <meta property="og:locale" content="{{ vocab_og_locale }}" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="{{ vocab_copy.title }}" />
+    <meta name="twitter:description" content="{{ vocab_copy.description }}" />
+    <link rel="icon" type="image/svg+xml" href="{% asset_url 'images/beirit-web-favicon-mini.svg' %}" />
+    <title>{{ vocab_copy.title }}</title>
+    <script id="vocab-schema" type="application/ld+json">{{ vocab_schema|safe }}</script>
     <link rel="stylesheet" href="{% asset_url 'vokabelbox/style.css' %}" />
     <script src="{% asset_url 'vokabelbox/translations.js' %}" defer></script>
     <script src="{% asset_url 'vokabelbox/app.js' %}" defer></script>
   </head>
   <body class="vocab-page">
+    {% include "modules/vokabelbox_icons.html" %}
+    <a class="vocab-skip-link" href="#vocab-main" data-i18n="vocab.skip">{{ vocab_copy.skip }}</a>
     <header class="vocab-module-header">
-      <a class="vocab-module-brand" href="/">Beirit Web <span>Portfolio</span></a>
-      <label class="vocab-language-switch">
-        <span data-i18n="vocab.language">Sprache</span>
-        <select data-vocab-language>
-          <option value="de"{% if initial_lang == 'de' %} selected{% endif %}>Deutsch</option>
-          <option value="ru"{% if initial_lang == 'ru' %} selected{% endif %}>Русский</option>
-          <option value="uk"{% if initial_lang == 'uk' %} selected{% endif %}>Українська</option>
-        </select>
-      </label>
+      <div class="vocab-header-inner">
+        <a class="vocab-module-brand" href="/">
+          <img src="{% asset_url 'images/beirit-web-favicon-mini.svg' %}" width="36" height="36" alt="" />
+          <span class="vocab-brand-name">Beirit Web<span data-i18n="vocab.brand_caption">{{ vocab_copy.brand_caption }}</span></span>
+          <span class="vocab-sr-only" data-i18n="vocab.home">{{ vocab_copy.home }}</span>
+        </a>
+        <nav class="vocab-desktop-nav" aria-label="{{ vocab_copy.main_navigation }}" data-i18n-aria-label="vocab.main_navigation">
+          {% include "modules/vokabelbox_navigation.html" %}
+        </nav>
+        <form class="vocab-language-form" method="get" action="{% url 'pages:vokabelbox' %}">
+          <label class="vocab-language-switch">
+            <span class="vocab-language-caption">{% include "modules/vokabelbox_icon.html" with name="languages" only %}<span data-i18n="vocab.language">{{ vocab_copy.language }}</span></span>
+            <select name="lang" data-vocab-language>
+              <option value="de" lang="de"{% if initial_lang == 'de' %} selected{% endif %}>Deutsch</option>
+              <option value="ru" lang="ru"{% if initial_lang == 'ru' %} selected{% endif %}>Русский</option>
+              <option value="uk" lang="uk"{% if initial_lang == 'uk' %} selected{% endif %}>Українська</option>
+            </select>
+          </label>
+          <noscript><button type="submit">{{ vocab_copy.apply_language }}</button></noscript>
+        </form>
+        <details class="vocab-mobile-menu" id="vocabMenu">
+          <summary aria-controls="vocabMobileNavigation" aria-label="{{ vocab_copy.menu }}" data-i18n-aria-label="vocab.menu">
+            {% include "modules/vokabelbox_icon.html" with name="menu" icon_class="vocab-menu-open" only %}
+            {% include "modules/vokabelbox_icon.html" with name="close" icon_class="vocab-menu-close" only %}
+            <span class="vocab-sr-only" data-i18n="vocab.menu">{{ vocab_copy.menu }}</span>
+          </summary>
+          <nav id="vocabMobileNavigation" aria-label="{{ vocab_copy.main_navigation }}" data-i18n-aria-label="vocab.main_navigation">
+            {% include "modules/vokabelbox_navigation.html" %}
+          </nav>
+        </details>
+      </div>
     </header>
     {% include "vokabelbox_content.html" with vocab_project_module=True vocab_back_url="/projekte/sprachdienstleistungen/#vokabelbox" %}
+    <footer class="vocab-footer">
+      <div class="vocab-footer-inner">
+        <div class="vocab-footer-credit">
+          <a class="vocab-footer-brand" href="/">Beirit Web</a>
+          <small>© Eugen Beirit</small>
+        </div>
+        <nav aria-label="{{ vocab_copy.footer_navigation }}" data-i18n-aria-label="vocab.footer_navigation">
+          <a href="{% url 'pages:projects_page_no_slash' %}">{% include "modules/vokabelbox_icon.html" with name="projects" only %}<span data-i18n="vocab.projects">{{ vocab_copy.projects }}</span></a>
+          <a href="{% url 'pages:contact_no_slash' %}">{% include "modules/vokabelbox_icon.html" with name="mail" only %}<span data-i18n="vocab.contact">{{ vocab_copy.contact }}</span></a>
+          <a href="{% url 'pages:imprint' %}">{% include "modules/vokabelbox_icon.html" with name="file" only %}<span data-i18n="vocab.imprint">{{ vocab_copy.imprint }}</span></a>
+          <a href="{% url 'pages:privacy' %}">{% include "modules/vokabelbox_icon.html" with name="shield" only %}<span data-i18n="vocab.privacy">{{ vocab_copy.privacy }}</span></a>
+        </nav>
+      </div>
+    </footer>
+    <script id="vocab-content" type="application/json">{{ vocab_data_json|safe }}</script>
   </body>
 </html>

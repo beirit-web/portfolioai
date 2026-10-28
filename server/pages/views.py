@@ -74,6 +74,7 @@ from .seo import (
 from .project_detail import build_project_detail
 from .projects_overview import build_projects_overview, projects_presentation_catalog
 from .home_presentation import rendered_home
+from .vokabelbox import CONTENT_PATH as VOCAB_CONTENT_PATH, LANGUAGES as VOCAB_LANGUAGES, language_path as vocab_language_path, page_context as vocab_page_context
 from .housing_api import (
     housing_authenticated_user,
     make_housing_auth_token,
@@ -530,6 +531,12 @@ def build_sitemap_entries() -> list[dict[str, str]]:
             }
         )
     deutschlive_lastmod = date.fromtimestamp(ROUTE_DATA_PATH.stat().st_mtime).isoformat()
+    entries.extend({
+        "loc": build_absolute_site_url(vocab_language_path(language)),
+        "changefreq": "monthly",
+        "priority": "0.6",
+        "lastmod": date.fromtimestamp(VOCAB_CONTENT_PATH.stat().st_mtime).isoformat(),
+    } for language in VOCAB_LANGUAGES)
     entries.extend(
         {
             "loc": build_absolute_site_url(deutschlive_app_path(path)),
@@ -666,11 +673,14 @@ def sitemap_xml(_request):
 @never_cache
 def vokabelbox(request):
     learner = f"user-{request.user.pk}" if request.user.is_authenticated else "guest"
-    return render(request, "pages/vokabelbox.html", {
-        "site_url": settings.SITE_URL,
-        "initial_lang": get_preferred_language(request),
+    context = vocab_page_context(request, get_preferred_language(request))
+    response = render(request, "pages/vokabelbox.html", {
+        **context,
         "vocab_storage_key": f"sprachservice:vokabelbox:v1:{learner}",
     })
+    response["Content-Language"] = context["initial_lang"]
+    patch_vary_headers(response, ("Accept-Language", "Cookie"))
+    return response
 
 
 @ensure_csrf_cookie

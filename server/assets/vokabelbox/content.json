@@ -1,0 +1,529 @@
+{
+  "_license": "Vokabelbox — Copyright (c) 2025 Eugen, MIT License.",
+  "words": [
+    {
+      "id": "der-apfel-0",
+      "article": "der",
+      "word": "Apfel",
+      "translation": "apple",
+      "meanings": {
+        "de": "Eine runde Frucht mit Schale und Kernen.",
+        "ru": "яблоко",
+        "uk": "яблуко"
+      }
+    },
+    {
+      "id": "der-bleistift-1",
+      "article": "der",
+      "word": "Bleistift",
+      "translation": "pencil",
+      "meanings": {
+        "de": "Ein Stift zum Schreiben und Zeichnen, dessen Striche man wegradieren kann.",
+        "ru": "карандаш",
+        "uk": "олівець"
+      }
+    },
+    {
+      "id": "der-computer-2",
+      "article": "der",
+      "word": "Computer",
+      "translation": "computer",
+      "meanings": {
+        "de": "Ein elektronisches Gerät zum Arbeiten, Lernen oder Spielen.",
+        "ru": "компьютер",
+        "uk": "комп’ютер"
+      }
+    },
+    {
+      "id": "der-fußball-3",
+      "article": "der",
+      "word": "Fußball",
+      "translation": "football",
+      "meanings": {
+        "de": "Ein Mannschaftssport und der Ball, mit dem man ihn spielt.",
+        "ru": "футбол; футбольный мяч",
+        "uk": "футбол; футбольний м’яч"
+      }
+    },
+    {
+      "id": "der-hund-4",
+      "article": "der",
+      "word": "Hund",
+      "translation": "dog",
+      "meanings": {
+        "de": "Ein Haustier, das bellt.",
+        "ru": "собака",
+        "uk": "собака"
+      }
+    },
+    {
+      "id": "der-junge-5",
+      "article": "der",
+      "word": "Junge",
+      "translation": "boy",
+      "meanings": {
+        "de": "Ein männliches Kind.",
+        "ru": "мальчик",
+        "uk": "хлопчик"
+      }
+    },
+    {
+      "id": "der-kopf-6",
+      "article": "der",
+      "word": "Kopf",
+      "translation": "head",
+      "meanings": {
+        "de": "Der Körperteil mit Gesicht und Gehirn.",
+        "ru": "голова",
+        "uk": "голова"
+      }
+    },
+    {
+      "id": "der-rucksack-7",
+      "article": "der",
+      "word": "Rucksack",
+      "translation": "backpack",
+      "meanings": {
+        "de": "Eine Tasche, die man auf dem Rücken trägt.",
+        "ru": "рюкзак",
+        "uk": "рюкзак"
+      }
+    },
+    {
+      "id": "der-stuhl-8",
+      "article": "der",
+      "word": "Stuhl",
+      "translation": "chair",
+      "meanings": {
+        "de": "Ein Möbelstück zum Sitzen, meist mit einer Rückenlehne.",
+        "ru": "стул",
+        "uk": "стілець"
+      }
+    },
+    {
+      "id": "der-tisch-9",
+      "article": "der",
+      "word": "Tisch",
+      "translation": "table",
+      "meanings": {
+        "de": "Ein Möbelstück mit einer Fläche zum Essen oder Arbeiten.",
+        "ru": "стол",
+        "uk": "стіл"
+      }
+    },
+    {
+      "id": "die-blume-10",
+      "article": "die",
+      "word": "Blume",
+      "translation": "flower",
+      "meanings": {
+        "de": "Eine Pflanze mit einer Blüte.",
+        "ru": "цветок",
+        "uk": "квітка"
+      }
+    },
+    {
+      "id": "die-flasche-11",
+      "article": "die",
+      "word": "Flasche",
+      "translation": "bottle",
+      "meanings": {
+        "de": "Ein Gefäß mit engem Hals, zum Beispiel für Getränke.",
+        "ru": "бутылка",
+        "uk": "пляшка"
+      }
+    },
+    {
+      "id": "die-hand-12",
+      "article": "die",
+      "word": "Hand",
+      "translation": "hand",
+      "meanings": {
+        "de": "Der Körperteil am Ende des Arms mit fünf Fingern.",
+        "ru": "кисть руки",
+        "uk": "кисть руки"
+      }
+    },
+    {
+      "id": "die-jacke-13",
+      "article": "die",
+      "word": "Jacke",
+      "translation": "jacket",
+      "meanings": {
+        "de": "Ein Kleidungsstück für den Oberkörper, das man vorne öffnet.",
+        "ru": "куртка",
+        "uk": "куртка"
+      }
+    },
+    {
+      "id": "die-katze-14",
+      "article": "die",
+      "word": "Katze",
+      "translation": "cat",
+      "meanings": {
+        "de": "Ein Haustier, das miaut.",
+        "ru": "кошка",
+        "uk": "кішка"
+      }
+    },
+    {
+      "id": "die-küche-15",
+      "article": "die",
+      "word": "Küche",
+      "translation": "kitchen",
+      "meanings": {
+        "de": "Der Raum, in dem man Essen zubereitet.",
+        "ru": "кухня",
+        "uk": "кухня"
+      }
+    },
+    {
+      "id": "die-lehrerin-16",
+      "article": "die",
+      "word": "Lehrerin",
+      "translation": "teacher",
+      "meanings": {
+        "de": "Eine Frau, die unterrichtet.",
+        "ru": "учительница",
+        "uk": "вчителька"
+      }
+    },
+    {
+      "id": "die-schule-17",
+      "article": "die",
+      "word": "Schule",
+      "translation": "school",
+      "meanings": {
+        "de": "Ein Ort, an dem Kinder und Jugendliche lernen.",
+        "ru": "школа",
+        "uk": "школа"
+      }
+    },
+    {
+      "id": "die-straße-18",
+      "article": "die",
+      "word": "Straße",
+      "translation": "street",
+      "meanings": {
+        "de": "Ein befestigter Weg für den Verkehr.",
+        "ru": "улица; дорога",
+        "uk": "вулиця; дорога"
+      }
+    },
+    {
+      "id": "die-tasche-19",
+      "article": "die",
+      "word": "Tasche",
+      "translation": "bag",
+      "meanings": {
+        "de": "Darin kann man Dinge aufbewahren und mitnehmen.",
+        "ru": "сумка",
+        "uk": "сумка"
+      }
+    },
+    {
+      "id": "das-auto-20",
+      "article": "das",
+      "word": "Auto",
+      "translation": "car",
+      "meanings": {
+        "de": "Ein Fahrzeug mit Motor und meist vier Rädern.",
+        "ru": "автомобиль",
+        "uk": "автомобіль"
+      }
+    },
+    {
+      "id": "das-bett-21",
+      "article": "das",
+      "word": "Bett",
+      "translation": "bed",
+      "meanings": {
+        "de": "Ein Möbelstück zum Schlafen.",
+        "ru": "кровать",
+        "uk": "ліжко"
+      }
+    },
+    {
+      "id": "das-buch-22",
+      "article": "das",
+      "word": "Buch",
+      "translation": "book",
+      "meanings": {
+        "de": "Gebundene Seiten mit Texten oder Bildern.",
+        "ru": "книга",
+        "uk": "книга"
+      }
+    },
+    {
+      "id": "das-fahrrad-23",
+      "article": "das",
+      "word": "Fahrrad",
+      "translation": "bicycle",
+      "meanings": {
+        "de": "Ein Fahrzeug mit zwei Rädern, das man mit Pedalen bewegt.",
+        "ru": "велосипед",
+        "uk": "велосипед"
+      }
+    },
+    {
+      "id": "das-fenster-24",
+      "article": "das",
+      "word": "Fenster",
+      "translation": "window",
+      "meanings": {
+        "de": "Eine Öffnung mit Glas, durch die Licht in einen Raum kommt.",
+        "ru": "окно",
+        "uk": "вікно"
+      }
+    },
+    {
+      "id": "das-haus-25",
+      "article": "das",
+      "word": "Haus",
+      "translation": "house",
+      "meanings": {
+        "de": "Ein Gebäude, in dem Menschen wohnen können.",
+        "ru": "дом",
+        "uk": "будинок"
+      }
+    },
+    {
+      "id": "das-kind-26",
+      "article": "das",
+      "word": "Kind",
+      "translation": "child",
+      "meanings": {
+        "de": "Ein junger Mensch, der noch nicht erwachsen ist.",
+        "ru": "ребёнок",
+        "uk": "дитина"
+      }
+    },
+    {
+      "id": "das-mädchen-27",
+      "article": "das",
+      "word": "Mädchen",
+      "translation": "girl",
+      "meanings": {
+        "de": "Ein weibliches Kind.",
+        "ru": "девочка",
+        "uk": "дівчинка"
+      }
+    },
+    {
+      "id": "das-sofa-28",
+      "article": "das",
+      "word": "Sofa",
+      "translation": "sofa",
+      "meanings": {
+        "de": "Ein gepolstertes Möbelstück zum Sitzen für mehrere Personen.",
+        "ru": "диван",
+        "uk": "диван"
+      }
+    },
+    {
+      "id": "das-wasser-29",
+      "article": "das",
+      "word": "Wasser",
+      "translation": "water",
+      "meanings": {
+        "de": "Eine klare Flüssigkeit, die Menschen, Tiere und Pflanzen brauchen.",
+        "ru": "вода",
+        "uk": "вода"
+      }
+    }
+  ],
+  "vocabulary": {
+    "de": {
+      "back": "Zur Sprachplattform",
+      "project_back": "Zur Projektbeschreibung",
+      "language": "Sprache",
+      "module": "Deutsch lernen · Wort für Wort",
+      "intro": "Entdecke deutsche Nomen und ihre Artikel. Sammle wichtige Wörter und festige dein Wissen mit einer kleinen Übung.",
+      "words": "Vokabeln",
+      "known": "gelernt",
+      "favorites": "Favoriten",
+      "word_list": "Wortliste",
+      "search": "Suche",
+      "search_placeholder": "z. B. Apfel oder Schule",
+      "article": "Artikel",
+      "all": "Alle",
+      "training": "Training",
+      "quiz": "Artikel-Quiz",
+      "question": "Welcher Artikel passt?",
+      "next": "Nächste Frage",
+      "selection": "Auswahl",
+      "overview": "Lernübersicht",
+      "answers": "Antworten",
+      "storage": "Lernstand und Favoriten werden in diesem Browser gespeichert.",
+      "session_storage": "Lernstand und Favoriten bleiben für diese Sitzung erhalten. Der Browserspeicher ist nicht verfügbar.",
+      "matches": "Treffer",
+      "matches_one": "Treffer",
+      "matches_few": "Treffer",
+      "matches_many": "Treffer",
+      "matches_other": "Treffer",
+      "choose_view": "Lernbereich wählen",
+      "practice": "Üben",
+      "close": "Schließen",
+      "word_hint": "Tippe auf ein Wort, um es zu markieren oder zu deinen Favoriten hinzuzufügen.",
+      "training_hint": "Wähle den passenden Artikel. Die Lösung erscheint nach deiner Antwort.",
+      "score_label": "Richtige Antworten / beantwortete Fragen",
+      "empty_favorites": "Noch keine Favoriten",
+      "empty_favorites_hint": "Öffne ein Wort in der Wortliste und füge es zu deinen Favoriten hinzu.",
+      "meaning": "Bedeutung",
+      "mark_unknown": "Als ungelernt markieren",
+      "mark_known": "Als gelernt markieren",
+      "remove_favorite": "Favorit entfernen",
+      "favorite": "Favorit",
+      "correct": "Richtig",
+      "incorrect": "Richtig ist",
+      "learned": "Gelernt",
+      "favorite_status": "Favorit",
+      "empty_title": "Keine passende Vokabel",
+      "empty_hint": "Ändere den Suchbegriff oder wähle einen anderen Artikel.",
+      "skip": "Zum Lernbereich",
+      "submit_search": "Suchen",
+      "apply_language": "Sprache wechseln",
+      "no_script": "Die Wortliste und Suche funktionieren ohne JavaScript. Für Quiz, Favoriten und Lernstand aktiviere JavaScript.",
+      "title": "Vokabelbox – deutsche Artikel üben | Beirit Web",
+      "description": "30 deutsche Nomen mit der, die und das lernen: deutsche Erklärungen, russische und ukrainische Übersetzungen, Wortsuche, Favoriten und Artikel-Quiz.",
+      "brand_caption": "Sprachen entdecken",
+      "main_navigation": "Hauptnavigation",
+      "menu": "Menü",
+      "project_link": "Zum Projekt",
+      "contact": "Kontakt",
+      "footer_navigation": "Weitere Links",
+      "projects": "Projekte",
+      "imprint": "Impressum",
+      "privacy": "Datenschutz",
+      "home": "Startseite"
+    },
+    "ru": {
+      "back": "К языковой платформе",
+      "project_back": "К описанию проекта",
+      "language": "Язык",
+      "module": "Немецкий · Слово за словом",
+      "intro": "Изучайте немецкие существительные и их артикли. Сохраняйте важные слова и закрепляйте знания в коротком упражнении.",
+      "words": "Слова",
+      "known": "выучено",
+      "favorites": "Избранное",
+      "word_list": "Список слов",
+      "search": "Поиск",
+      "search_placeholder": "например, Apfel или Schule",
+      "article": "Артикль",
+      "all": "Все",
+      "training": "Тренировка",
+      "quiz": "Тест на артикли",
+      "question": "Какой артикль подходит?",
+      "next": "Следующий вопрос",
+      "selection": "Выбор",
+      "overview": "Обзор обучения",
+      "answers": "Ответы",
+      "storage": "Прогресс и избранное сохраняются в этом браузере.",
+      "session_storage": "Прогресс доступен в текущем сеансе. Хранилище браузера недоступно.",
+      "matches": "результатов",
+      "matches_one": "результат",
+      "matches_few": "результата",
+      "matches_many": "результатов",
+      "matches_other": "результата",
+      "choose_view": "Выбрать учебный раздел",
+      "practice": "Практика",
+      "close": "Закрыть",
+      "word_hint": "Нажмите на слово, чтобы отметить его как выученное или добавить в избранное.",
+      "training_hint": "Выберите подходящий артикль. Правильный ответ появится после вашего ответа.",
+      "score_label": "Правильные ответы / вопросы с ответами",
+      "empty_favorites": "Избранных слов пока нет",
+      "empty_favorites_hint": "Откройте слово в списке и добавьте его в избранное.",
+      "meaning": "Значение",
+      "mark_unknown": "Отметить как невыученное",
+      "mark_known": "Отметить как выученное",
+      "remove_favorite": "Удалить из избранного",
+      "favorite": "В избранное",
+      "correct": "Правильно",
+      "incorrect": "Правильный ответ",
+      "learned": "Выучено",
+      "favorite_status": "Избранное",
+      "empty_title": "Подходящих слов нет",
+      "empty_hint": "Измените поисковый запрос или выберите другой артикль.",
+      "skip": "К учебному разделу",
+      "submit_search": "Найти",
+      "apply_language": "Сменить язык",
+      "no_script": "Список слов и поиск работают без JavaScript. Для теста, избранного и прогресса включите JavaScript.",
+      "title": "Vokabelbox – немецкие слова и артикли | Beirit Web",
+      "description": "Изучайте 30 немецких существительных с der, die и das: переводы на русский и украинский, объяснения на немецком, поиск, избранное и тест на артикли.",
+      "brand_caption": "Открываем языки",
+      "main_navigation": "Основная навигация",
+      "menu": "Меню",
+      "project_link": "О проекте",
+      "contact": "Контакты",
+      "footer_navigation": "Дополнительные ссылки",
+      "projects": "Проекты",
+      "imprint": "Выходные данные",
+      "privacy": "Конфиденциальность",
+      "home": "Главная страница"
+    },
+    "uk": {
+      "back": "До мовної платформи",
+      "project_back": "До опису проєкту",
+      "language": "Мова",
+      "module": "Німецька · Слово за словом",
+      "intro": "Вивчайте німецькі іменники та їхні артиклі. Зберігайте важливі слова й закріплюйте знання в короткій вправі.",
+      "words": "Слова",
+      "known": "вивчено",
+      "favorites": "Обране",
+      "word_list": "Список слів",
+      "search": "Пошук",
+      "search_placeholder": "наприклад, Apfel або Schule",
+      "article": "Артикль",
+      "all": "Усі",
+      "training": "Тренування",
+      "quiz": "Тест на артиклі",
+      "question": "Який артикль підходить?",
+      "next": "Наступне запитання",
+      "selection": "Вибір",
+      "overview": "Огляд навчання",
+      "answers": "Відповіді",
+      "storage": "Прогрес та обране зберігаються в цьому браузері.",
+      "session_storage": "Прогрес доступний у поточному сеансі. Сховище браузера недоступне.",
+      "matches": "результатів",
+      "matches_one": "результат",
+      "matches_few": "результати",
+      "matches_many": "результатів",
+      "matches_other": "результату",
+      "choose_view": "Вибрати навчальний розділ",
+      "practice": "Практика",
+      "close": "Закрити",
+      "word_hint": "Натисніть на слово, щоб позначити його як вивчене або додати до обраного.",
+      "training_hint": "Виберіть відповідний артикль. Правильна відповідь з’явиться після вашої відповіді.",
+      "score_label": "Правильні відповіді / запитання з відповідями",
+      "empty_favorites": "Обраних слів поки немає",
+      "empty_favorites_hint": "Відкрийте слово в списку та додайте його до обраного.",
+      "meaning": "Значення",
+      "mark_unknown": "Позначити як невивчене",
+      "mark_known": "Позначити як вивчене",
+      "remove_favorite": "Видалити з обраного",
+      "favorite": "До обраного",
+      "correct": "Правильно",
+      "incorrect": "Правильна відповідь",
+      "learned": "Вивчено",
+      "favorite_status": "Обране",
+      "empty_title": "Відповідних слів немає",
+      "empty_hint": "Змініть пошуковий запит або виберіть інший артикль.",
+      "skip": "До навчального розділу",
+      "submit_search": "Знайти",
+      "apply_language": "Змінити мову",
+      "no_script": "Список слів і пошук працюють без JavaScript. Для тесту, обраного та прогресу увімкніть JavaScript.",
+      "title": "Vokabelbox – німецькі слова та артиклі | Beirit Web",
+      "description": "Вивчайте 30 німецьких іменників із der, die та das: переклади українською й російською, пояснення німецькою, пошук, обране та тест на артиклі.",
+      "brand_caption": "Відкриваємо мови",
+      "main_navigation": "Основна навігація",
+      "menu": "Меню",
+      "project_link": "Про проєкт",
+      "contact": "Контакти",
+      "footer_navigation": "Додаткові посилання",
+      "projects": "Проєкти",
+      "imprint": "Вихідні дані",
+      "privacy": "Конфіденційність",
+      "home": "Головна сторінка"
+    }
+  }
+}
