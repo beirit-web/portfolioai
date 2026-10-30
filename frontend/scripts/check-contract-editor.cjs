@@ -158,6 +158,7 @@ async function mobileWorkflow(browser) {
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`${baseUrl}/static/portfolio/vertragsgenerator-main/index.html`);
   await page.waitForURL("**/vertragsgenerator/");
+  await page.getByRole("link", { name: "Editor öffnen", exact: true }).first().click();
   await ready(page);
   await expect(page.locator("#formPane")).toBeVisible();
   await expect(page.locator("#previewPane")).toBeHidden();
@@ -295,7 +296,7 @@ async function mobileWorkflow(browser) {
 async function responsiveLayouts(browser) {
   for (const [width, height] of [[280,700], [320,320], [320,700], [390,844], [768,1024], [844,390], [1024,768], [1440,1000], [1920,1080]]) {
     const page = await browser.newPage({ viewport: { width, height } });
-    await page.goto(`${baseUrl}/vertragsgenerator/`);
+    await page.goto(`${baseUrl}/vertragsgenerator/?workspace=editor`);
     await ready(page);
     await assertTheme(page);
     await assertLayout(page, width);

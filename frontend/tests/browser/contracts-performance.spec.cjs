@@ -14,7 +14,7 @@ test("contract editor preserves first-paint layout and server-rendered inputs", 
     await route.continue();
   });
   try {
-    await page.goto("/vertragsgenerator/", { waitUntil: "commit" });
+    await page.goto("/vertragsgenerator/?workspace=editor", { waitUntil: "commit" });
     await expect(page.locator("#vermieter")).toBeVisible();
     await expect(page.locator("#stepList .step-button")).toHaveCount(5);
     await expect(page.locator(".field-group:visible")).toHaveCount(1);
@@ -61,7 +61,7 @@ test("logo changes reuse the contract text without preview requests", async ({ p
   page.on("request", request => {
     if (request.url().includes("/vertragsgenerator/vorschau/")) previewRequests.push(request);
   });
-  await page.goto("/vertragsgenerator/");
+  await page.goto("/vertragsgenerator/?workspace=editor");
   await ready(page);
   expect(previewRequests).toHaveLength(1);
   const originalText = await page.locator(".preview-text").textContent();

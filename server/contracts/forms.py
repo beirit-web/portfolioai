@@ -42,7 +42,8 @@ class ContractForm(forms.Form):
                                     "kind": kind})
         return list(groups.values())
 
-    def document(self):
+    def document_values(self):
+        """Validated display values shared by TXT export and document layouts."""
         self.is_valid()
         values = {}
         for name, field in self.fields.items():
@@ -53,8 +54,12 @@ class ContractForm(forms.Form):
             elif isinstance(field, forms.DateField) and value is not None:
                 value = value.strftime("%d.%m.%Y")
             values[name] = value or ""
+        return values
 
-        return render_to_string(f"contracts/documents/{self.template_key}.txt", values).strip()
+    def document(self):
+        return render_to_string(
+            f"contracts/documents/{self.template_key}.txt", self.document_values(),
+        ).strip()
 
     def validation(self):
         self.is_valid()

@@ -1,0 +1,79 @@
+.clearable-control {
+  position: relative;
+  min-width: 0;
+}
+
+/* Match the base input selector's specificity so its desktop padding cannot win. */
+.clearable-control input.clearable-input[type],
+.clearable-control input.clearable-input:not([type]),
+.clearable-control textarea.clearable-input {
+  display: block;
+  padding-right: 49px;
+}
+
+.field-clear {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: #f0f1f5;
+  color: #656777;
+  cursor: pointer;
+}
+
+.field-clear-symbol {
+  font-family: sans-serif;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.field-clear:hover:not(:disabled) {
+  background: #e9e5f5;
+  color: #57428b;
+}
+
+.field-clear:focus-visible {
+  outline: 2px solid var(--accent, #72629a);
+  outline-offset: 2px;
+}
+
+.field-clear:disabled {
+  background: #f7f7f9;
+  color: #b9bbc4;
+  cursor: default;
+}
+
+.clearable-control--textarea .field-clear {
+  top: 9px;
+  transform: none;
+}
+
+/* Keep the native date picker / number arrows and the currency unit usable. */
+.amount-control.clearable-control input.clearable-input[type="number"] {
+  padding-right: 72px;
+}
+
+.amount-control.clearable-control .field-unit {
+  right: 49px;
+}
+
+.field-clear--label {
+  width: auto;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 550;
+}
+
+.clearable-control--prompt textarea.clearable-input {
+  padding-right: 88px;
+}

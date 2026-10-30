@@ -27,12 +27,36 @@ den zugehörigen Demo-Screenshot.
 |  Botanic mit Wetter   |    Vertragsgenerator    |     Notenrechner      |
 | :-------------------: | :---------------------: | :-------------------: |
 | [![Botanic][c4]][s4]  |  [![Vertrag][c5]][s5]   |  [![Noten][c6]][s6]   |
-| Pflanzen und Gießplan | Vorschau und TXT-Export | Noten und Auswertung  |
+| Pflanzen und Gießplan | Vertragsstudio mit optionaler KI | Noten und Auswertung  |
 |    Python, Django     |   Django, JavaScript    | HTML, CSS, JavaScript |
 |    [Quellcode][q4]    |     [Quellcode][q5]     |    [Quellcode][q6]    |
 
 Weitere Ansichten und die Herkunft der Screenshots stehen im
 [Bildnachweis](server/assets/images/portfolio-previews/README.md).
+
+## Vertragsstudio
+
+Unter `http://localhost:8000/vertragsgenerator/` lassen sich Mietverträge,
+Fahrzeug-Kaufverträge und einfache Kaufverträge mit fiktiven Beispieldaten
+vorbereiten. Zum aktuellen Funktionsumfang gehören:
+
+- Vorlagenübersicht und lokale Entwurfsablage mit Suche, Duplizieren und Wiederöffnen.
+- Editor mit Live-Vorschau, einzeln leerbaren Eingabefeldern und automatischer
+  Speicherung der Arbeitskopie im Browser.
+- Eigene Mietvertragsgestaltung mit Vertragsparteien, Mietobjekt und Mietbeginn,
+  hervorgehobenen Miet- und Kautionsbeträgen sowie Unterschriftsbereich.
+- TXT-Export, Kopieren und PDF-Ausgabe über den Browser-Druckdialog;
+  Schriftgröße und eigenes Logo sind einstellbar.
+- Optionaler Gemini-Assistent für Vertragsentwürfe, sprachliches Verbessern und
+  Kürzen. Vorschläge werden erst nach ausdrücklicher Übernahme in den Editor geladen.
+
+Die [Dokumentation des Vertragsgenerators](server/contracts/README.md) beschreibt
+die lokale KI-Konfiguration, Begrenzungen, Datenverarbeitung und Prüfungen.
+Die KI ist in der öffentlichen Beispielkonfiguration deaktiviert.
+
+Als nächste Verbesserungen sind ein mobiler Lesemodus, gezielte KI-Rückfragen,
+ein direkter PDF-Download und ein Vergleich gespeicherter Entwürfe vorgesehen.
+Diese Erweiterungen sind noch nicht umgesetzt.
 
 ## Lokal starten
 

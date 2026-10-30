@@ -1,0 +1,58 @@
+{% load static contracts_ui %}
+<div class="studio-shell">
+  <aside class="studio-sidebar">
+    <a class="studio-brand" href="{% url 'contracts:generator' %}" data-workspace-link="overview"><span>{% contract_icon 'file-text' %}</span><div>Vertragsstudio<small>BEIRIT DIGITAL</small></div></a>
+    <span class="workspace-label">DEIN ARBEITSBEREICH</span>
+    <nav class="studio-nav" aria-label="Vertragsstudio">
+      <a href="{% url 'contracts:generator' %}" data-workspace-link="overview" aria-current="page">{% contract_icon 'layout-dashboard' %}Übersicht</a>
+      <a href="#assistant" data-workspace-link="assistant">{% contract_icon 'sparkles' %}KI-Assistent<span>NEU</span></a>
+      <a href="#drafts" data-workspace-link="drafts">{% contract_icon 'folders' %}Meine Entwürfe<span id="sidebarDraftCount">0</span></a>
+      <a href="#templates" data-workspace-link="templates">{% contract_icon 'layout-template' %}Vorlagen<span>{{ config.templates|length }}</span></a>
+      <a href="?workspace=editor" data-workspace-link="editor">{% contract_icon 'pen-line' %}Editor öffnen</a>
+    </nav>
+    <div class="sidebar-note"><span class="color-icon mint">{% contract_icon 'shield-check' %}</span><strong>Dein Browser. Deine Ablage.</strong><p>Gespeicherte Entwürfe bleiben auf diesem Gerät. Du entscheidest, was du exportierst.</p></div>
+    <a class="studio-portfolio" href="/projekte/vertragsgenerator">{% contract_icon 'arrow-up-right' %}Zur Projektseite</a>
+  </aside>
+  <div class="studio-body">
+    <header class="studio-topbar"><div><span class="workspace-breadcrumb">Arbeitsbereich</span><span class="breadcrumb-slash">/</span><strong id="workspaceBreadcrumb">Übersicht</strong></div><div class="studio-topbar-actions"><span class="demo-pill"><span></span>Portfolio-Demo</span><nav aria-label="Projekt"><a class="button button--quiet" href="/projekte/vertragsgenerator" aria-label="Zur Startseite des Vertragsgenerators">{% contract_icon 'arrow-up-right' %}<span>Projektseite</span></a></nav></div></header>
+    <main class="studio-main" id="studioMain">
+      <section class="welcome-heading"><div><p class="overline">WENIGER PAPIERKRAM. MEHR ÜBERBLICK.</p><h1 id="workspaceTitle" tabindex="-1">Deine Verträge. An einem Ort.</h1><p id="workspaceSubtitle">Von der ersten Vorlage bis zum fertigen Entwurf.</p></div><a class="button button--primary" href="#templates" data-workspace-link="templates">{% contract_icon 'plus' %}Vertrag erstellen</a></section>
+      <section class="studio-hero overview-only" aria-labelledby="heroTitle">
+        <div class="hero-copy"><span class="hero-kicker">DEIN NÄCHSTER VERTRAG BEGINNT HIER</span><h2 id="heroTitle">Gut vorbereitet.<br>Klar vereinbart.</h2><p>Starte mit deiner Beschreibung oder einer Vorlage. Erstelle und bearbeite deinen Entwurf mit KI-Unterstützung.</p><div class="hero-actions"><a class="button button--primary" href="#assistant" data-workspace-link="assistant">{% contract_icon 'sparkles' %}Mit KI beginnen</a><a class="button button--quiet" href="#templates" data-workspace-link="templates">Vorlagen entdecken{% contract_icon 'arrow-right' %}</a></div><span class="hero-footnote">3 Vorlagen · Live-Vorschau · PDF & Text</span></div>
+        <img class="hero-art" src="{% static 'contracts/illustrations/studio.svg' %}" width="520" height="320" alt="Illustration: Vertragsdokument mit Haus, Fahrzeug und einer bestätigten Vereinbarung" />
+      </section>
+      <section class="studio-stats overview-only" aria-label="Dein Arbeitsbereich in Zahlen">
+        <div><span class="color-icon lilac">{% contract_icon 'folders' %}</span><div><strong id="draftCount">0</strong><span>Gespeicherte Entwürfe</span></div></div>
+        <div><span class="color-icon peach">{% contract_icon 'layout-template' %}</span><div><strong>{{ config.templates|length }} <small>Vertragsarten</small></strong><span>Bereit zum Ausfüllen</span></div></div>
+        <div><span class="color-icon mint">{% contract_icon 'download' %}</span><div><strong>PDF & TXT</strong><span>Drucken, herunterladen, kopieren</span></div></div>
+      </section>
+      {% include 'contracts/assistant.html' %}
+      <section id="templates" class="template-library" aria-labelledby="templatesTitle">
+        <div class="studio-section-heading"><div><p class="overline">FÜR DEINE NÄCHSTE VEREINBARUNG</p><h2 id="templatesTitle">Mit einer Vorlage starten</h2></div><span class="section-caption">{{ config.templates|length }} Vorlagen verfügbar</span></div>
+        <div class="template-cards">
+          {% for key, template in config.templates.items %}
+          <a class="template-card template-card--{{ key }}" href="?template={{ key }}" data-open-template="{{ key }}">
+            <div class="template-art">{% with illustration='contracts/illustrations/'|add:key|add:'.svg' %}<img src="{% static illustration %}" width="320" height="160" alt="" />{% endwith %}<span>{% if key == 'rent' %}WOHNEN{% elif key == 'vehicle' %}MOBILITÄT{% else %}PRIVATER VERKAUF{% endif %}</span></div>
+            <div class="template-card-copy"><h3>{{ template.label }}</h3><p>{{ template.summary }}</p><div><span>{{ template.fields|length }} Angaben · 5 Schritte</span><span class="template-arrow">{% contract_icon 'arrow-right' %}</span></div></div>
+          </a>
+          {% endfor %}
+        </div>
+        <p class="template-note">{% contract_icon 'circle-alert' %}Demo-Vorlagen zur Veranschaulichung. Vor echter Nutzung fachlich prüfen lassen.</p>
+      </section>
+      <section id="drafts" class="draft-library" aria-labelledby="draftsTitle">
+        <div class="studio-section-heading"><div><p class="overline">HIER GEHT’S WEITER</p><h2 id="draftsTitle">Meine Entwürfe</h2></div><span class="section-caption">Lokal in diesem Browser</span></div>
+        <div class="draft-panel">
+          <div class="draft-filters"><label class="draft-search">{% contract_icon 'search' %}<input type="search" id="draftSearch" placeholder="Entwürfe durchsuchen …" aria-label="Entwürfe durchsuchen" /></label><label class="sr-only" for="draftFilter">Nach Vertragsart filtern</label><select id="draftFilter"><option value="all">Alle Vertragsarten</option>{% for key, template in config.templates.items %}<option value="{{ key }}">{{ template.label }}</option>{% endfor %}</select></div>
+          <div id="draftList" aria-live="polite"></div>
+          <div class="draft-empty" id="draftEmpty"><span class="color-icon lilac">{% contract_icon 'folder-plus' %}</span><h3>Platz für deine nächste Vereinbarung.</h3><p>Starte mit einer Vorlage. Über „In Ablage speichern“ legst du im Editor eine benannte Kopie ab.</p><a href="?workspace=editor" data-workspace-link="editor" class="button button--secondary">Editor öffnen{% contract_icon 'arrow-right' %}</a></div>
+          <noscript><p class="template-note">Die lokale Entwurfsablage benötigt JavaScript. Die Vorlagen und der Text-Export funktionieren auch ohne JavaScript.</p></noscript>
+        </div>
+      </section>
+      <section class="workflow-guide overview-only" aria-label="So funktioniert es"><div><span>01</span><strong>Vorlage wählen</strong><p>Die passende Basis für deine Vereinbarung.</p></div><div><span>02</span><strong>Details ergänzen</strong><p>Schritt für Schritt mit direkter Vorschau.</p></div><div><span>03</span><strong>Prüfen & exportieren</strong><p>Als PDF drucken oder als Text mitnehmen.</p></div></section>
+      <footer class="studio-footer"><span>Beirit Digital · Vertragsstudio</span><span>{% contract_icon 'shield-check' %}Entwürfe lokal · Vorschau auf dem Server</span></footer>
+    </main>
+  </div>
+</div>
+<dialog id="snapshotDialog" class="settings-dialog" aria-labelledby="snapshotTitle">
+  <form id="snapshotForm"><div class="dialog-heading"><div><p class="overline">MEINE ENTWÜRFE</p><h2 id="snapshotTitle">In Ablage speichern</h2></div><button type="button" class="icon-button" id="cancelSnapshot" aria-label="Schließen">{% contract_icon 'x' %}</button></div><div class="settings-body snapshot-body"><label for="snapshotName">Name des Entwurfs</label><input id="snapshotName" name="name" maxlength="100" required placeholder="z. B. Mietvertrag Musterwohnung" /><p>Speichert eine eigenständige Kopie deiner aktuellen Angaben in diesem Browser. Logo und Schriftgröße gelten weiterhin für alle Dokumente.</p><p id="snapshotError" role="alert"></p></div><div class="dialog-footer"><button type="button" class="button button--quiet" id="cancelSnapshotFooter">Abbrechen</button><button class="button button--primary" type="submit">{% contract_icon 'bookmark' %}Entwurf speichern</button></div></form>
+</dialog>

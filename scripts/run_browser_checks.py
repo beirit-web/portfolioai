@@ -104,6 +104,8 @@ def check_environment(directory):
         "HOUSING_SOMANTIC_API_KEY": "",
         "HOUSING_SOMANTIC_MONTHLY_LIMIT": "45",
         "REALTIME_NOTIFICATIONS_ENABLED": "false",
+        "CONTRACTS_AI_ENABLED": "false",
+        "CONTRACTS_GEMINI_API_KEY": "",
         "MAINTENANCE_MODE": "false",
         "LOGIN_REQUIRED": "false",
         "SECURE_SSL_REDIRECT": "false",

@@ -22,18 +22,26 @@
     <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
     <link rel="stylesheet" href="{% asset_url 'contracts/style.css' %}" />
     <link rel="stylesheet" href="{% asset_url 'css/project-home.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'contracts/workspace.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'contracts/document-design.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'contracts/assistant-layout.css' %}" />
+    <link rel="stylesheet" href="{% asset_url 'contracts/clear-inputs.css' %}" />
     <title>Vertragsgenerator | Beirit Digital</title>
   </head>
-  <body data-view="form">
+  <body data-view="form" data-workspace="{{ workspace }}">
+    {% include 'contracts/workspace.html' %}
     <nav class="project-home-nav" aria-label="Projekt"><a href="/projekte/vertragsgenerator" aria-label="Zur Startseite des Vertragsgenerators">Zur Startseite</a></nav>
     <header class="app-header">
       <div class="topbar">
         <div class="app-identity">
+          <a class="icon-button workspace-back" href="{% url 'contracts:generator' %}" data-workspace-link="overview" aria-label="Zur Übersicht">{% contract_icon 'chevron-left' %}</a>
           <span class="app-symbol">{% contract_icon 'file-text' %}</span>
           <h1>Vertragsgenerator</h1>
           <span class="app-edition">BEIRIT DIGITAL</span>
         </div>
         <div class="header-actions">
+          <a class="icon-button" href="#assistant" data-workspace-link="assistant" aria-label="KI-Assistent öffnen" title="KI-Assistent">{% contract_icon 'sparkles' %}</a>
+          <button type="button" class="button button--secondary" id="saveSnapshotButton" aria-label="Entwurf in Ablage speichern">{% contract_icon 'folder-plus' %}<span class="save-label">In Ablage speichern</span></button>
           <button type="button" class="icon-button" id="openSettingsButton" aria-label="Dokumenteinstellungen" title="Dokumenteinstellungen" data-tooltip="Dokumenteinstellungen">{% contract_icon 'sliders-horizontal' %}</button>
           <details class="toolbar-menu" id="exportMenu">
             <summary class="button button--primary export-trigger" aria-label="Export" title="Export">{% contract_icon 'download' %}<span>Export</span>{% contract_icon 'chevron-down' %}</summary>
@@ -136,7 +144,7 @@
         </div>
         <div class="document-stage" id="documentStage">
           <div class="page-frame" id="pageFrame">
-            <article class="contract-preview" id="contractPreview" tabindex="0" aria-label="Vertragsentwurf" aria-busy="false"><h3>{{ definition.label }}</h3><div class="preview-text"><p>{{ document }}</p></div></article>
+            <article class="contract-preview contract-document" id="contractPreview" tabindex="0" aria-label="Vertragsentwurf" aria-busy="false"><h3>{{ definition.label }}</h3><div class="preview-text"><p>{{ document }}</p></div></article>
           </div>
         </div>
         <div class="document-feedback">
@@ -166,5 +174,8 @@
     <div class="action-toast" id="actionToast" role="status" hidden></div>
     {{ config|json_script:"contract-config" }}
     <script src="{% asset_url 'contracts/app.js' %}" defer charset="UTF-8"></script>
+    <script src="{% asset_url 'contracts/workspace.js' %}" defer charset="UTF-8"></script>
+    <script src="{% asset_url 'contracts/assistant.js' %}" defer charset="UTF-8"></script>
+    <script src="{% asset_url 'contracts/clear-inputs.js' %}" defer charset="UTF-8"></script>
   </body>
 </html>

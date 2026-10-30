@@ -1,0 +1,205 @@
+/* The same document typography is used in the editor and the AI preview. */
+.contract-document {
+  color: #263340;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.contract-preview.contract-document { padding: 42px 46px 46px; }
+.contract-document .document-masthead {
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 17px;
+  margin-bottom: 26px;
+  border-bottom: 2px solid #bd3934;
+  color: #677482;
+  font: 600 10px/1.5 Inter, -apple-system, sans-serif;
+  letter-spacing: 1.2px;
+}
+.contract-document .document-masthead span:last-child {
+  padding: 4px 9px;
+  border: 1px solid #e4ded6;
+  border-radius: 4px;
+  color: #826847;
+  background: #fbf8f3;
+  font-size: 9px;
+  letter-spacing: .8px;
+}
+.contract-document h3.document-title {
+  margin: 0 0 28px;
+  max-width: 100%;
+  font-size: 29px;
+  line-height: 1.25;
+  font-weight: 650;
+  letter-spacing: -.8px;
+}
+.contract-document .preview-text { display: block; }
+.contract-document p { margin: 0; white-space: pre-wrap; }
+.contract-document .preview-text > p:not(.document-closing) { margin: 14px 0; }
+.contract-document .document-parties {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 25px;
+  break-inside: avoid;
+}
+.contract-document .document-party {
+  padding: 17px 19px;
+  border: 1px solid #e2e6ea;
+  border-radius: 6px;
+  background: #f7f9fa;
+}
+.contract-document .document-party h4 {
+  margin: 0 0 8px;
+  color: #697784;
+  font-size: .72em;
+  font-weight: 650;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+.contract-document .document-party p { line-height: 1.65; }
+.contract-document .document-clause { padding: 19px 0; border-bottom: 1px solid #e5e9ed; }
+.contract-document .clause-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 11px;
+  margin: 0 0 11px;
+  font-size: 1em;
+  font-weight: 650;
+  line-height: 1.5;
+  break-after: avoid;
+}
+.contract-document .clause-number {
+  flex-shrink: 0;
+  min-width: 25px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: #f1f3f6;
+  color: #6c7987;
+  text-align: center;
+  font-size: .8em;
+}
+.contract-document .document-clause > p,
+.contract-document .document-facts { margin: 0 0 0 36px; }
+.contract-document .document-clause > p + p { margin-top: 10px; }
+.contract-document .document-facts > div {
+  display: grid;
+  grid-template-columns: minmax(125px, 34%) minmax(0, 1fr);
+  gap: 12px;
+  padding: 4px 0;
+}
+.contract-document .document-facts dt { color: #697784; }
+.contract-document .document-facts dd { margin: 0; font-weight: 500; }
+.contract-document .document-closing { margin-top: 26px; font-size: .9em; }
+.contract-document .signature-area { margin-top: 25px; padding-top: 0; border: 0; }
+.contract-document .signature-area h4 { margin: 0; color: #697784; font-size: 10px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; }
+.contract-document .signature-grid { gap: 30px; }
+.contract-document .signature-card { gap: 6px; padding-top: 44px; }
+.contract-document .signature-line { border-color: #8c98a4; }
+.contract-document .signature-label { font-size: .85em; font-weight: 600; }
+.contract-document .signature-card small { color: #7b8793; font-size: 9px; }
+.document-stage { background: #e9edf1; }
+
+/* Rental documents have their own hierarchy instead of a stack of equal blocks. */
+.rental-document { container: rental / inline-size; color: #293c48; }
+.contract-preview > .rental-document { min-height: 1033px; display: flex; flex-direction: column; }
+.rental-document .document-masthead {
+  margin-bottom: 22px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #d9e3e6;
+  color: #53727f;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+}
+.rental-title-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 25px; }
+.rental-title-copy { min-width: 0; }
+.contract-document .rental-document h3.document-title { margin: 0 0 7px; font-size: 40px; font-weight: 650; letter-spacing: -1.4px; }
+.contract-document .rental-subtitle { color: #6c7b84; font-size: .82em; line-height: 1.6; }
+.rental-symbol { flex: 0 0 66px; height: 66px; display: grid; place-items: center; border: 1px solid #dae7e9; border-radius: 16px; color: #346475; background: #f1f7f7; }
+.rental-symbol .icon { width: 32px; height: 32px; stroke-width: 1.4; }
+.contract-document .rental-document .rental-introduction { margin: 0 0 14px; color: #6b7983; font-size: .81em; }
+.rental-document .document-parties { gap: 26px; margin-bottom: 23px; }
+.rental-document .document-party { padding: 0 0 17px; border: 0; border-bottom: 2px solid #dce5e9; border-radius: 0; background: transparent; }
+.rental-document .document-party h4 { margin-bottom: 7px; color: #476675; letter-spacing: .8px; font-size: .7em; }
+.rental-document .document-party p { line-height: 1.6; }
+.rental-property-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px; padding: 18px 20px; margin-bottom: 19px; border: 1px solid #dce5e9; border-radius: 7px; background: #f7f9fa; }
+.rental-document .rental-property-grid .document-clause { padding: 0; border: 0; }
+.rental-document .rental-property-grid .document-clause + .document-clause { padding-left: 24px; border-left: 1px solid #dce5e9; }
+.rental-document .document-clause { padding: 17px 0; }
+.rental-document .clause-heading { gap: 8px; margin-bottom: 8px; font-size: .9em; }
+.rental-document .clause-number { padding: 0; min-width: 17px; background: transparent; color: #718993; font-size: .9em; }
+.rental-document .document-clause > p { margin-left: 25px; font-size: .92em; line-height: 1.65; }
+.rental-document .rental-property-grid .document-clause > p { margin-left: 0; }
+.rental-document .rental-payments { padding: 0 0 18px; }
+.rental-payment-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 22px; margin: 13px 0 0 25px; }
+.rental-amount { padding: 15px 18px; background: #f1f6f6; border-radius: 6px; }
+.rental-payment-grid dt { color: #5e7680; font-size: .75em; line-height: 1.6; }
+.rental-payment-grid dd { margin: 0; white-space: pre-wrap; }
+.rental-amount dd { margin-top: 4px; font-size: 1.55em; line-height: 1.35; font-weight: 600; letter-spacing: -.5px; font-variant-numeric: tabular-nums; }
+.rental-due { grid-column: 1 / -1; display: grid; grid-template-columns: 125px minmax(0, 1fr); align-items: baseline; gap: 12px; padding-top: 13px; }
+.rental-due dd { font-size: .88em; }
+.rental-closing { margin-top: 20px; break-inside: avoid; }
+.rental-place-date { display: flex; align-items: baseline; gap: 15px; }
+.rental-place-date > span { flex-shrink: 0; color: #75838a; font-size: .72em; }
+.contract-document .rental-place-date .document-closing { margin: 0; font-size: .86em; }
+.rental-document .signature-area { margin-top: 22px; }
+.rental-document .signature-area h4 { color: #677f89; font-size: 9px; }
+.rental-document .signature-card { padding-top: 35px; }
+.rental-document .signature-grid { gap: 36px; }
+.rental-document-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-top: 13px; margin-top: auto; border-top: 1px solid #dce5e9; color: #7a8c94; font-size: 9px; letter-spacing: .2px; }
+.rental-closing + .rental-document-footer { margin-top: 28px; }
+.contract-preview .rental-closing + .rental-document-footer { margin-top: auto; padding-top: 13px; }
+.contract-preview .rental-closing { padding-bottom: 28px; }
+.rental-document .preview-brand { padding-bottom: 15px; margin-bottom: 16px; min-height: 90px; }
+
+@container rental (max-width: 440px) {
+  .rental-title-row { gap: 12px; }
+  .contract-document .rental-document h3.document-title { font-size: 32px; }
+  .rental-symbol { flex-basis: 46px; height: 46px; border-radius: 12px; }
+  .rental-symbol .icon { width: 26px; height: 26px; }
+  .rental-property-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 16px; }
+  .rental-document .rental-property-grid .document-clause + .document-clause { padding: 14px 0 0; border-left: 0; border-top: 1px solid #dce5e9; }
+  .rental-payment-grid { margin-left: 0; gap: 0 12px; }
+  .rental-amount { padding: 12px; }
+  .rental-amount dd { font-size: 1.25em; }
+  .rental-due { grid-template-columns: minmax(0, 1fr); gap: 3px; }
+  .rental-place-date { display: block; }
+}
+@container rental (max-width: 300px) {
+  .rental-symbol { display: none; }
+  .rental-document .document-parties, .rental-payment-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .rental-document .document-masthead { flex-wrap: wrap; }
+}
+
+@media screen and (min-width: 1024px) {
+  .preview-toolbar { padding: 13px 25px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; }
+  .preview-heading { flex: 1; gap: 15px; }
+  .preview-tools { margin: 0; gap: 15px; }
+  .document-stage { padding: 24px; }
+}
+@media print {
+  .contract-preview.contract-document { padding: 0; font-size: 10pt; }
+  .contract-preview.contract-document[data-font-size="small"] { font-size: 9pt; }
+  .contract-preview.contract-document[data-font-size="large"] { font-size: 11.5pt; }
+  .contract-document h3.document-title { font-size: 22pt; margin-bottom: 22px; }
+  .contract-document .document-masthead { margin-bottom: 22px; }
+  .contract-document .document-party { background: white; }
+  .contract-document .document-clause { padding: 14px 0; break-inside: avoid; }
+  .contract-document .document-parties, .contract-document .document-facts > div { break-inside: avoid; }
+  .contract-document .clause-heading { break-after: avoid; }
+  .contract-preview > .rental-document { display: block; min-height: 0; container-type: normal; }
+  .rental-document .document-masthead { margin-bottom: 18px; }
+  .contract-document .rental-document h3.document-title { font-size: 27pt; }
+  .rental-title-row { margin-bottom: 18px; }
+  .rental-document .document-parties { margin-bottom: 18px; }
+  .rental-property-grid { margin-bottom: 16px; padding: 14px 17px; break-inside: avoid; }
+  .rental-document .document-clause { padding-top: 13px; padding-bottom: 13px; }
+  .rental-document .rental-property-grid .document-clause { padding-top: 0; padding-bottom: 0; }
+  .rental-document .rental-payments { padding-top: 0; }
+  .rental-amount { padding: 12px 16px; border: 1px solid #dce5e9; }
+  .rental-closing { margin-top: 16px; }
+  .contract-preview .rental-closing { padding-bottom: 20px; }
+  .rental-document .signature-card { padding-top: 30px; }
+  .rental-closing + .rental-document-footer { margin-top: 0; }
+}

@@ -33,6 +33,7 @@ id_rsa.*
 .env.backup
 .env.production
 .env.original
+.env.orig
 .envrc
 .venv/
 __pycache__/

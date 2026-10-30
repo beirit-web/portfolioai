@@ -44,6 +44,31 @@ class ContractFormTests(SimpleTestCase):
         form = ContractForm("purchase", {"seller": text})
         self.assertIn(text, form.document())
 
+    def test_document_values_format_valid_values_and_leave_missing_or_invalid_values_empty(self):
+        form = ContractForm("rent", {"miete": "0", "kaution": "1234.50",
+                                     "beginn": "2026-02-30", "datum": "2026-10-29"})
+        values = form.document_values()
+        self.assertEqual(set(values), set(form.fields))
+        self.assertEqual(values["miete"], "0,00 €")
+        self.assertEqual(values["kaution"], "1.234,50 €")
+        self.assertEqual(values["beginn"], "")
+        self.assertEqual(values["datum"], "29.10.2026")
+        self.assertEqual(values["vermieter"], "")
+        self.assertEqual(values["zusatz"], "")
+        self.assertIn("beginn", form.validation()["invalidFields"])
+        self.assertIn("Der Mietbeginn ist der ________________.", form.document())
+
+    def test_document_values_preserve_multiline_parties_and_numbered_agreements(self):
+        party = "Alex Beispiel\n\nMusterweg 1\n12345 Musterstadt"
+        agreement = "1. Schlüssel erhalten\n\n2. Zähler abgelesen\nHinweis: <unverändert>"
+        form = ContractForm("rent", {**TEMPLATES["rent"]["sample"],
+                                     "vermieter": party, "zusatz": agreement})
+        values = form.document_values()
+        self.assertEqual(values["vermieter"], party)
+        self.assertEqual(values["zusatz"], agreement)
+        self.assertIn(f"Vermieter:\n{party}\n\nund\nMieter:", form.document())
+        self.assertIn(f"5. Weitere Vereinbarungen\n{agreement}\n\n", form.document())
+
 
 @override_settings(LOGIN_REQUIRED=False, SECURE_SSL_REDIRECT=False)
 class ContractViewTests(TestCase):
@@ -85,6 +110,7 @@ class ContractViewTests(TestCase):
                 self.assertEqual(download.status_code, 200)
                 self.assertTrue(preview.json()["complete"])
                 self.assertEqual(preview.json()["text"], download.content.decode())
+                self.assertEqual(preview.json()["documentValues"], ContractForm(key, data).document_values())
                 self.assertEqual(download["Content-Type"], "text/plain; charset=utf-8")
                 self.assertIn(definition["fileName"], download["Content-Disposition"])
                 self.assertIn("no-store", preview["Cache-Control"])
@@ -94,12 +120,14 @@ class ContractViewTests(TestCase):
         preview = self.client.post(reverse("contracts:preview"), {"template": "rent"})
         self.assertFalse(preview.json()["complete"])
         self.assertIn("vermieter", preview.json()["errors"])
+        self.assertEqual(preview.json()["documentValues"]["vermieter"], "")
         self.assertEqual(self.client.post(reverse("contracts:download"), {"template": "rent"}).status_code, 200)
 
     def test_invalid_inputs_block_download_and_return_field_errors(self):
         data = {"template": "purchase", "price": "-10"}
         preview = self.client.post(reverse("contracts:preview"), data)
         self.assertIn("price", preview.json()["invalidFields"])
+        self.assertEqual(preview.json()["documentValues"]["price"], "")
         download = self.client.post(reverse("contracts:download"), data)
         self.assertEqual(download.status_code, 400)
         self.assertIn("price", download.json()["errors"])

@@ -1,0 +1,32 @@
+{% load contracts_ui %}
+<section class="ai-workspace" id="assistant" aria-labelledby="assistantTitle">
+  <div class="ai-intro"><span class="color-icon lilac">{% contract_icon 'sparkles' %}</span><div><h2 id="assistantTitle">Beschreiben. Vorschau prüfen. Weiterbearbeiten.</h2><p>Deine Angaben werden zu einem übersichtlichen Entwurf, den du im Editor ergänzen kannst.</p></div></div>
+  <div class="ai-layout">
+    <form id="aiForm" class="ai-card">
+      <div class="ai-card-heading"><h3>{% contract_icon 'pen-line' %}Deine Angaben</h3><span class="demo-pill">Google Gemini</span></div>
+      <label for="aiAction">Was möchtest du tun?</label><select id="aiAction" name="action"><option value="generate">Vertragsentwurf vorbereiten</option><option value="improve">Formulierung verbessern</option><option value="shorten">Text kürzen</option></select>
+      <div id="aiTemplateField"><label for="aiTemplate">Vertragsart</label><select id="aiTemplate" name="template">{% for key, template in config.templates.items %}<option value="{{ key }}">{{ template.label }}</option>{% endfor %}</select></div>
+      <label for="aiPrompt" id="aiPromptLabel">Deine Beschreibung</label><textarea id="aiPrompt" name="prompt" minlength="10" maxlength="5000" rows="7" required placeholder="Zum Beispiel: Max Beispiel verkauft Mira Muster ein gebrauchtes Fahrrad für 180 Euro. Barzahlung bei Abholung in Musterstadt."></textarea>
+      <div class="ai-prompt-footer"><button type="button" class="text-button" id="aiExample">{% contract_icon 'sparkles' %}Beispiel einsetzen</button><span id="aiCharacterCount">0 / 5.000</span></div>
+      <label class="ai-consent"><input type="checkbox" id="aiConsent" name="consent" value="yes" required /><span>Ich stimme zu, dass dieser Text an Google Gemini übermittelt wird. Ich verwende ausschließlich fiktive Beispieldaten.</span></label>
+      <p class="ai-privacy">Es gelten die <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noopener noreferrer">Datenverarbeitungsbedingungen von Google</a>. Bitte keine echten Kundendaten oder vertraulichen Inhalte eingeben.</p>
+      <button type="submit" class="button button--primary" id="aiSubmit"{% if not config.aiAvailable %} disabled{% endif %}>{% contract_icon 'sparkles' %}<span>Entwurf vorbereiten</span></button>
+      <p id="aiStatus" role="status">{% if config.aiAvailable %}Bereit · Begrenztes KI-Kontingent{% else %}Die KI ist noch nicht aktiviert. Die Vorlagen und der Editor stehen dir bereits zur Verfügung.{% endif %}</p>
+      <noscript><p>Der KI-Assistent benötigt JavaScript.</p></noscript>
+    </form>
+    <section class="ai-card ai-result" aria-labelledby="aiResultTitle" aria-busy="false" data-state="empty">
+      <div class="ai-card-heading"><h3 id="aiResultTitle">{% contract_icon 'file-text' %}<span>Dein Vertragsentwurf</span></h3><span class="demo-pill" id="aiResultLabel">Vorschau</span></div>
+      <div class="ai-result-stage">
+        <div id="aiResultEmpty">
+          <div class="ai-empty-paper" aria-hidden="true"><span class="color-icon mint">{% contract_icon 'file-text' %}</span><span class="ai-empty-line ai-empty-line--title"></span><span class="ai-empty-line"></span><span class="ai-empty-line ai-empty-line--short"></span><div class="ai-empty-parties"><span></span><span></span></div><span class="ai-empty-line"></span><span class="ai-empty-line"></span><span class="ai-empty-line ai-empty-line--short"></span><span class="ai-empty-check">{% contract_icon 'check' %}</span></div>
+          <h3 id="aiResultEmptyTitle">Hier nimmt dein Vertrag Form an.</h3>
+          <p id="aiResultEmptyHint">Beschreibe die Parteien, den Gegenstand, Preis und Termine. Dein Entwurf erscheint hier mit klar gegliederten Abschnitten.</p>
+          <ol><li><span>1</span>Beschreiben</li><li><span>2</span>Prüfen</li><li><span>3</span>Ergänzen</li></ol>
+        </div>
+        <article class="contract-document" id="aiResultDocument" aria-label="Vorschau des KI-Vertragsentwurfs" tabindex="-1" hidden></article>
+        <label class="sr-only" for="aiResultText">KI-Vorschlag</label><textarea id="aiResultText" rows="20" readonly hidden></textarea>
+      </div>
+      <div class="ai-result-footer"><div class="ai-result-actions" id="aiResultActions" hidden><button class="button button--primary" type="button" id="aiApply">Im Editor übernehmen{% contract_icon 'arrow-right' %}</button><button class="button button--secondary" type="button" id="aiCopy">{% contract_icon 'copy' %}Text kopieren</button></div><p class="ai-review-note">{% contract_icon 'shield-check' %}<span>KI kann Fehler machen. Prüfe alle Angaben und Formulierungen. Dies ist ein Demo-Entwurf, keine Rechtsberatung.</span></p></div>
+    </section>
+  </div>
+</section>

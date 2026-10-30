@@ -71,6 +71,9 @@ let toastTimer = 0;
 let activeTemplateOption = 0;
 let templateSearch = "";
 let templateSearchTime = 0;
+let validationFields = [];
+let displayedMissingFields = [];
+let feedbackComplete = null;
 
 function icon(name) {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -152,7 +155,7 @@ function updateDocumentZoom() {
   if (!stageWidth || !paperHeight) return;
   const style = getComputedStyle(stage);
   const availableWidth = stageWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-  documentScale = elements.zoomSelect.value === "fit" ? Math.min(1, availableWidth / 794) : Number(elements.zoomSelect.value);
+  documentScale = elements.zoomSelect.value === "fit" ? Math.min(1.5, availableWidth / 794) : Number(elements.zoomSelect.value);
   const transform = `scale(${documentScale})`;
   const width = `${Math.ceil(794 * documentScale)}px`;
   const height = `${Math.ceil(paperHeight * documentScale)}px`;
@@ -183,7 +186,7 @@ function getTemplate() {
 }
 
 function getData(template = getTemplate()) {
-  return Object.fromEntries(template.fields.map(([, , name]) => [name, elements.form.elements[name]?.value || ""]));
+  return Object.fromEntries(template.fields.map(([, , name]) => [name, elements.form.elements.namedItem(name)?.value || ""]));
 }
 
 function requestBody() {
@@ -198,9 +201,21 @@ function storageKey() {
   return `${STORAGE_PREFIX}${elements.templateSelect.value || "rent"}`;
 }
 
+function setText(node, text) {
+  if (node.textContent !== text) node.textContent = text;
+}
+
+function setAttribute(node, name, value) {
+  if (node.getAttribute(name) !== value) node.setAttribute(name, value);
+}
+
+function setClass(node, name, active) {
+  if (node && node.classList.contains(name) !== active) node.classList.toggle(name, active);
+}
+
 function setStorageBadge(text, state = "") {
-  elements.storageBadge.textContent = text;
-  elements.storageBadge.dataset.state = state;
+  setText(elements.storageBadge, text);
+  if (elements.storageBadge.dataset.state !== state) elements.storageBadge.dataset.state = state;
 }
 
 function normalizeLogoData(data) {
@@ -253,7 +268,7 @@ function readFontSize() {
 
 function applyData(data) {
   Object.entries(data || {}).forEach(([key, fieldValue]) => {
-    const field = elements.form.elements[key];
+    const field = elements.form.elements.namedItem(key);
     if (field) field.value = fieldValue;
   });
 }
@@ -528,6 +543,11 @@ function renderForm({ reuseFields = false } = {}) {
       field.defaultValue = "";
     });
   }
+  validationFields = Array.from(elements.form.querySelectorAll('input:not([type="hidden"]), textarea'), field => ({
+    field,
+    error: document.getElementById(`${field.id}-error`),
+    group: field.closest('[data-group]')?.dataset.group,
+  }));
   renderStepList();
   selectSection(getGroups()[0][0]);
   const draft = readDraft();
@@ -569,60 +589,72 @@ function renderStepList() {
 }
 
 function validateFields(serverErrors = documentCache?.key === documentKey() ? documentCache.errors : {}) {
-  const fields = Array.from(elements.form.querySelectorAll('input:not([type="hidden"]), textarea'));
-  const requiredFields = fields.filter((field) => field.required);
   const missingFields = [];
+  const groupValidity = new Map();
+  let requiredCount = 0;
   let validRequired = 0;
 
-  fields.forEach((field) => {
+  validationFields.forEach(({ field, error, group }) => {
     const messages = serverErrors[field.name];
     const filled = Boolean(field.value.trim());
     const isValid = !messages && ((!field.required && !filled) || (filled && field.validity.valid));
-    field.setAttribute("aria-invalid", String(!isValid));
-    const error = document.querySelector(`#${field.id}-error`);
-    if (error) error.textContent = isValid ? "" : messages?.join(" ") || (filled ? "Ungültige Angabe" : "Pflichtfeld");
-    if (field.required && isValid) validRequired += 1;
+    setAttribute(field, "aria-invalid", String(!isValid));
+    if (error) setText(error, isValid ? "" : messages?.join(" ") || (filled ? "Ungültige Angabe" : "Pflichtfeld"));
+    if (field.required) {
+      requiredCount += 1;
+      if (isValid) validRequired += 1;
+    }
     if (!isValid) missingFields.push(field);
+    groupValidity.set(group, (groupValidity.get(group) ?? true) && isValid);
   });
 
-  const completion = requiredFields.length ? Math.round((validRequired / requiredFields.length) * 100) : 100;
+  const completion = requiredCount ? Math.round((validRequired / requiredCount) * 100) : 100;
   const complete = missingFields.length === 0;
   firstMissingField = missingFields[0] || null;
-  elements.progress.textContent = `${validRequired}/${requiredFields.length}`;
-  elements.statusBadge.textContent = complete ? "Bereit zum Export" : "Entwurf unvollständig";
-  elements.statusBadge.classList.toggle("is-complete", complete);
-  elements.completionBar.style.width = `${completion}%`;
-  elements.completionBar.parentElement.setAttribute("aria-valuenow", String(completion));
-  document.querySelector(".feedback-icon").replaceChildren(icon(complete ? "circle-check" : "circle-alert"));
-  document.querySelector(".document-feedback").classList.toggle("is-incomplete", !complete);
-  elements.exportHint.textContent = complete
+  setText(elements.progress, `${validRequired}/${requiredCount}`);
+  setText(elements.statusBadge, complete ? "Bereit zum Export" : "Entwurf unvollständig");
+  setClass(elements.statusBadge, "is-complete", complete);
+  if (elements.completionBar.style.width !== `${completion}%`) elements.completionBar.style.width = `${completion}%`;
+  setAttribute(elements.completionBar.parentElement, "aria-valuenow", String(completion));
+  if (feedbackComplete !== complete) {
+    document.querySelector(".feedback-icon").replaceChildren(icon(complete ? "circle-check" : "circle-alert"));
+    feedbackComplete = complete;
+  }
+  setClass(document.querySelector(".document-feedback"), "is-incomplete", !complete);
+  setText(elements.exportHint, complete
     ? "Alle Pflichtangaben sind ausgefüllt. Der Entwurf kann kopiert, heruntergeladen oder gedruckt werden."
-    : `${missingFields.length} Angaben fehlen oder sind ungültig. Leere Stellen bleiben im Entwurf sichtbar.`;
+    : `${missingFields.length} Angaben fehlen oder sind ungültig. Leere Stellen bleiben im Entwurf sichtbar.`);
   renderMissingList(missingFields);
 
-  getGroups().forEach(([groupKey]) => {
-    const groupFields = fields.filter((field) => field.closest("[data-group]")?.dataset.group === groupKey);
-    const groupDone = groupFields.length > 0 && groupFields.every((field) => field.getAttribute("aria-invalid") === "false");
-    const step = elements.stepList.querySelector(`[data-group="${groupKey}"]`);
-    step?.classList.toggle("is-complete", groupDone);
-    step?.classList.toggle("is-active", groupKey === selectedSection);
+  elements.stepList.querySelectorAll("li[data-group]").forEach(step => {
+    const groupKey = step.dataset.group;
+    setClass(step, "is-complete", groupValidity.get(groupKey) === true);
+    setClass(step, "is-active", groupKey === selectedSection);
   });
 }
 
 function renderMissingList(missingFields) {
-  const items = missingFields.slice(0, 5).map((field) => {
-    const meta = getFieldMeta(field.name);
-    const item = document.createElement("li");
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = meta.groupLabel ? `${meta.groupLabel}: ${meta.label}` : meta.label;
-    button.addEventListener("click", () => focusField(field));
-    item.append(button);
-    return item;
-  });
-  elements.missingList.replaceChildren(...items);
-  elements.missingList.hidden = missingFields.length === 0;
-  elements.focusMissingButton.hidden = missingFields.length === 0;
+  const visibleFields = missingFields.slice(0, 5);
+  // Retain focused links while typing; replacing fields on a template switch
+  // still rebuilds their handlers because this compares the actual field nodes.
+  if (visibleFields.length !== displayedMissingFields.length ||
+      visibleFields.some((field, index) => field !== displayedMissingFields[index])) {
+    const items = visibleFields.map(field => {
+      const meta = getFieldMeta(field.name);
+      const item = document.createElement("li");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = meta.groupLabel ? `${meta.groupLabel}: ${meta.label}` : meta.label;
+      button.addEventListener("click", () => focusField(field));
+      item.append(button);
+      return item;
+    });
+    elements.missingList.replaceChildren(...items);
+    displayedMissingFields = visibleFields;
+  }
+  const hidden = missingFields.length === 0;
+  if (elements.missingList.hidden !== hidden) elements.missingList.hidden = hidden;
+  if (elements.focusMissingButton.hidden !== hidden) elements.focusMissingButton.hidden = hidden;
 }
 
 function focusField(field) {
@@ -687,13 +719,12 @@ function endLogoDrag(event) {
 }
 
 function previewText(content) {
-  const lines = content
-    .split("\n")
-    .filter((line) => !line.trim().startsWith("Unterschrift "))
-    .join("\n")
-    .trim()
-    .split("\n");
-
+  const lines = content.trim().split("\n");
+  // Only replace the two signature placeholders added by the source template.
+  // A sentence beginning with "Unterschrift" can also be a user's agreement.
+  for (let count = 0; count < 2; count += 1) {
+    if (/^Unterschrift (?:Verkäufer|Käufer|Vermieter|Mieter): _+\s*$/.test(lines.at(-1))) lines.pop();
+  }
   lines.shift();
   return lines.join("\n").trim();
 }
@@ -701,49 +732,79 @@ function previewText(content) {
 function renderPreviewText(content) {
   const body = document.createElement("div");
   body.className = "preview-text";
-  const lines = previewText(content).split("\n");
-  let paragraph = [];
+  const blocks = previewText(content).split(/\n\s*\n/);
+  let section = body;
+  let parties;
 
-  const flushParagraph = () => {
-    if (!paragraph.length) return;
-    const text = paragraph.join("\n").trim();
-    if (text) {
-      const item = document.createElement("p");
-      item.textContent = text;
-      body.append(item);
+  function appendParagraph(parent, text) {
+    if (!text) return;
+    const lines = text.split("\n");
+    const facts = lines.map(line => line.match(/^([^:\n]{1,40}):\s+(.+)$/));
+    if (facts.every(Boolean)) {
+      const list = document.createElement("dl");
+      list.className = "document-facts";
+      facts.forEach(([, label, value]) => {
+        const row = document.createElement("div");
+        const term = document.createElement("dt");
+        const description = document.createElement("dd");
+        term.textContent = label;
+        description.textContent = value;
+        row.append(term, description);
+        list.append(row);
+      });
+      parent.append(list);
+    } else {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = text;
+      parent.append(paragraph);
     }
-    paragraph = [];
-  };
+  }
 
-  lines.forEach((line) => {
-    const trimmed = line.trim();
-    if (!trimmed) {
-      flushParagraph();
+  blocks.forEach((block, index) => {
+    const text = block.trim();
+    const party = section === body && text.match(/^(?:(Zwischen|und)\n)?(Verkäufer|Käufer|Vermieter|Mieter):\n([\s\S]+)$/);
+    if (party) {
+      if (!parties) {
+        parties = document.createElement("div");
+        parties.className = "document-parties";
+        body.append(parties);
+      }
+      const card = document.createElement("section");
+      card.className = "document-party";
+      const label = document.createElement("h4");
+      label.textContent = `${party[1] ? `${party[1]} · ` : ""}${party[2]}`;
+      const details = document.createElement("p");
+      details.textContent = party[3];
+      card.append(label, details);
+      parties.append(card);
       return;
     }
-
-    if (/^\d+\.\s/.test(trimmed)) {
-      flushParagraph();
+    const clause = text.match(/^(\d+)\.\s+([^\n]+)(?:\n([\s\S]*))?$/);
+    if (clause) {
+      section = document.createElement("section");
+      section.className = "document-clause";
       const heading = document.createElement("h4");
       heading.className = "clause-heading";
-      heading.textContent = trimmed;
-      body.append(heading);
+      const number = document.createElement("span");
+      number.className = "clause-number";
+      number.textContent = `${clause[1]}.`;
+      const title = document.createElement("span");
+      title.textContent = clause[2];
+      heading.append(number, title);
+      section.append(heading);
+      appendParagraph(section, clause[3]);
+      body.append(section);
       return;
     }
-
-    if (trimmed.endsWith(":") && trimmed.length <= 48) {
-      flushParagraph();
-      const label = document.createElement("p");
-      label.className = "document-label";
-      label.textContent = trimmed;
-      body.append(label);
+    if (index === blocks.length - 1 && /,\s*(?:\d{2}\.\d{2}\.\d{4}|_+)$/.test(text)) {
+      const closing = document.createElement("p");
+      closing.className = "document-closing";
+      closing.textContent = text;
+      body.append(closing);
       return;
     }
-
-    paragraph.push(line);
+    appendParagraph(section, text);
   });
-
-  flushParagraph();
   return body;
 }
 
@@ -780,18 +841,95 @@ function renderSignatureArea(template) {
   return wrapper;
 }
 
-function renderDocument(content) {
-  const template = getTemplate();
-  elements.preview.replaceChildren();
-  applyFontSize(elements.fontSizeSelect.value);
+function createRentalDocument(template, values) {
+  const node = (tag, className, text) => {
+    const element = document.createElement(tag);
+    element.className = className;
+    if (text !== undefined) element.textContent = text;
+    return element;
+  };
+  const value = (name, fallback = "______________________________") => values[name] || fallback;
+  const clause = (number, title, text) => {
+    const section = node("section", "document-clause");
+    section.dataset.clause = number;
+    const heading = node("h4", "clause-heading");
+    heading.append(node("span", "clause-number", `${number}.`), node("span", "", title));
+    section.append(heading);
+    if (text !== undefined) section.append(node("p", "", text));
+    return section;
+  };
+  const documentBody = node("div", "rental-document");
+  const masthead = node("div", "document-masthead");
+  masthead.append(node("span", "", "WOHNRAUM · MIETVEREINBARUNG"), node("span", "", "ENTWURF"));
+  const titleRow = node("header", "rental-title-row");
+  const titleCopy = node("div", "rental-title-copy");
+  titleCopy.append(node("h3", "document-title", template.label),
+    node("p", "rental-subtitle", "Vereinbarung zwischen Vermieter und Mieter"));
+  const symbol = node("span", "rental-symbol");
+  symbol.append(icon("house"));
+  titleRow.append(titleCopy, symbol);
+
+  const body = node("div", "preview-text");
+  const parties = node("div", "document-parties");
+  for (const [name, label] of [["vermieter", "Vermieter"], ["mieter", "Mieter"]]) {
+    const card = node("section", "document-party");
+    card.append(node("h4", "", label), node("p", "", value(name)));
+    parties.append(card);
+  }
+  body.append(node("p", "rental-introduction", "Zwischen den folgenden Vertragsparteien wird dieser Mietvertrag geschlossen."), parties);
+  const property = node("div", "rental-property-grid");
+  property.append(clause("1", "Mietobjekt", value("adresse")),
+    clause("2", "Mietbeginn", `Der Mietbeginn ist der ${value("beginn", "________________")}.`));
+  const payments = clause("3", "Miete und Kaution");
+  payments.classList.add("rental-payments");
+  const amounts = node("dl", "rental-payment-grid");
+  for (const [name, label] of [["miete", "Monatliche Miete"], ["kaution", "Kaution"]]) {
+    const amount = node("div", "rental-amount");
+    amount.append(node("dt", "", label), node("dd", "", value(name, "________________ EUR")));
+    amounts.append(amount);
+  }
+  const due = node("div", "rental-due");
+  due.append(node("dt", "", "Zahlungsfrist"), node("dd", "", value("zahlbarBis")));
+  amounts.append(due);
+  payments.append(amounts);
+  body.append(property, payments,
+    clause("4", "Übergabezustand", value("uebergabe", "Der Übergabezustand wird bei Übergabe dokumentiert.")),
+    clause("5", "Weitere Vereinbarungen", value("zusatz", "Keine zusätzlichen Vereinbarungen.")));
+
+  const closing = node("div", "rental-closing");
+  const place = node("div", "rental-place-date");
+  place.append(node("span", "", "Ort und Datum"), node("p", "document-closing", `${value("ort")}, ${value("datum", "________________")}`));
+  closing.append(place, renderSignatureArea(template));
+  const footer = node("footer", "rental-document-footer");
+  footer.append(node("span", "", "Mietvertrag"), node("span", "", "Vertragsentwurf · Zur Prüfung"));
+  documentBody.append(masthead, titleRow, body, closing, footer);
+  return documentBody;
+}
+
+// Shared by the editor and the AI result; all user content stays plain text.
+function createDocumentContent(content, template, documentValues) {
+  const fragment = document.createDocumentFragment();
+  if (template === TEMPLATES.rent && documentValues) {
+    fragment.append(createRentalDocument(template, documentValues));
+    return fragment;
+  }
   const masthead = document.createElement("div");
   masthead.className = "document-masthead";
   const documentType = document.createElement("span");
-  documentType.textContent = "VERTRAGSENTWURF";
+  documentType.textContent = "VERTRAGSVEREINBARUNG";
   const draftStatus = document.createElement("span");
   draftStatus.textContent = "ENTWURF";
   masthead.append(documentType, draftStatus);
-  elements.preview.append(masthead);
+  const heading = document.createElement("h3");
+  heading.className = "document-title";
+  heading.textContent = template.label;
+  fragment.append(masthead, heading, renderPreviewText(content), renderSignatureArea(template));
+  return fragment;
+}
+
+function renderDocument(content) {
+  elements.preview.replaceChildren(createDocumentContent(content, getTemplate(), documentCache?.documentValues));
+  applyFontSize(elements.fontSizeSelect.value);
 
   if (logoData?.src) {
     const brand = document.createElement("div");
@@ -805,33 +943,34 @@ function renderDocument(content) {
     image.addEventListener("pointerup", endLogoDrag);
     image.addEventListener("pointercancel", endLogoDrag);
     brand.append(image);
-    elements.preview.append(brand);
+    const title = elements.preview.querySelector(".document-title");
+    (title.closest(".rental-title-row") || title).before(brand);
     updateLogoLayout();
   }
 
-  const heading = document.createElement("h3");
-  heading.textContent = template.label;
-  elements.preview.append(heading, renderPreviewText(content), renderSignatureArea(template));
   scheduleDocumentZoom();
 }
 
 function setExportPending(pending) {
-  elements.preview.setAttribute("aria-busy", String(pending));
+  setAttribute(elements.preview, "aria-busy", String(pending));
   [elements.copyButton, elements.downloadButton, elements.printButton].forEach((button) => {
-    button.disabled = pending;
+    if (button.disabled !== pending) button.disabled = pending;
   });
 }
 
 async function refreshDocument() {
+  clearTimeout(previewTimer);
+  previewTimer = 0;
   const key = documentKey();
   const version = ++previewVersion;
   previewController?.abort();
-  previewController = new AbortController();
+  const controller = new AbortController();
+  previewController = controller;
   setExportPending(true);
   try {
     const response = await fetch(config.previewUrl, {
       method: "POST", body: requestBody(), credentials: "same-origin",
-      headers: { "X-CSRFToken": csrfToken }, signal: previewController.signal,
+      headers: { "X-CSRFToken": csrfToken }, signal: controller.signal,
     });
     if (!response.ok) throw new Error("Die Vorschau konnte nicht geladen werden.");
     const result = await response.json();
@@ -847,25 +986,42 @@ async function refreshDocument() {
     elements.exportHint.textContent = "Vorschau nicht erreichbar. Eingaben bleiben lokal gespeichert. Bitte erneut exportieren oder ein Feld ändern.";
     setExportPending(false);
     return null;
+  } finally {
+    if (previewController === controller) previewController = null;
   }
 }
 
-function updatePreview() {
+function ensureDocumentPreview() {
+  if (document.body.dataset.workspace !== "editor" || documentCache?.key === documentKey() ||
+      previewTimer || previewController) return;
+  setExportPending(true);
+  previewTimer = setTimeout(() => {
+    previewTimer = 0;
+    if (document.body.dataset.workspace === "editor") refreshDocument();
+  }, 180);
+}
+
+function updatePreview({ refreshInputs = true } = {}) {
+  // Individual input events already update their own clear button.
+  if (refreshInputs) window.ContractInputs?.refresh();
   clearTimeout(previewTimer);
+  previewTimer = 0;
   ++previewVersion;
   previewController?.abort();
+  previewController = null;
   validateFields();
-  setExportPending(true);
-  previewTimer = setTimeout(refreshDocument, 180);
+  setExportPending(documentCache?.key !== documentKey());
+  ensureDocumentPreview();
 }
 
 async function currentDocument() {
   clearTimeout(previewTimer);
+  previewTimer = 0;
   const result = documentCache?.key === documentKey() ? documentCache : await refreshDocument();
   if (!result) return null;
   if (result.invalidFields.length) {
     elements.exportHint.textContent = "Bitte korrigiere die ungültigen Angaben vor dem Export.";
-    focusField(elements.form.elements[result.invalidFields[0]]);
+    focusField(elements.form.elements.namedItem(result.invalidFields[0]));
     return null;
   }
   return result;
@@ -874,7 +1030,7 @@ async function currentDocument() {
 function fillSample() {
   closeMenus();
   Object.entries(getTemplate().sample).forEach(([key, sampleValue]) => {
-    const field = elements.form.elements[key];
+    const field = elements.form.elements.namedItem(key);
     if (field) field.value = sampleValue;
   });
   updatePreview();
@@ -979,7 +1135,7 @@ elements.templateField.addEventListener("focusout", (event) => {
   if (!elements.templateField.contains(event.relatedTarget)) closeTemplatePicker();
 });
 elements.form.addEventListener("input", () => {
-  updatePreview();
+  updatePreview({ refreshInputs: false });
   scheduleSave();
 });
 elements.form.addEventListener("focusin", () => validateFields());

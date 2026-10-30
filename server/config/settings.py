@@ -67,6 +67,7 @@ BASE_DIR = SERVER_DIR
 
 # Local overrides precede the public sample; explicit process values always win.
 load_dotenv(SERVER_DIR / ".env.local", override=False)
+load_dotenv(SERVER_DIR / ".env.orig", override=False)
 load_dotenv(SERVER_DIR / ".env", override=False)
 
 # Core security
@@ -489,6 +490,12 @@ AUTH_TOKEN_MAX_AGE = env_int("AUTH_TOKEN_MAX_AGE", 60 * 60 * 2)
 OPENAI_API_KEY = env("OPENAI_API_KEY", "")
 OPENAI_MODEL = env("OPENAI_MODEL", "gpt-4.1-mini")
 AI_FEATURES_ENABLED = env_bool("AI_FEATURES_ENABLED", False)
+CONTRACTS_AI_ENABLED = env_bool("CONTRACTS_AI_ENABLED", False)
+CONTRACTS_GEMINI_API_KEY = env("CONTRACTS_GEMINI_API_KEY", "").strip()
+CONTRACTS_GEMINI_MODEL = env("CONTRACTS_GEMINI_MODEL", "gemini-3.5-flash-lite").strip()
+# Application cap, not a guarantee of the provider's free quota. Use an unbilled project.
+CONTRACTS_AI_DAILY_LIMIT = max(0, min(20, env_int("CONTRACTS_AI_DAILY_LIMIT", 20)))
+CONTRACTS_AI_USAGE_PATH = _raw_db_path.parent / "contracts-ai-usage.sqlite3"
 AI_STREAMING_PREPARED = env_bool("AI_STREAMING_PREPARED", True)
 USE_REDIS_CHANNEL_LAYER = env_bool("USE_REDIS_CHANNEL_LAYER", False)
 CHANNEL_LAYERS = {
