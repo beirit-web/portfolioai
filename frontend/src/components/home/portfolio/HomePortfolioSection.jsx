@@ -275,10 +275,20 @@ function usePortfolioCarousel(itemCount, initialIndex = 0) {
 
 
 export default function HomePortfolioSection({ t, language, homeOverviewCopy, onNavigate, contentsOnly = false }) {
-  const { featuredItems: homePortfolioItems } = usePortfolioProjects(t, {
+  const { featuredItems } = usePortfolioProjects(t, {
     fetchRemote: true,
     language,
   });
+  const homePortfolioItems = React.useMemo(() => {
+    // Keep the curated homepage copy when live project metadata is refreshed.
+    const localizedBySlug = new Map(
+      t("home.portfolio.items").map((item) => [portfolioSlugFor(item), item]),
+    );
+    return featuredItems.map((item) => {
+      const text = localizedBySlug.get(portfolioSlugFor(item))?.text;
+      return text && text !== item.text ? { ...item, text } : item;
+    });
+  }, [featuredItems, t]);
   const portfolioStartIndex = React.useMemo(() => {
     const preferredIndex = homePortfolioItems.findIndex(
       (item) => portfolioSlugFor(item) === PORTFOLIO_START_SLUG,

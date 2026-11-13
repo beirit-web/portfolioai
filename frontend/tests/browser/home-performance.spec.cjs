@@ -37,12 +37,28 @@ test("refreshes carousel data when visitors approach the projects", async ({ pag
   await expect(page.locator(".site-header")).toBeVisible();
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   expect(requests).toEqual([]);
+  const cards = page.locator("#referenzen .portfolio-card");
+  const originalDescriptions = await cards.locator(".portfolio-card__text").allTextContents();
+  const originalLinks = await cards.evaluateAll(nodes => nodes.map(node => node.getAttribute("href")));
   const response = page.waitForResponse(response => new URL(response.url()).pathname === "/api/projects/");
   await page.locator("#referenzen").scrollIntoViewIfNeeded();
   expect((await response).ok()).toBe(true);
   await expect(page.locator("#referenzen")).toHaveAttribute("data-enhanced", "true");
   await expect(page.locator(".portfolio-carousel__slide.is-active")).toBeVisible();
   expect(requests).toHaveLength(1);
+  await expect(cards.locator(".portfolio-card__text")).toHaveText(originalDescriptions);
+  expect(await cards.evaluateAll(nodes => nodes.map(node => node.getAttribute("href")))).toEqual(originalLinks);
+  await expect(cards.locator(".portfolio-card__index")).toHaveText(["01", "02", "03", "04", "05", "06"]);
+  await page.locator(".portfolio-carousel__button").first().click();
+  for (let index = 0; index < 6; index += 1) {
+    if (index > 0) await page.locator(".portfolio-carousel__button").last().click();
+    const activeCard = page.locator(".portfolio-carousel__slide.is-active");
+    await expect(activeCard).toBeVisible();
+    await expect(activeCard).not.toHaveAttribute("aria-hidden", "true");
+    await expect(activeCard).toHaveAttribute("href", originalLinks[index]);
+    await expect(page.locator(".portfolio-carousel__counter")).toHaveText(`${index + 1} / 6`);
+  }
+  await expect(cards.locator(".portfolio-card__text")).toHaveText(originalDescriptions);
 });
 
 for (const language of ["de", "ru", "uk"]) {

@@ -1894,6 +1894,216 @@
   }
 }
 
+.site-shell--home .home-main#top > .codex-workflow-section {
+  box-sizing: border-box;
+  padding: clamp(1.5rem, 4vw, 3rem) var(--page-x);
+}
+
+.codex-workflow-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+  overflow: hidden;
+  border: 1px solid rgba(4, 35, 84, 0.13);
+  border-radius: 1.5rem;
+  background: #f8fafc;
+  box-shadow: 0 1rem 3rem rgba(4, 35, 84, 0.07);
+}
+
+.codex-workflow-heading {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 3rem;
+  min-width: 0;
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(64, 185, 236, 0.17), transparent 60%),
+    radial-gradient(ellipse at 100% 85%, rgba(6, 155, 251, 0.2), transparent 60%),
+    linear-gradient(155deg, #081e3d, #042354 65%, #07345b);
+}
+
+.codex-workflow-heading::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(125, 211, 252, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(125, 211, 252, 0.07) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(150deg, transparent 15%, #000 90%);
+  content: "";
+  pointer-events: none;
+}
+
+.codex-workflow-heading::after {
+  position: absolute;
+  right: -7rem;
+  bottom: 5rem;
+  z-index: -1;
+  width: 18rem;
+  height: 18rem;
+  border: 1px solid rgba(125, 211, 252, 0.14);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3rem rgba(125, 211, 252, 0.035), 0 0 0 6rem rgba(125, 211, 252, 0.025);
+  content: "";
+  pointer-events: none;
+}
+
+.codex-workflow-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.codex-workflow-symbol {
+  display: inline-flex;
+  flex: 0 0 auto;
+  padding: 0.7rem;
+  border: 1px solid rgba(125, 211, 252, 0.35);
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(125, 211, 252, 0.16), rgba(125, 211, 252, 0.04));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #7dd3fc;
+}
+
+.site-shell--home .home-main#top .codex-workflow-eyebrow {
+  margin-top: 2.75rem;
+  color: #a5cce3;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.site-shell--home .home-main#top .codex-workflow-title {
+  margin-top: 0.85rem;
+  color: #f8fafc;
+  font-size: clamp(1.85rem, 3vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+  text-wrap: balance;
+  overflow-wrap: normal;
+}
+
+.codex-workflow-title-accent {
+  display: block;
+  margin-top: 0.2em;
+  color: #7dd3fc;
+  font-size: 1.45em;
+  font-weight: 850;
+  letter-spacing: -0.045em;
+}
+
+.codex-workflow-tools {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.15rem;
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  border-radius: 1rem;
+  background: rgba(5, 22, 48, 0.65);
+  color: #cbd5e1;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.codex-workflow-agent {
+  color: #f8fafc;
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.codex-workflow-tools-label {
+  color: #a5cce3;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.codex-workflow-technologies {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.codex-workflow-technologies > span {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 0.45rem;
+  background: rgba(125, 211, 252, 0.08);
+  color: #e0f2fe;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.codex-workflow-copy {
+  display: grid;
+  min-width: 0;
+  margin: 0;
+  padding: 0 clamp(1.25rem, 3vw, 2.5rem);
+  list-style: none;
+}
+
+.codex-workflow-step {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  padding-block: 1.75rem;
+}
+
+.codex-workflow-step + .codex-workflow-step {
+  border-top: 1px solid #dce5ee;
+}
+
+.codex-workflow-number {
+  padding-top: 0.1rem;
+  color: #0369a1;
+  font-size: 0.85rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.site-shell--home .home-main#top .codex-workflow-step h3 {
+  color: #042354;
+  font-size: 1.05rem;
+  font-weight: 750;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.site-shell--home .home-main#top .codex-workflow-step p {
+  max-width: 65ch;
+  margin-top: 0.65rem;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 63.99rem) {
+  .codex-workflow-panel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .codex-workflow-heading {
+    gap: 1.75rem;
+  }
+
+  .site-shell--home .home-main#top .codex-workflow-eyebrow {
+    margin-top: 1.75rem;
+  }
+
+  .codex-workflow-step {
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    padding-block: 1.5rem;
+  }
+}
+
 /* A restrained warm accent echoes the projects CTA. */
 .site-shell.site-shell--home .home-main#top {
   --home-warm: #c99a24;

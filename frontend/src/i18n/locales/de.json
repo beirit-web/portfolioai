@@ -49,7 +49,7 @@
     "hero": {
       "eyebrow": "Beirit Web",
       "headline": "Beirit Web",
-      "tagline": "Ich bin Eugen. Ich entwickle Webanwendungen mit React, Python und Django und zeige hier meine Projekte und die technischen Entscheidungen dahinter.",
+      "tagline": "Ich bin Eugen. Mit Python, Django, React und OpenAI Codex verwirkliche ich eigene Ideen für Webanwendungen. Hier stelle ich meine Projekte vor und gebe Einblicke in ihre technische Umsetzung.",
       "ctaAria": "Projekte ansehen",
       "ctas": [
         {
@@ -217,7 +217,7 @@
     "services": {
       "kicker": "Kompetenzen",
       "title": "Technische Schwerpunkte aus meinen Projekten",
-      "intro": "Erfahrungsbereiche mit konkreten Beispielen aus Entwicklung, Optimierung und mehrsprachigen Anwendungen.",
+      "intro": "Einblicke in die Technologien, Funktionen und Herausforderungen meiner Webanwendungen.",
       "note": "Die Projekte zeigen, wie diese Schwerpunkte praktisch umgesetzt sind.",
       "cardLabels": {
         "problem": "Herausforderung",
@@ -253,6 +253,22 @@
           "solution": "Lokalisierung, Sprachumschaltung und mehrsprachige Inhalte werden strukturiert umgesetzt.",
           "benefit": "Konsistente Nutzungserlebnisse über Sprachgrenzen hinweg."
         }
+      ]
+    },
+    "codexWorkflow": {
+      "title": "Meine Arbeitsweise mit Codex",
+      "paragraphs": [
+        "Meine Projekte beginnen mit eigenen Ideen. Ich beschreibe Funktionen, Abläufe und gewünschte Ergebnisse möglichst präzise, damit Codex die Aufgaben gezielt umsetzen kann.",
+        "Nicht jede Lösung funktioniert auf Anhieb. Wenn Codex bei einem Problem nicht weiterkommt, analysiere ich die Ergebnisse und greife bei Bedarf selbst in den Code ein, um die gewünschte Richtung zu verdeutlichen.",
+        "Mit jedem Projekt habe ich gelernt, Anforderungen genauer zu formulieren, Fehler systematischer einzugrenzen und Codex effizienter einzusetzen.",
+        "Meine Projekte dokumentieren die entstandenen Anwendungen, technische Herausforderungen und meine Erfahrungen mit KI-gestützter Softwareentwicklung."
+      ],
+      "eyebrow": "Projektpraxis",
+      "steps": [
+        "Ideen und Anforderungen formulieren",
+        "Fehler erkennen und eingrenzen",
+        "Zusammenarbeit verbessern",
+        "Erfahrungen dokumentieren"
       ]
     },
     "tech": {
@@ -445,7 +461,7 @@
           "title": "Sprachplattform mit Lernmodulen",
           "type": "Webplattform",
           "status": "Portfolio-Fallstudie",
-          "text": "Mehrsprachige Django-Plattform mit Nutzerkonten, DeutschLive und Vokabelbox: Dialoge, Übungen, Quiz und lokale Audioaufnahmen.",
+          "text": "Mehrsprachige Django-Plattform mit Nutzerkonten, geschützten Bereichen, Vokabelbox, DeutschLive und lokalem Audioplayer. Die Anwendung dient als technische Portfolio-Fallstudie; Sprachdienstleistungen werden darüber nicht angeboten.",
           "overviewText": "Mehrsprachige Lernplattform mit Nutzerkonten, DeutschLive, Vokabelbox und lokalen Audioaufnahmen.",
           "images": [
             {
@@ -537,7 +553,7 @@
           "title": "Notenrechner",
           "type": "Notenberechnung",
           "status": "Browser-Demo",
-          "text": "Browser-Anwendung für Durchschnittsnoten mit schrittweiser Eingabe, Prüfung von Komma- und Punktwerten und direktem Ergebnis.",
+          "text": "Durchschnittsnoten im Browser berechnen: mit schrittweiser Eingabe, Prüfung von Komma- und Punktwerten und direktem Ergebnis.",
           "overviewText": "Durchschnittsnoten berechnen: mit geprüften Eingaben und verständlicher Auswertung.",
           "images": [
             {
@@ -699,7 +715,7 @@
           "title": "Wohnungssuche Bodensee",
           "type": "Wohnungssuche",
           "status": "Dashboard-Demo",
-          "text": "React-Dashboard für Wohnungssuche mit Suchprofilen, Filtern, Angebotsstatus und Matching-Score. Die Portfolio-Ansicht enthält fiktive Angebote.",
+          "text": "React-Dashboard mit Suchprofilen, Filtern, Angebotsstatus und Matching-Score. Die Demo zeigt fiktive Wohnungsangebote.",
           "overviewText": "Wohnungssuche mit Filtern, Suchprofilen und Matching-Score anhand fiktiver Angebote.",
           "images": [
             {

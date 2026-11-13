@@ -294,6 +294,46 @@ function StandalonePage({ routeKey, projectSlug, t, language, onNavigate, contac
   );
 }
 
+function CodexWorkflowSection({ t }) {
+  const steps = t("home.codexWorkflow.steps");
+  const [titleBeforeCodex, titleAfterCodex] = t("home.codexWorkflow.title").split("Codex");
+  return (
+    <section className="codex-workflow-section" aria-labelledby="codex-workflow-title">
+      <div className="codex-workflow-panel">
+        <header className="codex-workflow-heading">
+          <div>
+            <div className="codex-workflow-brand">
+              <span className="codex-workflow-symbol" aria-hidden="true"><Code2 size={26} strokeWidth={1.5} /></span>
+              <span className="codex-workflow-agent">OpenAI Codex</span>
+            </div>
+            <p className="codex-workflow-eyebrow">{t("home.codexWorkflow.eyebrow")}</p>
+            <h2 id="codex-workflow-title" className="codex-workflow-title">
+              {titleBeforeCodex}<span className="codex-workflow-title-accent">Codex</span>{titleAfterCodex}
+            </h2>
+          </div>
+          <div className="codex-workflow-tools">
+            <span className="codex-workflow-tools-label">{t("home.hero.trustAria")}</span>
+            <div className="codex-workflow-technologies">
+              {["Python", "Django", "React"].map(technology => <span key={technology}>{technology}</span>)}
+            </div>
+          </div>
+        </header>
+        <ol className="codex-workflow-copy" role="list">
+          {t("home.codexWorkflow.paragraphs").map((paragraph, index) => (
+            <li className="codex-workflow-step" key={paragraph}>
+              <span className="codex-workflow-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+              <div>
+                <h3>{steps[index]}</h3>
+                <p>{paragraph}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
 export function HomeMain({ t, language, onNavigate, onAnchorNavigate }) {
   const services = t("home.services.items");
   const servicesTitle = t("home.services.title");
@@ -356,6 +396,8 @@ export function HomeMain({ t, language, onNavigate, onAnchorNavigate }) {
             })}
           </div>
         </section>
+
+        <CodexWorkflowSection t={t} />
 
         <HomePortfolioSection
           t={t}
