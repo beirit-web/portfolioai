@@ -1,0 +1,81 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ initial_lang|default:'de' }}" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="{% block color_scheme %}light{% endblock %}" />
+    <title>{% block title %}Beirit Web | Portfolio für Web- und Softwareentwicklung{% endblock %}</title>
+    {% block meta %}
+      <meta
+        name="description"
+        content="{% block meta_description %}Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.{% endblock %}"
+      />
+      <meta
+        name="keywords"
+        content="{% block meta_keywords %}{{ seo_keywords }}{% endblock %}"
+      />
+      <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}" />
+      <link rel="canonical" href="{% block canonical_url %}{{ site_url }}{{ request.path }}{% endblock %}" />
+      {% block alternate_links %}{% endblock %}
+      <meta property="og:site_name" content="Beirit Web Portfolio" />
+      <meta property="og:type" content="website" />
+      <meta property="og:locale" content="{% block og_locale %}{% if initial_lang|slice:':2' == 'ru' %}ru_RU{% elif initial_lang|slice:':2' == 'uk' %}uk_UA{% else %}de_DE{% endif %}{% endblock %}" />
+      <meta property="og:title" content="{% block og_title %}Beirit Web | Portfolio für Web- und Softwareentwicklung{% endblock %}" />
+      <meta
+        property="og:description"
+        content="{% block og_description %}Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.{% endblock %}"
+      />
+      <meta property="og:url" content="{% block og_url %}{{ site_url }}{{ request.path }}{% endblock %}" />
+      <meta property="og:image" content="{% block og_image_url %}{{ site_url }}{% static 'images/beirit-digital-logo.png' %}{% endblock %}" />
+      <meta property="og:image:alt" content="{% block og_image_alt %}Beirit Web Portfolio Logo{% endblock %}" />
+      <meta property="og:image:width" content="1254" />
+      <meta property="og:image:height" content="1254" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="{% block twitter_title %}Beirit Web | Portfolio für Web- und Softwareentwicklung{% endblock %}" />
+      <meta
+        name="twitter:description"
+        content="{% block twitter_description %}Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.{% endblock %}"
+      />
+      <meta name="twitter:image" content="{% block twitter_image_url %}{{ site_url }}{% static 'images/beirit-digital-logo.png' %}{% endblock %}" />
+      {% block twitter_image_alt_tag %}{% endblock %}
+    {% endblock %}
+    {% block page_bootstrap %}
+    {{ auth_session_js_config|json_script:"auth-session-config-data" }}
+    <script nonce="{{ request.csp_nonce }}">
+      window.PREFERRED_LANG = "{{ initial_lang|default:'de'|escapejs }}";
+      document.documentElement.lang =
+        window.PREFERRED_LANG || "{{ initial_lang|default:'de'|escapejs }}";
+      window.AUTH_SESSION_CONFIG = JSON.parse(
+        document.getElementById("auth-session-config-data").textContent
+      );
+    </script>
+    {% endblock %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
+    <link rel="apple-touch-icon" href="{% static 'images/beirit-digital-logo-180.png' %}" />
+    <link rel="shortcut icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
+    {% block extra_icons %}{% endblock %}
+    {% block base_styles %}
+      <link rel="stylesheet" href="{% asset_url 'css/root.css' %}" />
+      <link rel="stylesheet" href="{% asset_url 'css/main.css' %}" />
+      <link rel="stylesheet" href="{% asset_url 'css/flash.css' %}" />
+    {% endblock %}
+    {% block extra_head %}{% endblock %}
+    {% block footer_link_styles %}<link rel="stylesheet" href="{% asset_url 'css/footer-links.css' %}" />{% endblock %}
+  </head>
+  <body{% block body_attrs %} class="has-topnav"{% endblock %}>
+    {% block topnav %}
+      {% include "partials/topnav.html" %}
+    {% endblock %}
+    {% block content %}{% endblock %}
+    {% block footer %}
+      {% include "partials/site_footer.html" %}
+    {% endblock %}
+    {% block before_base_scripts %}{% endblock %}
+    {% block base_scripts %}
+      <script nonce="{{ request.csp_nonce }}" src="{% asset_url 'js/i18n-data.js' %}" defer></script>
+      <script nonce="{{ request.csp_nonce }}" src="{% asset_url 'js/main.js' %}" defer></script>
+    {% endblock %}
+    {% block extra_scripts %}{% endblock %}
+  </body>
+</html>

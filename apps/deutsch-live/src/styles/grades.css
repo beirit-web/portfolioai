@@ -1,0 +1,202 @@
+/* Loaded with the GradeCalculator route. Shared tokens and utilities stay in main.css. */
+@reference "./main.css";
+@layer components {
+
+  .grade-calculator {
+    @apply relative min-w-0 max-w-full overflow-hidden;
+    overflow-wrap: anywhere;
+  }
+
+  .grade-calculator .section-header > *,
+  .grade-calculator__title,
+  .grade-calculator__title span,
+  .grade-calculator__footer-actions span {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .grade-calculator__title svg {
+    flex-shrink: 0;
+  }
+
+  .grade-calculator__summary {
+    @apply grid min-w-0 w-full max-w-md gap-3 p-5 text-sm font-bold leading-6 text-slate-700 dark:text-slate-200;
+  }
+
+  .grade-calculator__layout {
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:items-start;
+  }
+
+  .grade-calculator__intro {
+    @apply grid min-w-0 gap-4 p-3 sm:p-5;
+  }
+
+  .grade-calculator__intro ul {
+    @apply grid gap-3 pl-0;
+    list-style: none;
+  }
+
+  .grade-calculator__intro li {
+    @apply border-l-4 border-cyan-300 bg-transparent px-3 py-1.5 text-sm font-bold leading-6 text-slate-700 dark:border-cyan-400/50 dark:text-slate-200;
+  }
+
+  .grade-calculator__card {
+    @apply relative grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 overflow-hidden p-3 sm:p-5;
+    container: grade-calculator / inline-size;
+  }
+
+  .grade-calculator__step {
+    @apply inline-flex min-w-0 max-w-full w-fit rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-black uppercase tracking-wide text-cyan-800 dark:text-cyan-200;
+  }
+
+  .grade-calculator__status {
+    @apply border-0 px-0 py-1 text-sm font-bold leading-6;
+  }
+
+  .grade-calculator__status--info {
+    @apply bg-transparent text-slate-700 dark:text-slate-200;
+  }
+
+  .grade-calculator__status--success {
+    @apply bg-transparent text-emerald-700 dark:text-emerald-200;
+  }
+
+  .grade-calculator__status--error {
+    @apply bg-transparent text-red-700 dark:text-red-200;
+  }
+
+  .grade-calculator__form,
+  .grade-calculator__step-panel {
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4;
+  }
+
+  .grade-calculator__step-panel label,
+  .grade-calculator__grade-field span {
+    @apply text-sm font-black text-slate-800 dark:text-slate-100;
+  }
+
+  .grade-calculator__step-panel input {
+    @apply min-w-0 w-full max-w-full rounded-2xl border border-slate-200 bg-white/85 px-4 py-3 font-semibold text-slate-950 dark:border-slate-700 dark:bg-slate-950/70 dark:text-white;
+  }
+
+  .grade-calculator__step-panel input[aria-invalid="true"] {
+    @apply border-red-400 bg-red-50 dark:border-red-400 dark:bg-red-950/40;
+  }
+
+  .grade-calculator__hint,
+  .grade-calculator__preview {
+    @apply text-sm font-semibold leading-6 text-slate-600 dark:text-slate-300;
+  }
+
+  .grade-calculator__actions {
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-2;
+  }
+
+  .grade-calculator__grade-grid {
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] max-h-[clamp(9rem,48dvh,28rem)] gap-3 overflow-auto pr-1;
+    scrollbar-color: var(--dl-color-accent) transparent;
+    scrollbar-gutter: stable;
+    scroll-padding-block: 0.5rem;
+  }
+
+  .grade-calculator__grade-field {
+    @apply grid min-w-0 gap-2 rounded-2xl border border-slate-200/80 bg-white/60 p-3 dark:border-slate-700/70 dark:bg-slate-950/35;
+  }
+
+  .grade-calculator__result {
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] items-start gap-4 border p-3;
+  }
+
+  .grade-calculator__result-media {
+    @apply m-0 grid min-h-0 min-w-0 max-w-full place-items-center justify-self-center overflow-hidden rounded-xl border border-white/60 bg-white/55 dark:border-white/10 dark:bg-slate-950/35;
+    width: min(100%, 14rem, 28dvh);
+    aspect-ratio: 2 / 3;
+  }
+
+  .grade-calculator__result-media img {
+    @apply block h-full min-h-0 w-full min-w-0 max-w-full object-contain;
+  }
+
+  .grade-calculator__result-content {
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4;
+    container: grade-result / inline-size;
+  }
+
+  .grade-calculator__result.is-passed .grade-calculator__result-media {
+    width: min(100%, 14rem, 42dvh);
+    aspect-ratio: 1;
+  }
+
+  .grade-calculator__result.is-passed {
+    @apply border-emerald-300 bg-emerald-50/80 dark:border-emerald-400/50 dark:bg-emerald-950/45;
+  }
+
+  .grade-calculator__result.is-failed {
+    @apply border-red-300 bg-red-50/80 dark:border-red-400/50 dark:bg-red-950/45;
+  }
+
+  .grade-calculator__result-heading {
+    @apply flex min-w-0 items-center gap-2;
+  }
+
+  .grade-calculator__result-heading svg {
+    @apply h-6 w-6 shrink-0;
+  }
+
+  .grade-calculator__result-heading h3 {
+    @apply min-w-0 text-xl font-black;
+  }
+
+  .grade-calculator__metrics {
+    @apply grid min-w-0 grid-cols-[minmax(0,1fr)] gap-2;
+  }
+
+  .grade-calculator__metric {
+    @apply min-w-0 rounded-2xl border border-slate-200/80 bg-white/80 p-3 dark:border-slate-700/70 dark:bg-slate-950/45;
+  }
+
+  .grade-calculator__metric span {
+    @apply block text-xs font-black uppercase tracking-wide text-slate-500 dark:text-slate-400;
+  }
+
+  .grade-calculator__metric strong {
+    @apply mt-1 block text-2xl font-black text-slate-950 dark:text-white;
+  }
+
+  .grade-calculator__lead {
+    @apply text-lg font-black leading-7;
+  }
+
+  .grade-calculator__footer-actions {
+    @apply flex min-w-0 flex-wrap justify-end;
+  }
+
+  .grade-calculator__actions .app-button,
+  .grade-calculator__footer-actions .app-button {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  @container grade-calculator (min-width: 24rem) {
+    .grade-calculator__actions,
+    .grade-calculator__grade-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @container grade-calculator (min-width: 34rem) {
+    .grade-calculator__result {
+      grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+    }
+  }
+
+  @container grade-result (min-width: 18rem) {
+    .grade-calculator__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .grade-calculator__canvas {
+    @apply pointer-events-none absolute inset-0 h-full w-full;
+  }
+}

@@ -1,0 +1,28 @@
+{% extends 'shop/base.html' %}
+{% load shop_ui %}
+{% block content %}
+  <div class="page-heading"><div><p class="eyebrow">DAS SORTIMENT</p><h2>{{ category_label|default:"Torten & Kuchen" }}</h2></div><span class="muted">{{ products|length }} Artikel</span></div>
+  <form method="get" action="{% url 'storefront:catalog' %}" class="catalog-filters" aria-label="Produktfilter">
+    <div class="search-field">
+      <label class="sr-only" for="productSearch">Produkt suchen</label>
+      <input type="search" id="productSearch" name="q" value="{{ query }}" maxlength="80" placeholder="Torte, Schoko, Zutaten …">
+      <button class="icon-button search-submit" type="submit" title="Suchen" aria-label="Suchen">{% shop_icon 'search' %}</button>
+    </div>
+    <button class="icon-button filter-button" type="button" title="Filter öffnen" aria-label="Filter öffnen" aria-expanded="false" aria-controls="catalogFilterPanel" hidden>{% shop_icon 'filter' %}</button>
+    <div class="catalog-filter-panel" id="catalogFilterPanel" role="group" aria-label="Filterauswahl">
+      <p class="filter-hint" hidden>Deine Auswahl wird automatisch übernommen und gemerkt.</p>
+      <div class="filter-field"><label for="categorySelect">Kategorie</label><select name="category" id="categorySelect"><option value="all">Alle Kategorien</option>{% for key, label in categories %}<option value="{{ key }}" {% if filter_category == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+      <div class="filter-field"><label for="sortSelect">Sortierung</label><select name="sort" id="sortSelect"><option value="featured" {% if sort == 'featured' %}selected{% endif %}>Empfohlen</option><option value="priceAsc" {% if sort == 'priceAsc' %}selected{% endif %}>Preis aufsteigend</option><option value="priceDesc" {% if sort == 'priceDesc' %}selected{% endif %}>Preis absteigend</option><option value="leadTime" {% if sort == 'leadTime' %}selected{% endif %}>Kürzester Vorlauf</option></select></div>
+      <button class="button button--primary" type="submit" aria-label="Produkte filtern">Filtern</button>
+    </div>
+    <p class="filter-status sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
+  </form>
+  <div class="filter-summary" {% if not query and category == 'all' and sort == 'priceAsc' %}hidden{% endif %}><span>{% if category_label %}Kategorie: {{ category_label }}{% if query %} · {% endif %}{% endif %}{% if query %}Suche: „{{ query }}“{% endif %}{% if sort != 'priceAsc' %}{% if query or category_label %} · {% endif %}Sortierung: {% if sort == 'priceDesc' %}Preis absteigend{% elif sort == 'leadTime' %}Kürzester Vorlauf{% else %}Empfohlen{% endif %}{% endif %}</span><a class="text-link" data-reset-filters href="{% url 'storefront:catalog' %}?reset=1">Filter zurücksetzen</a></div>
+  <div class="product-grid">
+    {% for product in products %}<article class="product-card" data-product-id="{{ product.pk }}">
+      <a class="product-photo" href="{% url 'storefront:product' product.slug %}">{% product_image product eager=forloop.first %}</a>
+      <div class="product-copy"><p class="eyebrow">{{ product.get_category_display }}</p><h3><a href="{% url 'storefront:product' product.slug %}">{{ product.name }}</a></h3><p class="product-description">{{ product.description }}</p><div class="product-facts"><span>{{ product.serves }}</span><span>{% shop_icon 'clock' %}{{ product.lead_time_days }} Tag{{ product.lead_time_days|pluralize:'e' }} Vorlauf</span></div><p class="allergens">Allergene: {{ product.allergens|default:'Keine Angaben' }}</p>
+      <div class="product-footer"><strong>{{ product.price|euros }}</strong>{% if product.is_available %}<form method="post" action="{% url 'storefront:add' product.pk %}">{% csrf_token %}<input type="hidden" name="quantity" value="1"><input type="hidden" name="next" value="{{ request.get_full_path }}"><button type="submit" class="button button--primary" aria-label="Auswählen: {{ product.name }} in den Warenkorb">{% shop_icon 'plus' %}<span>Auswählen</span></button></form>{% else %}<span class="availability">Nicht verfügbar</span>{% endif %}</div></div>
+    </article>{% empty %}<div class="empty-state">{% shop_icon 'search' %}<h3>Keine Artikel gefunden</h3><a class="button button--secondary" data-reset-filters href="{% url 'storefront:catalog' %}?reset=1">Filter zurücksetzen</a></div>{% endfor %}
+  </div>
+{% endblock %}

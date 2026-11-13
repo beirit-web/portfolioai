@@ -1,0 +1,2 @@
+{% load shop_ui %}
+<dl class="price-summary"><div><dt>Artikel</dt><dd>{{ subtotal|euros }}</dd></div><div><dt>Übergabe</dt><dd id="deliveryFee">{{ delivery_fee|euros }}</dd></div><div class="summary-total"><dt>Gesamt</dt><dd id="totalPrice">{{ total|euros }}</dd></div></dl>

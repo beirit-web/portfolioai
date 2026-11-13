@@ -1,0 +1,27 @@
+<nav class="topnav topnav--backstube" id="mainTopnav" aria-label="{% if initial_lang|slice:':2' == 'ru' %}Навигация пекарни{% else %}Backstube{% endif %}">
+  {% include 'shop/brand.html' only %}
+  {% include 'shop/account_navigation_links.html' with link_class='nav-link' %}
+  <button class="icon burger" id="burgerToggle" type="button"
+    aria-label="{% if initial_lang|slice:':2' == 'ru' %}Меню пекарни{% else %}Backstuben-Menü{% endif %}"
+    aria-expanded="false" aria-controls="sideNav"></button>
+</nav>
+
+{% if messages %}
+<div class="flash-container" role="status" aria-live="polite">
+  {% for message in messages %}
+  <div class="flash flash--{{ message.tags|default:'info' }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<button class="sidenav-backdrop" id="sideNavBackdrop" type="button" aria-hidden="true" tabindex="-1"></button>
+<div id="sideNav" class="sidenav" aria-hidden="true" inert>
+  <div class="sidenav__panel" role="dialog" aria-modal="true"
+    aria-label="{% if initial_lang|slice:':2' == 'ru' %}Меню пекарни{% else %}Backstuben-Menü{% endif %}" tabindex="-1">
+    <div class="sidenav__content">
+      <nav class="sidenav__group" aria-label="{% if initial_lang|slice:':2' == 'ru' %}Навигация пекарни{% else %}Backstube{% endif %}">
+        {% include 'shop/account_navigation_links.html' with link_class='sidenav-link--icon' %}
+      </nav>
+    </div>
+  </div>
+</div>

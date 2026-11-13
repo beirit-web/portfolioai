@@ -1,0 +1,133 @@
+{% load static shop_ui %}
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  {% if tab == 'catalog' %}<meta name="description" content="Torten und Kuchen der Beirit Backstube entdecken, nach Zutaten und Kategorien suchen und eine unverbindliche Bestellanfrage vorbereiten.">{% endif %}
+  {% if tab != 'catalog' %}<meta name="robots" content="noindex, nofollow">{% endif %}
+  <title>{% block title %}Beirit Backstube{% endblock %} | Beirit Digital</title>
+  <link rel="icon" type="image/svg+xml" href="{% asset_url 'shop/brand-mark.svg' %}">
+  <link rel="stylesheet" href="{% asset_url 'shop/style.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'shop/brand.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'css/project-home.css' %}">
+  <link rel="stylesheet" href="{% asset_url 'css/footer-links.css' %}">
+  <script nonce="{{ request.csp_nonce }}" src="{% asset_url 'shop/app.js' %}" defer></script>
+</head>
+<body id="shopTop" class="{% if tab == 'catalog' %}shop-catalog{% endif %}{% if cart_count and tab == 'catalog' %} has-cart-bar{% endif %}">
+  <a class="skip-link" href="#main">Zum Inhalt</a>
+  <nav class="project-home-nav project-home-nav--shop" aria-label="Shop-Schnellnavigation">
+    <a href="{% url 'storefront:catalog' %}" aria-label="Zur Startseite des Torten- und Kuchen-Shops">Zur Startseite</a>
+    <details class="project-home-nav__menu">
+      <summary class="project-home-nav__toggle">
+        <svg class="project-home-nav__menu-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <span>Menü</span>
+      </summary>
+      <div class="project-home-nav__panel">
+        <details class="project-home-nav__select" name="shop-navigation">
+          <summary>Sortiment</summary>
+          <ul class="project-home-nav__options">
+            <li><a data-reset-filters href="{% url 'storefront:catalog' %}?reset=1" {% if request.resolver_match.url_name == 'catalog' and category == 'all' and not query and sort == 'priceAsc' %}aria-current="page"{% endif %}>Alle Produkte</a></li>
+            <li><a href="{% url 'storefront:catalog' %}#productSearch">Produktsuche</a></li>
+            {% for key, label in navigation_categories %}
+            <li><a href="{% url 'storefront:catalog' %}?category={{ key|urlencode }}" {% if request.resolver_match.url_name == 'catalog' and category == key and not query %}aria-current="page"{% endif %}>{{ label }}</a></li>
+            {% endfor %}
+          </ul>
+        </details>
+        <details class="project-home-nav__select" name="shop-navigation">
+          <summary>Geschmack</summary>
+          <ul class="project-home-nav__options">
+            <li><a href="{% url 'storefront:catalog' %}?q=Schoko" {% if request.resolver_match.url_name == 'catalog' and query == 'Schoko' and category == 'all' %}aria-current="page"{% endif %}>Schokoladengebäck</a></li>
+            <li><a href="{% url 'storefront:catalog' %}?category=torte&amp;q=Erdbeer" {% if request.resolver_match.url_name == 'catalog' and query == 'Erdbeer' and category == 'torte' %}aria-current="page"{% endif %}>Erdbeertorten</a></li>
+            <li><a href="{% url 'storefront:catalog' %}?category=kuchen&amp;q=Apfel" {% if request.resolver_match.url_name == 'catalog' and query == 'Apfel' and category == 'kuchen' %}aria-current="page"{% endif %}>Apfelkuchen</a></li>
+            <li><a href="{% url 'storefront:catalog' %}?category=kuchen&amp;q=Zitrone" {% if request.resolver_match.url_name == 'catalog' and query == 'Zitrone' and category == 'kuchen' %}aria-current="page"{% endif %}>Zitronenkuchen</a></li>
+          </ul>
+        </details>
+        <details class="project-home-nav__select" name="shop-navigation" id="headerPriceSort">
+          <summary aria-label="Sortierung: {% if sort == 'priceAsc' %}Preis aufsteigend{% elif sort == 'priceDesc' %}Preis absteigend{% elif sort == 'leadTime' %}Kürzester Vorlauf{% else %}Bitte wählen{% endif %}">{% if sort == 'priceAsc' %}Preis aufsteigend{% elif sort == 'priceDesc' %}Preis absteigend{% elif sort == 'leadTime' %}Kürzester Vorlauf{% else %}Sortierung{% endif %}</summary>
+          <ul class="project-home-nav__options">
+            <li><a href="{% url 'storefront:catalog' %}?sort=priceAsc{% if query %}&amp;q={{ query|urlencode }}{% endif %}{% if filter_category and filter_category != 'all' %}&amp;category={{ filter_category|urlencode }}{% endif %}" {% if sort == 'priceAsc' %}aria-current="true"{% endif %}>Preis aufsteigend</a></li>
+            <li><a href="{% url 'storefront:catalog' %}?sort=priceDesc{% if query %}&amp;q={{ query|urlencode }}{% endif %}{% if filter_category and filter_category != 'all' %}&amp;category={{ filter_category|urlencode }}{% endif %}" {% if sort == 'priceDesc' %}aria-current="true"{% endif %}>Preis absteigend</a></li>
+            <li><a href="{% url 'storefront:catalog' %}?sort=leadTime{% if query %}&amp;q={{ query|urlencode }}{% endif %}{% if filter_category and filter_category != 'all' %}&amp;category={{ filter_category|urlencode }}{% endif %}" {% if request.resolver_match.url_name == 'catalog' and sort == 'leadTime' %}aria-current="page"{% endif %}>Kürzester Vorlauf</a></li>
+          </ul>
+        </details>
+        <details class="project-home-nav__select" name="shop-navigation">
+          <summary>Konto &amp; Bestellung</summary>
+          <ul class="project-home-nav__options">
+            <li><a href="{% url 'storefront:orders' %}" {% if tab == 'orders' %}aria-current="page"{% endif %}>Meine Anfragen</a></li>
+            <li><a href="{% if request.user.is_authenticated %}{{ account_profile_url }}{% else %}{{ login_url }}{% endif %}">{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}</a></li>
+            {% if not request.user.is_authenticated %}
+            <li><a href="{{ account_register_url }}">Registrieren</a></li>
+            <li><a href="{{ account_password_reset_url }}">Passwort vergessen?</a></li>
+            {% endif %}
+            <li><a href="{% url 'storefront:cart' %}" {% if tab == 'cart' %}aria-current="page"{% endif %}>Warenkorb ({{ cart_count }})</a></li>
+            <li><a href="{% url 'storefront:checkout' %}" {% if tab == 'checkout' %}aria-current="page"{% endif %}>Bestellanfrage</a></li>
+          </ul>
+        </details>
+        <details class="project-home-nav__select" name="shop-navigation">
+          <summary>Informationen</summary>
+          <ul class="project-home-nav__options">
+            <li><a href="{% url 'pages:contact' %}">Kontakt</a></li>
+            <li><a href="{% url 'pages:imprint' %}">Impressum</a></li>
+            <li><a href="{% url 'pages:privacy' %}">Datenschutz</a></li>
+          </ul>
+        </details>
+      </div>
+    </details>
+  </nav>
+  <header class="shop-header">
+    {% include 'shop/brand.html' with brand_heading=True only %}
+    <div class="header-actions"><a class="icon-button" href="{% if request.user.is_authenticated %}{{ account_profile_url }}{% else %}{{ login_url }}{% endif %}" title="{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}" aria-label="{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}">{% shop_icon 'user' %}</a><a class="cart-link" href="{% url 'storefront:cart' %}" aria-label="Warenkorb, {{ cart_count }} Artikel">{% shop_icon 'bag' %}<span class="cart-count">{{ cart_count }}</span></a></div>
+  </header>
+  <nav class="shop-nav" aria-label="Shop"><div><a href="{% url 'storefront:catalog' %}" {% if tab == 'catalog' %}aria-current="page"{% endif %}>Sortiment</a><a href="{% url 'storefront:cart' %}" {% if tab == 'cart' %}aria-current="page"{% endif %}>Warenkorb{% if cart_count %}<small>{{ cart_count }}</small>{% endif %}</a><a href="{% url 'storefront:orders' %}" {% if tab == 'orders' %}aria-current="page"{% endif %}>Meine Anfragen</a></div></nav>
+  <main id="main" tabindex="-1">
+    {% if messages %}<div class="messages" aria-live="polite">{% for message in messages %}<p class="message message--{{ message.tags }}" {% if message.tags == 'error' %}role="alert"{% endif %}>{% if message.tags == 'error' %}{% shop_icon 'alert' %}{% else %}{% shop_icon 'check' %}{% endif %}{{ message }}</p>{% endfor %}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="shop-footer site-footer" data-footer-tone="dark">
+    <div class="shop-footer__inner">
+      <div class="shop-footer__main">
+        <div class="shop-footer__brand">
+          {% include 'shop/brand.html' only %}
+          <p class="shop-footer__tagline">Torten. Kuchen. Lieblingsstücke.</p>
+          <p class="shop-footer__description">Entdecke das Sortiment und probiere eine unverbindliche Bestellanfrage aus.</p>
+          <a class="shop-footer__project footer-link" href="/projekte/online-shop">Das Projekt entdecken {% shop_icon 'arrow' %}</a>
+        </div>
+        <nav class="shop-footer__nav" aria-labelledby="shopFooterAssortment">
+          <h2 id="shopFooterAssortment">Unser Sortiment</h2>
+          <ul>
+            <li><a class="footer-link" data-reset-filters href="{% url 'storefront:catalog' %}?reset=1">Alle Produkte</a></li>
+            {% for key, label in navigation_categories %}
+            <li><a class="footer-link" href="{% url 'storefront:catalog' %}?category={{ key|urlencode }}">{{ label }}</a></li>
+            {% endfor %}
+          </ul>
+        </nav>
+        <nav class="shop-footer__nav" aria-labelledby="shopFooterVisit">
+          <h2 id="shopFooterVisit">Dein Besuch</h2>
+          <ul>
+            <li><a class="footer-link" href="{% url 'storefront:cart' %}">Warenkorb</a></li>
+            <li><a class="footer-link" href="{% url 'storefront:orders' %}">Meine Anfragen</a></li>
+            <li><a class="footer-link" href="{% if request.user.is_authenticated %}{{ account_profile_url }}{% else %}{{ login_url }}{% endif %}">{% if request.user.is_authenticated %}Mein Konto{% else %}Anmelden{% endif %}</a></li>
+            <li><a class="footer-link" href="{% url 'pages:contact' %}">Kontakt</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="shop-footer__note">
+        <span class="shop-footer__badge">Portfolio-Demo</span>
+        <p>Ein Beispielshop zum Ausprobieren. Keine echten Bestellungen oder Zahlungen.</p>
+      </div>
+      <div class="shop-footer__bottom">
+        <a class="footer-link" href="/projekte">Ein Projekt von Beirit Web {% shop_icon 'arrow' %}</a>
+        <nav class="shop-footer__legal" aria-label="Rechtliche Informationen">
+          <a class="footer-link" href="{% url 'pages:imprint' %}">Impressum</a>
+          <a class="footer-link" href="{% url 'pages:privacy' %}">Datenschutz</a>
+        </nav>
+        <a class="footer-link shop-footer__top" href="#shopTop">Nach oben {% shop_icon 'next' %}</a>
+      </div>
+    </div>
+  </footer>
+  {% if cart_count and tab == 'catalog' %}<a class="mobile-cart-bar" href="{% url 'storefront:cart' %}"><span>{% shop_icon 'bag' %}{{ cart_count }} Artikel</span><strong>{{ subtotal|euros }}</strong>{% shop_icon 'next' %}</a>{% endif %}
+</body>
+</html>

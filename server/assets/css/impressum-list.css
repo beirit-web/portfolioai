@@ -1,0 +1,10 @@
+.imprint-list li {
+  padding-left: 1.15rem;
+}
+
+.imprint-list li::before {
+  top: .72em;
+  width: .62rem;
+  height: 2px;
+  border-radius: 1px;
+}

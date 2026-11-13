@@ -1,0 +1,317 @@
+/* Responsive adjustments for the portfolio app, loaded after its bundled styles. */
+.housing-nav-backdrop,
+.housing-nav-close {
+  display: none;
+}
+
+.housing-home-link {
+  text-decoration: none;
+}
+
+.header-actions .housing-home-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-panel .housing-home-link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.app-shell,
+.workspace,
+.workspace > *,
+.content-grid > *,
+.listing-card > *,
+.page-header > *,
+.status-banner > *,
+.section-heading > *,
+.info-box > *,
+.login-panel,
+.login-panel > * {
+  min-width: 0;
+}
+
+.workspace {
+  margin-inline: auto;
+}
+
+.page-header,
+.section-heading {
+  flex-wrap: wrap;
+}
+
+.header-actions {
+  min-width: 0;
+}
+
+.primary,
+.secondary,
+.toggle,
+.icon-button,
+.sidebar-action,
+nav button {
+  min-height: 44px;
+  max-width: 100%;
+}
+
+.primary,
+.secondary,
+.toggle {
+  padding-block: 0.65rem;
+  text-align: center;
+}
+
+svg {
+  flex-shrink: 0;
+}
+
+.controls {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  align-items: stretch;
+}
+
+.controls > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.controls .searchbox {
+  grid-column: 1 / -1;
+}
+
+input,
+select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.result-count {
+  display: flex;
+  align-items: center;
+  white-space: normal;
+}
+
+.content-grid:has(> .profile-list) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.listing-title {
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.listing-title h2 {
+  flex: 1 1 12rem;
+}
+
+.listing-title span,
+.badges span {
+  max-width: 100%;
+  white-space: normal;
+}
+
+.brand,
+.user-chip,
+h1,
+h2,
+p,
+.facts,
+.reasons,
+.timeline-row {
+  overflow-wrap: anywhere;
+}
+
+.timeline-row {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.profile-card > h2,
+.profile-card > p {
+  grid-column: 1 / -1;
+}
+
+.profile-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 880px;
+  padding: 1rem;
+  border: 1px solid #dbe2df;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.profile-form > * {
+  min-width: 0;
+}
+
+.profile-form > label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.profile-form input:not([type="checkbox"]) {
+  min-height: 44px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #d5ded9;
+  border-radius: 8px;
+}
+
+.profile-form label:has(input[type="checkbox"]) {
+  flex-direction: row;
+  align-items: center;
+  min-height: 44px;
+}
+
+.profile-form input[type="checkbox"] {
+  width: auto;
+  flex-shrink: 0;
+}
+
+.profile-form > fieldset,
+.profile-form > div,
+.profile-form > .error {
+  grid-column: 1 / -1;
+}
+
+.profile-form fieldset {
+  min-width: 0;
+  margin: 0;
+  border: 1px solid #d5ded9;
+  border-radius: 8px;
+}
+
+.profile-form fieldset > div,
+.profile-form > div {
+  flex-wrap: wrap;
+}
+
+.profile-form fieldset input:not([type="checkbox"]) {
+  flex: 1 1 10rem;
+  width: auto;
+}
+
+@media (min-width: 981px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 1200px) {
+  .content-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-rows: 48px minmax(0, 1fr);
+  }
+
+  .mobile-menu-button {
+    height: 48px;
+    align-self: start;
+    z-index: 40;
+  }
+
+  .housing-nav-backdrop:not([hidden]) {
+    display: block;
+    position: fixed;
+    inset: 48px 0 0;
+    z-index: 30;
+    background: rgb(10 25 21 / 55%);
+  }
+
+  .sidebar.open {
+    position: fixed;
+    inset: 48px auto 0 0;
+    z-index: 35;
+    width: min(85vw, 320px);
+    gap: 1rem;
+    max-height: calc(100vh - 48px);
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .housing-nav-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 0.6rem;
+    border: 1px solid #477168;
+    border-radius: 8px;
+    color: #e9f3ef;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .sidebar nav button,
+  .sidebar-action {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .header-actions .housing-home-link {
+    width: 100%;
+  }
+
+  .workspace {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .page-header,
+  .section-heading {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  h1 {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+
+  .listing-title h2 {
+    flex-basis: auto;
+  }
+
+  .listing-title span {
+    align-self: flex-start;
+  }
+
+  .profile-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .profile-form > div > button {
+    flex: 1 1 8rem;
+  }
+
+  .login-page,
+  .login-panel {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

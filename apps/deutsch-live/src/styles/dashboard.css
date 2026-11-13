@@ -1,0 +1,180 @@
+/* Loaded with the Dashboard route. Shared tokens and utilities stay in main.css. */
+@reference "./main.css";
+@layer components {
+
+  .section-grid--dashboard {
+    @apply lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)];
+  }
+
+  .dashboard-progress-grid {
+    @apply mb-6 grid gap-4 md:grid-cols-3;
+  }
+
+  .dashboard-progress-card {
+    @apply min-h-44;
+  }
+
+  .dashboard-shell {
+    @apply relative;
+  }
+
+  .dashboard-header {
+    @apply mb-5;
+  }
+
+  .dashboard-next-card {
+    @apply mb-6 grid gap-4 rounded-[1.5rem] bg-slate-950 p-5 text-white shadow-2xl shadow-slate-950/20 dark:bg-white dark:text-slate-950 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center;
+  }
+
+  .dashboard-next-card__icon {
+    @apply hidden h-10 w-10 text-cyan-300 dark:text-indigo-700 sm:block;
+  }
+
+  .dashboard-flow {
+    @apply grid gap-5;
+  }
+
+  .dashboard-stat-stack {
+    @apply grid gap-4;
+  }
+
+  .dashboard-settings-panel :where(input:not([type="checkbox"]), select) {
+    @apply rounded-xl;
+  }
+
+  .dashboard-settings-actions button,
+  .dashboard-danger-zone button {
+    @apply inline-flex min-h-12 items-center justify-center;
+  }
+
+  @media (min-width: 1024px) {
+    .dashboard-flow {
+      grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 0.92fr);
+    }
+
+    .dashboard-recommendation-panel,
+    .dashboard-stat-stack,
+    .dashboard-learning-plan,
+    .dashboard-topic-panel,
+    .dashboard-settings-panel {
+      grid-column: 1;
+    }
+
+    .dashboard-time-panel,
+    .dashboard-writing-panel,
+    .dashboard-danger-zone {
+      grid-column: 2;
+    }
+  }
+
+  .recommendation-item {
+    @apply flex items-start gap-3 border-cyan-200/80 bg-cyan-400/10 font-semibold text-slate-700 dark:border-cyan-400/30 dark:bg-cyan-950/35 dark:text-slate-200;
+  }
+
+  .recommendation-item__index {
+    @apply inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-500 text-sm font-black text-slate-950;
+  }
+
+  @media (max-width: 480px) {
+
+    .dashboard-progress-grid {
+      @apply gap-3;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+
+  .dashboard-progress-grid {
+    gap: 0.85rem;
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-shell {
+    padding: 1rem;
+  }
+
+  .dashboard-header {
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-next-card {
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+    padding: 1rem;
+  }
+
+  .dashboard-next-card h3 {
+    font-size: 1.35rem;
+    line-height: 1.18;
+  }
+
+  .dashboard-progress-grid {
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-progress-card {
+    min-height: auto;
+  }
+
+  .dashboard-flow {
+    gap: 1rem;
+  }
+
+  .dashboard-stat-stack {
+    gap: 0.85rem;
+  }
+
+  .dashboard-stat-stack .section-grid--stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .dashboard-stat-stack .stat-card {
+    min-height: auto;
+    padding: 0.85rem;
+  }
+
+  .dashboard-stat-stack .stat-card__icon {
+    height: 2rem;
+    margin-bottom: 0.5rem;
+    width: 2rem;
+  }
+
+  .dashboard-stat-stack .stat-card p:last-child {
+    font-size: 1.35rem;
+    line-height: 1.1;
+  }
+
+  .dashboard-learning-plan {
+    margin-top: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-topic-panel,
+  .dashboard-time-panel,
+  .dashboard-writing-panel,
+  .dashboard-settings-panel,
+  .dashboard-danger-zone {
+    margin-top: 0;
+  }
+
+  .dashboard-writing-panel .surface-item {
+    max-height: 8rem;
+    overflow: auto;
+  }
+
+  .dashboard-settings-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-settings-actions button,
+  .dashboard-danger-zone button {
+    width: 100%;
+  }
+
+  .dashboard-danger-zone {
+    padding: 1rem;
+  }
+}

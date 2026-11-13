@@ -1,0 +1,1 @@
+{% account_text "Bitte bestätigen Sie Ihre E-Mail-Adresse bei Beirit Digital" %}

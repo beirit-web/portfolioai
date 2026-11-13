@@ -1,0 +1,107 @@
+name: Beirit Digital CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  portfolio-data:
+    name: Portfolio source data
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Check portfolio source data
+        run: python scripts/check_beirit.py --group data
+
+  backend:
+    name: Backend checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: server/requirements.txt
+
+      - name: Install backend dependencies
+        working-directory: server
+        run: python -m pip install -r requirements.txt
+
+      - name: Run backend checks
+        run: python scripts/check_beirit.py --group backend
+
+  frontend:
+    name: Frontend builds and browser checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: |
+            frontend/package-lock.json
+            apps/deutsch-live/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Install DeutschLive frontend dependencies
+        working-directory: apps/deutsch-live
+        run: npm ci
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: server/requirements.txt
+
+      - name: Install backend dependencies
+        working-directory: server
+        run: python -m pip install -r requirements.txt
+
+      - name: Run frontend checks and builds
+        run: python scripts/check_beirit.py --group frontend
+
+      - name: Install browser for UI checks
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser checks
+        run: python scripts/check_beirit.py --group browser
+
+      - name: Save browser report and previews
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: beirit-browser-checks
+          path: |
+            runtime/browser-checks/
+            runtime/housing-checks/
+          if-no-files-found: ignore

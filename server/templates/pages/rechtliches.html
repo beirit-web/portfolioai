@@ -1,0 +1,145 @@
+{% extends "base_public.html" %}
+{% load static imprint_ui %}
+
+{% block title %}{{ legal_meta.title }}{% endblock %}
+{% block meta_robots %}{{ legal_meta.robots }}{% endblock %}
+{% block meta_description %}{{ legal_meta.description }}{% endblock %}
+{% block canonical_url %}{{ legal_meta.canonical }}{% endblock %}
+{% block og_locale %}{{ legal_meta.locale }}{% endblock %}
+{% block og_title %}{{ legal_meta.title }}{% endblock %}
+{% block og_description %}{{ legal_meta.description }}{% endblock %}
+{% block og_url %}{{ legal_meta.canonical }}{% endblock %}
+{% block og_image_url %}{{ legal_meta.share_image }}{% endblock %}
+{% block og_image_alt %}{{ legal_meta.image_alt }}{% endblock %}
+{% block twitter_title %}{{ legal_meta.title }}{% endblock %}
+{% block twitter_description %}{{ legal_meta.description }}{% endblock %}
+{% block twitter_image_url %}{{ legal_meta.share_image }}{% endblock %}
+{% block twitter_image_alt_tag %}<meta name="twitter:image:alt" content="{{ legal_meta.image_alt }}" />{% endblock %}
+{% block page_bootstrap %}{% endblock %}
+{% block base_styles %}
+  <style>{% inline_asset 'css/project-terms.css' %}</style>
+  <style>{% inline_asset 'css/impressum-nav.css' %}</style>
+{% endblock %}
+{% block footer_link_styles %}<style>{% inline_asset 'css/footer-links.css' %}</style>{% endblock %}
+{% block extra_head %}
+  <meta name="twitter:url" content="{{ legal_meta.canonical }}" />
+  {% include "partials/legal_navigation_bootstrap.html" %}
+{% endblock %}
+{% block body_attrs %} class="terms-body"{% endblock %}
+{% block topnav %}
+  {% include "partials/public_navigation.html" with nav_meta=legal_meta %}
+{% endblock %}
+{% block base_scripts %}
+  <script nonce="{{ request.csp_nonce }}">{% inline_asset 'js/impressum-nav.js' %}</script>
+{% endblock %}
+
+{% block content %}
+  {% project_terms_copy initial_lang as terms %}
+  <main aria-labelledby="terms-title" class="page-shell has-topnav template-page template-page--wide legal-page-shell legal-page-shell--terms">
+    <header class="terms-hero" aria-labelledby="terms-title">
+      <div class="terms-hero__copy">
+        <p class="section-kicker">{{ terms.page.kicker }}</p>
+        <h1 id="terms-title">{{ terms.page.title }}</h1>
+        <p class="section-intro">{{ terms.page.lead }}</p>
+        <p class="legal-authoritative-note">{{ terms.authoritative_note }}</p>
+      </div>
+      <div class="terms-hero__facts" aria-label="{{ terms.page.facts_aria }}">
+        <span>{{ terms.page.facts.0 }}</span>
+        <span>{{ terms.page.facts.1 }}</span>
+        <span>{{ terms.page.facts.2 }}</span>
+        <span>{{ terms.page.facts.3 }}</span>
+      </div>
+    </header>
+
+    <div class="legal-page">
+      <p class="legal-callout">{% if initial_lang|slice:':2' == 'ru' %}Вымышленные примерные данные для демонстрации портфолио.{% else %}Fiktive Musterangaben für die Portfolio-Demonstration.{% endif %}</p>
+      <section class="template-panel legal-section" id="geltung">
+        <h2>{{ terms.page.sections.scope.title }}</h2>
+        <p>{{ terms.page.sections.scope.text }}</p>
+      </section>
+
+      <section class="template-panel legal-section" id="kontakt">
+        <h2>{{ terms.page.sections.request.title }}</h2>
+        <p>{{ terms.page.sections.request.text }}</p>
+        <ul role="list">
+          <li>{{ terms.page.sections.request.items.0 }}</li>
+          <li>{{ terms.page.sections.request.items.1 }}</li>
+          <li>{{ terms.page.sections.request.items.2 }}</li>
+          <li>{{ terms.page.sections.request.items.3 }}</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="projektvereinbarung">
+        <h2>{{ terms.page.sections.agreement.title }}</h2>
+        <p>{{ terms.page.sections.agreement.text }}</p>
+      </section>
+
+      <section class="template-panel legal-section" id="mitwirkung">
+        <h2>{{ terms.page.sections.material.title }}</h2>
+        <ul role="list">
+          <li>{{ terms.page.sections.material.items.0 }}</li>
+          <li>{{ terms.page.sections.material.items.1 }}</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="lieferung">
+        <h2>{{ terms.page.sections.delivery.title }}</h2>
+        <ul role="list">
+          <li>{{ terms.page.sections.delivery.items.0 }}</li>
+          <li>{{ terms.page.sections.delivery.items.1 }}</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="zahlung">
+        <h2>{{ terms.page.sections.payment.title }}</h2>
+        <ul role="list">
+          <li>{{ terms.page.sections.payment.items.0 }}</li>
+          <li>{{ terms.page.sections.payment.items.1 }}</li>
+          <li>{{ terms.page.sections.payment.items.2 }}</li>
+          <li>{{ terms.page.sections.payment.items.3 }}</li>
+          <li>{{ terms.page.sections.payment.items.4 }}</li>
+          <li>{{ terms.page.sections.payment.items.5 }}</li>
+          <li>{{ terms.page.sections.payment.items.6 }}</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="rechte">
+        <h2>{{ terms.page.sections.rights.title }}</h2>
+        <ul role="list">
+          <li>{{ terms.page.sections.rights.items.0 }}</li>
+          <li>{{ terms.page.sections.rights.items.1 }}</li>
+          <li>{{ terms.page.sections.rights.items.2 }}</li>
+          <li>{{ terms.page.sections.rights.items.3 }}</li>
+          <li>{{ terms.page.sections.rights.items.4 }}</li>
+        </ul>
+      </section>
+
+      <section class="template-panel legal-section" id="haftung">
+        <h2>{{ terms.page.sections.liability.title }}</h2>
+        <p>{{ terms.page.sections.liability.text }}</p>
+      </section>
+
+      <section class="template-panel legal-section" id="deutschlive-aufnahmen">
+        {% if initial_lang|slice:":2" == "ru" %}
+        <h2>DeutschLive: собственные аудиозаписи</h2>
+        <p>Функция «Мои записи» хранит выбранные аудиофайлы локально в используемом браузере. Записи не загружаются на сервер; синхронизации и серверных резервных копий нет. Сохраняйте важные файлы с помощью команды «Скачать». Данные браузера могут быть удалены; удаление аккаунта не очищает локальную коллекцию автоматически.</p>
+        <p>Используйте только файлы, на которые у вас есть необходимые права, и соблюдайте права записанных людей. Права на файлы остаются у соответствующих правообладателей. Локальное добавление не предоставляет поставщику права использования записей.</p>
+        <p>Подробности: <a href="/deutschlive/nutzungsbedingungen">условия использования DeutschLive</a> и <a href="/deutschlive/datenschutz">политика конфиденциальности DeutschLive</a>.</p>
+        {% else %}
+        <h2>DeutschLive: eigene Audioaufnahmen</h2>
+        <p>Die Funktion „Meine Aufnahmen“ speichert ausgewählte Audiodateien lokal im verwendeten Browser. Es gibt keinen Upload, keine Synchronisierung und keine serverseitige Sicherung dieser Dateien. Sichern Sie wichtige Aufnahmen über „Herunterladen“. Browserdaten können gelöscht werden; eine Kontolöschung entfernt die lokale Sammlung nicht automatisch.</p>
+        <p>Verwenden Sie nur Dateien, zu deren Nutzung Sie berechtigt sind, und beachten Sie die Rechte aufgenommener Personen. Die Rechte an den Dateien verbleiben bei den jeweiligen Rechteinhabern. Das lokale Hinzufügen räumt dem Anbieter keine Nutzungsrechte an den Aufnahmen ein.</p>
+        <p>Einzelheiten stehen in den <a href="/deutschlive/nutzungsbedingungen">Nutzungsbedingungen von DeutschLive</a> und der <a href="/deutschlive/datenschutz">Datenschutzerklärung von DeutschLive</a>.</p>
+        {% endif %}
+      </section>
+
+      <section class="template-panel legal-section" id="datenschutz-hinweis">
+        <h2>{{ terms.page.sections.privacy.title }}</h2>
+        <p>
+          <span>{{ terms.page.sections.privacy.text_before }}</span>
+          <a href="{% url 'pages:privacy' %}">{{ terms.page.sections.privacy.link }}</a>.
+        </p>
+      </section>
+    </div>
+  </main>
+{% endblock %}

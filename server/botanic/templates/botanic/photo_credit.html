@@ -1,0 +1,3 @@
+{% if species.image_url %}
+<details class="photo-credit"><summary>Bildnachweis</summary><p>{{ species.image_attribution }} · <a href="{{ species.image_source_url }}" target="_blank" rel="noopener noreferrer">Original</a> · <a href="{{ species.license_url }}" target="_blank" rel="noopener noreferrer">{{ species.image_license|upper }}</a></p></details>
+{% endif %}

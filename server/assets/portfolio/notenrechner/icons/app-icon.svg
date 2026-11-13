@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Notenrechner von Beirit Digital</title>
+  <rect width="512" height="512" rx="112" fill="#2b8064"/>
+  <rect x="148" y="100" width="216" height="312" rx="32" fill="#f5f8f3"/>
+  <rect x="180" y="136" width="152" height="64" rx="12" fill="#d5e8c4"/>
+  <path d="M254 160h54m-32 18h32" fill="none" stroke="#2b8064" stroke-width="10" stroke-linecap="round"/>
+  <g fill="#2b8064"><rect x="180" y="232" width="40" height="40" rx="10"/><rect x="236" y="232" width="40" height="40" rx="10"/><rect x="180" y="288" width="40" height="40" rx="10"/><rect x="236" y="288" width="40" height="40" rx="10"/><rect x="180" y="344" width="96" height="32" rx="10"/></g>
+  <rect x="292" y="232" width="40" height="40" rx="10" fill="#b6a3d2"/>
+  <rect x="292" y="288" width="40" height="88" rx="10" fill="#b6a3d2"/>
+  <path d="M302 326h20m-20 16h20" fill="none" stroke="#f5f8f3" stroke-width="7" stroke-linecap="round"/>
+</svg>

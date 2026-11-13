@@ -1,0 +1,478 @@
+{
+  "/static/portfolio/online-shop/assets/apfel-streusel-stueck.jpg": {
+    "width": 313,
+    "height": 627,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/apfel-streusel-stueck-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/apfel-streusel-stueck-313.webp",
+        "width": 313
+      }
+    ]
+  },
+  "/static/portfolio/online-shop/assets/erdbeer-sahne-torte.jpg": {
+    "width": 313,
+    "height": 627,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/erdbeer-sahne-torte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/erdbeer-sahne-torte-313.webp",
+        "width": 313
+      }
+    ]
+  },
+  "/static/portfolio/online-shop/assets/himbeer-cheesecake.jpg": {
+    "width": 313,
+    "height": 627,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/himbeer-cheesecake-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/himbeer-cheesecake-313.webp",
+        "width": 313
+      }
+    ]
+  },
+  "/static/portfolio/online-shop/assets/karotten-walnuss-kuchen.jpg": {
+    "width": 313,
+    "height": 627,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/karotten-walnuss-kuchen-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/karotten-walnuss-kuchen-313.webp",
+        "width": 313
+      }
+    ]
+  },
+  "/static/portfolio/online-shop/assets/mini-toertchen-box.jpg": {
+    "width": 315,
+    "height": 627,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/mini-toertchen-box-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/mini-toertchen-box-315.webp",
+        "width": 315
+      }
+    ]
+  },
+  "/static/portfolio/online-shop/assets/schoko-ganache-stueck.jpg": {
+    "width": 313,
+    "height": 627,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/schoko-ganache-stueck-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/schoko-ganache-stueck-313.webp",
+        "width": 313
+      }
+    ]
+  },
+  "/static/portfolio/online-shop/assets/schwarzwaelder-torte.jpg": {
+    "width": 313,
+    "height": 627,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/schwarzwaelder-torte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/schwarzwaelder-torte-313.webp",
+        "width": 313
+      }
+    ]
+  },
+  "/static/portfolio/online-shop/assets/zitronen-tarte.jpg": {
+    "width": 315,
+    "height": 627,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/zitronen-tarte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/zitronen-tarte-315.webp",
+        "width": 315
+      }
+    ]
+  },
+  "/static/shop/products/apfel-streusel-kuchen.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/apfel-streusel-kuchen-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/apfel-streusel-kuchen-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/apfel-streusel-kuchen-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/apfel-streusel-kuchen-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/apfel-streusel-kuchen-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/bienenstich.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/bienenstich-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/bienenstich-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/bienenstich-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/bienenstich-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/bienenstich-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/donauwellen-kuchen.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/donauwellen-kuchen-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/donauwellen-kuchen-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/donauwellen-kuchen-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/donauwellen-kuchen-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/donauwellen-kuchen-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/heidelbeer-joghurt-torte.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/heidelbeer-joghurt-torte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/heidelbeer-joghurt-torte-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/heidelbeer-joghurt-torte-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/heidelbeer-joghurt-torte-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/heidelbeer-joghurt-torte-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/kaese-sahne-torte.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/kaese-sahne-torte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/kaese-sahne-torte-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/kaese-sahne-torte-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/kaese-sahne-torte-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/kaese-sahne-torte-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/mango-maracuja-torte.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/mango-maracuja-torte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/mango-maracuja-torte-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/mango-maracuja-torte-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/mango-maracuja-torte-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/mango-maracuja-torte-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/marmorkuchen.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/marmorkuchen-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/marmorkuchen-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/marmorkuchen-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/marmorkuchen-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/marmorkuchen-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/mokka-torte.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/mokka-torte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/mokka-torte-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/mokka-torte-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/mokka-torte-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/mokka-torte-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/nuss-nougat-kuchen.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/nuss-nougat-kuchen-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/nuss-nougat-kuchen-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/nuss-nougat-kuchen-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/nuss-nougat-kuchen-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/nuss-nougat-kuchen-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/pflaumen-streusel-kuchen.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/pflaumen-streusel-kuchen-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/pflaumen-streusel-kuchen-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/pflaumen-streusel-kuchen-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/pflaumen-streusel-kuchen-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/pflaumen-streusel-kuchen-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/pistazien-himbeer-torte.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/pistazien-himbeer-torte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/pistazien-himbeer-torte-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/pistazien-himbeer-torte-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/pistazien-himbeer-torte-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/pistazien-himbeer-torte-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/sachertorte.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/sachertorte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/sachertorte-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/sachertorte-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/sachertorte-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/sachertorte-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/tiramisu-torte.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/tiramisu-torte-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/tiramisu-torte-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/tiramisu-torte-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/tiramisu-torte-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/tiramisu-torte-768.webp",
+        "width": 768
+      }
+    ]
+  },
+  "/static/shop/products/zitronen-mohn-kuchen.webp": {
+    "width": 768,
+    "height": 1024,
+    "candidates": [
+      {
+        "path": "shop/products/responsive/zitronen-mohn-kuchen-160.webp",
+        "width": 160
+      },
+      {
+        "path": "shop/products/responsive/zitronen-mohn-kuchen-320.webp",
+        "width": 320
+      },
+      {
+        "path": "shop/products/responsive/zitronen-mohn-kuchen-480.webp",
+        "width": 480
+      },
+      {
+        "path": "shop/products/responsive/zitronen-mohn-kuchen-640.webp",
+        "width": 640
+      },
+      {
+        "path": "shop/products/responsive/zitronen-mohn-kuchen-768.webp",
+        "width": 768
+      }
+    ]
+  }
+}

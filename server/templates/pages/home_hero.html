@@ -1,0 +1,19 @@
+{# Match Hero.jsx so hydration retains the first paint, including its text nodes. #}
+{# Lucide SVGs: ISC notice retained in pages/project_header.html and assets/images/lucide-LICENSE.txt. #}
+<section class="hero-stage hero-stage--portfolio">
+  <div class="hero-stage__wave-grid" aria-hidden="true"></div>
+  <div class="hero-stage__mesh" aria-hidden="true"></div>
+  <div class="hero-stage__content">
+    <div class="hero-stage__copy">
+      <div class="hero-stage__text">
+        <h1 class="hero-stage__headline hero-stage__headline--brand">{% for segment in hero.headlineSegments %}<span class="hero-stage__headline-segment hero-stage__headline-segment--{{ forloop.counter }}">{{ segment }}{% if not forloop.last %} {% endif %}</span>{% endfor %}</h1>
+        <p class="hero-stage__tagline hero-stage__tagline--visible">{{ hero.tagline }}</p>
+      </div>
+      <div class="hero-stage__actions">
+        <a class="hero-stage__action hero-stage__action--primary" href="/projekte"><span>{{ hero.projectsCta }}</span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        <a class="hero-stage__action hero-stage__action--secondary" href="/kontakt">{{ hero.contactCta }}</a>
+      </div>
+      <a class="hero-stage__next" href="#kompetenzen" aria-label="{{ hero.nextAria }}"><span>{{ hero.next }}</span><svg class="hero-stage__next-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></a>
+    </div>
+  </div>
+</section>

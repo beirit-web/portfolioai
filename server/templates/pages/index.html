@@ -1,0 +1,178 @@
+{% load static vite_assets %}
+<!doctype html>
+<html lang="{{ initial_lang|default:'de' }}" data-theme="light"{% if projects_overview or project_detail or home_main_html %} class="page-is-loaded"{% endif %}>
+  <head>
+    <title>{{ react_page_meta.title|default:"Beirit Web | Portfolio für Web- und Softwareentwicklung" }}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="{{ react_page_meta.description|default:'Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.' }}"
+    />
+    <meta
+      name="keywords"
+      content="{{ react_page_meta.keywords|default:'Beirit Web, Portfolio, Webentwicklung, Softwareentwicklung, React, Django, Python, JavaScript, Fullstack' }}"
+    />
+    <link rel="canonical" href="{{ react_page_meta.canonical }}" />
+    <meta name="robots" content="{{ react_page_meta.robots|default:'index, follow' }}" />
+    <meta property="og:locale" content="{% if initial_lang|slice:':2' == 'ru' %}ru_RU{% elif initial_lang|slice:':2' == 'uk' %}uk_UA{% else %}de_DE{% endif %}" />
+    <meta property="og:title" content="{{ react_page_meta.title|default:'Beirit Web | Portfolio für Web- und Softwareentwicklung' }}" />
+    <meta
+      property="og:description"
+      content="{{ react_page_meta.description|default:'Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.' }}"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Beirit Web" />
+    <meta property="og:url" content="{{ react_page_meta.canonical }}" />
+    <meta property="og:image" content="{{ site_url }}{% static 'images/beirit-digital-logo.png' %}" />
+    <meta property="og:image:width" content="1254" />
+    <meta property="og:image:height" content="1254" />
+    <meta property="og:image:alt" content="Beirit Web Portfolio" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="{{ react_page_meta.canonical }}" />
+    <meta name="twitter:title" content="{{ react_page_meta.title|default:'Beirit Web | Portfolio für Web- und Softwareentwicklung' }}" />
+    <meta
+      name="twitter:description"
+      content="{{ react_page_meta.description|default:'Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.' }}"
+    />
+    <meta name="twitter:image" content="{{ site_url }}{% static 'images/beirit-digital-logo.png' %}" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
+    <link rel="shortcut icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
+    {% if react_route_path == '/ueber-mich' %}
+      {% vite_modulepreload_assets 'src/about.jsx' %}
+      <link rel="preload" as="image" href="{% static 'images/about-forest-background.webp' %}" fetchpriority="high" />
+      <link rel="preload" as="image" href="{% static 'images/eugen-360.webp' %}" imagesrcset="{% static 'images/eugen-360.webp' %} 360w, {% static 'images/eugen-540.webp' %} 540w" imagesizes="(min-width: 48rem) 22rem, calc(100vw - 2px)" />
+    {% elif react_route_path == '/kontakt' %}
+      {% vite_modulepreload_assets 'src/components/contact/ContactForm.jsx' 'src/components/contact/ContactDetails.jsx' %}
+    {% endif %}
+    {% if react_project_image_preload %}
+      <link rel="preload" as="image" href="{{ react_project_image_preload.src }}"{% if react_project_image_preload.srcset %} imagesrcset="{{ react_project_image_preload.srcset }}" imagesizes="{{ react_project_image_preload.sizes }}"{% endif %}{% if react_project_image_preload.media %} media="{{ react_project_image_preload.media }}"{% endif %} fetchpriority="high" />
+    {% endif %}
+    {{ auth_session_js_config|json_script:"auth-session-config-data" }}
+    {{ react_home_config|json_script:"beirit-home-config-data" }}
+    <script nonce="{{ request.csp_nonce }}">
+      window.PREFERRED_LANG = "{{ initial_lang|default:'de'|escapejs }}";
+      document.documentElement.lang =
+        window.PREFERRED_LANG || "{{ initial_lang|default:'de'|escapejs }}";
+      window.AUTH_SESSION_CONFIG = JSON.parse(
+        document.getElementById("auth-session-config-data").textContent
+      );
+      window.BEIRIT_HOME_CONFIG = JSON.parse(
+        document.getElementById("beirit-home-config-data").textContent
+      );
+    </script>
+    <script nonce="{{ request.csp_nonce }}" type="application/ld+json">{{ portfolio_structured_data_json|safe }}</script>
+    {% if react_is_home_route %}
+      {% if home_main_html %}
+      {% vite_inline_css_assets 'src/home-rendering.css' %}
+      {% else %}
+      {% vite_inline_css_assets 'src/components/home/hero/Hero.css' 'src/components/home/HomePage.css' 'src/homepage-layout.css' 'src/header-nav.css' %}
+      {% endif %}
+    {% elif react_route_path == '/projekte' %}
+      {% vite_inline_css_assets 'src/projects-page.css' 'src/header-nav.css' %}
+    {% elif react_is_project_detail %}
+      {% vite_inline_css_assets 'src/project-detail-page.css' 'src/project-detail-rendering.css' 'src/header-nav.css' %}
+    {% elif react_route_path == '/ueber-mich' %}
+      {% vite_inline_css_assets 'src/about-shell.css' 'src/about-page.css' 'src/header-nav.css' %}
+    {% elif react_route_path == '/wetter' %}
+      {% vite_css_assets 'src/site.css' 'src/header-nav.css' 'src/components/weather/WeatherPage.css' %}
+    {% elif react_route_path == '/kontakt' or react_route_path == '/kompetenzen' %}
+      <script nonce="{{ request.csp_nonce }}">
+        {
+          const anchor = document.currentScript;
+          const desktop = matchMedia("(min-width: 48rem)");
+          const desktopCss = {% vite_css_asset_urls 'src/site.css' %};
+          const mobileCss = {% vite_css_asset_urls 'src/mobile-pages.css' %};
+          const loaded = new Map();
+          const loadPageCss = (isDesktop) => Promise.all((isDesktop ? desktopCss : mobileCss).map((href) => {
+            if (loaded.has(href)) return loaded.get(href);
+            const promise = new Promise((resolve) => {
+              const link = document.createElement("link");
+              link.rel = "stylesheet";
+              link.href = href;
+              link.media = isDesktop ? "(min-width: 48rem)" : "(max-width: 47.99rem)";
+              link.onload = resolve;
+              link.onerror = resolve;
+              document.head.insertBefore(link, anchor);
+            });
+            loaded.set(href, promise);
+            return promise;
+          }));
+          window.BEIRIT_CRITICAL_CSS_READY = loadPageCss(desktop.matches);
+          const onViewportChange = (event) => loadPageCss(event.matches);
+          if (desktop.addEventListener) desktop.addEventListener("change", onViewportChange);
+          else desktop.addListener(onViewportChange);
+        }
+      </script>
+      <noscript>{% vite_css_assets 'src/site.css' %}</noscript>
+      {% vite_css_assets 'src/header-nav.css' %}
+    {% else %}
+      {% vite_css_assets 'src/site.css' 'src/header-nav.css' %}
+    {% endif %}
+    <script nonce="{{ request.csp_nonce }}">
+      window.BEIRIT_DEFERRED_CSS = [];
+    </script>
+    {% if react_route_path == '/kontakt' %}
+      {% vite_inline_css_assets 'src/components/contact/ContactForm.jsx' %}
+    {% endif %}
+    {% if home_main_html %}
+      {% vite_react_assets 'src/home.js' fetchpriority='low' %}
+    {% elif react_route_path == '/projekte' %}
+      {% vite_react_assets 'src/projects.js' fetchpriority='low' %}
+    {% elif react_is_project_detail %}
+      {% vite_react_assets 'src/project-detail.js' fetchpriority='low' %}
+    {% elif react_route_path == '/ueber-mich' %}
+      {% vite_react_assets 'src/about.jsx' %}
+    {% else %}
+      {% vite_react_assets 'src/main.jsx' %}
+    {% endif %}
+  </head>
+  <body>
+    <div id="beirit-root"{% if home_hero %} data-prerendered-language="{{ initial_lang|default:'de' }}"{% endif %}>
+      {% if projects_overview %}
+        {% include "pages/projects_overview.html" with overview=projects_overview only %}
+      {% elif project_detail %}
+        {% include "pages/project_detail.html" with detail=project_detail only %}
+      {% elif react_is_home_route %}
+        <div class="site-shell site-shell--home min-h-screen bg-[#f3f4f6] text-stone-950">
+          {% if home_main_html %}
+            {{ home_main_html|safe }}
+            {% include "pages/project_footer.html" with overview=home_chrome only %}
+          {% else %}
+          <main id="top" class="home-main">
+            {% if home_hero %}
+              {% include "pages/home_hero.html" with hero=home_hero only %}
+            {% else %}
+            <section class="hero-stage" aria-hidden="true">
+              <div class="hero-stage__wave-grid" aria-hidden="true"></div>
+              <div class="hero-stage__mesh" aria-hidden="true"></div>
+            </section>
+            {% endif %}
+          </main>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    {% if home_main_html %}{% include "pages/project_header.html" with overview=home_chrome only %}{% endif %}
+    {% if not projects_overview and not project_detail and not home_hero %}<noscript>
+      <main class="react-noscript-message">
+        <h1>Beirit Web – Portfolio für Web- und Softwareentwicklung</h1>
+        <p>Bitte aktivieren Sie JavaScript, um die React-Oberfläche und das Kontaktformular zu nutzen.</p>
+        <p><a href="/kontakt">Kontakt</a></p>
+      </main>
+    </noscript>{% endif %}
+    {% if contact_form.errors %}
+      <section class="react-home-errors" aria-live="polite">
+        {% for field in contact_form %}
+          {% for error in field.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        {% endfor %}
+        {% for error in contact_form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </section>
+    {% endif %}
+  </body>
+</html>

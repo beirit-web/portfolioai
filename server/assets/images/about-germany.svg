@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="fabric" x1="8" y1="12" x2="56" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff" stop-opacity=".2"/>
+      <stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".75" stop-color="#000" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".1"/>
+    </linearGradient>
+  </defs>
+  <path d="M8 49c16-6 32 6 48 0v3c-16 6-32-6-48 0Z" fill="#0F172A" fill-opacity=".18"/>
+  <path d="M8 12c16-6 32 6 48 0v36c-16 6-32-6-48 0Z" fill="#E11D2E"/>
+  <path d="M8 12c16-6 32 6 48 0v12c-16 6-32-6-48 0Z" fill="#171717"/>
+  <path d="M8 36c16-6 32 6 48 0v12c-16 6-32-6-48 0Z" fill="#FFCE00"/>
+  <path d="M8 12c16-6 32 6 48 0v36c-16 6-32-6-48 0Z" fill="url(#fabric)"/>
+</svg>

@@ -1,0 +1,33 @@
+{% autoescape off %}Mietvertrag
+
+Zwischen
+Vermieter:
+{{ vermieter|default:"______________________________" }}
+
+und
+Mieter:
+{{ mieter|default:"______________________________" }}
+
+wird folgender Mietvertrag geschlossen.
+
+1. Mietobjekt
+{{ adresse|default:"______________________________" }}
+
+2. Mietbeginn
+Der Mietbeginn ist der {{ beginn|default:"________________" }}.
+
+3. Miete und Kaution
+Monatliche Miete: {{ miete|default:"________________ EUR" }}
+Kaution: {{ kaution|default:"________________ EUR" }}
+Zahlungsfrist: {{ zahlbarBis|default:"______________________________" }}
+
+4. Übergabezustand
+{{ uebergabe|default:"Der Übergabezustand wird bei Übergabe dokumentiert." }}
+
+5. Weitere Vereinbarungen
+{{ zusatz|default:"Keine zusätzlichen Vereinbarungen." }}
+
+{{ ort|default:"______________________________" }}, {{ datum|default:"________________" }}
+
+Unterschrift Vermieter: ______________________________
+Unterschrift Mieter: ______________________________{% endautoescape %}

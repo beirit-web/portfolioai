@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Notenrechner-Demo von Beirit Digital zur Berechnung der Durchschnittsnote mit Eingabeprüfung, Schrittführung und direktem Ergebnis."
+    />
+    <meta
+      name="keywords"
+      content="Beirit Digital, Notenrechner, Durchschnittsnote berechnen, Schulnoten Rechner, JavaScript App, Portfolio Demo, Webentwicklung, Webapp"
+    />
+    <link rel="canonical" href="https://portfolio.example.invalid/static/portfolio/notenrechner/" />
+    <meta property="og:title" content="Notenrechner Webapp | Beirit Digital" />
+    <meta property="og:description" content="Interaktiver Notenrechner mit Schrittführung, Eingabeprüfung und sofortiger Auswertung." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Notenrechner Webapp | Beirit Digital" />
+    <meta name="twitter:description" content="Portfolio-Demo eines Notenrechners zur Berechnung der Durchschnittsnote." />
+    <link rel="icon" href="./img/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#f5f8f3" />
+    <link rel="stylesheet" href="./styles.css?v=20261105" />
+    <title>Notenrechner Webapp | Beirit Digital</title>
+  </head>
+  <body data-step="1">
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="Notenrechner Startseite"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M8 7h8M8 12h1m6 0h1M8 17h1m6 0h1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span>notenrechner<small>VON BEIRIT DIGITAL</small></span></a>
+      <nav class="calculator-account-nav" aria-label="Notenrechner-Konto" data-online-only>
+      <a href="/projekte/notenrechner">Zur Projektstartseite</a>
+      <a data-account-guest href="/login/?next=%2Fstatic%2Fportfolio%2Fnotenrechner%2Findex.html">Anmelden</a>
+      <a data-account-guest href="/register/?next=%2Fstatic%2Fportfolio%2Fnotenrechner%2Findex.html">Registrieren</a>
+      <a data-account-guest href="/password-reset/?next=%2Flogin%2F%3Fnext%3D%252Fstatic%252Fportfolio%252Fnotenrechner%252Findex.html">Passwort vergessen?</a>
+      <a data-account-member hidden href="/profil/?next=%2Fstatic%2Fportfolio%2Fnotenrechner%2Findex.html">Mein Konto</a>
+      <a data-account-member hidden href="/logout/?next=%2Fstatic%2Fportfolio%2Fnotenrechner%2Findex.html">Abmelden</a>
+      </nav>
+    </header>
+    <main class="app-shell">
+      <section class="intro-panel" aria-labelledby="intro-title">
+        <div class="intro-copy">
+          <span class="eyebrow"><span aria-hidden="true"></span>DEIN PERSÖNLICHER NOTENSPIEGEL</span>
+          <h1 id="intro-title">Deine Noten.<br><span>Alles im Blick.</span></h1>
+          <p>Vom ersten Fach bis zum Durchschnitt. Trag deine Noten ein und sieh, wo du stehst.</p>
+          <div class="intro-benefits"><span><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Ohne Anmeldung</span><span><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m13 2-8 12h6l-1 8 9-13h-6l1-7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Direkt berechnet</span></div>
+        </div>
+        <div class="intro-art" aria-hidden="true">
+          <svg class="study-art" viewBox="0 0 420 260" fill="none">
+            <ellipse cx="216" cy="231" rx="156" ry="15" fill="#dbe8da"/>
+            <path d="M48 141C35 64 119 19 203 34s180 15 175 93-100 102-176 100S62 217 48 141Z" fill="#e4edde"/>
+            <g class="art-note" transform="rotate(-9 164 139)"><rect x="82" y="55" width="155" height="170" rx="12" fill="#d3decf"/><rect x="76" y="47" width="155" height="170" rx="12" fill="white" stroke="#d5dfd4"/><path d="M102 82h76M102 96h48" stroke="#b3c8ba" stroke-width="6" stroke-linecap="round"/><path d="M103 178V136M129 178v-25M155 178v-59M181 178v-39M207 178v-80" stroke-width="15" stroke-linecap="round" stroke="#2b8064"/><path d="M155 178v-59" stroke-width="15" stroke-linecap="round" stroke="#b7d775"/><path d="M207 178v-80" stroke-width="15" stroke-linecap="round" stroke="#8fb9a6"/><path d="M96 190h114" stroke="#dce5db" stroke-width="2"/></g>
+            <g class="art-calculator" transform="rotate(11 276 153)"><rect x="225" y="84" width="107" height="145" rx="18" fill="#c7bde1"/><rect x="220" y="78" width="107" height="145" rx="18" fill="#ddd3f0" stroke="#bdb0d5"/><rect x="235" y="94" width="77" height="33" rx="6" fill="#f6f3fc"/><path d="M268 106h30m-12 9h12" stroke="#70658a" stroke-width="4" stroke-linecap="round"/><g fill="#f7f4fc"><rect x="235" y="140" width="18" height="18" rx="5"/><rect x="265" y="140" width="18" height="18" rx="5"/><rect x="235" y="168" width="18" height="18" rx="5"/><rect x="265" y="168" width="18" height="18" rx="5"/><rect x="235" y="196" width="48" height="12" rx="5"/></g><rect x="295" y="140" width="18" height="18" rx="5" fill="#8e7fae"/><rect x="295" y="168" width="18" height="40" rx="5" fill="#fff"/><path d="M301 186h6m-6 6h6" stroke="#8e7fae" stroke-width="2" stroke-linecap="round"/></g>
+            <g transform="rotate(32 333 66)"><path d="M327 20h12v78l-6 16-6-16V20Z" fill="#e7ac6d"/><path d="M327 29h6v68h-6z" fill="#f4cc8b"/><path d="m329 108 4 6 4-6" fill="#384c43"/><path d="M327 20a6 6 0 0 1 12 0v9h-12v-9Z" fill="#e99b91"/></g>
+            <g class="art-check"><circle cx="238" cy="52" r="24" fill="#2b8064"/><path d="m227 52 7 7 14-15" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+            <path d="m58 64 3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" fill="#e7ac6d"/><path d="m355 172 3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" fill="#8e7fae"/><circle cx="88" cy="205" r="5" fill="#e99b91"/>
+          </svg>
+          <span class="art-caption">Ein bisschen Klarheit für deinen Lernalltag.</span>
+        </div>
+      </section>
+
+      <section class="calculator-card" aria-labelledby="calculator-title">
+        <ol class="step-progress" aria-label="Berechnungsschritte">
+          <li data-progress-step="1" class="is-current" aria-current="step"><span class="step-number">01</span><span>Start</span></li>
+          <li data-progress-step="2"><span class="step-number">02</span><span>Fächer</span></li>
+          <li data-progress-step="3"><span class="step-number">03</span><span>Noten</span></li>
+        </ol>
+        <div class="calculator-heading"><div><span class="step-indicator" id="stepIndicator">Schritt 1 von 3</span><h2 id="calculator-title">Deine Berechnung</h2></div><span class="heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16M4 12h7M4 19h7m5-9v10m-4-5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span></div>
+
+        <p class="status-message" id="statusMessage" role="status" aria-live="polite">
+          Gib zuerst deinen Namen ein oder fahre anonym fort.
+        </p>
+
+        <form id="gradeForm" novalidate>
+          <div class="step-panel is-active" id="stepName" data-step="1">
+            <label for="name">Wie heißt du? <span class="optional-label">optional</span></label>
+            <input
+              type="text"
+              id="name"
+              autocomplete="name"
+              placeholder="Dein Vorname"
+              aria-describedby="nameHint"
+            />
+            <p class="field-hint" id="nameHint">Nur für die Begrüßung. Du kannst auch anonym weitermachen.</p>
+            <button type="button" class="primary-action" data-action="start">
+              Weiter <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+
+          <div class="step-panel" id="stepSubjects" data-step="2" hidden>
+            <label for="subjects">Anzahl der Fächer</label>
+            <input
+              type="number"
+              id="subjects"
+              min="1"
+              max="20"
+              inputmode="numeric"
+              placeholder="Zum Beispiel 6"
+              aria-describedby="subjectHint"
+              required
+            />
+            <div class="subject-presets" aria-label="Fächeranzahl auswählen"><button type="button" data-subject-count="3" aria-pressed="false">3 Fächer</button><button type="button" data-subject-count="6" aria-pressed="false">6 Fächer</button><button type="button" data-subject-count="10" aria-pressed="false">10 Fächer</button></div>
+            <p class="field-hint" id="subjectHint">Erlaubt sind 1 bis 20 Fächer. Alle zählen gleich viel.</p>
+            <button type="button" class="primary-action" data-action="subjects">
+              Noten eingeben
+            </button>
+          </div>
+
+          <div class="step-panel" id="stepGrades" data-step="3" hidden>
+            <div class="grade-entry-heading"><p>Deine Noten <span>1,0 bis 6,0</span></p><span id="gradeCompletion">0 Noten eingetragen</span></div>
+            <div id="gradeInputs" class="grade-inputs"></div>
+            <div class="button-row">
+              <button type="button" class="secondary-action" data-action="back">
+                Zurück
+              </button>
+              <button type="submit" class="primary-action">Berechnen</button>
+            </div>
+          </div>
+        </form>
+        <div class="example-option"><span>Erst mal ausprobieren?</span><button type="button" data-action="example"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Mit Beispiel ausprobieren</button></div>
+
+        <section
+          class="result-panel"
+          id="result"
+          aria-live="polite"
+          aria-labelledby="resultTitle"
+          tabindex="-1"
+          hidden
+        >
+          <h3 id="resultTitle">Dein Ergebnis</h3>
+          <div id="resultContent"></div>
+        </section>
+        <div class="calculator-footer"><span><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z" stroke="currentColor" stroke-width="1.5"/><path d="m8 12 3 3 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Berechnung in deinem Browser</span><button type="button" data-action="restart"><svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>Neu starten</button></div>
+        <canvas class="celebration-canvas" id="celebrationCanvas" aria-hidden="true"></canvas>
+      </section>
+
+      <aside class="insight-column" aria-label="Dein Notenüberblick">
+        <section class="live-card" aria-labelledby="liveTitle">
+          <div class="live-heading"><h2 id="liveTitle">Dein Notenspiegel</h2><span class="live-tag"><span aria-hidden="true"></span>LIVE</span></div>
+          <div class="average-overview"><div class="average-ring"><div><span id="liveAverage" data-state="empty">—</span><span>Durchschnitt</span></div></div><div class="average-copy"><strong id="liveCount">Noch keine Noten</strong><p id="liveCaption">Dein Durchschnitt erscheint hier.</p><span class="small-note">Alle Fächer gleich gewichtet</span></div></div>
+          <div class="distribution-heading"><h3>So verteilen sich deine Noten</h3><span>Anzahl der Fächer</span></div>
+          <div class="grade-distribution" role="list" aria-label="Notenverteilung nach gerundeter Note">
+            <div data-grade-bucket="1" role="listitem" aria-label="Note 1: 0 Fächer"><span class="distribution-count">0</span><div class="distribution-track"><span class="distribution-fill"></span></div><span class="distribution-label">1</span></div>
+            <div data-grade-bucket="2" role="listitem" aria-label="Note 2: 0 Fächer"><span class="distribution-count">0</span><div class="distribution-track"><span class="distribution-fill"></span></div><span class="distribution-label">2</span></div>
+            <div data-grade-bucket="3" role="listitem" aria-label="Note 3: 0 Fächer"><span class="distribution-count">0</span><div class="distribution-track"><span class="distribution-fill"></span></div><span class="distribution-label">3</span></div>
+            <div data-grade-bucket="4" role="listitem" aria-label="Note 4: 0 Fächer"><span class="distribution-count">0</span><div class="distribution-track"><span class="distribution-fill"></span></div><span class="distribution-label">4</span></div>
+            <div data-grade-bucket="5" role="listitem" aria-label="Note 5: 0 Fächer"><span class="distribution-count">0</span><div class="distribution-track"><span class="distribution-fill"></span></div><span class="distribution-label">5</span></div>
+            <div data-grade-bucket="6" role="listitem" aria-label="Note 6: 0 Fächer"><span class="distribution-count">0</span><div class="distribution-track"><span class="distribution-fill"></span></div><span class="distribution-label">6</span></div>
+          </div>
+          <p class="chart-note">Dezimalnoten werden im Diagramm der nächsten ganzen Note zugeordnet.</p>
+        </section>
+        <section class="settings-card" aria-labelledby="settingsTitle">
+          <h2 id="settingsTitle">Deine Bestehensregel</h2>
+          <p>Stelle die Grenze passend zu deiner Schule ein. Alle Fächer zählen weiterhin gleich viel.</p>
+          <form id="passingSettings" novalidate>
+            <label for="passingGrade">Bestehensnote</label>
+            <input id="passingGrade" type="text" inputmode="decimal" value="4,0" aria-describedby="passingGradeHint" />
+            <p class="field-hint" id="passingGradeHint">1 bis 6, mit bis zu zwei Nachkommastellen.</p>
+            <label class="checkbox-label" for="passingInclusive"><input id="passingInclusive" type="checkbox" /><span>Die Grenze zählt noch als bestanden</span></label>
+            <button type="submit" class="secondary-action">Bestehensregel speichern</button>
+            <p id="passingSettingsStatus" class="settings-status" role="status" aria-live="polite">Die Standardregel ist aktiv.</p>
+          </form>
+        </section>
+        <section class="good-to-know" aria-labelledby="tipTitle"><span class="tip-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9 18h6m-6 3h6M8 14a6 6 0 1 1 8 0c-1 .8-1 2-1 2H9s0-1.2-1-2Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span><div><h2 id="tipTitle">Gut zu wissen</h2><p id="passingRuleText">Ein Durchschnitt unter 4,0 gilt als bestanden; ab 4,0 gilt er als nicht bestanden.</p><p>Deine Schule kann weitere Regeln verwenden.</p></div></section>
+        <section class="settings-card" aria-labelledby="offlineTitle">
+          <h2 id="offlineTitle">Auch ohne Internet</h2>
+          <p id="offlineHelp">Speichere den Rechner einmal in diesem Browser. Danach kannst du ihn auch ohne Verbindung öffnen und benutzen.</p>
+          <div class="offline-actions">
+            <button type="button" id="prepareOffline" class="secondary-action">Offline bereitmachen</button>
+            <button type="button" id="installApp" class="secondary-action" hidden>App installieren</button>
+          </div>
+          <p id="offlineStatus" class="settings-status" role="status" aria-live="polite">Noch nicht offline gespeichert.</p>
+        </section>
+      </aside>
+      <footer class="page-footer"><span>Beirit Digital <span aria-hidden="true">/</span> Portfolio-Demo</span><span>1–20 Fächer <span aria-hidden="true">·</span> Noten von 1 bis 6 <span aria-hidden="true">·</span> Gleiche Gewichtung</span></footer>
+    </main>
+    <noscript><p class="no-script">Bitte aktiviere JavaScript, um deine Noten zu berechnen.</p></noscript>
+    <script src="./app.js?v=20261105" defer></script>
+    <script src="./offline.js?v=20261105" defer></script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{% extends "base_public.html" %}
+{% block color_scheme %}light dark{% endblock %}
+{% block topnav %}
+  {% include "registration/project_account_nav.html" %}
+{% endblock %}
+{% block base_styles %}
+  <link rel="stylesheet" href="{% asset_url 'css/account-pages.min.css' %}">
+{% endblock %}
+{% block base_scripts %}
+  <script nonce="{{ request.csp_nonce }}" src="{% asset_url 'js/account-translations.min.js' %}" defer></script>
+  <script nonce="{{ request.csp_nonce }}" src="{% asset_url 'js/account-runtime.min.js' %}" defer></script>
+{% endblock %}

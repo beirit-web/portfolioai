@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="de" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta
+      name="description"
+      content="Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python."
+    />
+    <meta
+      name="keywords"
+      content="Beirit Web, Portfolio, Webentwicklung, Softwareentwicklung, React, Django, Python, JavaScript, Fullstack"
+    />
+    <meta
+      property="og:title"
+      content="Beirit Web | Portfolio für Web- und Softwareentwicklung"
+    />
+    <meta
+      property="og:description"
+      content="Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:title"
+      content="Beirit Web | Portfolio für Web- und Softwareentwicklung"
+    />
+    <meta
+      name="twitter:description"
+      content="Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python."
+    />
+    <title>Beirit Web | Portfolio für Web- und Softwareentwicklung</title>
+    <link rel="icon" type="image/svg+xml" href="/static/images/beirit-web-favicon-mini.svg" />
+    <link rel="apple-touch-icon" href="/static/images/beirit-digital-logo-180.png" />
+    <link
+      rel="shortcut icon"
+      type="image/svg+xml"
+      href="/static/images/beirit-web-favicon-mini.svg"
+    />
+    <link rel="stylesheet" href="/src/site.css" />
+    <link rel="stylesheet" href="/src/homepage-layout.css" />
+    <link rel="stylesheet" href="/src/components/home/hero/Hero.css" />
+    <link rel="stylesheet" href="/src/components/home/HomePage.css" />
+  </head>
+  <body>
+    <div id="beirit-root"></div>
+    <script>
+      window.BEIRIT_HOME_CONFIG = {
+        contactApiUrl: "/api/contact/",
+        logoUrl: "/static/images/beirit-digital-logo-160.webp",
+        logoSmallUrl: "/static/images/beirit-digital-logo-160.webp",
+        logoLargeUrl: "/static/images/beirit-digital-logo-320.webp",
+        appVersion: "1.2.5-beta",
+        priceRows: [],
+      };
+      window.BEIRIT_DEFERRED_CSS = [
+        "/src/components/shared/TechnicalLabel.css",
+        "/src/components/home/FaqSection.css",
+        "/src/components/home/TechnologyProofSection.css",
+      ];
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

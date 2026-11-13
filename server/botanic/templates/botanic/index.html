@@ -1,0 +1,29 @@
+{% extends 'botanic/base.html' %}
+{% load botanic_ui %}
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">{% if tab == 'search' %}PFLANZENKATALOG{% else %}DEINE SAMMLUNG{% endif %}</p>
+      <h1>{% if tab == 'search' %}Pflanzen entdecken{% elif tab == 'plants' %}Meine Pflanzen{% else %}Gießplan{% endif %}</h1>
+    </div>
+    {% if tab != 'search' and request.user.is_authenticated %}
+      <a
+        class="button button--primary add-plant"
+        href="?tab=search"
+        aria-label="Pflanze hinzufügen"
+      >{% botanic_icon 'plus' %}<span>Pflanze hinzufügen</span></a>
+    {% elif tab == 'search' %}
+      <a
+        class="source-link"
+        href="https://www.inaturalist.org"
+        target="_blank"
+        rel="noopener noreferrer"
+      >iNaturalist{% botanic_icon 'arrow' %}</a>
+    {% endif %}
+  </div>
+  {% if tab == 'search' %}
+    {% include 'botanic/catalog.html' %}
+  {% else %}
+    {% include 'botanic/collection.html' %}
+  {% endif %}
+{% endblock %}

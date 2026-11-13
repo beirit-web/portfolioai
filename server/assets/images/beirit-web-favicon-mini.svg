@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs>
+  <linearGradient id="g" x1="8" y1="6" x2="57" y2="58" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#071B42"/>
+    <stop offset=".58" stop-color="#0868E8"/>
+    <stop offset="1" stop-color="#16CFF4"/>
+  </linearGradient>
+</defs>
+
+<!-- Kompaktes B -->
+<path fill="url(#g)" d="M8 5h28c12 0 20 6 20 15 0 6-3 10-8 13 6 2 10 7 10 13 0 9-8 13-21 13H8V5zm11 9v14h15c7 0 11-2 11-7s-4-7-11-7H19zm0 23v13h17c7 0 11-2 11-6.5S43 37 36 37H19z"/>
+
+<!-- Code als wichtigstes Mini-Detail -->
+<g fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M28 35l-5 4 5 4"/>
+  <path d="M38 35l5 4-5 4"/>
+  <path d="M35 33l-4 13"/>
+</g>
+
+<!-- Orbit -->
+<path d="M4.5 27c9 14 34 26 55 18" fill="none" stroke="#19D1F3" stroke-width="2.3" stroke-linecap="round"/>
+<circle cx="6.5" cy="29.5" r="2.5" fill="#19D1F3"/>
+
+<!-- React-Anspielung: stark vereinfacht -->
+<g transform="translate(18 19)" fill="none" stroke="#20D7F4" stroke-width="1.5">
+  <ellipse rx="6" ry="2.2"/>
+  <ellipse rx="6" ry="2.2" transform="rotate(60)"/>
+  <ellipse rx="6" ry="2.2" transform="rotate(120)"/>
+  <circle r="1.2" fill="#20D7F4" stroke="none"/>
+</g>
+
+<!-- Django-Farbakzent -->
+<path d="M43 14h3v11c-2 1.5-4 2-6 2-4 0-6-2.5-6-5.5S36.5 16 40 16h3v-2zm0 5h-2.5c-1.7 0-2.8 1-2.8 2.5s1.1 2.5 2.8 2.5c1 0 1.8-.2 2.5-.7V19z" fill="#0B5D42"/>
+
+<!-- Cloud + DB als kleines Backend-Symbol -->
+<path d="M39 53h8c2.5 0 4-1.4 4-3.2 0-1.7-1.3-3-3.1-3.2-.7-2.3-2.6-3.7-5-3.7-2.7 0-4.8 1.8-5.2 4.2-1.6.3-2.7 1.5-2.7 2.9 0 1.8 1.6 3 4 3z"
+      fill="#fff" stroke="#19C9EE" stroke-width="1.5"/>
+<g transform="translate(49 45)" fill="#082F72" stroke="#21D4EF" stroke-width="1.2">
+  <ellipse cx="4.5" cy="1.5" rx="4.2" ry="1.5"/>
+  <path d="M.3 1.5v7c0 1 1.9 1.7 4.2 1.7s4.2-.7 4.2-1.7v-7"/>
+  <path d="M.3 5c0 1 1.9 1.7 4.2 1.7S8.7 6 8.7 5" fill="none"/>
+</g>
+</svg>

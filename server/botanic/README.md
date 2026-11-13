@@ -1,0 +1,154 @@
+# ENBT Botanic
+
+Django-App im bestehenden Projekt, erreichbar unter `/botanic/`.
+Die bisherige statische URL leitet zur neuen App weiter. Die alte React-Quelle
+bleibt als Archiv erhalten und wird von dieser App nicht mehr verwendet.
+
+## Lokal starten
+
+Installation und gemeinsamer Serverstart stehen in der
+[Hauptanleitung](../../README.md#lokal-starten).
+
+Aufruf: <http://localhost:8000/botanic/>. Anmeldung und Registrierung nutzen die
+vorhandenen Beirit-Konten einschließlich der bestehenden E-Mail-Verifizierung.
+Der lokale Mailbetrieb ist unter
+[Musterdaten und Grenzen](../../README.md#musterdaten-und-grenzen) beschrieben.
+
+## Daten und Funktionen
+
+- `Species`: gemeinsam gespeicherte, oeffentliche Pflanzenarten von iNaturalist.
+- `Plant`: private Exemplare mit Eigentuemer, Namen, Standort, Notizen,
+  frei waehlbarem Intervall (1 bis 365 Tage), naechstem Termin und Pause.
+- `Watering`: ein Giessvorgang je Pflanze und Kalendertag.
+- `ApiBudget`: installationsweites Abrufbudget, auch fuer mehrere Worker.
+
+Die Suche ist ohne Konto moeglich. Sammlung und Giessplan sind benutzergetrennt;
+alle Aenderungen verlangen Anmeldung, POST und CSRF-Schutz. Mehrere Exemplare
+derselben Art sind erlaubt. Loeschen entfernt auch deren Giessprotokoll, nicht
+aber die gemeinsame Pflanzenart. Admin-Zugriff folgt den bestehenden Rechten.
+
+Beim Markieren als gegossen wird der naechste Termin vom tatsaechlichen Giessdatum
+aus berechnet. Wiederholte Klicks am selben Tag erzeugen keinen weiteren Eintrag.
+Termine lassen sich um 1, 3 oder 7 Tage verschieben. Pausierte Pflanzen werden
+nicht als faellig angezeigt. Es gibt keine Hintergrundjobs, E-Mail- oder
+Push-Erinnerungen. Die wesentlichen Ablaeufe funktionieren ohne JavaScript.
+
+## API und Bilder
+
+Verwendet wird die oeffentliche iNaturalist-v1-Taxa-API; kein API-Schluessel und
+kein zusaetzliches Abo erforderlich. Verfuegbarkeit und Nutzungsbedingungen des
+Anbieters bleiben eine externe Abhaengigkeit. Es werden nur Suchbegriffe und
+Pflanzenart-IDs uebertragen, keine Kontodaten, Notizen oder Giessplaene.
+
+- Suche: 12 Ergebnisse je Seite, maximal 20 Seiten je Suchbegriff.
+- Cache: 24 Stunden, Django-Alias `botanic`, FileBasedCache im Verzeichnis
+  `botanic-cache` neben der konfigurierten SQLite-Datei. Schreibrechte erforderlich.
+  Das Verzeichnis liegt ausserhalb der statischen Auslieferung und ist Git-ignoriert.
+- Abrufbudget: maximal ein neuer API-Aufruf pro Sekunde und 9.500 pro lokalem
+  Kalendertag. Ein HTTP 429 des Anbieters setzt eine Abrufpause von 60 Sekunden.
+- Fehlende freigegebene Fotos werden mit einem zusaetzlichen gebuendelten
+  Artenabruf gesucht. Kein Einzelabruf fuer jede Karte.
+- Netzwerk-Timeout: 8 Sekunden pro Abruf; Antwortgroesse maximal 2 MiB.
+- Bei Ausfaellen bleiben gespeicherte Sammlungen und Giessplaene nutzbar.
+
+Fotos werden ausschliesslich mit CC0 oder CC BY uebernommen. Bildnachweis,
+Originalseite und Lizenz sind in der Oberflaeche verlinkt. Nicht freigegebene
+oder fehlende Fotos erhalten einen Platzhalter. Die Bilder werden direkt von
+freigegebenen iNaturalist-Bildhosts geladen, ohne Referrer. Diese Hosts erhalten
+dadurch die IP-Adresse des Browsers. Die CSP-Ausnahme gilt nur fuer Botanic-Seiten.
+Diese externen Bildabrufe sind bei einer Veroeffentlichung in der
+Datenschutzinformation zu beruecksichtigen.
+
+## Pflegehinweise
+
+iNaturalist liefert Taxonomie und Fotos, nicht artspezifische Giessintervalle.
+`care.py` enthaelt separat recherchierte Pflegehinweise mit Quellen. Zuordnung
+erfolgt nach exaktem botanischem Namen, einschliesslich expliziter Synonyme.
+
+Nur belegte Tagesbereiche liefern einen Startvorschlag fuer ein neues Exemplar.
+Bestehende Intervalle werden niemals dadurch ueberschrieben. Wo die Quelle nur
+Erdfeuchte beschreibt, wird kein artspezifischer Tagesabstand erfunden. Der
+allgemeine Formularwert von 7 Tagen ist ausdruecklich kein Pflegewert dieser Art.
+Jede Art hat einen Google-Link fuer weitere Recherche; kein Google-Scraping.
+
+Beim Erweitern von `CARE` Originalquelle, Namenszuordnung und Aktualitaet pruefen.
+Das Pruefdatum in Kommentar und Template gemeinsam aktualisieren. Licht, Erde,
+Topfgroesse und Jahreszeit veraendern den Wasserbedarf; Termine sind Erinnerungen.
+
+## Pruefungen und Werkzeuge
+
+Der [gemeinsame Prüflauf](../../docs/checks.md) beschreibt die regulären
+Prüfgruppen. Für die gezielte Backendprüfung und den optionalen Botanic-Browsercheck:
+
+```bash
+# server
+.venv/bin/python manage.py test botanic contracts pages.tests.test_projects
+
+# frontend, bei laufendem Django-Server und Netzwerkzugriff
+node scripts/check-botanic.cjs
+```
+
+Der Browsercheck legt ein temporaeres Testkonto mit zufaelligen Zugangsdaten an
+und entfernt es samt Pflanzen am Ende, auch bei regulaeren Testfehlern. Er prueft
+echte API-Fotos, Anmeldung, alle Schreibablaeufe, Nutzung ohne JavaScript und
+acht Bildschirmgroessen (280 bis 1920 Pixel).
+Screenshots: `runtime/botanic-checks/screenshots/` ab Repository-Stamm.
+Optional: `BOTANIC_BASE_URL` für einen lokalen HTTP(S)-Ursprung und
+`BOTANIC_SCREENSHOT_DIR` für einen anderen Ausgabeordner setzen. Relative
+Ausgabepfade beziehen sich auf den Repository-Stamm. Nur gegen die
+lokale Entwicklungsdatenbank verwenden; ein hart beendeter Prozess kann ein
+`botanic-check-...@example.test`-Konto zuruecklassen.
+
+`build-botanic-icons.cjs` erzeugt aus `frontend/` den Lucide-Sprite bei
+Icon-Aenderungen; der fertige Sprite ist eingecheckt. Die gemeinsamen
+[Frontend-Builds](../../docs/architecture.md#vom-quellcode-zur-ausgelieferten-seite)
+sind in der Architektur beschrieben.
+
+API-Quellen: [Dokumentation](https://api.inaturalist.org/v1/docs/),
+[empfohlene Nutzung](https://www.inaturalist.org/pages/api+recommended+practices),
+[Bildlizenzen](https://help.inaturalist.org/en/support/solutions/articles/151000169918).
+
+Die Spendenoberfläche ist im Portfolio ausgeblendet. Alte Spenden- und
+Zahlungsadressen leiten zur Projektübersicht unter `/projekte` weiter.
+
+## Seitentitel und SEO
+
+`seo.py` liefert für Pflanzensammlung, Gießplan, Katalog, Artseiten und Wetter
+eigene Titel und Beschreibungen. Canonical-, Open-Graph- und Twitter-Angaben
+stehen bereits im Server-HTML. Absolute URLs verwenden `SITE_URL`; das lokale
+oder konfigurierte Beispiel wird nicht durch den Host eines Aufrufs ersetzt.
+Die Hauptüberschrift bezeichnet die aktuelle Ansicht; der Markenname ist
+keine zusätzliche Hauptüberschrift.
+
+Die allgemeine Einstiegsseite „Meine Pflanzen“ ist ohne Anmeldung mit
+`index, follow` erreichbar. Sie erklärt die Sammlung und zeigt Anmelden und
+Konto erstellen, ohne persönliche Pflanzen auszugeben. Die angemeldete
+Sammlung, der Gießplan, eigene Pflanzen und das Wettermodul behalten
+`noindex, nofollow`, zusätzlich im HTTP-Header `X-Robots-Tag`.
+Metadaten eigener Pflanzen enthalten keine Kontonamen, Spitznamen, Standorte,
+Notizen oder persönlichen Filterwerte. Der öffentliche Projektbericht unter
+`/projekte/enbt-botanic` bleibt der Einstieg in der Portfolio-Sitemap.
+
+Canonical-URLs der Sammlung und des Plans behalten `tab=plants` beziehungsweise
+`tab=watering`, lassen aber Filter und Trackingparameter weg. Öffentliche
+Suchergebnisse behalten ihren validierten Suchbegriff und ihre Seitenzahl,
+wenn diese vom Standard `Monstera`, Seite 1 abweichen. Artseiten besitzen
+ihre eigene URL. API-Ausfälle, ungültige Formulare und POST-Antworten sind
+von der Indexierung ausgeschlossen.
+
+Backendregressionen: `botanic.test_seo`; Browserregressionen einschließlich
+Ansichten ohne JavaScript von 280 bis 1440 Pixeln:
+`frontend/tests/browser/botanic-seo.spec.cjs`.
+
+```bash
+# server
+.venv/bin/python manage.py test botanic pages.tests.test_portfolio_seo
+# Repository-Stamm
+npm --prefix frontend run test:browser -- botanic-seo.spec.cjs portfolio-seo.spec.cjs weather.spec.cjs
+```
+
+## Integriertes Wetter
+
+Unter `/botanic/wetter/` ist das Wettermodul über die Botanic-Navigation erreichbar. Die bestehende Wetteroberfläche und `weather-widget.js` werden gemeinsam weiterverwendet: Ortssuche, aktuelle Werte, Regenfenster, Sonnenzeiten, stündlicher Verlauf, 5-Tage-Vorhersage und Luftqualität. Letzte Orte und Cache bleiben im Browser erhalten. Das Modul ist auch ohne Anmeldung nutzbar. Gießtermine werden weiterhin individuell verwaltet.
+
+Die früheren Routen `/wetter` und `/wetter/` leiten dauerhaft zum Modul weiter. Wetter wird im Portfolio als Funktion von ENBT Botanic geführt; die bisherige Projektkarte bleibt unveröffentlicht im internen Datenbestand erhalten. Die Wetteroberfläche steht bereits im serverseitigen HTML; `weather-widget.js` erweitert sie direkt. Die bestehenden Wetterstyles gehören zum Portfolio-Build. Die SVG-Symbole stammen weiterhin aus Lucide; der Lizenzhinweis steht im Wetter-Template.

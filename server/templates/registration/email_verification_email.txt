@@ -1,0 +1,12 @@
+{% account_text "Hallo," %}
+
+{% account_text "bitte bestätigen Sie Ihre E-Mail-Adresse für Ihr Konto bei Beirit Digital." %}
+
+{% account_text "Bestätigungslink:" %}
+{{ activation_url }}
+
+{% account_text "Gültigkeit in Tagen:" %} {{ valid_for_days }}.
+
+{% account_text "Falls Sie diese Registrierung nicht durchgeführt haben, ignorieren Sie diese E-Mail bitte." %}
+
+Beirit Digital

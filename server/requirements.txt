@@ -1,0 +1,6 @@
+Django>=5.2.18,<5.3
+djangorestframework>=3.16.1,<4
+python-dotenv>=1.2.2,<2
+gunicorn>=26,<27
+whitenoise>=6.12,<7
+Pillow>=13.0.0,<14

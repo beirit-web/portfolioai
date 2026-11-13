@@ -1,0 +1,25 @@
+{% autoescape off %}Einfacher Kaufvertrag
+
+Verkäufer:
+{{ seller|default:"______________________________" }}
+
+Käufer:
+{{ buyer|default:"______________________________" }}
+
+1. Kaufgegenstand
+{{ item|default:"______________________________" }}
+
+2. Kaufpreis und Zahlung
+Kaufpreis: {{ price|default:"________________ EUR" }}
+Zahlungsfrist: {{ paymentDue|default:"______________________________" }}
+
+3. Übergabe oder Lieferung
+{{ delivery|default:"______________________________" }}
+
+4. Bedingungen
+{{ terms|default:"Keine zusätzlichen Bedingungen." }}
+
+{{ place|default:"______________________________" }}, {{ date|default:"________________" }}
+
+Unterschrift Verkäufer: ______________________________
+Unterschrift Käufer: ______________________________{% endautoescape %}

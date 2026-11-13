@@ -1,0 +1,305 @@
+/* Loaded with the BotTutor route. Shared tokens and utilities stay in main.css. */
+@reference "./main.css";
+@layer components {
+
+  [data-theme="dark"] .writing-chat-panel,
+  [data-theme="dark"] .writing-result-thread,
+  [data-theme="dark"] .writing-history-panel {
+    background-color: rgba(15, 23, 42, 0.88);
+    border-color: rgba(71, 85, 105, 0.72);
+    box-shadow: var(--dl-shadow-panel);
+  }
+
+  [data-theme="dark"] .writing-history-item {
+    background-color: rgba(2, 6, 23, 0.58);
+    border-color: rgba(51, 65, 85, 0.88);
+  }
+
+  .writing-chat-panel {
+    @apply rounded-xl border bg-white/70 p-3 dark:bg-slate-900/70 sm:rounded-[1.5rem] sm:p-5;
+    border-color: var(--dl-color-border);
+    box-shadow: var(--dl-shadow-card);
+  }
+
+  .writing-shell {
+    @apply mt-8;
+  }
+
+  .writing-layout {
+    @apply grid gap-6 lg:grid-cols-[0.9fr_1.1fr];
+  }
+
+  .writing-task-panel {
+    @apply min-w-0;
+  }
+
+  .writing-task-list {
+    @apply mt-5 grid gap-2;
+  }
+
+  .writing-task-button {
+    @apply min-w-0;
+  }
+
+  .writing-task-button span {
+    @apply min-w-0;
+  }
+
+  .writing-task-button span:first-child {
+    @apply leading-snug;
+  }
+
+  .writing-composer {
+    @apply min-w-0;
+  }
+
+  .writing-chat-thread {
+    @apply grid gap-3 rounded-xl border border-slate-200/80 bg-slate-50/80 p-3 dark:border-slate-800 dark:bg-slate-950/45;
+  }
+
+  .writing-result-thread {
+    @apply mt-6 grid gap-3 rounded-xl border bg-white/70 p-3 dark:bg-slate-900/70 sm:rounded-2xl sm:p-5;
+    border-color: var(--dl-color-border);
+  }
+
+  .chat-bubble {
+    @apply flex max-w-full items-start gap-3;
+  }
+
+  .chat-bubble__avatar {
+    @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full;
+  }
+
+  .chat-bubble__avatar svg {
+    @apply h-5 w-5;
+  }
+
+  .chat-bubble__body {
+    @apply min-w-0 rounded-2xl px-4 py-3 text-sm leading-6 shadow-sm;
+    overflow-wrap: anywhere;
+  }
+
+  .chat-bubble--bot .chat-bubble__avatar {
+    @apply bg-cyan-500 text-slate-950;
+  }
+
+  .chat-bubble--bot .chat-bubble__body {
+    @apply rounded-tl-md bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100;
+  }
+
+  .chat-bubble--user {
+    @apply justify-end;
+  }
+
+  .chat-bubble--user .chat-bubble__avatar {
+    @apply order-2 bg-indigo-600 text-white;
+  }
+
+  .chat-bubble--user .chat-bubble__body {
+    @apply order-1 rounded-tr-md bg-indigo-600 text-white;
+  }
+
+  .typing-indicator {
+    @apply inline-flex items-center gap-1;
+  }
+
+  .typing-indicator span {
+    @apply h-2 w-2 rounded-full bg-cyan-500;
+    animation: typing-dot 1s infinite ease-in-out;
+  }
+
+  .typing-indicator span:nth-child(2) {
+    animation-delay: 120ms;
+  }
+
+  .typing-indicator span:nth-child(3) {
+    animation-delay: 240ms;
+  }
+
+  .writing-block-list {
+    @apply max-h-40 overflow-y-auto rounded-xl border border-slate-200/70 bg-white/50 p-2 dark:border-slate-700 dark:bg-slate-950/35;
+    scrollbar-color: var(--dl-color-accent) transparent;
+  }
+
+  .writing-textarea {
+    @apply leading-7;
+  }
+
+  .writing-submit-button {
+    @apply min-h-12 justify-center transition hover:bg-cyan-400 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .writing-history-panel {
+    @apply mt-6 rounded-xl border bg-white/55 p-3 dark:bg-slate-900/55 sm:rounded-2xl sm:p-5;
+    border-color: var(--dl-color-border);
+  }
+
+  .writing-history-item {
+    @apply rounded-xl border bg-white/80 p-3 dark:bg-slate-950/70;
+    border-color: var(--dl-color-border);
+  }
+
+  .writing-history-item__user {
+    @apply mt-3 rounded-xl bg-indigo-500/10 p-3 text-sm font-semibold text-slate-700 dark:text-slate-200;
+  }
+
+  .writing-history-item__correction {
+    @apply mt-2 rounded-xl bg-cyan-400/10 p-3 text-sm font-semibold text-slate-700 dark:text-slate-200;
+  }
+
+  @keyframes typing-dot {
+    0%,
+    80%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
+    }
+    40% {
+      opacity: 1;
+      transform: translateY(-0.18rem);
+    }
+  }
+
+  @media (max-width: 480px) {
+
+    .writing-chat-panel,
+    .writing-history-panel {
+      @apply rounded-xl p-3;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+
+  .writing-chat-panel,
+  .writing-result-thread,
+  .writing-history-panel {
+    border-radius: 0.9rem;
+  }
+
+  .writing-shell {
+    margin-top: 1rem;
+    padding: 1rem;
+  }
+
+  .writing-kicker {
+    letter-spacing: 0.16em;
+  }
+
+  .writing-layout {
+    gap: 1rem;
+  }
+
+  .writing-intro-copy {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .writing-task-list {
+    display: flex;
+    gap: 0.75rem;
+    margin-inline: -1rem;
+    margin-top: 1rem;
+    overflow-x: auto;
+    padding: 0 1rem 0.2rem;
+    scroll-padding-inline: 1rem;
+    scroll-snap-type: x mandatory;
+  }
+
+  .writing-task-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .writing-task-button {
+    min-width: min(18rem, 82vw);
+    scroll-snap-align: start;
+  }
+
+  .writing-task-button span:first-child {
+    align-items: flex-start;
+  }
+
+  .writing-chat-panel {
+    padding: 1rem;
+  }
+
+  .writing-input-label {
+    font-size: 0.95rem;
+  }
+
+  .writing-chat-thread {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .chat-bubble {
+    gap: 0.6rem;
+  }
+
+  .chat-bubble__avatar {
+    height: 2rem;
+    width: 2rem;
+  }
+
+  .chat-bubble__body {
+    border-radius: 1rem;
+    padding: 0.75rem 0.9rem;
+  }
+
+  .chat-bubble--user .chat-bubble__body,
+  .chat-bubble--bot .chat-bubble__body {
+    max-width: calc(100% - 2.6rem);
+  }
+
+  .writing-block-list {
+    flex-wrap: nowrap;
+    margin-inline: -0.25rem;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 0.25rem 0.2rem;
+  }
+
+  .writing-block-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .writing-block-list button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .writing-textarea {
+    min-height: 12rem;
+    border-radius: 1rem;
+  }
+
+  .writing-submit-button {
+    width: 100%;
+  }
+
+  .writing-result-panel {
+    margin-top: 1rem;
+    padding: 1rem;
+  }
+
+  .writing-history-panel {
+    margin-top: 1rem;
+    padding: 1rem;
+  }
+
+  .writing-history-panel > div {
+    grid-template-columns: 1fr;
+  }
+
+  .writing-history-item {
+    padding: 0.9rem;
+  }
+
+  .writing-history-item__user,
+  .writing-history-item__correction {
+    max-height: 9rem;
+    overflow: auto;
+  }
+}

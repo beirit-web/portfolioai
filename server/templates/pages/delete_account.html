@@ -1,0 +1,26 @@
+{% extends "registration/account_base.html" %}
+
+{% block title %}{% account_text "Konto löschen | Beirit Digital" %}{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+
+{% block account_title %}{% account_text "Konto löschen" %}{% endblock %}
+{% block account_content %}
+      <p class="section-intro">
+        {% account_text "Dieser Schritt entfernt Ihr Konto und Ihre hinterlegten Profildaten. Sie können sich später jederzeit neu registrieren." %}
+      </p>
+      <p class="template-panel__kicker">{% account_text "Bestätigung" %}</p>
+      <form method="post" class="form">
+        {% csrf_token %}
+        <p class="template-inline-note">
+          {% account_text "Bestätigen Sie die Löschung Ihres Kontos (E-Mail:" %}
+          {% if request.user.email %}
+            {{ request.user.email }}
+          {% else %}
+            {% account_text "Keine E-Mail hinterlegt" %}
+          {% endif %}).
+        </p>
+        <button type="submit" class="btn-primary">
+          {% account_text "Konto endgültig löschen" %}
+        </button>
+      </form>
+{% endblock %}

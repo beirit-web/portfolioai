@@ -1,0 +1,14 @@
+{% extends "registration/account_base.html" %}
+{% block title %}{% account_text "Mein Demo-Konto | Beirit Web" %}{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block account_title %}{% account_text "Mein Demo-Konto" %}{% endblock %}
+{% block account_content %}
+  <p>{% if request.user.email %}{{ request.user.email }}{% else %}{% account_text "Keine E-Mail hinterlegt" %}{% endif %}</p>
+  {% if profile.image_url %}
+  <img src="{{ profile.image_url }}" alt="{% account_text "Aktuelles Profilbild" %}" width="80" height="80" style="object-fit: cover; border-radius: 50%;" />
+  <form method="post" class="form">{% csrf_token %}<input type="hidden" name="image-remove_image" value="on" /><button type="submit" name="image_submit">{% account_text "Bild entfernen" %}</button></form>
+  {% endif %}
+  <form method="post" class="form">{% csrf_token %}{{ account_form.as_p }}<button class="btn" type="submit" name="account_submit">{% account_text "Speichern" %}</button></form>
+  <p><a href="/shop/">Torten- und Kuchen-Shop</a> · <a href="/botanic/">ENBT Botanic</a> · <a href="/wohnungssuche/">Wohnungssuche Bodensee</a> · <a href="/static/portfolio/notenrechner/index.html">Notenrechner</a> · <a href="/deutschlive/">DeutschLive</a></p>
+  <p><a href="{% url 'pages:delete_account' %}">{% account_text "Konto löschen" %}</a></p>
+{% endblock %}

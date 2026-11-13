@@ -1,0 +1,11 @@
+<div class="portfolio-project-page__overview">
+  {% include "pages/project_detail_preview.html" %}
+  <div class="portfolio-card__details-grid">
+    <article class="portfolio-card__situation"><span>{{ detail.copy.situationLabel }}</span>{% for paragraph in detail.situation %}<p>{{ paragraph }}</p>{% endfor %}</article>
+    <article class="portfolio-card__implementation">
+      <span>{{ detail.copy.ownContributionLabel }}</span>{% for paragraph in detail.implementation %}<p>{{ paragraph }}</p>{% endfor %}
+      {% if detail.project.implementationFeatures %}<ul class="portfolio-project-checklist">{% for feature in detail.project.implementationFeatures %}<li>{% include "pages/project_icon.html" with nodes=detail.checkIcon icon_class='h-4 w-4' only %}<span>{{ feature }}</span></li>{% endfor %}</ul>{% endif %}
+    </article>
+    <article class="portfolio-card__result"><span>{{ detail.copy.resultLabel }}</span>{% for paragraph in detail.result %}<p>{{ paragraph }}</p>{% endfor %}</article>
+  </div>
+</div>

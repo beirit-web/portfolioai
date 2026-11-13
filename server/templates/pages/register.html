@@ -1,0 +1,181 @@
+{% extends "registration/account_visual_shell.html" %}
+{% load static %}
+
+{% block title %}{% account_text "Registrieren | Beirit Digital" %}{% endblock %}
+{% block meta_robots %}noindex, follow{% endblock %}
+{% block meta_description %}{% account_text "Konto für Beirit Digital anlegen, um geschützte Funktionen und persönliche Anliegen zu verwalten." %}{% endblock %}
+
+{% block body_attrs %} class="has-topnav register-page login-page--refined register-page--refined template-body backstube-account"{% endblock %}
+
+{% block content %}
+  <main class="backstube-account-page">
+    <div class="login-layout register-layout">
+    <aside class="login-intro register-intro" aria-labelledby="register-intro-title">
+      <span class="login-eyebrow">{{ account_project.name|default:"BEIRIT WEB" }}</span>
+      <h2 id="register-intro-title">{% account_text "Ihr persönlicher Bereich." %}</h2>
+      <p>{% account_text "Erstellen Sie Ihr Konto. Ein Profilbild können Sie jetzt hinzufügen oder später ergänzen." %}</p>
+      <img class="login-illustration" src="{% static 'images/account-access.svg' %}" alt="" width="320" height="264" aria-hidden="true" />
+      <div class="login-session-note">
+        {% include "partials/login_icon.html" with name="shield" %}
+        <p class="form-help">{% if local_activation_available %}{% account_text "Nach der Registrierung finden Sie unter /examplemail einen Aktivierungscode. Geben Sie ihn auf der Anmeldeseite ein. Der Code ist eine Minute gültig." %}{% else %}{% account_text "Nach der Registrierung bestätigen Sie Ihre E-Mail-Adresse über einen Link. Erst danach ist Ihr Konto aktiv und Sie können sich anmelden." %}{% endif %}</p>
+      </div>
+    </aside>
+    <section class="template-panel template-form-card login-form-card register-form-card" aria-labelledby="register-title">
+      <header class="login-card-heading">
+        <span class="login-card-heading__icon">{% include "partials/login_icon.html" with name="user" %}</span>
+        <div>
+          <h1 class="template-panel__kicker" id="register-title">{% account_text "Registrierung" %}</h1>
+          <p>{% account_text "E-Mail, Passwort und auf Wunsch ein Profilbild." %}</p>
+        </div>
+      </header>
+      {% include "partials/auth_messages.html" %}
+      {% if account_mail_is_console and not local_activation_available %}<p class="template-inline-note">{% account_text "Lokale Demo: Die Bestätigungs-E-Mail wird in der Serverkonsole ausgegeben. Es wird keine E-Mail an ein Postfach zugestellt." %}</p>{% endif %}
+      {% if already_logged_in %}
+        <div class="form-error" role="alert">
+          {% account_text "Sie sind bereits angemeldet. Falls Sie ein weiteres Konto anlegen wollen, melden Sie sich bitte zuerst ab." %}
+        </div>
+        <div class="template-actions">
+          <a class="btn-ghost cta-highlight" href="{% url 'pages:logout' %}">{% account_text "Abmelden" %}</a>
+          <a class="btn-primary" href="{% url 'pages:delete_account' %}">{% account_text "Konto löschen" %}</a>
+        </div>
+      {% endif %}
+      <form method="post" class="form" enctype="multipart/form-data" data-submit-once>
+        {% csrf_token %}
+        {% if registration_next %}<input type="hidden" name="next" value="{{ registration_next }}" />{% endif %}
+        {% if form.non_field_errors %}
+          <div class="form-error" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <div class="template-panel-grid register-fields">
+          <div class="register-field--wide">
+            <div class="form-field">
+              <label for="{{ form.email.id_for_label }}">{% include "partials/login_icon.html" with name="mail" %}{% account_text "E-Mail" %}</label>
+              {{ form.email }}
+              <small id="{{ form.email.auto_id }}_helptext" class="form-help">{{ form.email.help_text }}</small>
+              {% if form.email.errors %}
+                <div class="form-error" role="alert">{{ form.email.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="template-panel--span-6">
+            <div class="form-field">
+              <label for="{{ form.password1.id_for_label }}">{% include "partials/login_icon.html" with name="lock" %}{% account_text "Passwort" %}</label>
+              <div class="form-input-row">
+                {{ form.password1 }}
+                <button
+                  type="button"
+                  class="form-input-action"
+                  data-password-toggle="{{ form.password1.id_for_label }}"
+                  aria-controls="{{ form.password1.id_for_label }}"
+                  aria-label="{% account_text "Passwort anzeigen" %}"
+                >
+                  {% include "partials/login_icon.html" with name="eye" %}
+                  <span class="visually-hidden" data-password-toggle-text>{% account_text "Passwort anzeigen" %}</span>
+                </button>
+              </div>
+              {% if form.password1.help_text %}
+                <small id="{{ form.password1.auto_id }}_helptext" class="form-help">{{ form.password1.help_text }}</small>
+              {% endif %}
+              {% if form.password1.errors %}
+                <div class="form-error" role="alert">{{ form.password1.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="template-panel--span-6">
+            <div class="form-field">
+              <label for="{{ form.password2.id_for_label }}">{% include "partials/login_icon.html" with name="lock" %}{% account_text "Passwort wiederholen" %}</label>
+              <div class="form-input-row">
+                {{ form.password2 }}
+                <button
+                  type="button"
+                  class="form-input-action"
+                  data-password-toggle="{{ form.password2.id_for_label }}"
+                  aria-controls="{{ form.password2.id_for_label }}"
+                  aria-label="{% account_text "Passwort anzeigen" %}"
+                >
+                  {% include "partials/login_icon.html" with name="eye" %}
+                  <span class="visually-hidden" data-password-toggle-text>{% account_text "Passwort anzeigen" %}</span>
+                </button>
+              </div>
+              {% if form.password2.help_text %}
+                <small id="{{ form.password2.auto_id }}_helptext" class="form-help">{{ form.password2.help_text }}</small>
+              {% endif %}
+              {% if form.password2.errors %}
+                <div class="form-error" role="alert">{{ form.password2.errors }}</div>
+              {% endif %}
+            </div>
+          </div>
+          {% if form.image %}
+          <div class="register-field--wide register-profile">
+            <div class="form-field">
+              <label for="{{ form.image.id_for_label }}">{% include "partials/login_icon.html" with name="image" %}{% account_text "Profilbild (optional)" %}</label>
+              <div class="file-inline">
+                {{ form.image }}
+                <label class="file-inline__button" for="{{ form.image.id_for_label }}">{% include "partials/login_icon.html" with name="image" %}{% account_text "Datei wählen" %}</label>
+                <span class="file-inline__name" data-file-name-target="profile" data-empty-label="{% account_text "Keine Datei ausgewählt" %}">{% account_text "Keine Datei ausgewählt" %}</span>
+                <span class="file-inline__preview" data-file-preview="profile" aria-hidden="true"></span>
+              </div>
+              {% if form.image.errors %}
+                <div class="form-error" role="alert">{{ form.image.errors }}</div>
+              {% endif %}
+              <small id="{{ form.image.auto_id }}_helptext" class="form-help">{{ form.image.help_text }}</small>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="template-consent">
+          {{ form.privacy_consent }}
+          <label for="{{ form.privacy_consent.id_for_label }}">
+            {% account_text "Ich stimme zu, dass meine E-Mail-Adresse, mein Passwort in geschützter Form und optional mein Profilbild zur Kontoerstellung, Anmeldung und Kontoverwaltung verarbeitet werden. Hinweise dazu stehen in den" %}
+            <a href="{% url 'pages:privacy' %}">{% account_text "Datenschutzhinweisen" %}</a>.
+
+          </label>
+        </div>
+        {% if form.privacy_consent.errors %}
+          <div class="form-error" role="alert">{{ form.privacy_consent.errors }}</div>
+        {% endif %}
+        <button type="submit" class="btn-primary" data-loading-label="{% account_text "Registrierung läuft..." %}">
+          {% if local_activation_available %}{% account_text "Konto speichern und Aktivierungscode abrufen" %}{% else %}{% account_text "Konto anlegen und E-Mail bestätigen" %}{% endif %}
+          {% include "partials/login_icon.html" with name="arrow" %}
+        </button>
+      </form>
+      <div class="login-register">
+        <span>{% account_text "Bereits registriert?" %}</span>
+        <a class="btn-secondary" href="{% url 'pages:login' %}{% if registration_next %}?next={{ registration_next|urlencode }}{% endif %}">{% include "partials/login_icon.html" with name="arrow" %}{% account_text "Zum Login" %}</a>
+      </div>
+      <p class="template-empty">
+        {% if local_activation_available %}{% account_text "Aktivierungscode abgelaufen?" %}{% else %}{% account_text "Bestätigungslink abgelaufen oder keine E-Mail erhalten?" %}{% endif %}
+        <a href="{% url 'pages:verification_resend' %}{% if registration_next %}?next={{ registration_next|urlencode }}{% endif %}">{% if local_activation_available %}{% account_text "Neuen Aktivierungscode anfordern" %}{% else %}{% account_text "Bestätigungs-E-Mail erneut senden" %}{% endif %}</a>
+      </p>
+    </section>
+    </div>
+  </main>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script nonce="{{ request.csp_nonce }}">
+    document.addEventListener("DOMContentLoaded", function () {
+      const input = document.querySelector('[data-file-input="profile"]');
+      const nameEl = document.querySelector('[data-file-name-target="profile"]');
+      if (!input || !nameEl) return;
+      const previewEl = document.querySelector('[data-file-preview="profile"]');
+      const update = () => {
+        const file = input.files && input.files[0];
+        nameEl.textContent = file ? file.name : nameEl.dataset.emptyLabel;
+        if (!previewEl) return;
+        if (file && file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            previewEl.style.backgroundImage = `url(${e.target.result})`;
+            previewEl.classList.add("has-preview");
+          };
+          reader.readAsDataURL(file);
+          return;
+        }
+        previewEl.style.backgroundImage = "none";
+        previewEl.classList.remove("has-preview");
+      };
+      input.addEventListener("change", update);
+      update();
+    });
+  </script>
+{% endblock %}

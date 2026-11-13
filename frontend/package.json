@@ -1,0 +1,51 @@
+{
+  "name": "beirit-digital",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run check:i18n && npm run test:scripts && npm run test:portfolio && npm run test:lib",
+    "test:scripts": "node --test scripts/*.test.mjs",
+    "test:lib": "node --test src/lib/*.test.mjs",
+    "test:portfolio": "node --test src/components/home/portfolio/portfolioPresentation.test.mjs src/components/shared/technologyLogos.test.mjs",
+    "check:i18n": "node scripts/check-i18n.cjs",
+    "dev": "vite --config vite.config.mjs",
+    "build": "npm run build:accounts && vite build --config vite.config.mjs && node scripts/prerender-home.mjs",
+    "build:accounts": "node scripts/build-account-assets.cjs",
+    "build:housing": "npm --prefix ../apps/wohnungssuche run build",
+    "lighthouse": "node scripts/run-lighthouse.mjs",
+    "audit:projects": "node scripts/audit-project-performance.mjs",
+    "frontend:dev": "npm run dev",
+    "frontend:build": "npm run build",
+    "test:browser": "playwright test --config playwright.config.cjs",
+    "test:housing": "playwright test --config playwright.housing.config.cjs",
+    "check": "npm test && npm run build && npm run test:browser"
+  },
+  "keywords": [
+    "internal"
+  ],
+  "author": "Internal",
+  "license": "MIT",
+  "description": "Interne Tools und Assets ohne personenbezogene Daten.",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@tailwindcss/postcss": "4.3.3",
+    "@vitejs/plugin-react": "5.2.0",
+    "autoprefixer": "10.6.1",
+    "esbuild": "0.28.2",
+    "lucide-react": "^0.468.0",
+    "postcss": "8.5.30",
+    "postcss-selector-parser": "7.1.6",
+    "preact-render-to-string": "6.8.1",
+    "react": "^18.3.1",
+    "tailwindcss": "4.3.3",
+    "vite": "7.3.7"
+  },
+  "dependencies": {
+    "preact": "^10.29.8",
+    "three": "^0.184.0"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  }
+}
