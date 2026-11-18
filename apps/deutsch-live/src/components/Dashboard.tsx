@@ -95,7 +95,7 @@ function AccountDashboard({ user, refreshToken, onSettingsSaved }: Omit<Dashboar
       setSettings(response.settings);
       onSettingsSaved?.(response.settings);
       if (isLocale(response.settings.interfaceLanguage)) {
-        setLocale(response.settings.interfaceLanguage);
+        await setLocale(response.settings.interfaceLanguage);
       }
       setMessage(ui.dashboard.settingsSaved);
     });

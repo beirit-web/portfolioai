@@ -81,6 +81,23 @@ class ContactRequestForm(forms.Form):
     return value
 
 
+class DeleteAccountForm(forms.Form):
+  password = forms.CharField(
+    label=account_copy("Aktuelles Passwort"), max_length=1024, strip=False,
+    widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "class": "auth-input"}),
+  )
+
+  def __init__(self, user, *args, **kwargs):
+    self.user = user
+    super().__init__(*args, **kwargs)
+
+  def clean_password(self):
+    password = self.cleaned_data["password"]
+    if not self.user.check_password(password):
+      raise forms.ValidationError(account_copy("Das aktuelle Passwort ist nicht korrekt."))
+    return password
+
+
 class RegistrationForm(UserCreationForm):
   """
   Registrierungsformular mit E-Mail als Benutzername.
@@ -297,6 +314,11 @@ class LoginForm(AuthenticationForm):
 
 class UserAccountForm(forms.ModelForm):
   email = forms.EmailField(label=account_copy("E-Mail"), required=True)
+  current_password = forms.CharField(
+    label=account_copy("Aktuelles Passwort"), required=False, strip=False, max_length=1024,
+    widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+    help_text=account_copy("Für eine neue E-Mail-Adresse ist Ihr aktuelles Passwort erforderlich."),
+  )
   first_name = forms.CharField(label=account_copy("Vorname"), required=False, max_length=150)
   last_name = forms.CharField(label=account_copy("Nachname"), required=False, max_length=150)
 
@@ -306,6 +328,7 @@ class UserAccountForm(forms.ModelForm):
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    self.original_email = self.instance.email
     self.fields["first_name"].widget.attrs.update({"autocomplete": "given-name"})
     self.fields["last_name"].widget.attrs.update({"autocomplete": "family-name"})
     self.fields["email"].widget.attrs.update({"autocomplete": "email", "inputmode": "email"})
@@ -327,12 +350,22 @@ class UserAccountForm(forms.ModelForm):
       raise forms.ValidationError(account_copy("Diese E-Mail wird bereits verwendet."))
     return email
 
+  def clean(self):
+    cleaned = super().clean()
+    self.email_changed = bool(cleaned.get("email") and cleaned["email"].casefold() != self.original_email.casefold())
+    if self.email_changed and not self.instance.check_password(cleaned.get("current_password") or ""):
+      self.add_error("current_password", account_copy("Das aktuelle Passwort ist nicht korrekt."))
+    return cleaned
+
   def save(self, commit=True):
     user = super().save(commit=False)
     user.first_name = self.cleaned_data.get("first_name", "")
     user.last_name = self.cleaned_data.get("last_name", "")
-    user.email = self.cleaned_data["email"]
-    user.username = self.cleaned_data["email"]
+    # A ModelForm assigns cleaned model fields during validation. Restore the
+    # verified address; only the separate confirmation flow may replace it.
+    user.email = self.original_email
     if commit:
-      user.save()
+      # A simultaneous password reset or address confirmation must never be
+      # overwritten by this form's older in-memory account instance.
+      user.save(update_fields=["first_name", "last_name"])
     return user

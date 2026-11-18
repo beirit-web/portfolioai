@@ -162,10 +162,21 @@ class HousingPersistenceTests(TestCase):
         for kind in ("search-profiles", "search-locations"):
             for body in ("", "[1]", "null", "{", '{"name":"Example","radius_km":NaN}', b"\xff"):
                 with self.subTest(kind=kind, body=body):
-                    self.assertEqual(self.client_a.post(f"{API}{kind}/", body, content_type="application/json").status_code, 400)
+                    # Django omits this header for an empty body unless it is
+                    # explicit; this case tests invalid JSON with a valid type.
+                    response = self.client_a.post(f"{API}{kind}/", body, content_type="application/json", CONTENT_TYPE="application/json")
+                    self.assertEqual(response.status_code, 400)
         for body in ({}, {"name": " "}, {"name": []}, {"name": "x" * 121}, {"name": "Example", "user": self.user_b.pk}):
             for kind in ("search-profiles", "search-locations"):
                 self.assertEqual(self.client_a.post(f"{API}{kind}/", body, content_type="application/json").status_code, 400)
+        self.assertFalse(HousingSearchProfile.objects.exists())
+        self.assertFalse(HousingSearchLocation.objects.exists())
+
+    def test_missing_content_type_never_creates_records(self):
+        for kind in ("search-profiles", "search-locations"):
+            with self.subTest(kind=kind):
+                response = self.client_a.post(f"{API}{kind}/", '{"name":"Example"}', content_type="application/json", CONTENT_TYPE="")
+                self.assertEqual(response.status_code, 415)
         self.assertFalse(HousingSearchProfile.objects.exists())
         self.assertFalse(HousingSearchLocation.objects.exists())
 

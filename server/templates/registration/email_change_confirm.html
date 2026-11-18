@@ -1,0 +1,12 @@
+{% extends "registration/account_base.html" %}
+{% block title %}{% account_text "E-Mail-Adresse ändern" %} | Beirit Web{% endblock %}
+{% block account_title %}{% account_text "E-Mail-Adresse ändern" %}{% endblock %}
+{% block account_content %}
+{% if valid_change %}
+  <p>{% account_text "Bestätigen Sie Ihre neue E-Mail-Adresse mit Ihrem aktuellen Passwort. Danach melden Sie sich erneut an." %}</p>
+  <form method="post" class="form">{% csrf_token %}{{ form.as_p }}<button type="submit" class="btn-primary">{% account_text "E-Mail-Adresse bestätigen" %}</button></form>
+{% else %}
+  <p>{% account_text "Dieser Link ist ungültig oder abgelaufen. Fordern Sie die Änderung erneut in Ihrem Profil an." %}</p>
+{% endif %}
+  <p><a href="{% url 'pages:profile' %}">{% account_text "Mein Konto" %}</a></p>
+{% endblock %}

@@ -5,7 +5,7 @@ const { localBaseUrl, screenshotDirectory } = require("./lib/browser-checks.cjs"
 
 const baseUrl = localBaseUrl(process.env.CONTRACTS_BASE_URL || "http://localhost:8000");
 const screenshotDir = screenshotDirectory("contracts", process.env.CONTRACTS_SCREENSHOT_DIR);
-const logoPath = path.resolve(__dirname, "../../server/assets/images/beirit-digital-logo-160.webp");
+const logoPath = path.resolve(__dirname, "../../server/assets/images/beirit-web-logo-160.webp");
 
 async function ready(page) {
   await expect(page.locator("body")).toHaveClass(/is-enhanced/);

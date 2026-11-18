@@ -5,7 +5,7 @@ import { homeConfig as config, publicPageUrl } from "../../lib/homeConfig.js";
 import { getScrollBehavior } from "../../lib/appNavigation.js";
 import { isPlainLinkClick } from "./cardActivation.js";
 
-const configuredBrandLogoUrl = config.logoUrl || "/static/images/beirit-digital-logo-160.webp";
+const configuredBrandLogoUrl = config.logoUrl || "/static/images/beirit-web-logo-160.webp";
 const configuredBrandLogoSmallUrl = config.logoSmallUrl || configuredBrandLogoUrl;
 const configuredBrandLogoLargeUrl = config.logoLargeUrl || configuredBrandLogoSmallUrl;
 const brandLogoUrl = configuredBrandLogoUrl;
@@ -207,7 +207,7 @@ export function SiteHeader({ t, activePath = "/", onNavigate, portal = false }) 
               onError={(event) => {
                 if (event.currentTarget.dataset.fallbackApplied === "true") return;
                 event.currentTarget.dataset.fallbackApplied = "true";
-                event.currentTarget.src = "/static/images/beirit-digital-logo-160.webp";
+                event.currentTarget.src = "/static/images/beirit-web-logo-160.webp";
               }}
             />
           </a>

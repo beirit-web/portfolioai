@@ -1,5 +1,5 @@
 {
-  "defaultLocale": "ru",
+  "defaultLocale": "uk",
   "aliases": { "/handbuch": "/manual", "/feedback": "/kontakt" },
   "routes": {
     "/": {

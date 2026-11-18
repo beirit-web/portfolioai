@@ -2,6 +2,7 @@
 """Prepare persistent paths, back up SQLite, migrate and start the web server."""
 
 from datetime import datetime, timezone
+from contextlib import closing
 import os
 from pathlib import Path
 import pwd
@@ -11,8 +12,8 @@ import uuid
 
 
 def runtime_path(key, default, app_dir):
-    path = Path(os.environ.get(key) or default).expanduser()
-    return path if path.is_absolute() else app_dir / path
+    path = Path(os.environ.get(key, "").strip() or default).expanduser()
+    return (path if path.is_absolute() else app_dir / path).resolve()
 
 
 def positive_integer(key, default, maximum):
@@ -40,6 +41,9 @@ def main():
     db_path = runtime_path("DB_PATH", "/data/db.sqlite3", app_dir)
     backup_dir = runtime_path("DB_BACKUP_PATH", "/data/db_backups", app_dir)
     media_dir = runtime_path("MEDIA_ROOT", "/data/media", app_dir)
+    # Django and the filesystem preparation must use the same resolved paths,
+    # including when a host supplies empty values or relative overrides.
+    os.environ.update(DB_PATH=str(db_path), DB_BACKUP_PATH=str(backup_dir), MEDIA_ROOT=str(media_dir))
     port = positive_integer("PORT", 8000, 65535)
     workers = positive_integer("WEB_CONCURRENCY", 1, 32)
     threads = positive_integer("GUNICORN_THREADS", 4, 64)
@@ -67,6 +71,11 @@ def main():
     from django.db import connections
     from django.db.migrations.executor import MigrationExecutor
 
+    # Reject an unsafe mail opt-in before migrations or accepting traffic.
+    from django.conf import settings
+    if settings.ACCOUNT_EMAIL_DELIVERY_ENABLED:
+        call_command("check_release")
+
     # A migration plan reads schema metadata only. Backups are needed only when
     # a schema/data migration is pending, so ordinary restarts use no extra disk.
     database_exists = db_path.exists() and db_path.stat().st_size > 0
@@ -77,10 +86,13 @@ def main():
         stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
         backup = backup_dir / f"before-migrate-{stamp}-{uuid.uuid4().hex[:8]}.sqlite3"
         try:
-            with sqlite3.connect(db_path.as_uri() + "?mode=ro", uri=True) as source:
-                with sqlite3.connect(backup) as destination:
+            with closing(sqlite3.connect(db_path.as_uri() + "?mode=ro", uri=True)) as source:
+                with closing(sqlite3.connect(backup)) as destination:
                     source.backup(destination)
+                    if destination.execute("PRAGMA integrity_check").fetchall() != [("ok",)]:
+                        raise sqlite3.DatabaseError("Snapshot integrity check failed")
         except Exception:
+            backup.unlink(missing_ok=True)
             # Fail closed without reporting database content or credentials.
             raise SystemExit("Database backup failed; migration was not started.") from None
         print("Database backup completed before migration.", flush=True)

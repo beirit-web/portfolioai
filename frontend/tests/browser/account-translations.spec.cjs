@@ -15,7 +15,7 @@ for (const [locale, copy] of Object.entries({
       await page.goto('/register/');
       await expect(page.locator('html')).toHaveAttribute('lang', locale);
       await expect(page.getByRole('heading', { name: copy.register, exact: true })).toBeVisible();
-      await expect(page.locator('[data-file-name-target]')).toHaveText(copy.empty);
+      await expect(page.locator('#id_image')).toHaveCount(0);
       const email = `translation-${locale}-${testInfo.project.name}@example.test`;
       await page.getByLabel(copy.email, { exact: true }).fill(email);
       await page.getByLabel(copy.password, { exact: true }).fill('Fictional-translated-account-42!');

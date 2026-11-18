@@ -27,7 +27,7 @@ def _read_env_file(path: Path) -> dict[str, str]:
     return values
 
 
-class BeiritDigitalDomainIsolationTests(TestCase):
+class BeiritWebDomainIsolationTests(TestCase):
     @override_settings(
         SITE_URL=CANONICAL_URL,
         SITE_HOST=CANONICAL_HOST,
@@ -35,7 +35,7 @@ class BeiritDigitalDomainIsolationTests(TestCase):
         REDIRECT_OLD_HOSTS=[],
         LOGIN_REQUIRED=False,
     )
-    def test_homepage_uses_only_beirit_digital_canonical_urls(self):
+    def test_homepage_uses_only_beirit_web_canonical_urls(self):
         response = self.client.get(reverse("pages:home"))
 
         self.assertEqual(response.status_code, 200)
@@ -53,7 +53,7 @@ class BeiritDigitalDomainIsolationTests(TestCase):
         self.assertNotContains(response, '<meta property="og:url" content="https://legacy.example.invalid/" />')
 
     @override_settings(SITE_URL=CANONICAL_URL, SITE_HOST=CANONICAL_HOST, LOGIN_REQUIRED=False)
-    def test_robots_and_sitemap_use_beirit_digital_domain(self):
+    def test_robots_and_sitemap_use_beirit_web_domain(self):
         robots = self.client.get(reverse("pages:robots_txt"))
         sitemap = self.client.get(reverse("pages:sitemap_xml"))
 
@@ -65,7 +65,7 @@ class BeiritDigitalDomainIsolationTests(TestCase):
         self.assertNotContains(sitemap, "<loc>https://legacy.example.invalid/</loc>")
 
 
-class BeiritDigitalDeployConfigTests(TestCase):
+class BeiritWebDeployConfigTests(TestCase):
     def test_example_environment_contains_only_demo_payment_settings(self):
         env = _read_env_file(Path(settings.BASE_DIR) / ".env.example")
         self.assertEqual(env["PAYPAL_MODE"], "sandbox")

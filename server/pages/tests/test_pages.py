@@ -318,7 +318,7 @@ class HomeViewHelperTests(TestCase):
         self.assertRedirects(response, f"{reverse('pages:home')}#kontakt")
         message = ChatMessage.objects.get()
         self.assertEqual(message.contact_email, "ada@example.com")
-        self.assertIn("Kontaktformular Beirit Digital", message.text)
+        self.assertIn("Kontaktformular Beirit Web", message.text)
         self.assertIn("Betreff: Frage zu einem Webprojekt", message.text)
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ["owner@example.com"])
@@ -902,6 +902,7 @@ class ProfilePageTests(TestCase):
                 "account-first_name": "Mila",
                 "account-last_name": "Demir",
                 "account-email": "neu@example.com",
+                "account-current_password": "testpass123",
                 "account_submit": "1",
             },
         )
@@ -910,8 +911,8 @@ class ProfilePageTests(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, "Mila")
         self.assertEqual(self.user.last_name, "Demir")
-        self.assertEqual(self.user.email, "neu@example.com")
-        self.assertEqual(self.user.username, "neu@example.com")
+        self.assertEqual(self.user.email, "profilkunde@example.com")
+        self.assertEqual(self.user.username, "profilkunde")
 
     def test_profile_page_can_clear_optional_name_fields(self):
         self.user.last_name = "Kaya"
@@ -960,7 +961,7 @@ class ProfilePageTests(TestCase):
         user_id = self.user.pk
 
         self.client.force_login(self.user)
-        response = self.client.post(reverse("pages:delete_account"))
+        response = self.client.post(reverse("pages:delete_account"), {"password": "testpass123"})
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response["Location"], reverse("pages:home"))

@@ -153,3 +153,79 @@ password and `DEFAULT_FROM_EMAIL`. Use trusted process configuration for real
 values; every environment file in this public workspace must remain a fictional
 sample. The committed examples keep delivery disabled. Old SMTP settings alone
 cannot enable delivery, and payment/billing integrations remain disabled.
+
+## Account form security and SMTP checks
+
+Account deletion now requires the current password. A GET request to `/logout/`
+only displays confirmation; the CSRF-protected POST ends the session. Account
+registration, recovery and confirmation resend share database-backed submission
+limits across their route aliases. Each operation allows five requests per
+address/peer in 15 minutes and at most 50 requests per peer. Password checks for
+sensitive account changes have a separate five-attempt budget. Unknown addresses
+consume the same recovery budget as existing ones. Forwarded IP headers cannot
+reset these limits. Password reset links inherit HTTPS from the configured
+`SITE_URL`, including behind an HTTP proxy.
+
+Check trusted process configuration without exposing credentials:
+
+```sh
+python manage.py check_account_mail
+python manage.py check_account_mail --connect
+```
+
+The first command performs local validation only. `--connect` checks encrypted
+SMTP authentication without sending a message. Actual delivery and inbox arrival
+must still be verified through registration and password recovery. Configure
+`SITE_URL` for the actual public HTTPS origin before using emailed links publicly.
+
+For a local test using an existing IONOS mailbox, run this from the repository:
+
+```sh
+python3 scripts/run_local_account_mail.py --port 8001
+```
+
+Enter the full mailbox address and mailbox password in your own terminal. The
+script uses `smtp.ionos.de:465` with implicit TLS, checks the connection, disables
+the browser example mailbox, and applies pending database migrations before
+starting Django bound to loopback. An existing database is backed up before
+migration; a failed backup or migration prevents startup. `--check-only` skips
+database preparation and server startup. Credentials
+are passed only in process memory; no environment file is written. Mail links
+point to `http://localhost:8001` and therefore work only on that computer. This
+command does not deploy or configure a public server. Stop it with Ctrl+C.
+Without a `DJANGO_SECRET_KEY` supplied through trusted process configuration, it
+generates a temporary random key; restarting then invalidates existing sessions
+and emailed links, while the accounts themselves remain in the database.
+The normal sample configuration keeps real mail disabled.
+
+IONOS documents these settings in its [mail server reference](https://www.ionos.de/hilfe/e-mail/allgemeine-themen/serverinformationen-fuer-imap-pop3-und-smtp/).
+Gmail can separately use an existing provider's SMTP server through [Send mail as](https://support.google.com/mail/answer/22370);
+that does not migrate the domain to Google Workspace or configure this Django app.
+
+
+Vor der Freigabe kann der Postfachinhaber im eigenen Terminal eine echte
+Testmail an das eigene Postfach anfordern:
+
+```bash
+python3 scripts/run_local_account_mail.py --check-only --send-test
+```
+
+Den Befehl im Repository-Hauptverzeichnis ausführen. Die Passwortabfrage ist
+unsichtbar; Zugangsdaten werden nicht gespeichert. Ein erfolgreicher SMTP-Status
+ist noch kein Zustellnachweis: Eingang und Spamordner selbst kontrollieren.
+Ohne `--send-test` prüft der Starter nur die Anmeldung und verschickt keine
+Testnachricht. Für IONOS ist das Passwort des IONOS-Postfachs erforderlich;
+ein Gmail-App-Passwort gehört zu einem anderen Mailanbieter. Die Testnachricht
+hat den Betreff `Beirit Web: SMTP-Test`. Die Terminalausgabe unterscheidet
+Konfigurationsprüfung, SMTP-Anmeldung und Annahme der Nachricht. Bei Fehlern
+werden Fehlerart und gegebenenfalls der numerische SMTP-Status genannt;
+Passwörter und vollständige Serverantworten werden nicht ausgegeben.
+Jeder Testversand nennt außerdem die UTC-Versandzeit und eine eindeutige
+`Message-ID`, die auch im Nachrichtenkopf und im Nachrichtentext stehen.
+Falls der SMTP-Server die Nachricht annimmt, sie aber in keinem Ordner ankommt,
+kann der Postfachinhaber diese Angaben dem Mailanbieter zur Nachverfolgung geben.
+Die Mailprüfung und die Vorbereitung der Datenbank führen keine automatische
+Admin-Einrichtung aus; die normale Serverkonfiguration bleibt erhalten.
+Anschließend den lokalen Server mit `--port 8001` starten und die vollständige
+Registrierung, Bestätigung, Anmeldung, Wiederherstellung und Löschung mit einer
+eigenen Testadresse durchspielen. Der lokale Test veröffentlicht nichts.

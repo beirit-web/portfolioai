@@ -7,10 +7,10 @@ from django.views.generic import RedirectView
 
 
 ASSET_RENAMES = {
-    "images/aktueles-logo.png": "images/beirit-digital-logo.png",
-    "images/aktueles-logo-180.png": "images/beirit-digital-logo-180.png",
-    "images/aktueles-logo-160.webp": "images/beirit-digital-logo-160.webp",
-    "images/aktueles-logo-320.webp": "images/beirit-digital-logo-320.webp",
+    "images/aktueles-logo.png": "images/beirit-web-logo.png",
+    "images/aktueles-logo-180.png": "images/beirit-web-logo-180.png",
+    "images/aktueles-logo-160.webp": "images/beirit-web-logo-160.webp",
+    "images/aktueles-logo-320.webp": "images/beirit-web-logo-320.webp",
     "images/portfolio-test-main-desktop.webp": "images/portfolio-notenrechner-desktop.webp",
     "images/portfolio-vertragsgenerator-main-desktop.webp": "images/portfolio-vertragsgenerator-desktop.webp",
     "images/portfolio-vokabelbox-main-desktop.webp": "images/portfolio-vokabelbox-desktop.webp",

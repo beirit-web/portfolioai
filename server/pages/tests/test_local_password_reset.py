@@ -13,6 +13,7 @@ from django.urls import reverse
 
 from pages.account_views import RETURN_SESSION_KEY
 from pages.local_password_reset import SESSION_KEY, local_token_generator
+from pages.models import LoginAttemptBucket
 
 
 PASSWORD = "Fictional-local-recovery-42!"
@@ -161,6 +162,7 @@ class LocalPasswordResetTests(TestCase):
             ({}, {"REMOTE_ADDR": "192.0.2.1", "HTTP_X_FORWARDED_FOR": "127.0.0.1"}),
         ):
             with self.subTest(overrides=overrides, headers=headers):
+                LoginAttemptBucket.objects.all().delete()  # Independent mode configurations.
                 challenge = self.request_reset()
                 path = self.open_form()
                 with override_settings(**overrides):
@@ -180,6 +182,7 @@ class LocalPasswordResetTests(TestCase):
             (None, reverse("pages:login")),
         ):
             with self.subTest(candidate=candidate):
+                LoginAttemptBucket.objects.all().delete()  # Independent redirect candidates.
                 params = "?" + urlencode({"next": candidate}) if candidate else ""
                 start = self.client.get(reverse("password_reset") + params)
                 self.assertContains(start, f'name="next" value="{expected}"')

@@ -6,11 +6,15 @@ const { blockExternalRequests } = require("./helpers/network.cjs");
 test("imprint has stable first-paint geometry even when menu setup is delayed", async ({ page, context, baseURL }) => {
   await blockExternalRequests(context, baseURL);
   const navigationScript = fs.readFileSync(path.resolve(__dirname, "../../../server/assets/js/impressum-nav.js"), "utf8");
+  let navigationNonce = "";
   await page.route("**/impressum", async route => {
     const response = await route.fetch();
     const html = await response.text();
-    expect(html).toContain(`<script>${navigationScript}</script>`);
-    await route.fulfill({ response, body: html.replace(`<script>${navigationScript}</script>`, "") });
+    const delayedScript = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)]
+      .find(script => script[2] === navigationScript);
+    expect(delayedScript).toBeTruthy();
+    navigationNonce = delayedScript[1].match(/\bnonce=["']([^"']+)["']/)?.[1] || "";
+    await route.fulfill({ response, body: html.replace(delayedScript[0], "") });
   });
   await page.addInitScript(() => {
     window.imprintLayoutShift = 0;
@@ -26,7 +30,12 @@ test("imprint has stable first-paint geometry even when menu setup is delayed", 
   const main = page.getByRole("main", { name: "Impressum", exact: true });
   await expect(main).toBeVisible();
   const before = await main.boundingBox();
-  await page.addScriptTag({ content: navigationScript });
+  await page.evaluate(({ content, nonce }) => {
+    const script = document.createElement("script");
+    script.textContent = content;
+    if (nonce) script.nonce = nonce;
+    document.head.append(script);
+  }, { content: navigationScript, nonce: navigationNonce });
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   const after = await main.boundingBox();
   expect(after.y).toBe(before.y);

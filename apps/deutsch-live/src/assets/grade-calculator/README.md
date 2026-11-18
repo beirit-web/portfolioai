@@ -1,6 +1,6 @@
 # Notenrechner-Ergebnismedien
 
-Die Ergebnismedien stammen aus dem Notenrechner von Beirit Digital.
+Die Ergebnismedien stammen aus dem Notenrechner von Beirit Web.
 `GradeCalculator.tsx` importiert `img/success.webp`, `gewonnen.mp3` und
 `lost-signal.mp3` direkt aus `server/assets/portfolio/notenrechner/`.
 Die dortige README führt die MIT-Lizenz an; bestehende Autoren- und

@@ -4,7 +4,7 @@ export function enhanceProjectPage() {
     if (logo.dataset.fallbackApplied === "true") return;
     logo.dataset.fallbackApplied = "true";
     logo.removeAttribute("srcset");
-    logo.src = "/static/images/beirit-digital-logo-160.webp";
+    logo.src = "/static/images/beirit-web-logo-160.webp";
   };
   logo?.addEventListener("error", useFallbackLogo);
   if (logo?.complete && !logo.naturalWidth) useFallbackLogo();

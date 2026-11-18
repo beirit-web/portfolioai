@@ -27,7 +27,7 @@
         content="{% block og_description %}Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.{% endblock %}"
       />
       <meta property="og:url" content="{% block og_url %}{{ site_url }}{{ request.path }}{% endblock %}" />
-      <meta property="og:image" content="{% block og_image_url %}{{ site_url }}{% static 'images/beirit-digital-logo.png' %}{% endblock %}" />
+      <meta property="og:image" content="{% block og_image_url %}{{ site_url }}{% static 'images/beirit-web-logo.png' %}{% endblock %}" />
       <meta property="og:image:alt" content="{% block og_image_alt %}Beirit Web Portfolio Logo{% endblock %}" />
       <meta property="og:image:width" content="1254" />
       <meta property="og:image:height" content="1254" />
@@ -37,7 +37,7 @@
         name="twitter:description"
         content="{% block twitter_description %}Portfolio mit Webanwendungen, Softwareprojekten und technischen Fallstudien auf Basis von React, Django und Python.{% endblock %}"
       />
-      <meta name="twitter:image" content="{% block twitter_image_url %}{{ site_url }}{% static 'images/beirit-digital-logo.png' %}{% endblock %}" />
+      <meta name="twitter:image" content="{% block twitter_image_url %}{{ site_url }}{% static 'images/beirit-web-logo.png' %}{% endblock %}" />
       {% block twitter_image_alt_tag %}{% endblock %}
     {% endblock %}
     {% block page_bootstrap %}
@@ -52,7 +52,7 @@
     </script>
     {% endblock %}
     <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
-    <link rel="apple-touch-icon" href="{% static 'images/beirit-digital-logo-180.png' %}" />
+    <link rel="apple-touch-icon" href="{% static 'images/beirit-web-logo-180.png' %}" />
     <link rel="shortcut icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
     {% block extra_icons %}{% endblock %}
     {% block base_styles %}

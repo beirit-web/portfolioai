@@ -49,7 +49,7 @@ test("registration requires email confirmation and offers a replacement link bef
   await page.getByRole("form", { name: "Im Account anmelden", exact: true }).getByRole("button", { name: "Anmelden", exact: true }).click();
   await expect(page.locator("#account-status")).toContainText("bestätigen Sie zuerst Ihre E-Mail-Adresse");
   await page.getByRole("link", { name: "Bestätigungs-E-Mail erneut senden", exact: true }).click();
-  await expect(page).toHaveURL(/\/email-bestaetigung\/$/);
+  await expect(page).toHaveURL(/\/email-bestaetigung\/\?next=%2Fdeutschlive%2Faccount$/);
   await expect(page.getByRole("form", { name: "Neuen Aktivierungscode anfordern", exact: true })).toBeVisible();
 });
 

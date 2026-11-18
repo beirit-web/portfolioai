@@ -35,6 +35,11 @@ def _invalid_json_constant(_value):
 
 
 def housing_json_body(request):
+    # Authentication budgets parse JSON only for this media type. Accepting a
+    # form body here could make the budget and account view use different users,
+    # and would allow cross-origin HTML forms to submit registrations.
+    if request.content_type != "application/json":
+        return {}, JsonResponse({"errors": {"detail": ["Bitte senden Sie application/json."]}}, status=415)
     try:
         body = json.loads(request.body.decode("utf-8"), parse_constant=_invalid_json_constant)
     except (UnicodeDecodeError, json.JSONDecodeError, ValueError, RecursionError):

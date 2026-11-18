@@ -1,43 +1,26 @@
-import de from "./de.json";
-import ru from "./ru.json";
-import uk from "./uk.json";
+type Dictionary = typeof import("./ru.json");
 
 export type Locale = "ru" | "de" | "uk";
 
-const dictionaries = { ru, de, uk } as const;
-const resolvedDictionaries: Partial<Record<Locale, typeof ru>> = { ru };
+const loaders = {
+  de: () => import("./de.json"),
+  ru: () => import("./ru.json"),
+  uk: () => import("./uk.json"),
+};
+const resolvedDictionaries: Partial<Record<Locale, Dictionary>> = {};
+let changeSequence = 0;
 const LOCALE_STORAGE_KEY = "deutsch-live-locale";
 const LOCALE_COOKIE_KEY = "deutschlive_locale";
 let currentLocale: Locale = readInitialLocale();
-let currentUi = getUi(currentLocale);
+let currentUi: Dictionary;
 const listeners = new Set<(locale: Locale) => void>();
 
-function mergeWithFallback<T>(fallback: T, value: unknown): T {
-  if (!isRecord(fallback)) return (value ?? fallback) as T;
-  const incoming = isRecord(value) ? value : {};
-  const merged: Record<string, unknown> = { ...fallback };
-
-  for (const [key, fallbackValue] of Object.entries(fallback)) {
-    merged[key] = mergeWithFallback(fallbackValue, incoming[key]);
-  }
-
-  for (const [key, incomingValue] of Object.entries(incoming)) {
-    if (!(key in merged)) merged[key] = incomingValue;
-  }
-
-  return merged as T;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
 function readInitialLocale(): Locale {
-  if (typeof window === "undefined") return "ru";
+  if (typeof window === "undefined") return "uk";
   const storedLocale = localStorage.getItem(LOCALE_STORAGE_KEY);
   const cookieLocale = document.cookie.split(";").map(value => value.trim())
     .find(value => value.startsWith(`${LOCALE_COOKIE_KEY}=`))?.split("=")[1];
-  const locale = isLocale(storedLocale) ? storedLocale : isLocale(cookieLocale) ? cookieLocale : "ru";
+  const locale = isLocale(storedLocale) ? storedLocale : isLocale(cookieLocale) ? cookieLocale : "uk";
   // A first visit already uses the server's default. Only migrate an existing
   // browser preference; don't rewrite a cookie on every page load.
   if (isLocale(storedLocale) && storedLocale !== cookieLocale) persistLocaleCookie(locale);
@@ -54,24 +37,36 @@ export function isLocale(value: unknown): value is Locale {
   return value === "ru" || value === "de" || value === "uk";
 }
 
-export function getUi(locale: Locale = "ru") {
-  // The fallback dictionary already contains every key. Resolve the other
-  // language once, instead of cloning the entire dictionary on every switch.
-  return resolvedDictionaries[locale] ?? (resolvedDictionaries[locale] = mergeWithFallback(ru, dictionaries[locale]));
+async function loadLocale(locale: Locale): Promise<Dictionary> {
+  return resolvedDictionaries[locale] ?? (resolvedDictionaries[locale] = (await loaders[locale]()).default);
+}
+
+export async function prepareInitialLocale() {
+  currentUi = await loadLocale(currentLocale);
+}
+
+export function getUi(locale: Locale = currentLocale): Dictionary {
+  const dictionary = resolvedDictionaries[locale];
+  if (!dictionary) throw new Error("Locale must be loaded before rendering.");
+  return dictionary;
 }
 
 export function getLocale() {
   return currentLocale;
 }
 
-export function setLocale(locale: Locale) {
+export async function setLocale(locale: Locale) {
+  const sequence = ++changeSequence;
+  const dictionary = await loadLocale(locale);
+  if (sequence !== changeSequence) return false;
   currentLocale = locale;
-  currentUi = getUi(locale);
+  currentUi = dictionary;
   if (typeof window !== "undefined") {
     localStorage.setItem(LOCALE_STORAGE_KEY, locale);
     persistLocaleCookie(locale);
   }
   listeners.forEach((listener) => listener(locale));
+  return true;
 }
 
 export function subscribeLocale(listener: (locale: Locale) => void) {

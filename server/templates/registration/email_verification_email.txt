@@ -1,6 +1,6 @@
 {% account_text "Hallo," %}
 
-{% account_text "bitte bestätigen Sie Ihre E-Mail-Adresse für Ihr Konto bei Beirit Digital." %}
+{% account_text "bitte bestätigen Sie Ihre E-Mail-Adresse für Ihr Konto bei Beirit Web." %}
 
 {% account_text "Bestätigungslink:" %}
 {{ activation_url }}
@@ -9,4 +9,4 @@
 
 {% account_text "Falls Sie diese Registrierung nicht durchgeführt haben, ignorieren Sie diese E-Mail bitte." %}
 
-Beirit Digital
+Beirit Web

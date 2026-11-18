@@ -41,7 +41,7 @@ class AccountTranslationTests(TestCase):
         for path in templates:
             if path.is_file():
                 sources.update(re.findall(r'{% account_text "([^"]+)"', path.read_text()))
-        for name in ("forms.py", "local_activation.py", "account_views.py", "views.py"):
+        for name in ("forms.py", "local_activation.py", "account_views.py", "views.py", "email_change.py"):
             tree = ast.parse((root / "pages" / name).read_text())
             sources.update(node.args[0].value for node in ast.walk(tree)
                            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)

@@ -3,18 +3,23 @@ import { enhanceProjectPage } from "./lib/enhanceProjectPage.js";
 enhanceProjectPage();
 
 const section = document.getElementById("referenzen");
-let portfolioPending = false;
-async function enhancePortfolio() {
-  if (portfolioPending || !section) return;
-  portfolioPending = true;
+let portfolioPending;
+function enhancePortfolio() {
+  if (!section) return Promise.resolve(false);
+  if (portfolioPending) return portfolioPending;
+  portfolioPending = (async () => {
   try {
     const { enhanceHomePortfolio } = await import("./home-portfolio.jsx");
     await enhanceHomePortfolio(section, document.documentElement.lang);
     portfolioObserver?.disconnect();
+    return true;
   } catch {
     // Native project links remain usable after a transient module failure.
-    portfolioPending = false;
+    portfolioPending = undefined;
+    return false;
   }
+  })();
+  return portfolioPending;
 }
 const portfolioObserver = typeof IntersectionObserver === "function"
   ? new IntersectionObserver(entries => {
@@ -25,7 +30,19 @@ if (section) {
   if (portfolioObserver) portfolioObserver.observe(section);
   else void enhancePortfolio();
   section.addEventListener("pointerdown", enhancePortfolio, { passive: true });
-  section.addEventListener("keydown", enhancePortfolio);
+  section.addEventListener("focusin", enhancePortfolio);
+  section.addEventListener("keydown", async event => {
+    if (section.dataset.enhanced === "true") return;
+    if (!event.target.matches(".portfolio-carousel__viewport") || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    // React also replays events received while hydrating. Capture this event
+    // before its root listener so the first key is handled exactly once.
+    event.stopImmediatePropagation();
+    // Preserve the first keyboard action while the optional module hydrates.
+    if (await enhancePortfolio()) {
+      section.querySelector(".portfolio-carousel__viewport")?.dispatchEvent(new KeyboardEvent("keydown", { key: event.key, bubbles: true, cancelable: true }));
+    }
+  }, true);
 }
 
 const waveRoot = document.querySelector(".hero-stage__wave-grid");

@@ -35,7 +35,7 @@ class PortfolioAssetNameTests(SimpleTestCase):
     def test_url_normalization_preserves_suffixes_and_custom_urls(self):
         self.assertEqual(
             canonical_portfolio_url("/static/images/aktueles-logo.png?v=2#logo"),
-            "/static/images/beirit-digital-logo.png?v=2#logo",
+            "/static/images/beirit-web-logo.png?v=2#logo",
         )
         for url in ("https://demo.example.invalid/static/portfolio/test-main/index.html", "/media/projects/custom.webp", ""):
             self.assertEqual(canonical_portfolio_url(url), url)

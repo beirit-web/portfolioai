@@ -18,8 +18,9 @@ FROM python:3.13-slim-bookworm AS python-dependencies
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-COPY server/requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+COPY server/requirements.lock /tmp/requirements.lock
+RUN pip install --no-cache-dir --upgrade "pip>=26.3,<27" \
+    && pip install --no-cache-dir -r /tmp/requirements.lock
 
 FROM python-dependencies AS static-files
 WORKDIR /code
@@ -68,7 +69,7 @@ ENV APP_DIR=/code \
     WEB_CONCURRENCY=1 \
     GUNICORN_THREADS=4
 # Fail the build if the runtime user cannot import the application or templates.
-# Only fictional settings and temporary data are used; Fly supplies runtime secrets.
+# Only fictional settings and temporary data are used; the host supplies runtime secrets.
 RUN python - <<'PY'
 import os
 from tempfile import TemporaryDirectory

@@ -174,7 +174,7 @@ def build_projects_overview(projects, language="de", config=None, catalog=None):
     first_image = next((project["image"] for project in cards if project["image"] and project["image"].get("src")), None)
     if first_image:
         first_image["eager"] = True
-    logo = config.get("logoUrl") or "/static/images/beirit-digital-logo-160.webp"
+    logo = config.get("logoUrl") or "/static/images/beirit-web-logo-160.webp"
     small_logo = config.get("logoSmallUrl") or logo
     large_logo = config.get("logoLargeUrl") or small_logo
     public_base = config.get("publicPageBaseUrl") or ""

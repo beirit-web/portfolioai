@@ -8,7 +8,7 @@ module.exports = defineConfig({
   forbidOnly: !!process.env.CI,
   workers: 2,
   reporter: [["list"], ["html", { outputFolder: "../runtime/housing-checks/report", open: "never" }]],
-  use: { locale: "de-DE", reducedMotion: "reduce", trace: "retain-on-failure", screenshot: "only-on-failure" },
+  use: { locale: "de-DE", contextOptions: { reducedMotion: "reduce" }, trace: "retain-on-failure", screenshot: "only-on-failure" },
   projects: [
     { name: "mobile", use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
     { name: "desktop", use: { viewport: { width: 1440, height: 1000 } } },

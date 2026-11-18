@@ -1,7 +1,7 @@
 const { test, expect } = require("@playwright/test");
 const { blockExternalRequests } = require("./helpers/network.cjs");
 
-test.use({ reducedMotion: "no-preference" });
+test.use({ contextOptions: { reducedMotion: "no-preference" } });
 
 test.beforeEach(async ({ context, page, baseURL }) => {
   await blockExternalRequests(context, baseURL);

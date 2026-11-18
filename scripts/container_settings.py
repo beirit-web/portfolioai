@@ -5,7 +5,7 @@ import os
 
 # Apply these before importing settings, including values from older releases.
 for _key in (
-    "DEBUG", "DJANGO_DEBUG", "ACCOUNT_EMAIL_DELIVERY_ENABLED",
+    "DEBUG", "DJANGO_DEBUG",
     "LOCAL_ACCOUNT_ACTIVATION_ENABLED", "USER_UPLOADS_ENABLED",
     "AI_FEATURES_ENABLED", "CONTRACTS_AI_ENABLED", "HOUSING_SOMANTIC_ENABLED",
     "REALTIME_NOTIFICATIONS_ENABLED",
@@ -18,4 +18,5 @@ os.environ["CONTENT_SECURITY_POLICY_ENFORCE"] = "True"
 from config.settings import *  # noqa: E402,F403
 
 # Discard messages instead of writing email bodies or reset links into logs.
-EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
+if not ACCOUNT_EMAIL_DELIVERY_ENABLED:
+    EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"

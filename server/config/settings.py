@@ -142,6 +142,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "config.middleware.LoginAttemptLimitMiddleware",
+    "pages.account_security.AccountSubmissionLimitMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "config.middleware.AuthSessionIdleTimeoutMiddleware",
     "config.middleware.LoginRequiredMiddleware",
@@ -521,3 +522,7 @@ LOGGING = {
         "django": {"handlers": ["console"], "level": "ERROR"},
     },
 }
+
+# Trust only the configured network peers; never accept arbitrary X-Forwarded-For.
+TRUSTED_PROXY_CIDRS = [value.strip() for value in env("TRUSTED_PROXY_CIDRS", "").split(",") if value.strip()]
+CLIENT_IP_HEADER = env("CLIENT_IP_HEADER", "")

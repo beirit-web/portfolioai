@@ -4,7 +4,7 @@ import { getLocale, ui, type Locale } from "../i18n";
 
 const provider = (
   <>
-    <strong>Beirit Digital</strong>
+    <strong>Beirit Web</strong>
     <br />
     Max Mustermann
   </>
@@ -19,7 +19,7 @@ export function DatenschutzPage() {
         Kontakt: max.mustermann@example.com
       </LegalBlock>
       <LegalBlock title="Zweck der Plattform">
-        Beirit Digital stellt eine Lernplattform für Deutsch im Alltag bereit. Die Plattform richtet sich insbesondere an
+        Beirit Web stellt eine Lernplattform für Deutsch im Alltag bereit. Die Plattform richtet sich insbesondere an
         russischsprachige Nutzer und verarbeitet Daten, die für Accounts, Sessions, Lernfortschritt, Quizfunktionen,
         Schreibtraining und Feedback notwendig sind.
       </LegalBlock>
@@ -96,7 +96,7 @@ export function KontaktPage() {
   return (
     <>
       <LegalShell eyebrow="Kontakt" title="Kontakt">
-        <LegalBlock title="Beirit Digital">
+        <LegalBlock title="Beirit Web">
           Eugen
         </LegalBlock>
         <LegalBlock title="Support und Feedback">
@@ -122,7 +122,7 @@ function LegalShell({ eyebrow, title, children }: { eyebrow: string; title: stri
   return (
     <article lang="de" className="glass legal-page rounded-xl px-3 py-5 sm:rounded-[2rem] sm:p-8 lg:p-10">
       <p className="text-sm font-bold uppercase tracking-[0.24em] text-indigo-600 dark:text-indigo-300">
-        Beirit Digital
+        Beirit Web
       </p>
       <div className="mt-4 max-w-3xl">
         <p className="font-bold text-slate-600 dark:text-slate-300">{eyebrow}</p>

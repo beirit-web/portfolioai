@@ -46,8 +46,7 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
       setUser(response.user);
       const profileLocale = response.user?.settings.interfaceLanguage;
       if (isLocale(profileLocale)) {
-        persistLocale(profileLocale);
-        setLocaleState(profileLocale);
+        void persistLocale(profileLocale).catch(() => undefined);
       }
     }).catch(() => setUser(null)).finally(() => setAccountLoaded(true));
   }, []);
@@ -123,9 +122,8 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
     setDashboardRefresh((value) => value + 1);
   }
 
-  function changeLocale(nextLocale: Locale) {
-    persistLocale(nextLocale);
-    setLocaleState(nextLocale);
+  async function changeLocale(nextLocale: Locale) {
+    if (!await persistLocale(nextLocale).catch(() => false)) return;
     setUser((currentUser) => currentUser
       ? { ...currentUser, settings: { ...currentUser.settings, interfaceLanguage: nextLocale } }
       : currentUser
@@ -342,7 +340,7 @@ export default function App({ initialAccountPanel }: { initialAccountPanel?: Com
       <footer className="app-footer app-shell__footer site-footer">
         <div className="app-footer__brand">
           <p className="app-footer__product">{ui.common.appName}</p>
-          <p className="app-footer__meta">© 2026 Beirit Digital · {ui.common.madeInGermany}</p>
+          <p className="app-footer__meta">© 2026 Beirit Web · {ui.common.madeInGermany}</p>
         </div>
         <nav className="app-footer__links" aria-label={ui.common.legalAndProductPages}>
           {import.meta.env.VITE_PLATFORM_INTEGRATION === "true" && <>

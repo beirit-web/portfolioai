@@ -24,6 +24,7 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
 from django.urls import reverse
 from django.utils.encoding import force_str
 from django.utils.http import (
@@ -59,7 +60,7 @@ from .verification import (
     account_email_delivery_mode, pending_account_for_credentials,
     send_pending_account_verification,
 )
-from .forms import ContactRequestForm, LoginForm, RegistrationForm, UserAccountForm
+from .forms import ContactRequestForm, DeleteAccountForm, LoginForm, RegistrationForm, UserAccountForm
 from .models import ChatMessage, Profile, Project, WeatherSearch
 from .seo import (
     INTEGRATED_PROJECT_SLUGS,
@@ -565,7 +566,7 @@ def store_contact_request(request, contact_form: ContactRequestForm, lang: str) 
         f"{email}|{name}".encode("utf-8", errors="ignore")
     ).hexdigest()
     stored_text = (
-        f"Kontaktformular Beirit Digital\n"
+        f"Kontaktformular Beirit Web\n"
         f"Name: {name}\n"
         f"E-Mail: {email}\n"
         f"Betreff: {subject}\n\n"
@@ -732,9 +733,9 @@ def home(request, project_slug=None):
     ctx["react_home_config"] = {
         "pageMeta": page_meta,
         "contactApiUrl": reverse("pages:contact_request_api"),
-        "logoUrl": safe_static_url("images/beirit-digital-logo-160.webp"),
-        "logoSmallUrl": safe_static_url("images/beirit-digital-logo-160.webp"),
-        "logoLargeUrl": safe_static_url("images/beirit-digital-logo-320.webp"),
+        "logoUrl": safe_static_url("images/beirit-web-logo-160.webp"),
+        "logoSmallUrl": safe_static_url("images/beirit-web-logo-160.webp"),
+        "logoLargeUrl": safe_static_url("images/beirit-web-logo-320.webp"),
         "projectsApiUrl": reverse("pages:projects_api"),
         "weatherSearchesUrl": reverse("pages:weather_searches"),
         "loginUrl": reverse("pages:login"),
@@ -935,6 +936,10 @@ def donate(request):
     return redirect("pages:projects_page_no_slash")
 
 
+@require_http_methods(["GET", "POST"])
+@never_cache
+@csrf_protect
+@sensitive_post_parameters("password1", "password2")
 def register(request):
     already_logged_in = request.user.is_authenticated
     next_url = get_safe_login_redirect(request) if request.POST.get("next") or request.GET.get("next") else ""
@@ -1094,6 +1099,7 @@ def account_login_redirect(request, user):
 
 
 @never_cache
+@sensitive_post_parameters("password", "activation_code")
 def login_view(request):
     if request.user.is_authenticated:
         return account_login_redirect(request, request.user)
@@ -1148,10 +1154,19 @@ def login_view(request):
     return response
 
 
+@require_http_methods(["GET", "POST"])
+@csrf_protect
+@never_cache
 def logout_view(request):
     target = get_safe_login_redirect(request)
+    if request.method == "GET":
+        context = build_base_context(request)
+        context["logout_next"] = target
+        return render(request, "registration/logout_confirm.html", context)
     logout(request)
-    return redirect(target)
+    response = redirect(target)
+    response.delete_cookie("learning_auth_token", samesite="Lax")
+    return response
 
 
 @require_GET
@@ -1212,18 +1227,26 @@ def session_activity_api(request):
 
 @login_required
 @csrf_protect
+@require_http_methods(["GET", "POST"])
+@never_cache
+@sensitive_post_parameters("password")
 def delete_account(request):
     """
     Ermöglicht angemeldeten Nutzer:innen, ihr Konto selbst zu löschen.
     """
-    if request.method == "POST":
+    form = DeleteAccountForm(request.user, request.POST if request.method == "POST" else None)
+    if request.method == "POST" and form.is_valid():
         user_id = request.user.pk
+        with transaction.atomic():
+            User.objects.filter(pk=user_id).delete()
         logout(request)
-        User.objects.filter(pk=user_id).delete()
         cache.delete("footer_user_stats_v2")
         messages.success(request, account_copy("Ihr Konto wurde endgültig gelöscht."))
-        return redirect("pages:home")
+        response = redirect("pages:home")
+        response.delete_cookie("learning_auth_token", samesite="Lax")
+        return response
     context = build_base_context(request)
+    context["form"] = form
     return render(request, "pages/delete_account.html", context)
 
 
@@ -1348,7 +1371,11 @@ def get_client_fingerprint(request):
         return None
 
 
+@never_cache
+@sensitive_post_parameters("account-current_password")
+@csrf_protect
 @login_required
+@require_http_methods(["GET", "POST"])
 def profile_page(request):
     """Edit the demo account without the former client workspace."""
     profile, _ = Profile.objects.get_or_create(user=request.user)
@@ -1362,9 +1389,16 @@ def profile_page(request):
             return redirect(request.get_full_path())
         form = UserAccountForm(request.POST, instance=request.user, prefix="account")
         if form.is_valid():
-            form.save()
-            messages.success(request, account_copy("Ihre Kontodaten wurden aktualisiert."))
-            return redirect(request.get_full_path())
+            user = form.save(commit=False)
+            from .email_change import request_email_change
+            if form.email_changed and not request_email_change(user, form.cleaned_data["email"]):
+                form.add_error(None, account_copy("Die Bestätigungs-E-Mail konnte nicht versendet werden. Bitte versuchen Sie es später erneut."))
+            else:
+                # SMTP delivery can take long enough for another request to
+                # reset the password or confirm an address change.
+                user.save(update_fields=["first_name", "last_name"])
+                messages.success(request, account_copy("Bitte bestätigen Sie die neue E-Mail-Adresse. Bis dahin bleibt Ihre bisherige Adresse gültig.") if form.email_changed else account_copy("Ihre Kontodaten wurden aktualisiert."))
+                return redirect(request.get_full_path())
     return render(request, "pages/profile.html", {
         **build_base_context(request), "profile": profile, "account_form": form,
     })

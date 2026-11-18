@@ -70,7 +70,7 @@ Node.js ab 22.19.0. Alle Befehle werden vom Repository-Stamm aus ausgeführt:
 
 ```bash
 python3 -m venv server/.venv
-server/.venv/bin/python -m pip install -r server/requirements.txt
+server/.venv/bin/python -m pip install -r server/requirements.lock
 cp -n server/.env.example server/.env.local
 chmod 600 server/.env.local
 npm --prefix frontend ci
@@ -90,7 +90,9 @@ Das Portfolio läuft unter `http://127.0.0.1:8000/`. Für die Frontend-Entwicklu
 - `server/.env.example` ist die öffentliche Vorlage mit fiktiven Werten.
   Sie dokumentiert die Einstellungen und wird für isolierte Tests und Builds verwendet.
 - `server/.env.local` ist die einzige automatisch geladene lokale Konfiguration.
-  Persönliche Anpassungen gehören hierher; die Datei bleibt aus Git und dem Container ausgeschlossen.
+  Auch diese Datei enthält in diesem Portfolio ausschließlich fiktive Beispielwerte;
+  sie bleibt aus Git und dem Container ausgeschlossen. Echte Zugangsdaten werden
+  als Prozessvariablen oder über die unsichtbare Abfrage des Mailstarters übergeben.
   Der obige Kopierbefehl überschreibt keine vorhandene Datei.
 - `.env` und `.env.orig` werden nicht mehr geladen. Alte Sicherungen gehören in
   das ignorierte Verzeichnis `runtime/`, nicht neben die aktive Konfiguration.
@@ -136,7 +138,7 @@ Der lokale Push-Schutz lässt sich mit `git config core.hooksPath scripts/git-ho
 aktivieren.
 
 Der eigene Projektcode steht unter der [MIT-Lizenz](LICENSE), Copyright
-2025–2026 Eugen, Beirit Digital. Er kann unter diesen Bedingungen als
+2025–2026 Eugen, Beirit Web. Er kann unter diesen Bedingungen als
 Vorlage kopiert, angepasst und weiterentwickelt werden. Für übernommene
 Bestandteile gelten die [jeweiligen Drittlizenzen](docs/licenses/README.md).
 

@@ -84,14 +84,14 @@ class DeutschLiveSeoTests(SimpleTestCase):
                     self.assertContains(response, '<script type="module" src="/static/sample.js"></script>')
                     self.assertContains(response, '<link rel="stylesheet" href="/static/sample.css" />')
 
-    def test_default_and_invalid_cookie_match_the_russian_app_default(self):
+    def test_default_and_invalid_cookie_match_the_ukrainian_app_default(self):
         for cookie in (None, "en", '<script>alert("example")</script>'):
             self.client.cookies.clear()
             if cookie is not None:
                 self.client.cookies["deutschlive_locale"] = cookie
             response = self.client.get("/deutschlive/")
-            self.assertEqual(AppDocument(response.content).lang, "ru")
-            self.assertEqual(AppDocument(response.content).title, ROUTES["/"]["ru"]["title"])
+            self.assertEqual(AppDocument(response.content).lang, "uk")
+            self.assertEqual(AppDocument(response.content).title, ROUTES["/"]["uk"]["title"])
 
     def test_aliases_redirect_once_preserving_the_original_query(self):
         query = "topic=sample&token=a%2Bb&token=x&empty="
@@ -107,7 +107,7 @@ class DeutschLiveSeoTests(SimpleTestCase):
                 response = self.client.get("/deutschlive" + path + "?source=ignored")
                 self.assertEqual(response.status_code, 404)
                 doc = AppDocument(response.content)
-                self.assertEqual(doc.title, ROUTE_DATA["notFound"]["ru"]["title"])
+                self.assertEqual(doc.title, ROUTE_DATA["notFound"]["uk"]["title"])
                 self.assertEqual(doc.metadata["robots"], ["noindex, follow"])
                 self.assertEqual(response["X-Robots-Tag"], "noindex, follow")
                 self.assertEqual(doc.canonicals, ["https://portfolio.example.invalid/deutschlive" + path])
@@ -117,5 +117,5 @@ class DeutschLiveSeoTests(SimpleTestCase):
         response = self.client.get("/deutschlive/manual")
         doc = AppDocument(response.content)
         self.assertEqual(doc.links, [app_path(path) for path, route in ROUTES.items() if route["index"]])
-        self.assertContains(response, ROUTES["/manual"]["ru"]["description"])
-        self.assertContains(response, ROUTE_DATA["noScript"]["ru"]["description"])
+        self.assertContains(response, ROUTES["/manual"]["uk"]["description"])
+        self.assertContains(response, ROUTE_DATA["noScript"]["uk"]["description"])

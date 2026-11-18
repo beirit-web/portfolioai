@@ -2,7 +2,7 @@ const sections = [
   {
     title: "Angaben gemäß § 5 DDG",
     items: [
-      "Beirit Digital",
+      "Beirit Web",
       "Max Mustermann",
       "Musterstraße 1",
       "12345 Musterstadt",
@@ -17,7 +17,7 @@ const sections = [
     title: "Verantwortlich nach § 18 Abs. 2 MStV",
     items: [
       "Max Mustermann",
-      "Beirit Digital",
+      "Beirit Web",
       "Musterstraße 1",
       "12345 Musterstadt",
       "Deutschland"
@@ -29,7 +29,7 @@ export default function ImpressumPage() {
   return (
     <article lang="de" className="glass legal-page rounded-xl px-3 py-5 sm:rounded-[2rem] sm:p-8 lg:p-10">
       <p className="text-sm font-bold uppercase tracking-[0.24em] text-indigo-600 dark:text-indigo-300">
-        Beirit Digital
+        Beirit Web
       </p>
       <div className="mt-4 max-w-3xl">
         <h2 className="text-3xl font-black leading-tight text-slate-950 dark:text-white sm:text-5xl">
@@ -71,7 +71,7 @@ export default function ImpressumPage() {
         </LegalText>
 
         <LegalText title="Hinweis zur Lernplattform">
-          Die von Beirit Digital bereitgestellte Lernplattform unterstützt russischsprachige Nutzer beim Erlernen der
+          Die von Beirit Web bereitgestellte Lernplattform unterstützt russischsprachige Nutzer beim Erlernen der
           deutschen Sprache anhand realitätsnaher Alltagssituationen in Deutschland. Die Inhalte dienen ausschließlich
           Lern- und Informationszwecken und ersetzen keine Rechtsberatung, medizinische Beratung oder behördliche Auskunft.
         </LegalText>

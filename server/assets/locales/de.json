@@ -519,7 +519,7 @@
   "projectTermsPage": {
     "kicker": "Rechtliches",
     "title": "Projektbedingungen",
-    "lead": "Rahmenbedingungen für digitale Leistungen, Webprojekte, Angebote und Zusammenarbeit mit Beirit Digital.",
+    "lead": "Rahmenbedingungen für digitale Leistungen, Webprojekte, Angebote und Zusammenarbeit mit Beirit Web.",
     "facts_aria": "Kurzüberblick",
     "facts": [
       "Angebot vor Umsetzung",
@@ -530,7 +530,7 @@
     "sections": {
       "scope": {
         "title": "Geltungsbereich",
-        "text": "Diese Projektbedingungen gelten für digitale Leistungen von Beirit Digital, insbesondere Webentwicklung, Webseiten-Anpassungen, Reparaturen, Lokalisierung und digitale Inhalte."
+        "text": "Diese Projektbedingungen gelten für digitale Leistungen von Beirit Web, insbesondere Webentwicklung, Webseiten-Anpassungen, Reparaturen, Lokalisierung und digitale Inhalte."
       },
       "request": {
         "title": "Anfrage & Angebot",

@@ -1,0 +1,10 @@
+{% extends "registration/account_base.html" %}
+{% block title %}{% account_text "Abmelden" %} | Beirit Web{% endblock %}
+{% block account_title %}{% account_text "Abmelden" %}{% endblock %}
+{% block account_content %}
+  <form method="post" class="form">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ logout_next }}" />
+    <button type="submit" class="btn-primary">{% account_text "Abmelden" %}</button>
+  </form>
+{% endblock %}

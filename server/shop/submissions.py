@@ -4,6 +4,8 @@ from datetime import timedelta
 from math import ceil
 from uuid import uuid4
 
+from config.client_ip import client_ip
+
 from django.conf import settings
 from django.db import transaction
 from django.db.models import F
@@ -48,7 +50,7 @@ def reserve_submission(request):
     scopes = (
         ("session", session_id, max(1, int(getattr(settings, "SHOP_SESSION_SUBMISSION_LIMIT", 5)))),
         # Do not trust client-provided forwarding headers.
-        ("ip", request.META.get("REMOTE_ADDR", "unknown"), max(1, int(getattr(settings, "SHOP_IP_SUBMISSION_LIMIT", 20)))),
+        ("ip", client_ip(request), max(1, int(getattr(settings, "SHOP_IP_SUBMISSION_LIMIT", 20)))),
     )
     with transaction.atomic():
         for scope, value, limit in scopes:

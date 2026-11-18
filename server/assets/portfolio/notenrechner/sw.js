@@ -1,7 +1,7 @@
-/* Beirit Digital — the cache and worker are restricted to this calculator. */
+/* Beirit Web — the cache and worker are restricted to this calculator. */
 const CACHE_PREFIX = "notenrechner-offline-";
 // Bump this version when changing any file in OFFLINE_FILES.
-const CACHE_NAME = `${CACHE_PREFIX}v1-20261105`;
+const CACHE_NAME = `${CACHE_PREFIX}v2-20261113`;
 const OFFLINE_FILES = [
   "index.html", "styles.css", "app.js", "offline.js", "manifest.webmanifest",
   "icons/app-icon.svg", "icons/app-icon-192.png", "icons/app-icon-512.png",

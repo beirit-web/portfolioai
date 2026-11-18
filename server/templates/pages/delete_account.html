@@ -1,6 +1,6 @@
 {% extends "registration/account_base.html" %}
 
-{% block title %}{% account_text "Konto löschen | Beirit Digital" %}{% endblock %}
+{% block title %}{% account_text "Konto löschen | Beirit Web" %}{% endblock %}
 {% block meta_robots %}noindex, nofollow{% endblock %}
 
 {% block account_title %}{% account_text "Konto löschen" %}{% endblock %}
@@ -19,6 +19,11 @@
             {% account_text "Keine E-Mail hinterlegt" %}
           {% endif %}).
         </p>
+        <div class="form-field">
+          <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+          {{ form.password }}
+          {% if form.password.errors %}<div class="form-error" role="alert">{{ form.password.errors }}</div>{% endif %}
+        </div>
         <button type="submit" class="btn-primary">
           {% account_text "Konto endgültig löschen" %}
         </button>

@@ -64,6 +64,17 @@ class Profile(models.Model):
     return f"data:{self.image_mime};base64,{encoded}"
 
 
+class EmailChangeRequest(models.Model):
+  """One expiring, single-use address change per account; never a raw token."""
+
+  user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+  current_email = models.EmailField()
+  new_email = models.EmailField()
+  token_digest = models.CharField(max_length=64)
+  auth_hash = models.CharField(max_length=64)
+  expires_at = models.DateTimeField()
+
+
 class InterpreterApplication(models.Model):
   """
   Bewerbung von Dolmetscher:innen mit Basisdaten.

@@ -307,17 +307,17 @@
     "ru": "Удалить аккаунт безвозвратно",
     "uk": "Видалити обліковий запис безповоротно"
   },
-  "Konto für Beirit Digital anlegen, um geschützte Funktionen und persönliche Anliegen zu verwalten.": {
-    "ru": "Создайте аккаунт Beirit Digital для доступа к защищённым функциям и управления личными данными.",
-    "uk": "Створіть обліковий запис Beirit Digital для доступу до захищених функцій і керування особистими даними."
+  "Konto für Beirit Web anlegen, um geschützte Funktionen und persönliche Anliegen zu verwalten.": {
+    "ru": "Создайте аккаунт Beirit Web для доступа к защищённым функциям и управления личными данными.",
+    "uk": "Створіть обліковий запис Beirit Web для доступу до захищених функцій і керування особистими даними."
   },
   "Konto löschen": {
     "ru": "Удалить аккаунт",
     "uk": "Видалити обліковий запис"
   },
-  "Konto löschen | Beirit Digital": {
-    "ru": "Удалить аккаунт | Beirit Digital",
-    "uk": "Видалити обліковий запис | Beirit Digital"
+  "Konto löschen | Beirit Web": {
+    "ru": "Удалить аккаунт | Beirit Web",
+    "uk": "Видалити обліковий запис | Beirit Web"
   },
   "Konto speichern und Aktivierungscode abrufen": {
     "ru": "Сохранить аккаунт и получить код активации",
@@ -447,9 +447,9 @@
     "ru": "Зарегистрироваться",
     "uk": "Зареєструватися"
   },
-  "Registrieren | Beirit Digital": {
-    "ru": "Регистрация | Beirit Digital",
-    "uk": "Реєстрація | Beirit Digital"
+  "Registrieren | Beirit Web": {
+    "ru": "Регистрация | Beirit Web",
+    "uk": "Реєстрація | Beirit Web"
   },
   "Registrierung": {
     "ru": "Регистрация",
@@ -579,13 +579,13 @@
     "ru": "Запросите новый код для регистрации, ожидающей активации в этом браузере. Код появится на странице /examplemail.",
     "uk": "Запросіть новий код для реєстрації, що очікує активації в цьому браузері. Код з’явиться на сторінці /examplemail."
   },
-  "Anmelden | Beirit Digital": {
-    "ru": "Вход | Beirit Digital",
-    "uk": "Вхід | Beirit Digital"
+  "Anmelden | Beirit Web": {
+    "ru": "Вход | Beirit Web",
+    "uk": "Вхід | Beirit Web"
   },
-  "Melde dich bei Beirit Digital an, um deine persönlichen Projekte wie ENBT Botanic zu nutzen. Mit E-Mail und Passwort einloggen oder den Zugang wiederherstellen.": {
-    "ru": "Войдите в Beirit Digital, чтобы пользоваться личными проектами, например ENBT Botanic. Вход по электронной почте и паролю или восстановление доступа.",
-    "uk": "Увійдіть у Beirit Digital, щоб користуватися особистими проєктами, наприклад ENBT Botanic. Вхід за електронною поштою та паролем або відновлення доступу."
+  "Melde dich bei Beirit Web an, um deine persönlichen Projekte wie ENBT Botanic zu nutzen. Mit E-Mail und Passwort einloggen oder den Zugang wiederherstellen.": {
+    "ru": "Войдите в Beirit Web, чтобы пользоваться личными проектами, например ENBT Botanic. Вход по электронной почте и паролю или восстановление доступа.",
+    "uk": "Увійдіть у Beirit Web, щоб користуватися особистими проєктами, наприклад ENBT Botanic. Вхід за електронною поштою та паролем або відновлення доступу."
   },
   "Hallo,": {
     "ru": "Здравствуйте,",
@@ -599,17 +599,17 @@
     "ru": "Если вы не запрашивали сброс пароля, проигнорируйте это письмо.",
     "uk": "Якщо ви не запитували скидання пароля, проігноруйте цей лист."
   },
-  "Passwort zurücksetzen – Beirit Digital": {
-    "ru": "Сброс пароля – Beirit Digital",
-    "uk": "Скидання пароля – Beirit Digital"
+  "Passwort zurücksetzen – Beirit Web": {
+    "ru": "Сброс пароля – Beirit Web",
+    "uk": "Скидання пароля – Beirit Web"
   },
-  "Bitte bestätigen Sie Ihre E-Mail-Adresse bei Beirit Digital": {
-    "ru": "Подтвердите адрес электронной почты в Beirit Digital",
-    "uk": "Підтвердьте адресу електронної пошти в Beirit Digital"
+  "Bitte bestätigen Sie Ihre E-Mail-Adresse bei Beirit Web": {
+    "ru": "Подтвердите адрес электронной почты в Beirit Web",
+    "uk": "Підтвердьте адресу електронної пошти в Beirit Web"
   },
-  "bitte bestätigen Sie Ihre E-Mail-Adresse für Ihr Konto bei Beirit Digital.": {
-    "ru": "подтвердите адрес электронной почты для аккаунта Beirit Digital.",
-    "uk": "підтвердьте адресу електронної пошти для облікового запису Beirit Digital."
+  "bitte bestätigen Sie Ihre E-Mail-Adresse für Ihr Konto bei Beirit Web.": {
+    "ru": "подтвердите адрес электронной почты для аккаунта Beirit Web.",
+    "uk": "підтвердьте адресу електронної пошти для облікового запису Beirit Web."
   },
   "Bestätigungslink:": {
     "ru": "Ссылка подтверждения:",
@@ -722,5 +722,53 @@
   "Beim Zurücksetzen Ihres Passworts erscheint der Wiederherstellungstoken direkt im Browser. Es wird keine E-Mail verschickt.": {
     "ru": "При сбросе пароля токен восстановления появляется прямо в браузере. Письмо не отправляется.",
     "uk": "Під час скидання пароля токен відновлення з’являється прямо в браузері. Лист не надсилається."
+  },
+  "Aktuelles Passwort": {
+    "ru": "Текущий пароль",
+    "uk": "Поточний пароль"
+  },
+  "Das aktuelle Passwort ist nicht korrekt.": {
+    "ru": "Текущий пароль неверен.",
+    "uk": "Поточний пароль неправильний."
+  },
+  "Für eine neue E-Mail-Adresse ist Ihr aktuelles Passwort erforderlich.": {
+    "ru": "Для изменения адреса электронной почты нужен текущий пароль.",
+    "uk": "Для зміни електронної адреси потрібен поточний пароль."
+  },
+  "E-Mail-Adresse ändern": {
+    "ru": "Изменить электронную почту",
+    "uk": "Змінити електронну адресу"
+  },
+  "Eine Änderung Ihrer Konto-E-Mail wurde angefordert. Wenn Sie das nicht waren, setzen Sie bitte Ihr Passwort zurück.": {
+    "ru": "Запрошено изменение электронной почты вашего аккаунта. Если это были не вы, сбросьте пароль.",
+    "uk": "Надійшов запит на зміну електронної адреси вашого облікового запису. Якщо це були не ви, скиньте пароль."
+  },
+  "Bestätigen Sie Ihre neue E-Mail-Adresse innerhalb von 30 Minuten. Ihr aktuelles Passwort wird benötigt.": {
+    "ru": "Подтвердите новый адрес электронной почты в течение 30 минут. Потребуется текущий пароль.",
+    "uk": "Підтвердьте нову електронну адресу протягом 30 хвилин. Знадобиться поточний пароль."
+  },
+  "Ihre E-Mail-Adresse wurde bestätigt. Bitte melden Sie sich erneut an.": {
+    "ru": "Адрес электронной почты подтверждён. Войдите снова.",
+    "uk": "Електронну адресу підтверджено. Увійдіть знову."
+  },
+  "Die Bestätigungs-E-Mail konnte nicht versendet werden. Bitte versuchen Sie es später erneut.": {
+    "ru": "Не удалось отправить письмо с подтверждением. Попробуйте позже.",
+    "uk": "Не вдалося надіслати лист із підтвердженням. Спробуйте пізніше."
+  },
+  "Bitte bestätigen Sie die neue E-Mail-Adresse. Bis dahin bleibt Ihre bisherige Adresse gültig.": {
+    "ru": "Подтвердите новый адрес электронной почты. До этого ваш прежний адрес остаётся действующим.",
+    "uk": "Підтвердьте нову електронну адресу. До цього ваша попередня адреса залишається чинною."
+  },
+  "Bestätigen Sie Ihre neue E-Mail-Adresse mit Ihrem aktuellen Passwort. Danach melden Sie sich erneut an.": {
+    "ru": "Подтвердите новую электронную почту текущим паролем. Затем войдите снова.",
+    "uk": "Підтвердьте нову електронну адресу поточним паролем. Потім увійдіть знову."
+  },
+  "E-Mail-Adresse bestätigen": {
+    "ru": "Подтвердить электронную почту",
+    "uk": "Підтвердити електронну адресу"
+  },
+  "Dieser Link ist ungültig oder abgelaufen. Fordern Sie die Änderung erneut in Ihrem Profil an.": {
+    "ru": "Ссылка недействительна или срок её действия истёк. Повторите запрос в профиле.",
+    "uk": "Посилання недійсне або термін його дії минув. Повторіть запит у профілі."
   }
 }

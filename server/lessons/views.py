@@ -1,5 +1,6 @@
 import json
 import ipaddress
+from functools import wraps
 from datetime import timedelta
 
 from django.conf import settings
@@ -43,6 +44,7 @@ from pages.local_activation import local_registration_payload
 
 
 def api_login_required(view_func):
+    @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated or not _has_valid_auth_token(request):
             log_security_event("api_auth_required", path=request.path, user_id=getattr(request.user, "id", None))
@@ -939,7 +941,8 @@ def _feedback_rate_key(request):
 
 def _client_ip(request):
     try:
-        return str(ipaddress.ip_address(request.META.get("REMOTE_ADDR", "")))
+        from config.client_ip import client_ip
+        return str(ipaddress.ip_address(client_ip(request)))
     except ValueError:
         return None
 

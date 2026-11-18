@@ -80,7 +80,7 @@ def build_page_metadata(request, context, status=200):
 
     origin = settings.SITE_URL.rstrip("/")
     return {
-        "title": f"{heading} | ENBT Botanic | Beirit Digital",
+        "title": f"{heading} | ENBT Botanic | Beirit Web",
         "description": description,
         "canonical": f"{origin}{path}",
         "robots": "noindex, nofollow" if noindex else "index, follow",

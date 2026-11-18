@@ -33,7 +33,7 @@ class PortfolioAssetCompatibilityTests(SimpleTestCase):
 
     def test_canonical_urls_preserve_query_and_fragment_exactly(self):
         for old, new in (
-            ("/static/images/aktueles-logo.png", "/static/images/beirit-digital-logo.png"),
+            ("/static/images/aktueles-logo.png", "/static/images/beirit-web-logo.png"),
             ("/static/portfolio/test-main/app.js", "/static/portfolio/notenrechner/app.js"),
         ):
             for suffix in ("?", "#", "?#", f"?{self.query}#part%23two", "#section?source=legacy"):

@@ -9,11 +9,12 @@ from PIL import Image
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import Client, TestCase, override_settings
+from django.test import Client, RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
 from pages.local_activation import SESSION_KEY
+from pages.login_security import login_attempt_key
 from pages.models import LoginAttemptBucket, Profile
 
 
@@ -159,7 +160,7 @@ class LocalActivationTests(TestCase):
                     })
                     self.assertEqual(response.status_code, 200)
                     self.assertIn("activation_code", response.context["activation_form"].errors)
-        self.assertFalse(LoginAttemptBucket.objects.exists())
+        self.assertFalse(LoginAttemptBucket.objects.filter(key=login_attempt_key(RequestFactory().get("/"), user.email)).exists())
         self.assertEqual(self.client.session[SESSION_KEY]["attempts"], 0)
         self.assertEqual(self.activate().status_code, 302)
         user.refresh_from_db()
@@ -172,7 +173,7 @@ class LocalActivationTests(TestCase):
         with patch("pages.local_activation.timezone.now", return_value=expires):
             for _ in range(6):
                 self.assertContains(self.activate(original["code"]), "Aktivierungscode ist abgelaufen")
-            self.assertFalse(LoginAttemptBucket.objects.exists())
+            self.assertFalse(LoginAttemptBucket.objects.filter(key=login_attempt_key(RequestFactory().get("/"), user.email)).exists())
             self.assertEqual(self.client.post(reverse("pages:example_mail")).status_code, 302)
         self.assertEqual(self.activate().status_code, 302)
         user.refresh_from_db()
@@ -186,7 +187,7 @@ class LocalActivationTests(TestCase):
                     cancelled = self.client.post(path, {"action": "cancel_local_activation"})
                     self.assertEqual(cancelled.status_code, 302)
         self.assertNotIn(SESSION_KEY, self.client.session)
-        self.assertFalse(LoginAttemptBucket.objects.exists())
+        self.assertFalse(LoginAttemptBucket.objects.filter(key=login_attempt_key(RequestFactory().get("/"), "")).exists())
 
     def test_local_mode_keeps_the_shared_password_login_budget(self):
         user = get_user_model().objects.create_user(

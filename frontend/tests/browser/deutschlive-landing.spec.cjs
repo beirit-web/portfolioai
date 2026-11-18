@@ -168,7 +168,9 @@ test.describe("mobile language selection stays within the screen", () => {
       expect(await page.evaluate(() => scrollY)).toBe(originalScroll);
 
       await page.getByRole("main").focus();
-      await page.evaluate(() => scrollTo(0, 900));
+      expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
+      await page.evaluate(() => scrollTo({ top: 900, behavior: "instant" }));
+      await expect.poll(() => page.evaluate(() => scrollY)).toBe(900);
       const scrolledPosition = await page.evaluate(() => scrollY);
       await expectOnscreen(trigger);
       await trigger.click();

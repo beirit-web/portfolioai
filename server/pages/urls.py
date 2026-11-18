@@ -7,6 +7,7 @@ from lessons import views as lessons_views
 from . import views
 from .verification import AccountVerificationResendView
 from .local_activation import example_mail
+from .email_change import confirm_email_change
 from .housing_api import housing_account_session_api
 from .housing_live import housing_live_search, housing_live_status
 
@@ -69,6 +70,7 @@ urlpatterns = [
   path("api/security/admin-summary/", lessons_views.security_admin_summary, name="legacy_lessons_security_admin_summary"),
   path("kontakt/aktion/<slug:action>/", views.contact_action_redirect, name="contact_action"),
   path("profil/", views.profile_page, name="profile"),
+  path("account/email-change/<int:user_id>/<str:token>/", confirm_email_change, name="confirm_email_change"),
   path("rechtliches/", views.legal, name="legal"),
   path("projektbedingungen", RedirectView.as_view(url="/projekte", permanent=True), name="project_terms"),
   path("projektbedingungen/", RedirectView.as_view(pattern_name="pages:project_terms", permanent=True), name="project_terms_slash_redirect"),

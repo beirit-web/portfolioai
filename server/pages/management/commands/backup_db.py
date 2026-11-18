@@ -1,5 +1,8 @@
 import sqlite3
-from datetime import datetime
+import os
+import uuid
+from contextlib import closing
+from datetime import datetime, timezone
 from pathlib import Path
 
 from django.conf import settings
@@ -30,19 +33,30 @@ class Command(BaseCommand):
 
         backup_dir = Path(getattr(settings, "DB_BACKUP_PATH", settings.BASE_DIR / "backups"))
         try:
-            backup_dir.mkdir(parents=True, exist_ok=True)
+            backup_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
         except PermissionError as exc:
             raise CommandError(f"Backup-Verzeichnis nicht beschreibbar: {backup_dir}") from exc
 
-        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        target = backup_dir / f"{source_path.stem}-{timestamp}.sqlite3"
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S-%f")
+        target = backup_dir / f"{source_path.stem}-{timestamp}-{uuid.uuid4().hex[:8]}.sqlite3"
+        pending = target.with_suffix(".partial")
 
         self.stdout.write(f"Backing up {source_path} -> {target}")
-        with sqlite3.connect(source_path) as src, sqlite3.connect(target) as dst:
-            src.backup(dst)
+        # Create with private permissions before SQLite writes any account data.
+        descriptor = os.open(pending, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        os.close(descriptor)
+        try:
+            with closing(sqlite3.connect(source_path.resolve().as_uri() + "?mode=ro", uri=True)) as src, closing(sqlite3.connect(pending)) as dst:
+                src.backup(dst)
+                if dst.execute("PRAGMA integrity_check").fetchall() != [("ok",)]:
+                    raise CommandError("Backup integrity check failed.")
+            pending.replace(target)
+        except (OSError, sqlite3.Error, CommandError):
+            pending.unlink(missing_ok=True)
+            raise CommandError("Database backup failed; existing backups were retained.") from None
 
         if keep > 0:
-            backups = sorted(backup_dir.glob(f"{source_path.stem}-*.sqlite3"))
+            backups = sorted(backup_dir.glob(f"{source_path.stem}-*.sqlite3"), key=lambda path: (path.stat().st_mtime_ns, path.name))
             old = backups[:-keep]
             for path in old:
                 try:

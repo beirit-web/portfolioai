@@ -46,7 +46,7 @@ for (const colorScheme of ["light", "dark"]) {
     await page.goto("/password-reset/");
     await page.locator("#id_email").fill("invalid-email");
     await page.locator("main form").evaluate(form => { form.noValidate = true; });
-    await page.getByRole("button", { name: "Link senden", exact: true }).click();
+    await page.getByRole("form", { name: "Passwort wiederherstellen", exact: true }).getByRole("button").click();
     await expect(page.locator(".form-error")).toBeVisible();
     await expectReadableAccount(page, colorScheme);
 

@@ -3,6 +3,8 @@
 from datetime import timedelta
 import hashlib
 
+from config.client_ip import client_ip
+
 from django.db.models import F
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -15,8 +17,8 @@ LOGIN_ATTEMPT_WINDOW_SECONDS = 15 * 60
 
 
 def login_attempt_key(request, identifier):
-    # Use the direct peer, not an untrusted X-Forwarded-For header.
-    peer = request.META.get("REMOTE_ADDR", "unknown")
+    # Only explicitly trusted proxy peers may supply a client address.
+    peer = client_ip(request)
     identifier = User.normalize_username(identifier.strip()).casefold()
     user_id = User.objects.filter(Q(username__iexact=identifier) | Q(email__iexact=identifier)).values_list("pk", flat=True).first()
     account = f"user:{user_id}" if user_id else f"name:{identifier}"

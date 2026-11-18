@@ -17,7 +17,7 @@ test("guest collection is indexable in server HTML and excludes private filters"
   const server = await readMetadata(page, source);
   const live = await readMetadata(page);
   expect(live).toEqual(server);
-  expect(live.title).toBe("Meine Pflanzen | ENBT Botanic | Beirit Digital");
+  expect(live.title).toBe("Meine Pflanzen | ENBT Botanic | Beirit Web");
   expect(live.description).toContain("Pflanzensammlung");
   expect(live.canonical).toBe(`${baseURL}/botanic/?tab=plants`);
   expect(live.robots).toBe("index, follow");
@@ -52,7 +52,7 @@ test("collection and watering headings and navigation work without JavaScript at
     await page.screenshot({ path: testInfo.outputPath("collection-390.png"), fullPage: true });
     await page.getByRole("navigation", { name: "Botanic", exact: true }).getByRole("link", { name: "Gießplan", exact: true }).click();
     await expect(page.locator("main h1")).toHaveText("Gießplan");
-    await expect(page).toHaveTitle("Gießplan | ENBT Botanic | Beirit Digital");
+    await expect(page).toHaveTitle("Gießplan | ENBT Botanic | Beirit Web");
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, nofollow");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", `${baseURL}/botanic/?tab=watering`);
   } finally {

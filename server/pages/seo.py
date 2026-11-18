@@ -60,9 +60,9 @@ def login_page_metadata(request, absolute_url):
     public_form = request.method == "GET" and not request.GET.get("email", "").strip()
     project = project_account_context(request).get("account_project")
     return {
-        "title": f'{account_text("Anmelden")} | {project["name"]}' if project else account_text("Anmelden | Beirit Digital"),
+        "title": f'{account_text("Anmelden")} | {project["name"]}' if project else account_text("Anmelden | Beirit Web"),
         "description": account_text("Melden Sie sich an, um Ihr Profil und Ihre gespeicherten Inhalte zu öffnen.") if project else account_text(
-            "Melde dich bei Beirit Digital an, um deine persönlichen Projekte wie "
+            "Melde dich bei Beirit Web an, um deine persönlichen Projekte wie "
             "ENBT Botanic zu nutzen. Mit E-Mail und Passwort einloggen oder den Zugang wiederherstellen."
         ),
         "canonical": absolute_url("/login/"),
@@ -106,7 +106,7 @@ def imprint_page_metadata(language, absolute_url):
     return {
         **copy,
         "language": language,
-        "share_image": absolute_url(static("images/beirit-digital-logo.png")),
+        "share_image": absolute_url(static("images/beirit-web-logo.png")),
         "robots": "index, follow",
         "canonical": absolute_url("/impressum"),
         "links": [{"label": label, "route": f"pages:{route}"} for label, route in zip(copy["links"], routes)],

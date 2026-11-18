@@ -173,7 +173,7 @@ class BotanicSeoTests(TestCase):
                 response = self.client.get(reverse("botanic:index"), params)
                 document = self.assert_metadata(
                     response, canonical="/botanic/?tab=plants", robots="index, follow",
-                    title="Meine Pflanzen | ENBT Botanic | Beirit Digital",
+                    title="Meine Pflanzen | ENBT Botanic | Beirit Web",
                 )
                 self.assert_private_metadata(document)
                 self.assertEqual(document.headings, ["Meine Pflanzen"])
@@ -194,7 +194,7 @@ class BotanicSeoTests(TestCase):
                 response = self.client.get(reverse("botanic:index"), filters)
                 document = self.assert_metadata(
                     response, canonical="/botanic/?tab=plants", robots="noindex, nofollow",
-                    title="Meine Pflanzen | ENBT Botanic | Beirit Digital",
+                    title="Meine Pflanzen | ENBT Botanic | Beirit Web",
                 )
                 self.assert_private_metadata(document)
                 self.assertEqual(document.headings, ["Meine Pflanzen"])
@@ -215,7 +215,7 @@ class BotanicSeoTests(TestCase):
                 })
                 document = self.assert_metadata(
                     response, canonical="/botanic/?tab=watering", robots="noindex, nofollow",
-                    title="Gießplan | ENBT Botanic | Beirit Digital",
+                    title="Gießplan | ENBT Botanic | Beirit Web",
                 )
                 self.assert_private_metadata(document)
 
@@ -228,7 +228,7 @@ class BotanicSeoTests(TestCase):
         member = self.client.get(reverse("botanic:index"))
         document = self.assert_metadata(
             member, canonical="/botanic/?tab=plants", robots="noindex, nofollow",
-            title="Meine Pflanzen | ENBT Botanic | Beirit Digital",
+            title="Meine Pflanzen | ENBT Botanic | Beirit Web",
         )
         self.assert_private_metadata(document)
 
@@ -255,7 +255,7 @@ class BotanicSeoTests(TestCase):
                 response = self.client.get(path, {"utm_source": "example"})
                 document = self.assert_metadata(
                     response, canonical=path, robots="index, follow",
-                    title=f"{self.species.name} | ENBT Botanic | Beirit Digital",
+                    title=f"{self.species.name} | ENBT Botanic | Beirit Web",
                 )
                 self.assertIn(self.species.scientific_name, document.metadata["description"])
                 self.assertEqual(document.headings, [self.species.name])
@@ -268,7 +268,7 @@ class BotanicSeoTests(TestCase):
         self.assertContains(response, self.private_markers[1])
         document = self.assert_metadata(
             response, canonical=path, robots="noindex, nofollow",
-            title="Pflanze bearbeiten | ENBT Botanic | Beirit Digital",
+            title="Pflanze bearbeiten | ENBT Botanic | Beirit Web",
         )
         self.assert_private_metadata(document)
 

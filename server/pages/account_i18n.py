@@ -38,10 +38,10 @@ class AccountLanguageMiddleware:
         auth_prefix = "/" + settings.AUTH_URL_PREFIX.strip("/") + "/"
         reset_prefix = "/" + settings.PASSWORD_RESET_CONFIRM_PREFIX.strip("/") + "/"
         account_path = request.path.rstrip("/") in configured_paths | {
-            "/login", "/register", "/profil", "/account/delete",
+            "/login", "/logout", "/register", "/profil", "/account/delete",
             "/examplemail", "/email-bestaetigung", auth_prefix + "login",
         } or request.path.startswith((
-            "/password-reset", reset_prefix, "/verify-email/",
+            "/password-reset", reset_prefix, "/verify-email/", "/account/email-change/",
             auth_prefix + "password_reset/", auth_prefix + "reset/",
         ))
         if not account_path:

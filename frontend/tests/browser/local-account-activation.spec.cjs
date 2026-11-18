@@ -42,7 +42,7 @@ async function login(page) {
   await page.getByRole("form", { name: "Anmelden", exact: true }).getByRole("button", { name: "Anmelden", exact: true }).click();
 }
 
-test("local registration activates through the browser mailbox and preserves account edits across logins", async ({ page, context }, testInfo) => {
+test("registration, activation, login, password recovery and password-confirmed deletion work end to end", async ({ page, context }, testInfo) => {
   const email = `local-native-${testInfo.project.name}@example.test`;
   await page.goto("/register/?next=/profil/");
   await page.getByLabel("E-Mail", { exact: true }).fill(email);
@@ -57,12 +57,42 @@ test("local registration activates through the browser mailbox and preserves acc
   await page.getByRole("button", { name: "Speichern", exact: true }).click();
   await expect(page.getByRole("textbox", { name: /^Vorname:?$/ })).toHaveValue("Mustername");
   await page.goto("/logout/");
+  await page.locator("main").getByRole("button", { name: "Abmelden", exact: true }).click();
   await page.goto("/login/?next=/profil/");
   await expect(page.locator("#id_password")).toBeEnabled();
   await page.locator("#id_username").fill(email);
   await login(page);
   await expect(page).toHaveURL(/\/profil\/$/);
   await expect(page.getByRole("textbox", { name: /^Vorname:?$/ })).toHaveValue("Mustername");
+  await page.goto("/logout/");
+  await page.locator("main").getByRole("button", { name: "Abmelden", exact: true }).click();
+  await page.goto("/password-reset/");
+  await page.locator("#id_email").fill(email);
+  await page.locator('main form button[type="submit"]').click();
+  await page.getByRole("button", { name: "Token verwenden und Passwort setzen", exact: true }).click();
+  const newPassword = "Fictional-new-browser-password-73!";
+  await page.locator("#id_new_password1").fill(newPassword);
+  await page.locator("#id_new_password2").fill(newPassword);
+  await page.getByRole("button", { name: "Speichern", exact: true }).click();
+  await page.goto("/login/?next=/profil/");
+  await page.locator("#id_username").fill(email);
+  await login(page);
+  await expect(page).toHaveURL(/\/login\//);
+  await page.locator("#id_password").fill(newPassword);
+  await page.getByRole("form", { name: "Anmelden", exact: true }).getByRole("button", { name: "Anmelden", exact: true }).click();
+  await expect(page).toHaveURL(/\/profil\/$/);
+  await page.goto("/account/delete/");
+  await page.getByLabel("Aktuelles Passwort", { exact: true }).fill(password);
+  await page.getByRole("button", { name: "Konto endgültig löschen", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("Das aktuelle Passwort ist nicht korrekt.");
+  await page.getByLabel("Aktuelles Passwort", { exact: true }).fill(newPassword);
+  await page.getByRole("button", { name: "Konto endgültig löschen", exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await page.goto("/login/?next=/profil/");
+  await page.locator("#id_username").fill(email);
+  await page.locator("#id_password").fill(newPassword);
+  await page.getByRole("form", { name: "Anmelden", exact: true }).getByRole("button", { name: "Anmelden", exact: true }).click();
+  await expect(page).toHaveURL(/\/login\//);
 });
 
 test("housing registration uses the local code and opens a dashboard with persistent search profiles", async ({ page, context, isMobile }, testInfo) => {

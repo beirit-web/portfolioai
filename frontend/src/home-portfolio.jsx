@@ -6,12 +6,20 @@ import { createTranslator, ensureLanguage } from "./i18n/index.js";
 
 export async function enhanceHomePortfolio(section, language) {
   await ensureLanguage(language);
-  hydrateRoot(section, <HomePortfolioSection
+  await new Promise(resolve => {
+    function Ready({ children }) {
+      React.useEffect(() => {
+        section.dataset.enhanced = "true";
+        resolve();
+      }, []);
+      return children;
+    }
+    hydrateRoot(section, <Ready><HomePortfolioSection
     t={createTranslator(language)}
     language={language}
     homeOverviewCopy={homeOverviewCopyFor(language)}
     onNavigate={href => location.assign(href)}
     contentsOnly
-  />);
-  section.dataset.enhanced = "true";
+    /></Ready>);
+  });
 }

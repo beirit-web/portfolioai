@@ -14,9 +14,9 @@
       }, { once: true });
     </script>
     <meta name="theme-color" content="#ffffff" />
-    <meta name="description" content="Vertragsentwürfe mit Beirit Digital erstellen: Mietvertrag, Fahrzeug-Kaufvertrag und Kaufvertrag mit Dokumentvorschau und Export." />
+    <meta name="description" content="Vertragsentwürfe mit Beirit Web erstellen: Mietvertrag, Fahrzeug-Kaufvertrag und Kaufvertrag mit Dokumentvorschau und Export." />
     <link rel="canonical" href="{{ canonical_url }}" />
-    <meta property="og:title" content="Vertragsgenerator | Beirit Digital" />
+    <meta property="og:title" content="Vertragsgenerator | Beirit Web" />
     <meta property="og:description" content="Vertragsentwürfe erstellen, prüfen und exportieren." />
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href="{% static 'images/beirit-web-favicon-mini.svg' %}" />
@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="{% asset_url 'contracts/document-design.css' %}" />
     <link rel="stylesheet" href="{% asset_url 'contracts/assistant-layout.css' %}" />
     <link rel="stylesheet" href="{% asset_url 'contracts/clear-inputs.css' %}" />
-    <title>Vertragsgenerator | Beirit Digital</title>
+    <title>Vertragsgenerator | Beirit Web</title>
   </head>
   <body data-view="form" data-workspace="{{ workspace }}">
     {% include 'contracts/workspace.html' %}
@@ -37,7 +37,7 @@
           <a class="icon-button workspace-back" href="{% url 'contracts:generator' %}" data-workspace-link="overview" aria-label="Zur Übersicht">{% contract_icon 'chevron-left' %}</a>
           <span class="app-symbol">{% contract_icon 'file-text' %}</span>
           <h1>Vertragsgenerator</h1>
-          <span class="app-edition">BEIRIT DIGITAL</span>
+          <span class="app-edition">BEIRIT WEB</span>
         </div>
         <div class="header-actions">
           <a class="icon-button" href="#assistant" data-workspace-link="assistant" aria-label="KI-Assistent öffnen" title="KI-Assistent">{% contract_icon 'sparkles' %}</a>
@@ -87,7 +87,7 @@
           <div class="progress-summary"><span>Pflichtangaben</span><span id="fieldProgress">0/0</span></div>
           <div class="completion" role="progressbar" aria-label="Ausgefüllte Pflichtangaben" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="completionBar"></span></div>
           <button type="button" class="button button--quiet preview-shortcut" id="showPreviewButton">{% contract_icon 'eye' %}<span>Dokument prüfen</span>{% contract_icon 'arrow-up-right' %}</button>
-          <a class="studio-signature" href="/projekte" title="Beirit Digital Projekte"><img src="{% static 'images/beirit-digital-logo-160.webp' %}" width="160" height="160" alt="Beirit Digital" /><span>Projekte{% contract_icon 'arrow-up-right' %}</span></a>
+          <a class="studio-signature" href="/projekte" title="Beirit Web Projekte"><img src="{% static 'images/beirit-web-logo-160.webp' %}" width="160" height="160" alt="Beirit Web" /><span>Projekte{% contract_icon 'arrow-up-right' %}</span></a>
         </div>
       </aside>
       <section class="form-pane" id="formPane" aria-labelledby="form-title">

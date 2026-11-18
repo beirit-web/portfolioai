@@ -81,7 +81,7 @@ async function finishTransition(page) {
 
 for (const path of ["/ueber-mich", "/projekte"]) {
   test.describe(`${path}: mobile menu motion`, () => {
-    test.use({ reducedMotion: "no-preference" });
+    test.use({ contextOptions: { reducedMotion: "no-preference" } });
 
     for (const action of ["toggle", "escape"]) {
       test(`slides in and slides out when closed with ${action}`, async ({ page }) => {

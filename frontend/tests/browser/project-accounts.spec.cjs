@@ -38,6 +38,11 @@ for (const [name, path] of [
   test(`${name} exposes registration and recovery and keeps the project return path`, async ({ page }) => {
     await page.goto(path);
     if (name === "ENBT Botanic") await page.getByText("Kontooptionen", { exact: true }).click();
+    if (name === "Torten- und Kuchen-Shop") {
+      const menu = page.getByText("Menü", { exact: true });
+      if (await menu.isVisible()) await menu.click();
+      await page.getByText("Konto & Bestellung", { exact: true }).click();
+    }
     await expect(page.getByRole("link", { name: "Registrieren", exact: true }).first()).toBeVisible();
     await expect(page.getByRole("link", { name: "Passwort vergessen?", exact: true }).first()).toBeVisible();
     await page.getByRole("link", { name: "Anmelden", exact: true }).first().click();

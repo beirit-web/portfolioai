@@ -25,7 +25,7 @@ class LoginSeoTests(TestCase):
         self.assertEqual(response.status_code, 200)
         document = PortfolioDocument(response)
         project = response.context.get("account_project")
-        self.assertEqual(document.title, f'Anmelden | {project["name"]}' if project else "Anmelden | Beirit Digital")
+        self.assertEqual(document.title, f'Anmelden | {project["name"]}' if project else "Anmelden | Beirit Web")
         self.assertGreater(len(document.metadata["description"]), 35)
         self.assertEqual(document.canonical, self.canonical)
         self.assertEqual(len([link for link in document.links if link.get("rel") == "canonical"]), 1)

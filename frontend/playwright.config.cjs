@@ -17,7 +17,7 @@ module.exports = defineConfig({
   use: {
     baseURL: "http://127.0.0.1:8765",
     locale: "de-DE",
-    reducedMotion: "reduce",
+    contextOptions: { reducedMotion: "reduce" },
     colorScheme: "light",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",

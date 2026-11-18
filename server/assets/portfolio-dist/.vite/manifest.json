@@ -49,8 +49,8 @@
       "_cardActivation-DAZSw0vQ.js"
     ]
   },
-  "_enhanceProjectPage-CopGVsZ0.js": {
-    "file": "assets/enhanceProjectPage-CopGVsZ0.js",
+  "_enhanceProjectPage-Dbu3KrUX.js": {
+    "file": "assets/enhanceProjectPage-Dbu3KrUX.js",
     "name": "enhanceProjectPage"
   },
   "_file-text-RdlVvdx6.js": {
@@ -72,8 +72,8 @@
       "_arrow-right-CGTVQnsA.js"
     ]
   },
-  "_index-s5Yv8LY3.js": {
-    "file": "assets/index-s5Yv8LY3.js",
+  "_index-CsIfj414.js": {
+    "file": "assets/index-CsIfj414.js",
     "name": "index",
     "imports": [
       "_preload-helper-DAqlcvze.js",
@@ -91,8 +91,8 @@
       "_TechnologyTags-CLwo1Qts.js"
     ]
   },
-  "_mountSiteApp-C2RoPc2w.js": {
-    "file": "assets/mountSiteApp-C2RoPc2w.js",
+  "_mountSiteApp-Co6jPkuW.js": {
+    "file": "assets/mountSiteApp-Co6jPkuW.js",
     "name": "mountSiteApp",
     "imports": [
       "_preact-vendor-C31AVxSB.js",
@@ -111,16 +111,16 @@
     "file": "assets/three-vendor-BJgQQUs9.js",
     "name": "three-vendor"
   },
-  "_useI18n-Bc5fh9BL.js": {
-    "file": "assets/useI18n-Bc5fh9BL.js",
+  "_useI18n-CP5o2jAK.js": {
+    "file": "assets/useI18n-CP5o2jAK.js",
     "name": "useI18n",
     "imports": [
       "_preact-vendor-C31AVxSB.js",
       "_TechnologyTags-CLwo1Qts.js",
       "_cardActivation-DAZSw0vQ.js",
       "_database-DpCk4W__.js",
-      "_index-s5Yv8LY3.js",
-      "_mountSiteApp-C2RoPc2w.js"
+      "_index-CsIfj414.js",
+      "_mountSiteApp-Co6jPkuW.js"
     ]
   },
   "src/about-page.css": {
@@ -142,14 +142,14 @@
     ]
   },
   "src/about.jsx": {
-    "file": "assets/about-D6wgkijq.js",
+    "file": "assets/about-ci_SrXTy.js",
     "name": "about",
     "src": "src/about.jsx",
     "isEntry": true,
     "imports": [
       "_preact-vendor-C31AVxSB.js",
       "src/components/about/AboutPage.jsx",
-      "_mountSiteApp-C2RoPc2w.js",
+      "_mountSiteApp-Co6jPkuW.js",
       "_preload-helper-DAqlcvze.js",
       "_cardActivation-DAZSw0vQ.js",
       "_circle-check-BMqRrLCU.js",
@@ -245,7 +245,7 @@
     ]
   },
   "src/components/projects/PortfolioProjectPage.jsx": {
-    "file": "assets/PortfolioProjectPage-COld-F_f.js",
+    "file": "assets/PortfolioProjectPage-DVtXi2Jl.js",
     "name": "PortfolioProjectPage",
     "src": "src/components/projects/PortfolioProjectPage.jsx",
     "isDynamicEntry": true,
@@ -254,16 +254,16 @@
       "_cardActivation-DAZSw0vQ.js",
       "_languageServicesCaseStudy-DC4h_tVl.js",
       "_TechnologyTags-CLwo1Qts.js",
-      "_useI18n-Bc5fh9BL.js",
+      "_useI18n-CP5o2jAK.js",
       "_circle-check-BMqRrLCU.js",
       "_database-DpCk4W__.js",
-      "_index-s5Yv8LY3.js",
+      "_index-CsIfj414.js",
       "_preload-helper-DAqlcvze.js",
-      "_mountSiteApp-C2RoPc2w.js"
+      "_mountSiteApp-Co6jPkuW.js"
     ]
   },
   "src/components/projects/ProjectsOverviewPage.jsx": {
-    "file": "assets/ProjectsOverviewPage-Dhfc4ivi.js",
+    "file": "assets/ProjectsOverviewPage-BK30nkNf.js",
     "name": "ProjectsOverviewPage",
     "src": "src/components/projects/ProjectsOverviewPage.jsx",
     "isDynamicEntry": true,
@@ -271,7 +271,7 @@
       "_preact-vendor-C31AVxSB.js",
       "_TechnologyTags-CLwo1Qts.js",
       "_TechnicalLabel-DWJVOxmP.js",
-      "_mountSiteApp-C2RoPc2w.js",
+      "_mountSiteApp-Co6jPkuW.js",
       "_cardActivation-DAZSw0vQ.js",
       "_file-text-RdlVvdx6.js",
       "_arrow-right-CGTVQnsA.js"
@@ -305,14 +305,14 @@
     ]
   },
   "src/home-portfolio.jsx": {
-    "file": "assets/home-portfolio-DtlEk-4P.js",
+    "file": "assets/home-portfolio-Fpmdl9zO.js",
     "name": "home-portfolio",
     "src": "src/home-portfolio.jsx",
     "isDynamicEntry": true,
     "imports": [
       "_preact-vendor-C31AVxSB.js",
       "_homeOverviewCopy-BieQyCwt.js",
-      "_index-s5Yv8LY3.js",
+      "_index-CsIfj414.js",
       "_TechnologyTags-CLwo1Qts.js",
       "_cardActivation-DAZSw0vQ.js",
       "_TechnicalLabel-DWJVOxmP.js",
@@ -331,13 +331,13 @@
     ]
   },
   "src/home.js": {
-    "file": "assets/home-CDzCiAf4.js",
+    "file": "assets/home-CMnzwVhn.js",
     "name": "home",
     "src": "src/home.js",
     "isEntry": true,
     "imports": [
       "_preload-helper-DAqlcvze.js",
-      "_enhanceProjectPage-CopGVsZ0.js"
+      "_enhanceProjectPage-Dbu3KrUX.js"
     ],
     "dynamicImports": [
       "src/home-portfolio.jsx",
@@ -354,28 +354,28 @@
     ]
   },
   "src/i18n/locales/ru.json": {
-    "file": "assets/ru-hdYZvzh3.js",
+    "file": "assets/ru-BzyoiW6d.js",
     "name": "ru",
     "src": "src/i18n/locales/ru.json",
     "isDynamicEntry": true
   },
   "src/i18n/locales/uk.json": {
-    "file": "assets/uk-aQBh1nFx.js",
+    "file": "assets/uk-BSa9-dzo.js",
     "name": "uk",
     "src": "src/i18n/locales/uk.json",
     "isDynamicEntry": true
   },
   "src/main.jsx": {
-    "file": "assets/main-Dao9vtr_.js",
+    "file": "assets/main-D7vaKclq.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
     "imports": [
       "_preload-helper-DAqlcvze.js",
       "_preact-vendor-C31AVxSB.js",
-      "_useI18n-Bc5fh9BL.js",
+      "_useI18n-CP5o2jAK.js",
       "_cardActivation-DAZSw0vQ.js",
-      "_mountSiteApp-C2RoPc2w.js",
+      "_mountSiteApp-Co6jPkuW.js",
       "_TechnologyTags-CLwo1Qts.js",
       "_languageServicesCaseStudy-DC4h_tVl.js",
       "_TechnicalLabel-DWJVOxmP.js",
@@ -383,7 +383,7 @@
       "_homeOverviewCopy-BieQyCwt.js",
       "_file-text-RdlVvdx6.js",
       "_database-DpCk4W__.js",
-      "_index-s5Yv8LY3.js",
+      "_index-CsIfj414.js",
       "_arrow-left-1vFh7bBJ.js"
     ],
     "dynamicImports": [
@@ -425,33 +425,33 @@
     ]
   },
   "src/project-detail.js": {
-    "file": "assets/project-detail-BPTmUx5B.js",
+    "file": "assets/project-detail-bUjvmc-g.js",
     "name": "project-detail",
     "src": "src/project-detail.js",
     "isEntry": true,
     "imports": [
       "_preload-helper-DAqlcvze.js",
-      "_enhanceProjectPage-CopGVsZ0.js"
+      "_enhanceProjectPage-Dbu3KrUX.js"
     ],
     "dynamicImports": [
       "src/project-detail.jsx"
     ]
   },
   "src/project-detail.jsx": {
-    "file": "assets/project-detail-app-CiMyfXR0.js",
+    "file": "assets/project-detail-app-CNhs52iy.js",
     "name": "project-detail-app",
     "src": "src/project-detail.jsx",
     "isEntry": true,
     "isDynamicEntry": true,
     "imports": [
       "_preact-vendor-C31AVxSB.js",
-      "_useI18n-Bc5fh9BL.js",
-      "_mountSiteApp-C2RoPc2w.js",
+      "_useI18n-CP5o2jAK.js",
+      "_mountSiteApp-Co6jPkuW.js",
       "_TechnologyTags-CLwo1Qts.js",
       "_cardActivation-DAZSw0vQ.js",
       "src/components/projects/PortfolioProjectPage.jsx",
       "_database-DpCk4W__.js",
-      "_index-s5Yv8LY3.js",
+      "_index-CsIfj414.js",
       "_preload-helper-DAqlcvze.js",
       "_languageServicesCaseStudy-DC4h_tVl.js",
       "_circle-check-BMqRrLCU.js"
@@ -467,20 +467,20 @@
     ]
   },
   "src/projects.js": {
-    "file": "assets/projects-z1OISrz1.js",
+    "file": "assets/projects-C9g_Kyod.js",
     "name": "projects",
     "src": "src/projects.js",
     "isEntry": true,
     "imports": [
       "_preload-helper-DAqlcvze.js",
-      "_enhanceProjectPage-CopGVsZ0.js"
+      "_enhanceProjectPage-Dbu3KrUX.js"
     ],
     "dynamicImports": [
       "src/projects.jsx"
     ]
   },
   "src/projects.jsx": {
-    "file": "assets/projects-app-BVKqp7xj.js",
+    "file": "assets/projects-app-5wAAF_xK.js",
     "name": "projects-app",
     "src": "src/projects.jsx",
     "isEntry": true,
@@ -489,7 +489,7 @@
       "_preact-vendor-C31AVxSB.js",
       "_preload-helper-DAqlcvze.js",
       "_cardActivation-DAZSw0vQ.js",
-      "_mountSiteApp-C2RoPc2w.js",
+      "_mountSiteApp-Co6jPkuW.js",
       "_TechnologyTags-CLwo1Qts.js",
       "src/components/projects/ProjectsOverviewPage.jsx",
       "_languageServicesCaseStudy-DC4h_tVl.js",
@@ -512,25 +512,25 @@
     ]
   },
   "virtual:about-i18n/ru": {
-    "file": "assets/ru-B1ZE-UiD.js",
+    "file": "assets/ru-DaLZNp85.js",
     "name": "ru",
     "src": "virtual:about-i18n/ru",
     "isDynamicEntry": true
   },
   "virtual:about-i18n/uk": {
-    "file": "assets/uk-Dbp0RvJM.js",
+    "file": "assets/uk-D2WDBg-d.js",
     "name": "uk",
     "src": "virtual:about-i18n/uk",
     "isDynamicEntry": true
   },
   "virtual:projects-i18n/ru": {
-    "file": "assets/ru-VWoM4wG0.js",
+    "file": "assets/ru-BVhe0xku.js",
     "name": "ru",
     "src": "virtual:projects-i18n/ru",
     "isDynamicEntry": true
   },
   "virtual:projects-i18n/uk": {
-    "file": "assets/uk-B_xvJRLg.js",
+    "file": "assets/uk-CwJB-Buw.js",
     "name": "uk",
     "src": "virtual:projects-i18n/uk",
     "isDynamicEntry": true

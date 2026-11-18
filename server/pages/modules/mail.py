@@ -37,10 +37,9 @@ def send_notification_email(
     )
     for filename, content, mimetype in attachments or []:
       email.attach(filename, content, mimetype)
-    email.send(fail_silently=False)
-    return True
+    return email.send(fail_silently=False) == 1
   except Exception as exc:
-    logger.warning("Notification mail failed: %s", exc, exc_info=True)
+    logger.warning("Notification mail failed (%s)", type(exc).__name__)
     return False
 
 
@@ -48,6 +47,8 @@ def send_account_verification_email(user, activation_url: str):
   """
   Versendet die Bestaetigungs-Mail fuer neue Konten.
   """
+  if settings.EMAIL_BACKEND == "django.core.mail.backends.dummy.EmailBackend":
+    return False
   to_email = (getattr(user, "email", "") or "").strip()
   if not to_email:
     return False
@@ -76,8 +77,7 @@ def send_account_verification_email(user, activation_url: str):
       from_email=settings.DEFAULT_FROM_EMAIL or to_email,
       to=[to_email],
     )
-    email.send(fail_silently=False)
-    return True
+    return email.send(fail_silently=False) == 1
   except Exception as exc:
-    logger.warning("Account verification mail failed: %s", exc, exc_info=True)
+    logger.warning("Account verification mail failed (%s)", type(exc).__name__)
     return False

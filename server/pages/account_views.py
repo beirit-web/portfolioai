@@ -4,12 +4,15 @@ from .account_i18n import account_text_lazy as account_copy
 from .account_projects import project_account_context, recovery_login_url
 
 from datetime import datetime, timezone as datetime_timezone
+import logging
 from urllib.parse import urlencode, urlsplit
 
 from django import forms
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -49,6 +52,19 @@ class AccountPasswordResetForm(PasswordResetForm):
             "placeholder": "name@example.com",
         }),
     )
+
+    def send_mail(self, subject_template_name, email_template_name, context,
+                  from_email, to_email, html_email_template_name=None):
+        subject = "".join(render_to_string(subject_template_name, context).splitlines())
+        message = EmailMultiAlternatives(subject, render_to_string(email_template_name, context), from_email, [to_email])
+        if html_email_template_name:
+            message.attach_alternative(render_to_string(html_email_template_name, context), "text/html")
+        try:
+            if message.send(fail_silently=False) != 1:
+                logging.getLogger(__name__).warning("Password recovery mail was not accepted.")
+        except Exception as error:
+            # Provider exceptions can contain SMTP credentials or recipients.
+            logging.getLogger(__name__).warning("Password recovery mail failed (%s)", type(error).__name__)
 
 
 class AccountSetPasswordForm(SetPasswordForm):
@@ -96,7 +112,7 @@ class AccountPasswordResetView(AccountContextMixin, auth_views.PasswordResetView
             return HttpResponseRedirect(self.get_success_url())
         use_https = settings.PASSWORD_RESET_USE_HTTPS
         form.save(
-            use_https=self.request.is_secure() if use_https is None else use_https,
+            use_https=(self.request.is_secure() or urlsplit(settings.SITE_URL).scheme == "https") if use_https is None else use_https,
             domain_override=settings.PASSWORD_RESET_DOMAIN or urlsplit(settings.SITE_URL).netloc or self.request.get_host(),
             token_generator=self.token_generator,
             from_email=settings.DEFAULT_FROM_EMAIL,

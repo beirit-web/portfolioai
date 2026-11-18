@@ -16,13 +16,13 @@ function expectedMetadata(copy, canonical, robots) {
   };
 }
 
-for (const [locale, label, ogLocale] of [["de", "Deutsch", "de_DE"], ["uk", "Українська", "uk_UA"]]) {
+for (const [locale, label, ogLocale] of [["de", "Deutsch", "de_DE"], ["ru", "Русский", "ru_RU"]]) {
 test(`${label} selection survives reload with matching server and browser metadata`, async ({ page, baseURL }) => {
   const response = await page.goto("/deutschlive/manual?source=example");
   const canonical = `${baseURL}/deutschlive/manual`;
-  const russian = expectedMetadata(routes["/manual"].ru, canonical, "index, follow");
-  expect(await readMetadata(page, await response.text())).toEqual(russian);
-  await expect.poll(() => readMetadata(page)).toEqual(russian);
+  const ukrainian = expectedMetadata(routes["/manual"].uk, canonical, "index, follow");
+  expect(await readMetadata(page, await response.text())).toEqual(ukrainian);
+  await expect.poll(() => readMetadata(page)).toEqual(ukrainian);
 
   await page.locator(".app-nav__actions .language-switcher summary").click();
   await page.getByRole("button", { name: label, exact: true }).click();
@@ -44,6 +44,7 @@ test(`${label} selection survives reload with matching server and browser metada
 test("app navigation and browser back update canonical URLs and indexability", async ({ page, baseURL }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/deutschlive/");
+  await expect(page.locator(".app-nav__actions .language-switcher summary")).toHaveAttribute("title", "Українська");
   const menu = page.locator(".app-nav__desktop-menu select");
   await expect(menu).toBeVisible();
   const originalDocument = await page.evaluate(() => {
@@ -53,13 +54,13 @@ test("app navigation and browser back update canonical URLs and indexability", a
   for (const path of ["/manual", "/dashboard"]) {
     await menu.selectOption(path);
     await expect.poll(() => readMetadata(page)).toEqual(expectedMetadata(
-      routes[path].ru, `${baseURL}/deutschlive${path}`,
+      routes[path].uk, `${baseURL}/deutschlive${path}`,
       path === "/dashboard" ? "noindex, follow" : "index, follow",
     ));
   }
   await page.goBack();
   await expect.poll(() => readMetadata(page)).toEqual(expectedMetadata(
-    routes["/manual"].ru, `${baseURL}/deutschlive/manual`, "index, follow",
+    routes["/manual"].uk, `${baseURL}/deutschlive/manual`, "index, follow",
   ));
   expect(await page.evaluate(() => window.seoDocumentMarker)).toBe(originalDocument);
   await expect(page.locator('link[rel="canonical"]')).toHaveCount(1);
@@ -71,12 +72,12 @@ test("an unknown URL stays a noindexed 404 and its home link restores public met
   const response = await page.goto(`/deutschlive${path}?source=example`);
   expect(response.status()).toBe(404);
   expect(response.headers()["x-robots-tag"]).toBe("noindex, follow");
-  const missing = expectedMetadata(notFound.ru, `${baseURL}/deutschlive${path}`, "noindex, follow");
+  const missing = expectedMetadata(notFound.uk, `${baseURL}/deutschlive${path}`, "noindex, follow");
   expect(await readMetadata(page, await response.text())).toEqual(missing);
   await expect.poll(() => readMetadata(page)).toEqual(missing);
-  await expect(page.getByRole("heading", { name: notFound.ru.heading, level: 2, exact: true })).toBeVisible();
-  await page.getByRole("link", { name: notFound.ru.home, exact: true }).click();
+  await expect(page.getByRole("heading", { name: notFound.uk.heading, level: 2, exact: true })).toBeVisible();
+  await page.getByRole("link", { name: notFound.uk.home, exact: true }).click();
   await expect.poll(() => readMetadata(page)).toEqual(expectedMetadata(
-    routes["/"].ru, `${baseURL}/deutschlive/`, "index, follow",
+    routes["/"].uk, `${baseURL}/deutschlive/`, "index, follow",
   ));
 });

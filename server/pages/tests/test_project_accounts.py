@@ -112,6 +112,6 @@ class ProjectAccountTests(TestCase):
         url = shared_account_url("pages:profile", "/botanic/?tab=plants")
         response = self.client.post(url, {"image-remove_image": "on"})
         self.assertEqual(response["Location"], url)
-        response = self.client.get(shared_account_url("pages:logout", "/botanic/"))
+        response = self.client.post(shared_account_url("pages:logout", "/botanic/"))
         self.assertEqual(response["Location"], "/botanic/")
         self.assertNotIn("_auth_user_id", self.client.session)
