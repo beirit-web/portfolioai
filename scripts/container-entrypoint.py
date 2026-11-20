@@ -104,6 +104,8 @@ def main():
         "--bind", f"0.0.0.0:{port}",
         "--workers", str(workers),
         "--threads", str(threads),
+        # Docker manages lifecycle via signals; no local control socket is needed.
+        "--no-control-socket",
         "--timeout", "60", "--graceful-timeout", "30",
         "--error-logfile", "-",
     ])
