@@ -56,7 +56,9 @@ class Command(BaseCommand):
             raise CommandError("Database backup failed; existing backups were retained.") from None
 
         if keep > 0:
-            backups = sorted(backup_dir.glob(f"{source_path.stem}-*.sqlite3"), key=lambda path: (path.stat().st_mtime_ns, path.name))
+            # Always retain the snapshot just completed, even when timestamps
+            # tie or an older backup has a future mtime after a copy/clock change.
+            backups = sorted(backup_dir.glob(f"{source_path.stem}-*.sqlite3"), key=lambda path: (path == target, path.stat().st_mtime_ns, path.name))
             old = backups[:-keep]
             for path in old:
                 try:

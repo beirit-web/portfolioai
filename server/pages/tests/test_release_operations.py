@@ -34,6 +34,11 @@ class BackupRestoreTests(SimpleTestCase):
             with override_settings(DB_BACKUP_PATH=Path(directory) / "backups"), patch("pages.management.commands.backup_db.connections", {"default": fake}), patch("pages.management.commands.backup_db.datetime") as clock, patch("pages.management.commands.backup_db.uuid.uuid4", side_effect=uuids):
                 clock.now.return_value = datetime(2026, 1, 1, tzinfo=timezone.utc)
                 call_command("backup_db", keep=1, stdout=StringIO())
+                # Reproduce unreliable mtime ordering deterministically, as can
+                # also happen after copying old snapshots or changing the clock.
+                previous = next((Path(directory) / "backups").glob("*.sqlite3"))
+                future_ns = 4102444800 * 1_000_000_000
+                os.utime(previous, ns=(future_ns, future_ns))
                 with sqlite3.connect(source) as connection:
                     connection.execute("INSERT INTO auth_user VALUES (2, 'newer@example.test')")
                 call_command("backup_db", keep=1, stdout=StringIO())
