@@ -1,6 +1,8 @@
 // Module links and labels are shared by the client and Django build catalog.
 const modules = {
   sprachdienstleistungen: [
+    { id: "service-demo", href: "/demos/sprachdienstleistungen/", external: true, publicPage: true,
+      labels: { de: "Service-Website als Demo öffnen", ru: "Открыть демо сайта языковых услуг", uk: "Відкрити демо сайту мовних послуг" } },
     { id: "deutschlive", href: "/deutschlive/", external: true,
       labels: { de: "DeutschLive öffnen", ru: "Открыть DeutschLive", uk: "Відкрити DeutschLive" } },
     { id: "vokabelbox", href: "/vokabelbox/", external: true,

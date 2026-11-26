@@ -6,7 +6,7 @@
 - Never deploy from this workspace to Fly, IONOS or a previous production environment, except for the deployment to the Fly app `beirit-digital` explicitly authorized by the owner on 2026-11-20. This exception applies only to that deployment; all other portfolio restrictions remain in force.
 - Keep payments and billing webhooks disabled. Real credentials must never enable transactions here.
 - Use fictional client records and reserved example domains in code, fixtures, legal examples and deployment documentation.
-- Publish only the owner's first name (Eugen / Евгений / Євген), the existing portrait and the Beirit Web brand. Do not publish the owner's surname in personal names, address, birth details, phone numbers, email addresses or personal contact links. Keep author attribution using the first name and preserve third-party license attribution.
+- Publish only the owner's first name (Eugen / Евгений), the existing portrait and the Beirit Web brand. Do not publish the owner's surname in personal names, address, birth details, phone numbers, email addresses or personal contact links. Keep author attribution using the first name and preserve third-party license attribution.
 - Plain `.env` files may be committed only as fictional public samples matching their `.env.example` templates. All environment files must contain sample data only, including contact email values.
 - Keep local overrides such as `.env.local`, `.env.production` and `.env.original` ignored and uncommitted. Do not commit virtual environments, databases, client data, secret files or old repository history.
 - Run `python3 scripts/check_portfolio_data.py` before committing or pushing, plus checks appropriate to the changes.

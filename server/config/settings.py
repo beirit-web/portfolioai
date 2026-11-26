@@ -95,6 +95,7 @@ SITE_URL = str(env("SITE_URL", "") or "").strip().rstrip("/")
 if not SITE_URL:
     SITE_URL = "http://localhost:8000" if DEBUG else "https://portfolio.example.com"
 SITE_HOST = urlparse(SITE_URL).netloc or SITE_URL
+LANGUAGE_SERVICES_DEMO_URL = env("LANGUAGE_SERVICES_DEMO_URL", "").strip()
 REDIRECT_OLD_HOSTS = [
     host.strip().lower()
     for host in env_list_first(["REDIRECT_OLD_HOSTS"], default=[])

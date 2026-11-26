@@ -82,6 +82,15 @@ class ProjectDetailDocumentTests(TestCase):
         self.assertContains(response, "&lt;script&gt;alert")
         self.assertNotContains(response, '<script>alert("fictional sample")</script>')
 
+    def test_service_demo_is_available_in_the_server_rendered_project(self):
+        self.project.slug = "sprachdienstleistungen"
+        self.project.save(update_fields=["slug"])
+        response = self.client.get("/projekte/sprachdienstleistungen")
+        self.assertContains(response, 'href="/demos/sprachdienstleistungen/"')
+        self.assertContains(response, "Service-Website als Demo öffnen")
+        for path in ("/deutschlive/", "/vokabelbox/", "/deutschlive/recordings"):
+            self.assertContains(response, f'href="{path}"')
+
     def test_missing_presentation_build_keeps_the_client_fallback(self):
         with patch("pages.project_detail.projects_presentation_catalog", return_value=None):
             response = self.client.get("/projekte/online-shop")

@@ -10,6 +10,7 @@ from .local_activation import example_mail
 from .email_change import confirm_email_change
 from .housing_api import housing_account_session_api
 from .housing_live import housing_live_search, housing_live_status
+from .demo_views import language_services_demo
 
 app_name = "pages"
 
@@ -18,6 +19,7 @@ urlpatterns = [
   path("robots.txt", views.robots_txt, name="robots_txt"),
   path("sitemap.xml", views.sitemap_xml, name="sitemap_xml"),
   path("", views.home, name="home"),
+  path("demos/sprachdienstleistungen/", language_services_demo, name="language_services_demo"),
   path("vokabelbox/", views.vokabelbox, name="vokabelbox"),
   path("vokabelbox", RedirectView.as_view(pattern_name="pages:vokabelbox", permanent=True), name="vokabelbox_no_slash"),
   path("leistungen", RedirectView.as_view(url="/kompetenzen", permanent=True), name="services_page_no_slash"),

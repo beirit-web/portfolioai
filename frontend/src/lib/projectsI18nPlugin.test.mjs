@@ -140,6 +140,7 @@ test("the emitted presentation catalog retains canonical image, technology and g
     assert.equal(catalog.projectOverrides.sprachdienstleistungen[language].href, "/deutschlive/");
     assert.equal(catalog.projectOverrides.sprachdienstleistungen[language].showContactCta, false);
     assert.deepEqual(catalog.locales[language].detail.modules.sprachdienstleistungen.map(module => [module.id, module.href, module.external]), [
+      ["service-demo", "/demos/sprachdienstleistungen/", true],
       ["deutschlive", "/deutschlive/", true],
       ["vokabelbox", "/vokabelbox/", true],
       ["musikplayer", "/deutschlive/recordings", true],

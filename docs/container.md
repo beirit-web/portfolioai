@@ -82,6 +82,16 @@ Image. Dieses Repository enthält keinen automatischen Deployment-Workflow.
 Ein konkretes Hosting-Ziel wird nur durch eine ausdrücklich autorisierte
 Bereitstellung außerhalb des öffentlichen Beispielcodes festgelegt.
 
+Die frühere Service-Website kann separat als Demo erhalten bleiben.
+`LANGUAGE_SERVICES_DEMO_URL=https://languages.example.com/` konfiguriert das
+HTTPS-Ziel des Links „Service-Website als Demo öffnen“ auf der Projektseite.
+Der lokale Einstieg `/demos/sprachdienstleistungen/` leitet ausschließlich
+GET- und HEAD-Aufrufe weiter, ohne Besucherparameter oder Formulardaten.
+Das Ziel muss ohne Zugangsdaten, Query-String und Fragment konfiguriert sein.
+Ohne gültiges Ziel erscheint eine Nichtverfügbarkeitsseite. Die eigenständige
+Demo muss weiterhin ohne Buchungen oder aktive Zahlungsfunktionen betrieben
+werden; ihre Datenbank und Dateien gehören nicht in dieses Repository.
+
 
 ## Echte Konten vor einer Veröffentlichung
 
